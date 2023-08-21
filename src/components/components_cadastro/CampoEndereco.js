@@ -61,31 +61,49 @@ const CampoEndereco = (props) => {
                 ToastAndroid.show('CEP não encontrado', ToastAndroid.SHORT);
             }
         } catch (error) {
-            alert('CEP inválido. Certifique-se de que o CEP está correto e insira apenas números');
+            alert('CEP inválido. Certifique-se de que o CEP está correto.');
         }
     };
 
-    useEffect(() => {
-        if (uf) {
-            axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
-                .then(response => {
-                    const cidadesData = response.data.map(city => ({
-                        label: city.nome,
-                        value: city.nome,
-                    }));
-                    setCidades(cidadesData);
-                })
-                .catch(error => console.error('Houve um erro ao buscar cidades:', error));
-        }
-    }, [uf]);
+    const ListarCidades = async (uf) => {
+        const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
+        console.log(url);
+        await axios.get(url)
+            .then(response => {
+                const cidadesData = response.data.map(city => ({
+                    label: city.nome,
+                    value: city.nome,
+                }));
+                setCidades(cidadesData);
+            })
+            .catch(error => {
+                console.error('Houve um erro ao buscar cidades:', error);
+                ToastAndroid.show('Houve um erro ao buscar cidades', ToastAndroid.SHORT);
+            });
+    };
 
     const [textoDica, setTextoDica] = useState(false);
-    const [dicaEndereco, setDicaEndereco] = useState(false);
+
+    const [texto, setTexto] = useState('');
+    const formatarTextoCampo = (text) => {
+        const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
+        setCep(dataFormatadaCampo);
+        props.set1(1);
+
+        if (dataFormatadaCampo.length <= 5) {
+            setTexto(dataFormatadaCampo);
+        } else {
+            const dataFormatada = `${dataFormatadaCampo.slice(0, 5)}-${dataFormatadaCampo.slice(5,8)}`;
+            setTexto(dataFormatada);
+            if(props.set1 && dataFormatadaCampo.length == 8)
+                props.set1(dataFormatadaCampo);
+        }
+    };
 
     return (
         <View style={styles.containercampo}>
             <Text style={styles.titulocampo}>{props.texto}</Text>
-            <TextInput onChangeText={text => { setCep(text); if (props.set1) props.set1(text) }} maxLength={8} placeholderTextColor={corPlaceholderCad} placeholder={"CEP (Opcional)"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+            <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={"CEP (Opcional)"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
             <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>
                 <Text style={styles.textocadastro}>Pesquisar CEP</Text>
@@ -105,18 +123,18 @@ const CampoEndereco = (props) => {
                     onChange={item => {
                         setUf(item.value);
                         props.set2(item.value);
+                        ListarCidades(item.value)
                     }}
                 />
             </View>
-            {dicaEndereco && !uf && <Text style={styles.dica}>Selecione o UF primeiro.</Text>}
             <View style={styles.selecionar}>
                 <Dropdown
                     style={styles.dropdown}
                     placeholderStyle={{ color: corPlaceholderCad, fontSize: 18, }}
                     selectedTextStyle={{ fontSize: 18, }}
                     inputSearchStyle={{ height: 40, fontSize: 18, }}
-                    data={cidades}
-                    search
+                    data={uf ? cidades : [{ label: 'Selecione o UF primeiro', value: 'Selecione o UF primeiro' }]}
+                    search={uf ? true : false}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
@@ -127,8 +145,8 @@ const CampoEndereco = (props) => {
                         setCidade(item.value);
                         props.set3(item.value);
                     }}
-                    onFocus={() => { setDicaEndereco(true); setCidadeBackup(cidade), setCidade(''); }}
-                    onBlur={() => { setDicaEndereco(false); setCidade(cidadeBackup); }}
+                    onFocus={() => { setCidadeBackup(cidade), setCidade(''); }}
+                    onBlur={() => { setCidade(cidadeBackup); }}
                 />
             </View>
             <TextInput onChangeText={text => { setBairro(text); props.set4(text) }} value={bairro} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />

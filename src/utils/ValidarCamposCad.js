@@ -16,7 +16,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nome && !criteriosNome.test(nome)) {
             mensagemErro += "Nome completo inválido.\n";
         }
-        if (!dtNasc) {
+        if (dtNasc && dtNasc == 1) {
             mensagemErro += "Data de nascimento inválida.\n";
         }
         if (cpf && !criteriosCpf.test(cpf)) {

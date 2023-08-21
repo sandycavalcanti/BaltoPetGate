@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +12,7 @@ import GroupBox from '../../components/components_cadastro/GroupBox';
 import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
 import CampoSenha from '../../components/components_cadastro/CampoSenha';
 import CampoDtNasc from '../../components/components_cadastro/CampoDtNasc';
+import CampoCpf from '../../components/components_cadastro/CampoCpf';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 
 const CadVeterinario = () => {
@@ -20,7 +22,6 @@ const CadVeterinario = () => {
   const [email, setEmail] = useState('');
   const [nomePerfil, setNomePerfil] = useState('');
   const [dtNasc, setDtNasc] = useState();
-  const [dtNascExiste, setDtNascExiste] = useState();
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState();
   const [crmv, setCrmv] = useState();
@@ -40,7 +41,7 @@ const CadVeterinario = () => {
   const [facebook, setFacebook] = useState('');
 
   const Cadastrar = async () => {
-    const camposObrigatorios = [email, dtNascExiste, nome, nomePerfil, cpf, crmv, telefone1, senha, senhaConfirmacao];
+    const camposObrigatorios = [email, dtNasc, nome, nomePerfil, cpf, crmv, telefone1, senha, senhaConfirmacao];
     const camposCadastro = {
       email, nome, nomePerfil, cep, uf, cidade, bairro, rua, numero, complemento,
       dtNasc, cpf, crmv, facebook, instagram, whatsapp, telefone1, telefone2, senha, senhaConfirmacao
@@ -91,8 +92,8 @@ const CadVeterinario = () => {
     <ContainerCadastro titulo="Crie sua conta!">
       <GroupBox titulo="Informações pessoais">
         <CampoSimples set={setNome} placeholder={"Nome Completo"} />
-        <CampoDtNasc set1={setDtNasc} set2={setDtNascExiste} />
-        <CampoDica set={setCpf} placeholder={"CPF"} textodica="Insira apenas números" keyboardType='numeric' maxLength={11} />
+        <CampoDtNasc set={setDtNasc} />
+        <CampoCpf set={setCpf} />
         <CampoDica set={setCrmv} placeholder={"CRMV"} textodica="Insira apenas números" keyboardType='numeric' maxLength={7} />
       </GroupBox>
       <GroupBox titulo="Informações da cliníca veterinária">
