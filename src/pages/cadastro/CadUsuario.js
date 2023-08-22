@@ -24,7 +24,7 @@ const CadUsuario = () => {
   const Cadastrar = async () => {
     const camposObrigatorios = [email, nome, nomePerfil, senha, senhaConfirmacao];
     const camposCadastro = { email, nome, nomePerfil, senha, senhaConfirmacao }
-    
+
     let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
     if (!mensagemErro) {
       InserirDados();

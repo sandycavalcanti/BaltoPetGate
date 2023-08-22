@@ -6,8 +6,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
     const criteriosSenha = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
     const criteriosCpf = /^\d{11}$/;
     const criteriosCrmv = /^\d{4,7}$/;
+    const criteriosTelefone = /^\d{10,13}$/;
 
-    const { nome, dtNasc, cpf, crmv, uf, cidade, bairro, rua, numero, nomePerfil, email, senha, senhaConfirmacao } = dados;
+    const { nome, dtNasc, cpf, crmv, uf, cidade, bairro, rua, numero, nomePerfil, telefone1, telefone2, whatsapp, facebook, instagram, email, senha, senhaConfirmacao } = dados;
 
     if (camposObrigatorios.some(campo => !campo)) {
         mensagemErro = "Complete todos os campos obrigatórios.";
@@ -30,6 +31,12 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         }
         if (nomePerfil && !criteriosNomePerfil.test(nomePerfil)) {
             mensagemErro += "Nome de perfil inválido.\n";
+        }
+        if (telefone1 && !criteriosTelefone.test(telefone1)) {
+            mensagemErro += "Primeiro número de telefone inválido.\n";
+        }
+        if (telefone2 && !criteriosTelefone.test(telefone2)) {
+            mensagemErro += "Segundo número de telefone inválido.\n";
         }
         if (email && !criteriosEmail.test(email)) {
             mensagemErro += "E-mail inválido.\n";

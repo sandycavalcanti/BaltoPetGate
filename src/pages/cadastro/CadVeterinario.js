@@ -102,8 +102,7 @@ const CadVeterinario = () => {
           set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
       </GroupBox>
       <GroupBox titulo="Informações de contato">
-        <CampoTelefone set1={setTelefone1} set2={setTelefone2} />
-        <CampoDica set={setWhatsapp} placeholder={"Whatsapp (Opcional)"} textodica="Insira o DDD e apenas números. Você pode usar o mesmo número de telefone inserido no item acima" keyboardType='numeric' maxLength={11} opcional />
+        <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />
         <CampoRede set1={setInstagram} set2={setFacebook} opcional />
       </GroupBox>
       <GroupBox titulo="Informações de login">

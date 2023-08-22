@@ -5,7 +5,7 @@ import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } f
 const CampoCpf = (props) => {
     const [textoDica, setTextoDica] = useState(false);
     const [texto, setTexto] = useState('');
-    
+
     const formatarTextoCampo = (text) => {
         const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
         props.set(1);
@@ -15,11 +15,11 @@ const CampoCpf = (props) => {
         } else if (dataFormatadaCampo.length <= 6) {
             setTexto(`${dataFormatadaCampo.slice(0, 3)}.${dataFormatadaCampo.slice(3)}`);
         } else if (dataFormatadaCampo.length <= 9) {
-            setTexto(`${dataFormatadaCampo.slice(0, 3)}.${dataFormatadaCampo.slice(3,6)}.${dataFormatadaCampo.slice(6,9)}`);
+            setTexto(`${dataFormatadaCampo.slice(0, 3)}.${dataFormatadaCampo.slice(3, 6)}.${dataFormatadaCampo.slice(6, 9)}`);
         } else {
-            const dataFormatada = `${dataFormatadaCampo.slice(0, 3)}.${dataFormatadaCampo.slice(3,6)}.${dataFormatadaCampo.slice(6,9)}-${dataFormatadaCampo.slice(9,11)}`;
+            const dataFormatada = `${dataFormatadaCampo.slice(0, 3)}.${dataFormatadaCampo.slice(3, 6)}.${dataFormatadaCampo.slice(6, 9)}-${dataFormatadaCampo.slice(9, 11)}`;
             setTexto(dataFormatada);
-            if(dataFormatadaCampo.length == 11)
+            if (dataFormatadaCampo.length == 11)
                 props.set(dataFormatadaCampo);
         }
     };
