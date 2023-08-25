@@ -9,7 +9,7 @@ const CampoRede = (props) => {
     { props.opcional ? msg = ' (Opcional)' : msg = '' }
     return (
         <View style={styles.containercampo}>
-            <TextInput onChangeText={text => props.set1(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Link do Instagram" + msg} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='url' style={styles.campo} />
+            <TextInput onChangeText={text => props.set1(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Instagram" + msg} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='url' style={styles.campo} />
             {props.opcional ? <Text style={styles.asterisco}></Text> : <Text style={styles.asterisco}>*</Text>}
             <View>
                 <TextInput onChangeText={text => props.set2(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Link do Facebook" + msg} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='url' style={styles.campo} />

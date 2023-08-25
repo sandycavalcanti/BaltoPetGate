@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, ScrollView } from 'react-native'
+import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/components_cadastro/CampoSimples';
 import CampoDica from '../../components/components_cadastro/CampoDica';
@@ -12,8 +11,9 @@ import GroupBox from '../../components/components_cadastro/GroupBox';
 import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
 import CampoSenha from '../../components/components_cadastro/CampoSenha';
 import CampoDtNasc from '../../components/components_cadastro/CampoDtNasc';
-import CampoCpf from '../../components/components_cadastro/CampoCpf';
+import CampoNumFormatado from '../../components/components_cadastro/CampoNumFormatado';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
+import axios from 'axios';
 
 const CadVeterinario = () => {
   const navigation = useNavigation();
@@ -76,11 +76,11 @@ const CadVeterinario = () => {
       TB_PESSOA_FACEBOOK: facebook,
       TB_PESSOA_TELEFONE1: telefone1,
       TB_PESSOA_TELEFONE2: telefone2,
-      TB_PESOA_CRMV: crmv
+      TB_PESSOA_CRMV: crmv
     }).then(response => {
       const TokenUsuario = response.data.token;
       console.log(TokenUsuario);
-      navigation.reset({ index: 0, routes: [{ name: 'Pagina' }] });
+      // navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
     }).catch(error => {
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);
@@ -93,8 +93,8 @@ const CadVeterinario = () => {
       <GroupBox titulo="Informações pessoais">
         <CampoSimples set={setNome} placeholder={"Nome Completo"} />
         <CampoDtNasc set={setDtNasc} />
-        <CampoCpf set={setCpf} />
-        <CampoDica set={setCrmv} placeholder={"CRMV"} textodica="Insira apenas números" keyboardType='numeric' maxLength={7} />
+        <CampoNumFormatado set={setCpf} tipo='cpf' />
+        <CampoNumFormatado set={setCrmv} tipo='crmv' />
       </GroupBox>
       <GroupBox titulo="Informações da cliníca veterinária">
         <CampoSimples set={setNomePerfil} placeholder={"Nome da clínica"} />

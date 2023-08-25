@@ -4,6 +4,7 @@ import DropDownBotao from "../components/components_cadastro/DropDownBotao";
 import axios from 'axios';
 import { urlAPI } from '../constants';
 import { corFundoCad } from "../constants";
+import { ScrollView } from 'react-native-gesture-handler';
 
 function Home({ navigation: { navigate } }) {
 
@@ -43,12 +44,22 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
-  
-  const [select, setSelect] = useState();
-  const Selecionar = async () => {
+  const teste = async () => {
     try {
-      await axios.post(urlAPI + 'selanimal/filtrar', {
-        TB_ANIMAL_PESO: 2.7
+      const response = await axios.post(urlAPI + 'send-code', {
+        email: 'renanmochizuki@gmail.com'
+      });
+      console.log('Alterado:', response.data.message);
+    } catch (error) {
+      console.error('Erro ao alterar:', error);
+    }
+  };
+
+  const [select, setSelect] = useState();
+  const Selecionarcomfiltro = async () => {
+    try {
+      await axios.post(urlAPI + 'selpessoa/filtrar', {
+        TB_PESSOA_NOME_PERFIL: 'João'
       })
         .then((response) => {
           setSelect(response.data);
@@ -57,23 +68,45 @@ function Home({ navigation: { navigate } }) {
           console.error('Erro ao selecionar:', erro);
         })
     } catch (error) {
-      ToastAndroid.show('Email ou senha inválidos', ToastAndroid.SHORT);
+      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
     }
   };
 
+  const Selecionar = async () => {
+    try {
+      await axios.get(urlAPI + 'selpessoa')
+        .then((response) => {
+          setSelect(response.data);
+        }).catch((error) => {
+          let erro = error.response.data.message;
+          console.error('Erro ao selecionar:', erro);
+        })
+    } catch (error) {
+      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
+    }
+  };
+
+
   return (
-    <View style={styles.container}>
-      {/* <DropDownBotao/> */}
-      <TouchableOpacity onPress={() => navigate('Login')}><Text>Login</Text></TouchableOpacity>
-      <TouchableOpacity onPress={Selecionar}><Text>Selecionar</Text></TouchableOpacity>
-      {select && select.map((user, index) => (
-        <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
-          <Text>{`Nome: ${user.TB_ANIMAL_NOME}`}</Text>
-          <Text>{`Email: ${user.TB_ANIMAL_PESO}`}</Text>
-          {/* Outros campos a serem exibidos */}
-        </View>
-      ))}
-    </View>
+    <ScrollView style={{width:'100%', height: '100%'}}>
+      <View style={styles.container}>
+        {/* <DropDownBotao/> */}
+        <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
+
+        <TouchableOpacity onPress={Selecionarcomfiltro}><Text>Selecionar pessoa com filtro</Text></TouchableOpacity>
+
+        <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
+
+        <TouchableOpacity onPress={teste}><Text>teste de envio de codigo</Text></TouchableOpacity>
+        {select && select.map((user, index) => (
+          <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
+            <Text>{`Nome: ${user.TB_PESSOA_EMAIL}`}</Text>
+            <Text>{`Email: ${user.TB_PESSOA_NOME_PERFIL}`}</Text>
+            {/* Outros campos a serem exibidos */}
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 

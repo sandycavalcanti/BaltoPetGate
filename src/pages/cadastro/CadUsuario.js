@@ -7,6 +7,7 @@ import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar'
 import GroupBox from '../../components/components_cadastro/GroupBox';
 import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
+import { decode } from "react-native-pure-jwt";
 import axios from 'axios';
 import { urlAPI } from '../../constants';
 
@@ -42,8 +43,19 @@ const CadUsuario = () => {
       TB_PESSOA_SENHA: senha,
     }).then(response => {
       const TokenUsuario = response.data.token;
-      console.log(TokenUsuario);
-      navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+      // const decodedToken = jwt.verify(TokenUsuario, 'ermelinda');
+      // const usuarioId = decodedToken.TB_PESSOA_IDD;
+      decode(
+        TokenUsuario, // the token
+        'ermelinda', // the secret
+        {
+          skipValidation: true // to skip signature and exp verification
+        }
+      )
+        .then(console.log) // already an object. read below, exp key note
+        .catch(console.error);
+
+      // navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
     }).catch(error => {
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);

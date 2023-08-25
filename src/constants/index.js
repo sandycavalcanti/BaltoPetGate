@@ -10,4 +10,4 @@ export const corTituloBoxCad = "#fff";
 export const valorBordaCampoCad = 15;
 export const corFundo = "#CEF7FF";
 export const corFundoNavegacao = "#A9DDE8";
-export const urlAPI = "https://apibalto.vercel.app/";
+export const urlAPI = "https://apibalto-git-test-alterarsenha-renan-mochizuki.vercel.app/";

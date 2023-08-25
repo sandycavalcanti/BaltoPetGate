@@ -7715,6 +7715,11 @@ react-native-paper@^5.9.1:
     patch-package "^7.0.0"
     use-latest-callback "^0.1.5"
 
+react-native-pure-jwt@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/react-native-pure-jwt/-/react-native-pure-jwt-3.0.2.tgz"
+  integrity sha512-TbZ9JLCC33Ew2ENjovlDTFnNR7evUu5yKF4X5vLO5uO8FMMnBxS0mOUuUtAzlNPZ+tJQOKEoCyo43Hs1pTy+hA==
+
 react-native-ratings@8.0.4:
   version "8.0.4"
   resolved "https://registry.npmjs.org/react-native-ratings/-/react-native-ratings-8.0.4.tgz"
@@ -7761,7 +7766,7 @@ react-native-vector-icons@*, react-native-vector-icons@>7.0.0:
     postcss-value-parser "^4.2.0"
     styleq "^0.1.2"
 
-react-native@*, "react-native@>= 0.64.3", react-native@>=0.57, react-native@0.71.8:
+react-native@*, "react-native@>= 0.64.3", react-native@>=0.41.2, react-native@>=0.57, react-native@0.71.8:
   version "0.71.8"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.71.8.tgz"
   integrity sha512-ftMAuhpgTkbHU9brrqsEyxcNrpYvXKeATY+if22Nfhhg1zW+6wn95w9otwTnA3xHkljPCbng8mUhmmERjGEl7g==
