@@ -28,6 +28,7 @@ const CadAbrigo = ({ navigation: { navigate } }) => {
   const [telefone2, setTelefone2] = useState();
   const [whatsapp, setWhatsapp] = useState();
   const [senha, setSenha] = useState('');
+  const [senhaConfirmacao, setSenhaConfirmacao] = useState('');
   const [cep, setCep] = useState('');
   const [uf, setUf] = useState('');
   const [cidade, setCidade] = useState('');
