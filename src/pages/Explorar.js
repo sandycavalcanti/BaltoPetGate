@@ -4,7 +4,7 @@ import { corFundoCad } from "../constants";
 const Explorar = ({ navigation: { navigate } }) => {
 
     const Logar = () => {
-        navigate("CadastroAnimal");
+        navigate("HisChat");
     }
 
     return (

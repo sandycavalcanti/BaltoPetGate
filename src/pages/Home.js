@@ -4,6 +4,7 @@ import DropDownBotao from "../components/components_cadastro/DropDownBotao";
 import axios from 'axios';
 import { urlAPI } from '../constants';
 import { corFundoCad } from "../constants";
+import DropdownButton from '../components/components_perfil/DropdownButton';
 
 function Home({ navigation: { navigate } }) {
 
@@ -73,6 +74,10 @@ function Home({ navigation: { navigate } }) {
           {/* Outros campos a serem exibidos */}
         </View>
       ))}
+
+      <DropdownButton/>
+
+      
     </View>
   );
 }

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import TelaSplash from '../Splash/Splash';
 import Navegacao from '.';
-
+import HisChat from '../HistChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
@@ -54,6 +54,7 @@ function RootNavigator() {
       <Stack.Screen name="Perfil" component={Perfil} />
       <Stack.Screen name="CriarSenha" component={CriarSenha} />
       <Stack.Screen name="Postagem" component={Postagem} />
+      <Stack.Screen name="HisChat" component={HisChat} />
     </Stack.Navigator>
   );
 }
