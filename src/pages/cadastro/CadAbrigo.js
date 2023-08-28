@@ -15,7 +15,7 @@ import CampoNumFormatado from '../../components/components_cadastro/CampoNumForm
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
 
-const CadAbrigo = ({ navigation: { navigate } }) => {
+const CadAbrigo = () => {
   const navigation = useNavigation();
   const [mensagem, setMensagem] = useState('');
 
@@ -56,7 +56,7 @@ const Cadastrar = async () => {
 
   const InserirDados = async () => {
     await axios.post(urlAPI + 'cadpessoa', {
-      TB_TIPO_ID: 6,
+      TB_TIPO_ID: 5,
       TB_PESSOA_NOME: nome,
       TB_PESSOA_NOME_PERFIL: nomePerfil,
       TB_PESSOA_EMAIL: email,

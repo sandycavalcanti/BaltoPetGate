@@ -48,7 +48,8 @@ const CampoEndereco = (props) => {
         try {
             const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
             const endereco = response.data;
-            setUf(endereco.uf);
+            ListarCidades(endereco.uf);
+            setUf(endereco.uf)
             setCidade(endereco.localidade);
             setBairro(endereco.bairro);
             setRua(endereco.logradouro);
@@ -66,9 +67,7 @@ const CampoEndereco = (props) => {
     };
 
     const ListarCidades = async (uf) => {
-        const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
-        console.log(url);
-        await axios.get(url)
+        await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
             .then(response => {
                 const cidadesData = response.data.map(city => ({
                     label: city.nome,
@@ -93,16 +92,20 @@ const CampoEndereco = (props) => {
         if (dataFormatadaCampo.length <= 5) {
             setTexto(dataFormatadaCampo);
         } else {
-            const dataFormatada = `${dataFormatadaCampo.slice(0, 5)}-${dataFormatadaCampo.slice(5,8)}`;
+            const dataFormatada = `${dataFormatadaCampo.slice(0, 5)}-${dataFormatadaCampo.slice(5, 8)}`;
             setTexto(dataFormatada);
-            if(props.set1 && dataFormatadaCampo.length == 8)
+            if (props.set1 && dataFormatadaCampo.length == 8)
                 props.set1(dataFormatadaCampo);
         }
     };
 
+    let msg;
+    if (props.opcional) msg = 'Localização (Opcional):'
+    else msg = 'Localização '
+    
     return (
         <View style={styles.containercampo}>
-            <Text style={styles.titulocampo}>{props.texto}</Text>
+            <Text style={styles.titulocampo}>{msg}</Text>
             <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={"CEP (Opcional)"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
             <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>

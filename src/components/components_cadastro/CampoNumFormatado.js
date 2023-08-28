@@ -65,8 +65,7 @@ const CampoNumFormatado = (props) => {
                         <TextInput onChangeText={text => formatarTextoCnpj(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
                             placeholder={"CNPJ"} keyboardType='numeric' maxLength={18} />
                         : <></>}
-            {props.opcional ? <Text style={styles.asterisco}></Text> : <Text style={styles.asterisco}>*</Text>}
-            {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
+            {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
         </View>
     )
 }

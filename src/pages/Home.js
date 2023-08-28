@@ -88,7 +88,7 @@ function Home({ navigation: { navigate } }) {
 
 
   return (
-    <ScrollView style={{width:'100%', height: '100%'}}>
+    <ScrollView style={{ width: '100%', height: '100%' }}>
       <View style={styles.container}>
         {/* <DropDownBotao/> */}
         <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>

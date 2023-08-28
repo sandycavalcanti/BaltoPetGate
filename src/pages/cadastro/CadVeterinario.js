@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import CampoDica from '../../components/components_cadastro/CampoDica';
 import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
 import CampoTelefone from '../../components/components_cadastro/CampoTelefone';
 import CampoRede from '../../components/components_cadastro/CampoRede';
@@ -13,6 +12,7 @@ import CampoSenha from '../../components/components_cadastro/CampoSenha';
 import CampoDtNasc from '../../components/components_cadastro/CampoDtNasc';
 import CampoNumFormatado from '../../components/components_cadastro/CampoNumFormatado';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
+import { urlAPI } from '../../constants';
 import axios from 'axios';
 
 const CadVeterinario = () => {
@@ -98,7 +98,7 @@ const CadVeterinario = () => {
       </GroupBox>
       <GroupBox titulo="Informações da cliníca veterinária">
         <CampoSimples set={setNomePerfil} placeholder={"Nome da clínica"} />
-        <CampoEndereco texto="Localização (Opcional):"
+        <CampoEndereco opcional
           set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
       </GroupBox>
       <GroupBox titulo="Informações de contato">
@@ -109,8 +109,8 @@ const CadVeterinario = () => {
         <CampoSimples set={setEmail} placeholder={"Email"} keyboardType='email-address' />
         <CampoSenha set1={setSenha} set2={setSenhaConfirmacao} />
       </GroupBox>
+      {mensagem && <Text style={{ color: 'red' }}>{mensagem}</Text>}
       <BotaoCadastrar onPress={Cadastrar} />
-      {mensagem && <Text>{mensagem}</Text>}
     </ContainerCadastro>
   )
 }

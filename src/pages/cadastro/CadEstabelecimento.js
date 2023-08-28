@@ -15,7 +15,7 @@ import CampoNumFormatado from '../../components/components_cadastro/CampoNumForm
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
 
-const CadEstabelecimento = ({ navigation: { navigate } }) => {
+const CadEstabelecimento = () => {
   const navigation = useNavigation();
   const [mensagem, setMensagem] = useState('');
 
