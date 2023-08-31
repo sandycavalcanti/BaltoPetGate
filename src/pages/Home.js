@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import DropDownBotao from "../components/components_cadastro/DropDownBotao";
 import axios from 'axios';
 import { urlAPI } from '../constants';
 import { corFundoCad } from "../constants";
 import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DecodificarToken from '../utils/DecodificarToken';
 
 function Home({ navigation: { navigate } }) {
 
@@ -44,15 +46,22 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
-  const teste = async () => {
-    try {
-      const response = await axios.post(urlAPI + 'send-code', {
-        email: 'renanmochizuki@gmail.com'
-      });
-      console.log('Alterado:', response.data.message);
-    } catch (error) {
-      console.error('Erro ao alterar:', error);
-    }
+  useEffect(() => { // Executada só uma vez
+    Testar();
+  }, []);
+
+  const Testar = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const { TB_PESSOA_IDD, TB_TIPO_IDD } = DecodificarToken(token);
+    await axios.post(urlAPI + 'selpessoa/filtrar', {
+      TB_PESSOA_ID: TB_PESSOA_IDD
+    })
+      .then((response) => {
+        setSelect(response.data);
+      }).catch((error) => {
+        let erro = error.response.data.message;
+        console.error('Erro ao selecionar:', erro);
+      })
   };
 
   const [select, setSelect] = useState();
@@ -90,19 +99,19 @@ function Home({ navigation: { navigate } }) {
   return (
     <ScrollView style={{ width: '100%', height: '100%' }}>
       <View style={styles.container}>
-        {/* <DropDownBotao/> */}
         <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
 
         <TouchableOpacity onPress={Selecionarcomfiltro}><Text>Selecionar pessoa com filtro</Text></TouchableOpacity>
 
         <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
 
-        <TouchableOpacity onPress={teste}><Text>teste de envio de codigo</Text></TouchableOpacity>
+        <TouchableOpacity onPress={Testar}><Text>Testar</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
+            <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>
             <Text>{`Nome: ${user.TB_PESSOA_EMAIL}`}</Text>
             <Text>{`Email: ${user.TB_PESSOA_NOME_PERFIL}`}</Text>
-            {/* Outros campos a serem exibidos */}
+            <Text>{`TipoID: ${user.TB_TIPO_ID}`}</Text>
           </View>
         ))}
       </View>

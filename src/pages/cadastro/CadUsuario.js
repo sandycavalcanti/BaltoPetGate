@@ -7,9 +7,9 @@ import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar'
 import GroupBox from '../../components/components_cadastro/GroupBox';
 import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
-import { decode } from "react-native-pure-jwt";
 import axios from 'axios';
 import { urlAPI } from '../../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CadUsuario = () => {
   const navigation = useNavigation();
@@ -41,22 +41,12 @@ const CadUsuario = () => {
       TB_PESSOA_NOME_PERFIL: nomePerfil,
       TB_PESSOA_EMAIL: email,
       TB_PESSOA_SENHA: senha,
-    }).then(response => {
+    }).then(async (response) => {
       const TokenUsuario = response.data.token;
-      // const decodedToken = jwt.verify(TokenUsuario, 'ermelinda');
-      // const usuarioId = decodedToken.TB_PESSOA_IDD;
-      decode(
-        TokenUsuario, // the token
-        'ermelinda', // the secret
-        {
-          skipValidation: true // to skip signature and exp verification
-        }
-      )
-        .then(console.log) // already an object. read below, exp key note
-        .catch(console.error);
-
-      // navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+      await AsyncStorage.setItem('token', TokenUsuario);
+      navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
     }).catch(error => {
+      console.error(error)
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);
       setMensagem(erro);
