@@ -44,7 +44,7 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
-  
+
   const [select, setSelect] = useState();
   const Selecionar = async () => {
     try {
@@ -65,8 +65,9 @@ function Home({ navigation: { navigate } }) {
   return (
     <View style={styles.container}>
       {/* <DropDownBotao/> */}
-      <TouchableOpacity onPress={() => navigate('Login')}><Text>Login</Text></TouchableOpacity>
-      <TouchableOpacity onPress={Selecionar}><Text>Selecionar</Text></TouchableOpacity>
+      <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Teste')}><Text>Ir para teste</Text></TouchableOpacity>
+      <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
+      <TouchableOpacity style={{ marginVertical: 10 }} onPress={Selecionar}><Text>Selecionar</Text></TouchableOpacity>
       {select && select.map((user, index) => (
         <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
           <Text>{`Nome: ${user.TB_ANIMAL_NOME}`}</Text>
@@ -75,9 +76,9 @@ function Home({ navigation: { navigate } }) {
         </View>
       ))}
 
-      <DropdownButton/>
+      <DropdownButton />
 
-      
+
     </View>
   );
 }

@@ -2,9 +2,7 @@ import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Octicons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { Octicons, Feather, Ionicons } from '@expo/vector-icons';
 import { corFundoNavegacao } from '../../constants';
 import Home from '../Home';
 import Explorar from '../Explorar';
@@ -13,13 +11,12 @@ import Animal from '../Animal';
 
 const Tab = createBottomTabNavigator();
 
-
 const Navegacao = ({ navigation: { navigate } }) => {
 
     const HeaderExplorar = () => {
         return (
             <View style={styles.headerEsquerda}>
-                <TouchableOpacity style={styles.Botao} onPress={() => navigate('Perfil')}>
+                <TouchableOpacity style={styles.Botao} onPress={() => navigate('PerfilAbaScroll')}>
                     <Octicons name="person" size={35} color="white" />
                 </TouchableOpacity>
                 <View style={styles.barraPesquisa}>

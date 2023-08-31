@@ -21,20 +21,15 @@ import CriarSenha from "../cadastro/CriarSenha";
 import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
+import PerfilAbaScroll from '../PerfilAbaScroll';
+import Teste from '../Teste';
+
+const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <RootNavigator />
-    </NavigationContainer>
-  );
-}
-
-const Stack = createNativeStackNavigator();
-
-function RootNavigator() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Splash" component={TelaSplash} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Navegacao" component={Navegacao} />
@@ -55,6 +50,9 @@ function RootNavigator() {
       <Stack.Screen name="CriarSenha" component={CriarSenha} />
       <Stack.Screen name="Postagem" component={Postagem} />
       <Stack.Screen name="HisChat" component={HisChat} />
+      <Stack.Screen name="PerfilAbaScroll" component={PerfilAbaScroll} />
+      <Stack.Screen name="Teste" component={Teste} />
     </Stack.Navigator>
+    </NavigationContainer>
   );
 }
