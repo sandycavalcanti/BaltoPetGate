@@ -14,7 +14,7 @@ const tab1ItemSize = (windowWidth - 30);
 const tab2ItemSize = (windowWidth - 40) / 3;
 
 
-const PerfilAbaScroll = ({ navigation }) => {
+const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   // stats
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
@@ -46,7 +46,9 @@ const PerfilAbaScroll = ({ navigation }) => {
       console.error('Erro ao selecionar:', error);
     }
   };
-  Selecionar()
+  useEffect(() => {
+    Selecionar();
+  }, []);
 
   // PanResponder for header
   const headerPanResponder = useRef(
@@ -200,7 +202,7 @@ const PerfilAbaScroll = ({ navigation }) => {
       <Animated.View
         {...headerPanResponder.panHandlers}
         style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <Perfil navigation={navigation} />
+        <Perfil navigate={navigate} />
       </Animated.View>
     );
   };

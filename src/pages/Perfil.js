@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, Dimensions, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import Post from "../components/components_perfil/Post";
 import Perfil_post from "../components/components_perfil/Perfil_post";
 import DropdownButton from "../components/components_perfil/DropdownButton";
 import { Divider } from "react-native-elements";
 
-const Perfil = ({navigation:{navigate}}) => {
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+
+const Perfil = ({ navigate }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-
+        <View style={styles.Oval} ></View>
         <View style={styles.Fundo} ></View>
-
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigate("Home")}>
             <AntDesign name="left" size={28} color="black" />
@@ -70,14 +72,23 @@ const styles = StyleSheet.create({
     // height: '100%',
     backgroundColor: '#C1E6CD',
   },
+  Oval: {
+    position: 'absolute',
+    width: windowWidth / 2,
+    // height: '100%',
+    height: windowWidth / 2,
+    top: 170,
+    left: windowWidth / 4,
+    borderRadius: 120,
+    backgroundColor: '#CEF7FF',
+    transform: [{ scaleX: 2 }],
+  },
   Fundo: {
     position: 'absolute',
     width: '100%',
     // height: '100%',
-    height: 350,
-    top: 170,
-    borderTopLeftRadius: 120,
-    borderTopRightRadius: 120,
+    height: 240,
+    top: 270,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',
   },

@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
-import axios from "axios";
-import { urlAPI } from "../constants";
+import { View, Text } from "react-native"
 
 const Teste = () => {
-
     return (
-    <>
-    
-    </>
-    );
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Teste</Text>
+        </View>
+    )
 }
 
-export default Teste;
+export default Teste
