@@ -7,6 +7,7 @@ const CampoDtNasc = (props) => {
 
     const formatarDataCampo = (text) => {
         const dataFormatadaCampo = text.replace(/\D/g, '');
+        props.set(1);
 
         if (dataFormatadaCampo.length <= 2) {
             setData(dataFormatadaCampo);
@@ -15,7 +16,7 @@ const CampoDtNasc = (props) => {
         } else {
             const dataFormatada = `${dataFormatadaCampo.slice(0, 2)}/${dataFormatadaCampo.slice(2, 4)}/${dataFormatadaCampo.slice(4, 8)}`;
             setData(dataFormatada);
-            props.set1(formatarDataBanco(dataFormatada));
+            props.set(formatarDataBanco(dataFormatada));
         }
     };
 
@@ -26,24 +27,21 @@ const CampoDtNasc = (props) => {
         if (!isNaN(dia) && !isNaN(mes) && !isNaN(ano) && mes >= 1 && mes <= 12 && dia > 0 && dia <= 31 && ano > anoAtual - 120 && ano < anoAtual - 12) {
             const dataObjeto = new Date(ano, mes - 1, dia);
 
+            const isValidDate = (date) => date instanceof Date && !isNaN(date);
+
             if (isValidDate(dataObjeto)) {
                 const dataObjetoDate = dataObjeto.toISOString().split('T')[0];
                 return dataObjetoDate;
             }
         }
-        return null;
+        return 1;
     };
-
-    const isValidDate = (date) => {
-        return date instanceof Date && !isNaN(date);
-    };
-
 
     const [textoDica, setTextoDica] = useState(false);
 
     return (
         <View style={styles.containercampo}>
-            <TextInput onChangeText={(text) => { formatarDataCampo(text); props.set2(text); }} value={data} keyboardType="numeric"
+            <TextInput onChangeText={(text) => formatarDataCampo(text)} value={data} keyboardType="numeric"
                 placeholder="Data de nascimento" maxLength={10} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)}
                 placeholderTextColor={corPlaceholderCad} style={styles.campo} {...props} />
             {props.opcional ? <Text style={styles.asterisco}></Text> : <Text style={styles.asterisco}>*</Text>}

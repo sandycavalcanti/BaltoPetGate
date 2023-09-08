@@ -23,6 +23,7 @@ import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import PerfilAbaScroll from '../PerfilAbaScroll';
 import Teste from '../Teste';
+import CompletarCad from '../cadastro/CompletarCad';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +53,7 @@ export default function Navigation() {
       <Stack.Screen name="HisChat" component={HisChat} />
       <Stack.Screen name="PerfilAbaScroll" component={PerfilAbaScroll} />
       <Stack.Screen name="Teste" component={Teste} />
+      <Stack.Screen name="CompletarCad" component={CompletarCad} />
     </Stack.Navigator>
     </NavigationContainer>
   );

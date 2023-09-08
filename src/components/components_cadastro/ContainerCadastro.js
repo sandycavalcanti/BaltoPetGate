@@ -3,8 +3,8 @@ import { corFundoCad, corTituloCad } from '../../constants';
 
 const ContainerCadastro = (props) => {
   return (
-    <ScrollView style={{ width: '100%', height: '100%', }}>
-      <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.scroll}>
+      <SafeAreaView  style={styles.container}>
         <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
         <Text style={styles.titulo}>{props.titulo}</Text>
         {props.children}
@@ -13,17 +13,20 @@ const ContainerCadastro = (props) => {
   );
 };
 const styles = StyleSheet.create({
-  container: {
+  scroll:{
+    width: '100%', 
+    height: '100%', 
     backgroundColor: corFundoCad,
+  },
+  container: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    minHeight: '100%',
+    flex: 1
   },
   imagem: {
     height: 150,
     width: 150,
-    marginTop: 20,
+    marginTop: 50,
   },
   titulo: {
     fontSize: 25,

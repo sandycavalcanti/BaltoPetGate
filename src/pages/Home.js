@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import DropDownBotao from "../components/components_cadastro/DropDownBotao";
 import axios from 'axios';
 import { urlAPI } from '../constants';
 import { corFundoCad } from "../constants";
 import DropdownButton from '../components/components_perfil/DropdownButton';
+import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DecodificarToken from '../utils/DecodificarToken';
+
 
 function Home({ navigation: { navigate } }) {
 
@@ -44,12 +48,29 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
+  useEffect(() => { // Executada só uma vez
+    Testar();
+  }, []);
+
+  const Testar = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const { TB_PESSOA_IDD, TB_TIPO_IDD } = DecodificarToken(token);
+    await axios.post(urlAPI + 'selpessoa/filtrar', {
+      TB_PESSOA_ID: TB_PESSOA_IDD
+    })
+      .then((response) => {
+        setSelect(response.data);
+      }).catch((error) => {
+        let erro = error.response.data.message;
+        console.error('Erro ao selecionar:', erro);
+      })
+  };
 
   const [select, setSelect] = useState();
-  const Selecionar = async () => {
+  const Selecionarcomfiltro = async () => {
     try {
-      await axios.post(urlAPI + 'selanimal/filtrar', {
-        TB_ANIMAL_PESO: 2.7
+      await axios.post(urlAPI + 'selpessoa/filtrar', {
+        TB_PESSOA_NOME_PERFIL: 'João'
       })
         .then((response) => {
           setSelect(response.data);
@@ -58,28 +79,47 @@ function Home({ navigation: { navigate } }) {
           console.error('Erro ao selecionar:', erro);
         })
     } catch (error) {
-      ToastAndroid.show('Email ou senha inválidos', ToastAndroid.SHORT);
+      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
     }
   };
 
+  const Selecionar = async () => {
+    try {
+      await axios.get(urlAPI + 'selpessoa')
+        .then((response) => {
+          setSelect(response.data);
+        }).catch((error) => {
+          let erro = error.response.data.message;
+          console.error('Erro ao selecionar:', erro);
+        })
+    } catch (error) {
+      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
+    }
+  };
+
+
   return (
-    <View style={styles.container}>
-      {/* <DropDownBotao/> */}
-      <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Teste')}><Text>Ir para teste</Text></TouchableOpacity>
-      <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
-      <TouchableOpacity style={{ marginVertical: 10 }} onPress={Selecionar}><Text>Selecionar</Text></TouchableOpacity>
-      {select && select.map((user, index) => (
-        <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
-          <Text>{`Nome: ${user.TB_ANIMAL_NOME}`}</Text>
-          <Text>{`Email: ${user.TB_ANIMAL_PESO}`}</Text>
-          {/* Outros campos a serem exibidos */}
-        </View>
-      ))}
 
+    <ScrollView style={{ width: '100%', height: '100%' }}>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
+
+        <TouchableOpacity onPress={Selecionarcomfiltro}><Text>Selecionar pessoa com filtro</Text></TouchableOpacity>
+
+        <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
+ <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Teste')}><Text>Ir para teste</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('CompletarCad')}><Text>Completar Cadastro</Text></TouchableOpacity>
+        {select && select.map((user, index) => (
+          <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
+            <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>
+            <Text>{`Nome: ${user.TB_PESSOA_EMAIL}`}</Text>
+            <Text>{`Email: ${user.TB_PESSOA_NOME_PERFIL}`}</Text>
+            <Text>{`TipoID: ${user.TB_TIPO_ID}`}</Text>
+          </View>
+        ))}
+      </View>
       <DropdownButton />
-
-
-    </View>
+    </ScrollView>
   );
 }
 
