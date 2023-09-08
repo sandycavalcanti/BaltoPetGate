@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 
@@ -9,14 +9,20 @@ const CampoTelefone = (props) => {
     const [texto2, setTexto2] = useState();
     const [texto3, setTexto3] = useState();
 
+    useEffect(() => {
+        setTexto1(props.val1);
+        setTexto2(props.val2);
+        setTexto3(props.val3);
+    }, []);
+
     const formatarTextoCampo1 = (text) => {
         const dataFormatadaCampo = text.replace(/[\D.\-()a-zA-Z]/g, '');
         props.set1(1);
 
-        if (dataFormatadaCampo.length <= 0) {
+        if (dataFormatadaCampo.length <= 2) {
             setTexto1(dataFormatadaCampo);
-        } else if (dataFormatadaCampo.length <= 2) {
-            setTexto1(`(${dataFormatadaCampo.slice(0, 2)}`);
+        } else if (dataFormatadaCampo.length <= 3) {
+            setTexto1(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 3)}`);
         } else {
             setTexto1(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 13)}`);
             props.set1(dataFormatadaCampo);
@@ -27,10 +33,10 @@ const CampoTelefone = (props) => {
         const dataFormatadaCampo = text.replace(/[\D.\-()a-zA-Z]/g, '');
         props.set2(1);
 
-        if (dataFormatadaCampo.length <= 0) {
+        if (dataFormatadaCampo.length <= 2) {
             setTexto2(dataFormatadaCampo);
-        } else if (dataFormatadaCampo.length <= 2) {
-            setTexto2(`(${dataFormatadaCampo.slice(0, 2)}`);
+        } else if (dataFormatadaCampo.length <= 3) {
+            setTexto2(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 3)}`);
         } else {
             setTexto2(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 13)}`);
             props.set2(dataFormatadaCampo);
@@ -41,12 +47,13 @@ const CampoTelefone = (props) => {
         const dataFormatadaCampo = text.replace(/[\D.\-()a-zA-Z]/g, '');
         props.set3(1);
 
-        if (dataFormatadaCampo.length <= 0) {
+        if (dataFormatadaCampo.length <= 2) {
             setTexto3(dataFormatadaCampo);
-        } else if (dataFormatadaCampo.length <= 2) {
-            setTexto3(`(${dataFormatadaCampo.slice(0, 2)}`);
+        } else if (dataFormatadaCampo.length <= 3) {
+            setTexto3(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 3)}`);
         } else if (dataFormatadaCampo.length == 11) {
             setTexto3(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 7)}-${dataFormatadaCampo.slice(7, 11)}`);
+            props.set3(dataFormatadaCampo);
         } else {
             setTexto3(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 13)}`);
             props.set3(dataFormatadaCampo);

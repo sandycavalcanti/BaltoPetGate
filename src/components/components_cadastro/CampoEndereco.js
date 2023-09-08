@@ -48,7 +48,7 @@ const CampoEndereco = (props) => {
         try {
             const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
             const endereco = response.data;
-            ListarCidades(endereco.uf);
+            await ListarCidades(endereco.uf);
             setUf(endereco.uf)
             setCidade(endereco.localidade);
             setBairro(endereco.bairro);
@@ -87,7 +87,8 @@ const CampoEndereco = (props) => {
     const formatarTextoCampo = (text) => {
         const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
         setCep(dataFormatadaCampo);
-        props.set1(1);
+        if (props.set1)
+            props.set1(1);
 
         if (dataFormatadaCampo.length <= 5) {
             setTexto(dataFormatadaCampo);
@@ -99,14 +100,22 @@ const CampoEndereco = (props) => {
         }
     };
 
+    useEffect(() => {
+        if (props.set1) setTexto(props.val1);
+        setUf(props.val2);
+        setCidade(props.val3);
+        setBairro(props.val4);
+        setRua(props.val5);
+    }, [])
+
     let msg;
     if (props.opcional) msg = 'Localização (Opcional):'
-    else msg = 'Localização '
-    
+    else msg = 'Localização'
+
     return (
         <View style={styles.containercampo}>
-            <Text style={styles.titulocampo}>{msg}</Text>
-            <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={"CEP (Opcional)"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+            {!props.obrigatorio && <Text style={styles.titulocampo}>{msg}</Text>}
+            <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={!props.obrigatorio ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
             <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>
                 <Text style={styles.textocadastro}>Pesquisar CEP</Text>
@@ -155,8 +164,8 @@ const CampoEndereco = (props) => {
             <TextInput onChangeText={text => { setBairro(text); props.set4(text) }} value={bairro} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
             <TextInput onChangeText={text => { setRua(text); props.set5(text) }} value={rua} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
             {props.set1 && <>
-                <TextInput onChangeText={text => props.set6(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
-                <TextInput onChangeText={text => props.set7(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
+                <TextInput onChangeText={text => props.set6(text)} value={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
+                <TextInput onChangeText={text => props.set7(text)} value={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
             </>}
 
         </View>

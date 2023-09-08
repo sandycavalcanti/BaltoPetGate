@@ -34,19 +34,18 @@ const CadUsuario = () => {
     }
   }
 
-  const InserirDados = async () => {
-    await axios.post(urlAPI + 'cadpessoa', {
+  const InserirDados = () => {
+    axios.post(urlAPI + 'cadpessoa', {
       TB_TIPO_ID: 1,
       TB_PESSOA_NOME: nome,
       TB_PESSOA_NOME_PERFIL: nomePerfil,
       TB_PESSOA_EMAIL: email,
       TB_PESSOA_SENHA: senha,
-    }).then(async (response) => {
+    }).then(async response => {
       const TokenUsuario = response.data.token;
       await AsyncStorage.setItem('token', TokenUsuario);
       navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
     }).catch(error => {
-      console.error(error)
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);
       setMensagem(erro);

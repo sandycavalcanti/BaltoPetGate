@@ -21,6 +21,7 @@ import CriarSenha from "../cadastro/CriarSenha";
 import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
+import CompletarCad from '../cadastro/CompletarCad';
 
 export default function Navigation() {
   return (
@@ -54,6 +55,7 @@ function RootNavigator() {
       <Stack.Screen name="Perfil" component={Perfil} />
       <Stack.Screen name="CriarSenha" component={CriarSenha} />
       <Stack.Screen name="Postagem" component={Postagem} />
+      <Stack.Screen name="CompletarCad" component={CompletarCad} />
     </Stack.Navigator>
   );
 }

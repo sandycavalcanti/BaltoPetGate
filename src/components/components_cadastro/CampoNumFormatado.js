@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 
 const CampoNumFormatado = (props) => {
     const [textoDica, setTextoDica] = useState(false);
     const [texto, setTexto] = useState('');
+
+    useEffect(() => {
+        setTexto(props.val);
+    }, [])
 
     const formatarTextoCpf = (text) => {
         const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
@@ -53,19 +57,27 @@ const CampoNumFormatado = (props) => {
         }
     };
 
+    const formatarTextoNum = (text) => {
+        const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
+        props.set(dataFormatadaCampo);
+        setTexto(dataFormatadaCampo);
+    };
+
     return (
         <View style={styles.containercampo}>
             {props.tipo === 'cpf' ?
-                <TextInput onChangeText={text => formatarTextoCpf(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
+                <TextInput onChangeText={text => formatarTextoCpf(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
                     placeholder={"CPF"} keyboardType='numeric' maxLength={14} />
                 : props.tipo === 'crmv' ?
-                    <TextInput onChangeText={text => formatarTextoCrmv(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
+                    <TextInput onChangeText={text => formatarTextoCrmv(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
                         placeholder={"CRMV"} keyboardType='numeric' maxLength={7} />
                     : props.tipo === 'cnpj' ?
-                        <TextInput onChangeText={text => formatarTextoCnpj(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
+                        <TextInput onChangeText={text => formatarTextoCnpj(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
                             placeholder={"CNPJ"} keyboardType='numeric' maxLength={18} />
-                        : <></>}
-            {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
+                        : <TextInput onChangeText={text => formatarTextoNum(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
+                            keyboardType='numeric' {...props} />}
+            {!props.opcional && <Text style={styles.asterisco}>*</Text>}
+            {textoDica && props.textodica && <Text style={styles.dica}>{props.textodica}</Text>}
         </View>
     )
 }

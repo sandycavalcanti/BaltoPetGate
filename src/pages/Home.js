@@ -105,7 +105,7 @@ function Home({ navigation: { navigate } }) {
 
         <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
 
-        <TouchableOpacity onPress={Testar}><Text>Testar</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('CompletarCad')}><Text>Completar Cadastro</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
             <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>

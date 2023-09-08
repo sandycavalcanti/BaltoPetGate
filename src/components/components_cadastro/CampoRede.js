@@ -23,9 +23,11 @@ const CampoRede = (props) => {
     return (
         <View style={styles.containercampo}>
             {!props.opcional && <Text style={styles.titulocampo}>Insira pelo menos uma rede social:</Text>}
-            <TextInput onChangeText={text => formatarTextoInstagram(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Instagram" + msg} onFocus={() => setTextoDica('Você pode inserir o seu nome de usuário ou o link do Instagram')} onBlur={() => setTextoDica('')} keyboardType='url' style={styles.campo} />
-            {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
-            <TextInput onChangeText={text => formatarTextoFacebook(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Link do Facebook" + msg} onFocus={() => setTextoDica('Você deve inserir o link do Facebook')} onBlur={() => setTextoDica('')} keyboardType='url' style={styles.campo} />
+            {!props.opcional && <Text style={styles.asterisco}>*</Text>}
+            <TextInput onChangeText={text => formatarTextoInstagram(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Instagram" + msg} onFocus={() => setTextoDica('Você pode inserir o seu nome de usuário ou o link do Instagram')} onBlur={() => setTextoDica('')}
+                keyboardType='url' value={props.val1} style={styles.campo} />
+            <TextInput onChangeText={text => formatarTextoFacebook(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Link do Facebook" + msg} onFocus={() => setTextoDica('Você deve inserir o link do Facebook')} onBlur={() => setTextoDica('')}
+                keyboardType='url' value={props.val2} style={styles.campo} />
             {textoDica && <Text style={styles.dica}>{textoDica}</Text>}
         </View>
     )
