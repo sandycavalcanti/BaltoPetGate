@@ -4,10 +4,10 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
     const criteriosNome = /^(?=.*\s)(.{8,})$/;
     const criteriosNomePerfil = /^.{3,}$/;
     const criteriosSenha = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    const criteriosCpf = /^\d{11}$/;
-    const criteriosCrmv = /^\d{4,7}$/;
+    const criteriosTelefone = /^\d{10,13}$/;
+    const criteriosUrl = /^.{15,}$/;
 
-    const { nome, dtNasc, cpf, crmv, uf, cidade, bairro, rua, numero, nomePerfil, email, senha, senhaConfirmacao } = dados;
+    const { nome, dtNasc, cpf, crmv, cnpj, uf, cidade, bairro, rua, numero, nomePerfil, telefone1, telefone2, whatsapp, facebook, instagram, email, senha, senhaConfirmacao } = dados;
 
     if (camposObrigatorios.some(campo => !campo)) {
         mensagemErro = "Complete todos os campos obrigatórios.";
@@ -16,13 +16,13 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nome && !criteriosNome.test(nome)) {
             mensagemErro += "Nome completo inválido.\n";
         }
-        if (!dtNasc) {
+        if (dtNasc && dtNasc == 1) {
             mensagemErro += "Data de nascimento inválida.\n";
         }
-        if (cpf && !criteriosCpf.test(cpf)) {
+        if (cpf && cpf == 1) {
             mensagemErro += "CPF inválido.\n";
         }
-        if (crmv && !criteriosCrmv.test(crmv)) {
+        if (crmv && crmv == 1) {
             mensagemErro += "CRMV inválido.\n";
         }
         if ((uf || cidade || bairro || rua) && (!uf || !cidade || !bairro || !rua || !numero)) {
@@ -30,6 +30,21 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         }
         if (nomePerfil && !criteriosNomePerfil.test(nomePerfil)) {
             mensagemErro += "Nome de perfil inválido.\n";
+        }
+        if (cnpj && cnpj == 1) {
+            mensagemErro += "CNPJ inválido.\n";
+        }
+        if (telefone1 && !criteriosTelefone.test(telefone1)) {
+            mensagemErro += "Primeiro número de telefone inválido.\n";
+        }
+        if (telefone2 && !criteriosTelefone.test(telefone2)) {
+            mensagemErro += "Segundo número de telefone inválido.\n";
+        }
+        if (whatsapp && !criteriosTelefone.test(whatsapp)) {
+            mensagemErro += "Número de WhatsApp inválido.\n";
+        }
+        if (facebook && (!criteriosUrl.test(facebook) || !facebook.includes('facebook.com/'))) {
+            mensagemErro += "Link do facebook inválido.\n";
         }
         if (email && !criteriosEmail.test(email)) {
             mensagemErro += "E-mail inválido.\n";

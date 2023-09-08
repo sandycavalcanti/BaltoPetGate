@@ -4,7 +4,7 @@ import { corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../c
 const CampoSimples = (props) => {
   return (
     <View style={styles.containercampo}>
-      <TextInput onChangeText={text => props.set(text)} placeholderTextColor={corPlaceholderCad} style={styles.campo} {...props} />
+      <TextInput onChangeText={text => props.set(text)} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
       {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
     </View>
   )

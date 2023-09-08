@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad } from "../../constants";
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation: { navigate } }) => {
     const navigation = useNavigation();
@@ -24,9 +25,9 @@ const Login = ({ navigation: { navigate } }) => {
         await axios.post(urlAPI + 'login', {
             TB_PESSOA_EMAIL: email,
             TB_PESSOA_SENHA: senha,
-        }).then(response => {
+        }).then(async (response) => {
             const TokenUsuario = response.data.token;
-            console.log(TokenUsuario);
+            await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
         }).catch(error => {
             let erro = error.response.data.message;
