@@ -4,9 +4,11 @@ import DropDownBotao from "../components/components_cadastro/DropDownBotao";
 import axios from 'axios';
 import { urlAPI } from '../constants';
 import { corFundoCad } from "../constants";
+import DropdownButton from '../components/components_perfil/DropdownButton';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DecodificarToken from '../utils/DecodificarToken';
+
 
 function Home({ navigation: { navigate } }) {
 
@@ -97,6 +99,7 @@ function Home({ navigation: { navigate } }) {
 
 
   return (
+
     <ScrollView style={{ width: '100%', height: '100%' }}>
       <View style={styles.container}>
         <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
@@ -104,7 +107,7 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={Selecionarcomfiltro}><Text>Selecionar pessoa com filtro</Text></TouchableOpacity>
 
         <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
-
+ <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Teste')}><Text>Ir para teste</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('CompletarCad')}><Text>Completar Cadastro</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
@@ -115,6 +118,7 @@ function Home({ navigation: { navigate } }) {
           </View>
         ))}
       </View>
+      <DropdownButton />
     </ScrollView>
   );
 }

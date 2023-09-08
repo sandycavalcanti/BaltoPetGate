@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import LottieView from 'lottie-react-native';
 
 const TelaSplash = ({ navigation }) => {
 
@@ -7,13 +8,31 @@ const TelaSplash = ({ navigation }) => {
     setTimeout(() => {
       navigation.replace('Login');
     }, 4000);
-  }, []);
+  }, );
+
+  const animation = useRef(null);
 
   return (
 
     <View style={styles.Container}>
-      {/* <Image style={styles.ImagemFundo} resizeMode="contain" source={require('../../../assets/img/Splash_cima.png')} /> */}
-      <Image style={styles.Imagem} resizeMode='contain' source={require('../../../assets/img/Logo.png')} />
+      <Image
+        source={require('../../../assets/img/splash.png')}
+        style={styles.ImagemFundo}
+      />
+      <View style={styles.ContainerLogo}>
+        <Image
+          source={require('../../../assets/img/Logo.png')}
+          style={styles.Logo}
+        />
+      </View>
+      <View style={styles.ContainerLottie}>
+        <LottieView
+          source={require('../../../assets/animacaoCirculo.json')}
+          autoPlay
+          loop
+          style={styles.Lottie}
+        />
+      </View>
     </View>
   );
 };
@@ -27,15 +46,34 @@ const styles = StyleSheet.create({
   },
   ImagemFundo: {
     flex: 1,
+    resizeMode: 'cover',
     position: 'absolute',
-    justifyContent: 'space-around',
-    alignItems: 'center',
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
-  Imagem: {
-    width: '50%',
-    height: '50%'
+  ContainerLogo: {
+    flex: 1,
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  Logo: {
+    width: 250,
+    height: 250,
+  },
+  ContainerLottie: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  Lottie: {
+    width: 370,
+    height: 370,
   }
 });
 
