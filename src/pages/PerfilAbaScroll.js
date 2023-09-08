@@ -4,6 +4,8 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import Perfil from './Perfil';
 import axios from 'axios';
 import { urlAPI } from '../constants';
+import Post from '../components/components_perfil/Post';
+import Perfil_post from '../components/components_perfil/Perfil_post';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -12,6 +14,7 @@ const HeaderHeight = 550;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 const tab1ItemSize = (windowWidth - 30);
 const tab2ItemSize = (windowWidth - 40) / 3;
+
 
 
 const PerfilAbaScroll = ({ navigation: { navigate } }) => {
@@ -209,34 +212,17 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
 
   const renderTab1Item = ({ item, index }) => {
     return (
-      <View
-        style={{
-          borderRadius: 16,
-          width: tab1ItemSize,
-          height: tab1ItemSize,
-          backgroundColor: '#aaa',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
-        <Text>{item.TB_PESSOA_ID}</Text>
+      <View>
+        <Post textoPost={item.TB_POSTAGEM_TEXTO }/>
       </View>
     );
   };
 
   const renderTab2Item = ({ item, index }) => {
     return (
-      <View style={{
-        marginLeft: index % 3 === 0 ? 0 : 10,
-        borderRadius: 16,
-        width: tab2ItemSize,
-        height: tab2ItemSize,
-        backgroundColor: '#aaa',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-        <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
-        <Text>{item.TB_PESSOA_ID}</Text>
+      <View style={{backgroundColor: '#CEF7FF', justifyContent: 'space-around'}}>
+        <Perfil_post/>
+        <Post textoPost={item.TB_POSTAGEM_TEXTO }/>
       </View>
     );
   };

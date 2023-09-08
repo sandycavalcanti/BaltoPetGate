@@ -9,7 +9,7 @@ const Post = (props) => {
                     <Image style={styles.Imagem} resizeMode='cover' source={require('../../../assets/img/teste.jpg')} />
                 </View>
                 <View style={styles.ContainerTexto}>
-                    <Text style={styles.Texto}>Duis sed lacinia nisi, nec condimntum tellus. Mauris bibendum orci at malesuada tincidunt. Vivamus id finibus augue, non hendrerit risus. Etiam in nunc egestas, sagittis ex ac, dictum ex.</Text>
+                    <Text style={styles.Texto}>{props.textoPost}</Text>
                 </View>
             </View>
             <View style={styles.ContainerData}>
