@@ -1,21 +1,18 @@
 import { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-import DropDownBotao from "../components/components_cadastro/DropDownBotao";
+import { TouchableOpacity, Text, View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import DropDownBotao from "../../components/cadastro/DropDownBotao";
 import axios from 'axios';
-import { urlAPI } from '../constants';
-import { corFundoCad } from "../constants";
-import DropdownButton from '../components/components_perfil/DropdownButton';
-import { ScrollView } from 'react-native-gesture-handler';
+import { urlAPI } from '../../constants';
+import { corFundoCad } from "../../constants";
+import DropdownButton from '../../components/perfil/DropdownButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DecodificarToken from '../utils/DecodificarToken';
-
+import DecodificarToken from '../../utils/DecodificarToken';
 
 function Home({ navigation: { navigate } }) {
 
-  let id = 4;
   const AlterarDados = async () => {
     try {
-      const response = await axios.put(urlAPI + 'altpessoa/' + id, {
+      const response = await axios.put(urlAPI + 'altpessoa/' + 13, {
         TB_PESSOA_NOME: 'dados.nome',
         TB_PESSOA_NOME_PERFIL: 'dados.nomePerfil',
         TB_PESSOA_EMAIL: 'dados.email',
@@ -48,40 +45,7 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
-  useEffect(() => { // Executada só uma vez
-    Testar();
-  }, []);
-
-  const Testar = async () => {
-    const token = await AsyncStorage.getItem('token');
-    const { TB_PESSOA_IDD, TB_TIPO_IDD } = DecodificarToken(token);
-    await axios.post(urlAPI + 'selpessoa/filtrar', {
-      TB_PESSOA_ID: TB_PESSOA_IDD
-    })
-      .then((response) => {
-        setSelect(response.data);
-      }).catch((error) => {
-        let erro = error.response.data.message;
-        console.error('Erro ao selecionar:', erro);
-      })
-  };
-
   const [select, setSelect] = useState();
-  const Selecionarcomfiltro = async () => {
-    try {
-      await axios.post(urlAPI + 'selpessoa/filtrar', {
-        TB_PESSOA_NOME_PERFIL: 'João'
-      })
-        .then((response) => {
-          setSelect(response.data);
-        }).catch((error) => {
-          let erro = error.response.data.message;
-          console.error('Erro ao selecionar:', erro);
-        })
-    } catch (error) {
-      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
-    }
-  };
 
   const Selecionar = async () => {
     try {
@@ -97,18 +61,13 @@ function Home({ navigation: { navigate } }) {
     }
   };
 
-
   return (
-
     <ScrollView style={{ width: '100%', height: '100%' }}>
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
-
-        <TouchableOpacity onPress={Selecionarcomfiltro}><Text>Selecionar pessoa com filtro</Text></TouchableOpacity>
-
-        <TouchableOpacity onPress={Selecionar}><Text>Selecionar pessoas</Text></TouchableOpacity>
- <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => navigate('Teste')}><Text>Ir para teste</Text></TouchableOpacity>
-        <TouchableOpacity onPress={() => navigate('CompletarCad')}><Text>Completar Cadastro</Text></TouchableOpacity>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={() => navigate('Login')} style={{ marginVertical: 5 }}><Text>Voltar ao Login</Text></TouchableOpacity>
+        <TouchableOpacity onPress={Selecionar} style={{ marginVertical: 5 }}><Text>Selecionar pessoas</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('Teste')} style={{ marginVertical: 5 }}><Text>Ir para teste</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('CompletarCad')} style={{ marginVertical: 5 }}><Text>Completar Cadastro</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
             <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>
@@ -117,8 +76,8 @@ function Home({ navigation: { navigate } }) {
             <Text>{`TipoID: ${user.TB_TIPO_ID}`}</Text>
           </View>
         ))}
-      </View>
-      <DropdownButton />
+        <DropdownButton />
+      </SafeAreaView>
     </ScrollView>
   );
 }
@@ -129,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%',
+    height: 400
   },
 });
 

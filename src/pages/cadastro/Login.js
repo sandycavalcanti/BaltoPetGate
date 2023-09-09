@@ -28,7 +28,7 @@ const Login = ({ navigation: { navigate } }) => {
         }).then(async (response) => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.setItem('token', TokenUsuario);
-            navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
             let erro = error.response.data.message;
             ToastAndroid.show(erro, ToastAndroid.SHORT);
@@ -90,7 +90,7 @@ const Login = ({ navigation: { navigate } }) => {
                 <Text style={styles.textocad}> Não tenho uma conta</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigate("Navegacao")}>
+            <TouchableOpacity onPress={() => navigate("Menu")}>
                 <Text>PULAR</Text>
             </TouchableOpacity>
         </SafeAreaView>

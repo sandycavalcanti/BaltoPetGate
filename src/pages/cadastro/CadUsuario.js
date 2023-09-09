@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import CampoSenha from '../../components/components_cadastro/CampoSenha';
-import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
-import GroupBox from '../../components/components_cadastro/GroupBox';
-import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
+import CampoSimples from '../../components/cadastro/CampoSimples';
+import CampoSenha from '../../components/cadastro/CampoSenha';
+import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
+import GroupBox from '../../components/cadastro/GroupBox';
+import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
 import { urlAPI } from '../../constants';
@@ -44,7 +44,7 @@ const CadUsuario = () => {
     }).then(async response => {
       const TokenUsuario = response.data.token;
       await AsyncStorage.setItem('token', TokenUsuario);
-      navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+      navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
     }).catch(error => {
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);

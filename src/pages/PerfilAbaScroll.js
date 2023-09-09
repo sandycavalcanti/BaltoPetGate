@@ -4,18 +4,19 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import Perfil from './Perfil';
 import axios from 'axios';
 import { urlAPI } from '../constants';
-import Post from '../components/components_perfil/Post';
-import Perfil_post from '../components/components_perfil/Perfil_post';
+import Post from '../components/perfil/Post';
+import Perfil_post from '../components/perfil/Perfil_post';
+import DecodificarToken from '../utils/DecodificarToken';
+import AnimalPost from '../components/perfil/AnimalPost';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const TabBarHeight = 48;
-const HeaderHeight = 550;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 const tab1ItemSize = (windowWidth - 30);
 const tab2ItemSize = (windowWidth - 40) / 3;
-
-
+let HeaderHeight
+let TB_PESSOA_IDD;
 
 const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   // stats
@@ -34,21 +35,35 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   const isListGliding = useRef(false);
   const headerScrollStart = useRef(0);
   const _tabIndex = useRef(0);
-  const [select, setSelect] = useState('');
+  const [perfilHeight, setPerfilHeight] = useState(450);
+
+  HeaderHeight = perfilHeight;
+  const [selectAnimal, setSelectAnimal] = useState([]);
+  const [selectPostagem, setSelectPostagem] = useState([]);
+
   const Selecionar = async () => {
-    try {
-      await axios.get(urlAPI + 'selpessoa')
-        .then((response) => {
-          setSelect(response.data);
-        }).catch((error) => {
-          let erro = error.response.data.message;
-          console.error('Erro ao selecionar:', erro);
-        })
-    } catch (error) {
+    const decodedToken = await DecodificarToken();
+    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
+    axios.post(urlAPI + 'selanimal/filtrar', {
+      TB_PESSOA_ID: TB_PESSOA_IDD
+    }).then((response) => {
+      setSelectAnimal(response.data);
+    }).catch((error) => {
+      let erro = error.response.data.message;
       ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
-      console.error('Erro ao selecionar:', error);
-    }
+      console.error('Erro ao selecionar:', erro);
+    })
+    axios.post(urlAPI + 'selpostagem/filtrar', {
+      TB_PESSOA_ID: TB_PESSOA_IDD
+    }).then((response) => {
+      setSelectPostagem(response.data);
+    }).catch((error) => {
+      let erro = error.response.data.message;
+      ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+      console.error('Erro ao selecionar:', erro);
+    })
   };
+
   useEffect(() => {
     Selecionar();
   }, []);
@@ -181,19 +196,6 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
     });
   };
 
-  const onMomentumScrollBegin = () => {
-    isListGliding.current = true;
-  };
-
-  const onMomentumScrollEnd = () => {
-    isListGliding.current = false;
-    syncScrollOffset();
-  };
-
-  const onScrollEndDrag = () => {
-    syncScrollOffset();
-  };
-
   // render Helper
   const renderHeader = () => {
     const y = scrollY.interpolate({
@@ -205,24 +207,22 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       <Animated.View
         {...headerPanResponder.panHandlers}
         style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <Perfil navigate={navigate} />
+        <Perfil navigate={navigate} TB_PESSOA_IDD={TB_PESSOA_IDD} setPerfilHeight={setPerfilHeight} />
       </Animated.View>
     );
   };
 
   const renderTab1Item = ({ item, index }) => {
     return (
-      <View>
-        <Post textoPost={item.TB_POSTAGEM_TEXTO }/>
-      </View>
+      <AnimalPost texto={item.TB_ANIMAL_NOME} id={item.TB_ANIMAL_ID} navigate={navigate} data={item.createdAt} />
     );
   };
 
   const renderTab2Item = ({ item, index }) => {
     return (
-      <View style={{backgroundColor: '#CEF7FF', justifyContent: 'space-around'}}>
-        <Perfil_post/>
-        <Post textoPost={item.TB_POSTAGEM_TEXTO }/>
+      <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
+        <Perfil_post />
+        <Post textoPost={item.TB_POSTAGEM_TEXTO} />
       </View>
     );
   };
@@ -243,12 +243,12 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
     switch (route.key) {
       case 'tab1':
         numCols = 1;
-        data = select;
+        data = selectAnimal;
         renderItem = renderTab1Item;
         break;
       case 'tab2':
-        numCols = 3;
-        data = select;
+        numCols = 1;
+        data = selectPostagem;
         renderItem = renderTab2Item;
         break;
       default:
@@ -275,9 +275,9 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
           Animated.event([{
             nativeEvent: { contentOffset: { y: scrollY } },
           }], { useNativeDriver: true }) : null}
-        onMomentumScrollBegin={onMomentumScrollBegin}
-        onScrollEndDrag={onScrollEndDrag}
-        onMomentumScrollEnd={onMomentumScrollEnd}
+        onMomentumScrollBegin={() => isListGliding.current = true}
+        onScrollEndDrag={() => syncScrollOffset()}
+        onMomentumScrollEnd={() => { isListGliding.current = false; syncScrollOffset() }}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         ListHeaderComponent={() => <View style={{ height: 10 }} />}
         contentContainerStyle={{ paddingTop: HeaderHeight + TabBarHeight, paddingHorizontal: 10, minHeight: windowHeight - SafeStatusBar + HeaderHeight }}
@@ -297,35 +297,22 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       extrapolate: 'clamp',
     });
     return (
-      <Animated.View
-        style={{ top: 0, zIndex: 1, position: 'absolute', transform: [{ translateY: y }], width: '100%' }}>
-        <TabBar
-          {...props}
-          onTabPress={({ route, preventDefault }) => { if (isListGliding.current) preventDefault() }}
-          style={styles.tab}
-          renderLabel={renderLabel}
-          indicatorStyle={styles.indicator}
-        />
+      <Animated.View style={{ top: 0, zIndex: 1, position: 'absolute', transform: [{ translateY: y }], width: '100%' }}>
+        <TabBar {...props} onTabPress={({ route, preventDefault }) => { if (isListGliding.current) preventDefault() }} style={styles.tab}
+          renderLabel={renderLabel} indicatorStyle={styles.indicator} />
       </Animated.View>
     );
   };
 
   const renderTabView = () => {
     return (
-      <TabView
-        onSwipeStart={() => setCanScroll(false)}
-        onSwipeEnd={() => setCanScroll(true)}
-        onIndexChange={(id) => { _tabIndex.current = id; setIndex(id) }}
-        navigationState={{ index: tabIndex, routes }}
-        renderScene={renderScene}
-        renderTabBar={renderTabBar}
-        initialLayout={{ height: 0, width: windowWidth }}
-      />
+      <TabView onSwipeStart={() => setCanScroll(false)} onSwipeEnd={() => setCanScroll(true)}
+        onIndexChange={(id) => { _tabIndex.current = id; setIndex(id) }} navigationState={{ index: tabIndex, routes }}
+        renderScene={renderScene} renderTabBar={renderTabBar} initialLayout={{ height: 0, width: windowWidth }} />
     );
   };
 
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         {renderTabView()}

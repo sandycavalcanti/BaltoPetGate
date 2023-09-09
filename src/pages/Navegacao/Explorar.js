@@ -1,16 +1,16 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-import { corFundoCad } from "../constants";
+import { corFundoCad } from "../../constants";
 
-const Animal = ({ navigation: { navigate } }) => {
+const Explorar = ({ navigation: { navigate } }) => {
 
-    const Ficha = () => {
-        navigate("Ficha");
+    const Logar = () => {
+        navigate("HisChat");
     }
 
     return (
         <View style={styles.container}>
-            <Text>Animal</Text>
-            <TouchableOpacity onPress={Ficha}>
+            <Text>Explorar</Text>
+            <TouchableOpacity onPress={Logar}>
                 <Text>Clique</Text>
             </TouchableOpacity>
         </View>
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Animal;
+export default Explorar;

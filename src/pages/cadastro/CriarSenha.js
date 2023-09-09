@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native'
-import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
-import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
+import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
+import CampoSimples from '../../components/cadastro/CampoSimples';
+import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
 import { useState } from 'react';
 
 const CriarSenha = ({ navigation: { navigate } }) => {

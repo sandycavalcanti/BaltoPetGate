@@ -1,11 +1,11 @@
 import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useState } from "react";
 import axios from 'axios';
-import CampoSimples from "../../components/components_cadastro/CampoSimples";
-import BotaoCadastrar from "../../components/components_cadastro/BotaoCadastrar";
-import GroupBox from "../../components/components_cadastro/GroupBox";
-import Campo from "../../components/components_animal/Campo";
-import ContainerCadastro from "../../components/components_cadastro/ContainerCadastro";
+import CampoSimples from "../../components/cadastro/CampoSimples";
+import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
+import GroupBox from "../../components/cadastro/GroupBox";
+import Campo from "../../components/animal/Campo";
+import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 
 const CadFormularioDiario = ({navigation: {navigate }}) => {
 

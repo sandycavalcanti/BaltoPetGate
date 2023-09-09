@@ -1,22 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet, Dimensions, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { Entypo, AntDesign } from '@expo/vector-icons';
-import Post from "../components/components_perfil/Post";
-import Perfil_post from "../components/components_perfil/Perfil_post";
-import DropdownButton from "../components/components_perfil/DropdownButton";
+import axios from "axios";
+import { urlAPI } from "../constants";
 import { Divider } from "react-native-elements";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-const Perfil = ({ navigate }) => {
+const Perfil = ({ navigate, TB_PESSOA_IDD, setPerfilHeight }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [select, setSelect] = useState([]);
+
+  useEffect(() => {
+    if (TB_PESSOA_IDD) {
+      axios.post(urlAPI + 'selpessoa/filtrar', {
+        TB_PESSOA_ID: TB_PESSOA_IDD,
+      }).then((response) => {
+        setSelect(response.data[0]);
+      }).catch((error) => {
+        setSelect(error.response.data.message);
+      });
+    }
+  }, [TB_PESSOA_IDD]);
+
+  const MedirAltura = (event) => {
+    const height = event.nativeEvent.layout.height;
+    setPerfilHeight(height);
+  };
+
+  const SairDaConta = async () => {
+    await AsyncStorage.removeItem('token');
+    navigate('Login');
+  }
+
+  const Dropdown = () => {
+    return (
+      <Modal visible={dropdownVisible} transparent={true} animationType="none" onRequestClose={() => setDropdownVisible(false)}>
+        <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => setDropdownVisible(false)}>
+          <View style={[styles.dropdown, { top: 70, right: 25 }]}>
+            <TouchableOpacity style={styles.dropdownButton}>
+              <Text style={styles.textDropdownButton} onPress={() => navigate('CompletarCad')}>Alterar minhas informações</Text>
+            </TouchableOpacity>
+            <Divider width={1} color="black" />
+            <TouchableOpacity style={styles.dropdownButton}>
+              <Text style={styles.textDropdownButton}>Desativar conta</Text>
+            </TouchableOpacity>
+            <Divider width={1} color="black" />
+            <TouchableOpacity style={styles.dropdownButton} onPress={SairDaConta}>
+              <Text style={styles.textDropdownButton}>Sair da conta</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    )
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} onLayout={MedirAltura}>
       <View>
-        <View style={styles.Oval} ></View>
-        <View style={styles.Fundo} ></View>
+        <View style={styles.Oval}></View>
+        <View style={styles.Fundo}></View>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigate("Home")}>
             <AntDesign name="left" size={28} color="black" />
@@ -24,27 +69,11 @@ const Perfil = ({ navigate }) => {
           <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
             <Entypo name="dots-three-vertical" size={26} color="black" />
           </TouchableOpacity>
-          <Modal visible={dropdownVisible} transparent={true} animationType="none" onRequestClose={() => setDropdownVisible(false)}>
-            <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => setDropdownVisible(false)}>
-              <View style={[styles.dropdown, { top: 70, right: 25 }]}>
-                <TouchableOpacity style={styles.dropdownButton}>
-                  <Text style={styles.textDropdownButton}>Alterar minhas informações</Text>
-                </TouchableOpacity>
-                <Divider width={1} color="black" />
-                <TouchableOpacity style={styles.dropdownButton}>
-                  <Text style={styles.textDropdownButton}>Desativar conta</Text>
-                </TouchableOpacity>
-                <Divider width={1} color="black" />
-                <TouchableOpacity style={styles.dropdownButton}>
-                  <Text style={styles.textDropdownButton}>Sair da conta</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          </Modal>
+          <Dropdown />
         </View>
-        <View>
-          <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} />
-          <Text style={styles.profileName}> Vanesa Juliana (NOME)</Text>
+        <View style={styles.profileContainer}>
+          <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/200' }} />
+          <Text style={styles.profileName}>{select.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
@@ -54,10 +83,11 @@ const Perfil = ({ navigate }) => {
             <Text style={styles.buttonText}>Iniciar Chat</Text>
           </TouchableOpacity>
         </View>
-
         <View style={styles.content}>
           <Text style={styles.contentText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, magna vel lacinia tincidunt, velit velit bibendum velit, vel tincidunt justo quam vel nisl. Vivamus euismod, diam vel lacinia tincidunt, velit velit bibendum velit, vel tincidunt justo quam vel nisl.
+            ASDASDASDSAMDOJNASDJ
+            asdwiooooooooooooooooooooooj
+            INASIUDNASINAUIAJNDSJANDJAKSNKSAJNDKJANSDKJANSDKASNDKJASNKJASNDKJANSDKJASNDKJASNDKJ
           </Text>
         </View>
       </View>
@@ -69,13 +99,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingTop: 10,
-    // height: '100%',
+    height: '100%',
     backgroundColor: '#C1E6CD',
   },
   Oval: {
     position: 'absolute',
     width: windowWidth / 2,
-    // height: '100%',
     height: windowWidth / 2,
     top: 170,
     left: windowWidth / 4,
@@ -86,8 +115,7 @@ const styles = StyleSheet.create({
   Fundo: {
     position: 'absolute',
     width: '100%',
-    // height: '100%',
-    height: 240,
+    height: 140,
     top: 270,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',
@@ -97,18 +125,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  profileContainer: {
+    width: 250,
+    alignItems: 'center',
+  },
   profileImage: {
     width: 200,
     height: 200,
     borderRadius: 100,
     marginBottom: 10,
-    marginLeft: 35,
   },
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#093C4B',
-    marginLeft: 35,
+    textAlign: 'center',
+    marginRight: 5,
     marginBottom: 20
   },
   buttons: {
@@ -132,6 +164,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    backgroundColor: '#CEF7FF',
   },
   contentText: {
     fontSize: 15,
@@ -164,4 +197,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Perfil;
+export default Perfil

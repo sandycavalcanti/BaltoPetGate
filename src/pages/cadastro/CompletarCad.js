@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
-import CampoTelefone from '../../components/components_cadastro/CampoTelefone';
-import CampoRede from '../../components/components_cadastro/CampoRede';
-import CampoEndereco from '../../components/components_cadastro/CampoEndereco';
-import GroupBox from '../../components/components_cadastro/GroupBox';
-import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
-import CampoDtNasc from '../../components/components_cadastro/CampoDtNasc';
-import CampoNumFormatado from '../../components/components_cadastro/CampoNumFormatado';
+import CampoSimples from '../../components/cadastro/CampoSimples';
+import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
+import CampoTelefone from '../../components/cadastro/CampoTelefone';
+import CampoRede from '../../components/cadastro/CampoRede';
+import CampoEndereco from '../../components/cadastro/CampoEndereco';
+import GroupBox from '../../components/cadastro/GroupBox';
+import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
+import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
+import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import { urlAPI } from '../../constants';
 import axios from 'axios';
@@ -110,7 +110,7 @@ const CompletarCad = () => {
       TB_PESSOA_TELEFONE1: telefone1,
       TB_PESSOA_TELEFONE2: telefone2
     }).then(response => {
-      // navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+      // navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
       console.log(response);
     }).catch(error => {
       let erro = error.response.data.message;

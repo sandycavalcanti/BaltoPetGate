@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import CampoDica from '../../components/components_cadastro/CampoDica';
-import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
-import CampoTelefone from '../../components/components_cadastro/CampoTelefone';
-import CampoRede from '../../components/components_cadastro/CampoRede';
-import CampoEndereco from '../../components/components_cadastro/CampoEndereco';
-import GroupBox from '../../components/components_cadastro/GroupBox';
-import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
-import CampoSenha from '../../components/components_cadastro/CampoSenha';
-import CampoDtNasc from '../../components/components_cadastro/CampoDtNasc';
-import CampoNumFormatado from '../../components/components_cadastro/CampoNumFormatado';
+import CampoSimples from '../../components/cadastro/CampoSimples';
+import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
+import CampoTelefone from '../../components/cadastro/CampoTelefone';
+import CampoRede from '../../components/cadastro/CampoRede';
+import CampoEndereco from '../../components/cadastro/CampoEndereco';
+import GroupBox from '../../components/cadastro/GroupBox';
+import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
+import CampoSenha from '../../components/cadastro/CampoSenha';
+import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
+import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
 
@@ -80,7 +79,7 @@ const Cadastrar = async () => {
     }).then(response => {
       const TokenUsuario = response.data.token;
       console.log(TokenUsuario);
-      // navigation.reset({ index: 0, routes: [{ name: 'Navegacao' }] });
+      // navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
     }).catch(error => {
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);

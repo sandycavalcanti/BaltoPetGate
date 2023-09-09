@@ -1,27 +1,52 @@
 import { TouchableOpacity, Text, View, StyleSheet, Image, ScrollView } from "react-native";
-import TextoComum from "../components/components_ficha/TextoComum";
-import TextoMultiplo from "../components/components_ficha/TextoMultiplo";
-import TextoMenor from "../components/components_ficha/TextoMenor";
-import TextosOpcionais from "../components/components_ficha/TextosOpcionais";
-import BotaoCadastrar from "../components/components_cadastro/BotaoCadastrar";
-import { corBordaBoxCad, corFundo } from "../constants";
+import TextoComum from "../components/ficha/TextoComum";
+import TextoMultiplo from "../components/ficha/TextoMultiplo";
+import TextoMenor from "../components/ficha/TextoMenor";
+import TextosOpcionais from "../components/ficha/TextosOpcionais";
+import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
+import { corBordaBoxCad, corFundo, urlAPI } from "../constants";
+import { useRoute } from '@react-navigation/native';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Ficha_animal() {
+    const route = useRoute();
+    const { id } = route.params;
+
+    const [select, setSelect] = useState([]);
+
+    const Selecionar = async () => {
+        await axios.post(urlAPI + 'selanimal/filtrar', {
+            TB_ANIMAL_ID: id
+        }).then((response) => {
+            setSelect(response.data[0]);
+        }).catch((error) => {
+            ToastAndroid.show('Erro ao exibir itens ' + error.response.data.message, ToastAndroid.SHORT);
+        })
+    };
+
+    useEffect(() => {
+        Selecionar();
+    }, [])
 
     return (
         <ScrollView>
             <View style={styles.Container}>
                 <Image style={styles.Imagem} resizeMode='cover' source={require('../../assets/img/dog.png')} />
                 <View style={styles.Conjunto1}>
-                    <TextoComum textoTitulo='Nome:' textoDescricao='Nilsinho' />
-                    <TextoComum textoTitulo='Porte:' textoDescricao='Médio' />
+                    <TextoComum textoTitulo='Nome:' textoDescricao={select.TB_ANIMAL_NOME} />
+                    <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE} />
                 </View>
                 <View style={styles.Conjunto2}>
-                    <TextoComum textoTitulo='12' textoDescricao='Kg' />
-                    <View style={styles.Barras}>
-                        <TextoComum textoDescricao='Macho' />
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+                        <TextoComum textoTitulo={select.TB_ANIMAL_PESO} textoDescricao='Kg' />
                     </View>
-                    <TextoComum textoTitulo='2' textoDescricao='Ano(s)' />
+                    <View style={styles.Barras}>
+                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO} />
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={select.TB_ANIMAL_IDADE_TIPO} />
+                    </View>
                 </View>
                 <View style={styles.Conjunto3}>
                     <TextoComum textoTitulo='Temperamento:' />
@@ -40,30 +65,34 @@ function Ficha_animal() {
                     <TextoMultiplo textoMultiplo='Aaaaaa' />
                 </View>
                 <View style={styles.Conjunto4}>
-                    <TextosOpcionais textosOpcionais='Castrado(a)' />
-                    <TextosOpcionais textosOpcionais='Vermifugado(a)' />
-                    <TextosOpcionais textosOpcionais='Microchipado(a)' />
+                    {select.TB_ANIMAL_CASTRADO == 'SIM' &&
+                        <TextosOpcionais textosOpcionais='Castrado(a)' />}
+                    {select.TB_ANIMAL_VERMIFUGADO == 'SIM' &&
+                        <TextosOpcionais textosOpcionais='Vermifugado(a)' />}
+                    {select.TB_ANIMAL_MICROCHIP == 'SIM' &&
+                        <TextosOpcionais textosOpcionais='Microchipado(a)' />}
                 </View>
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Descrição</Text>
-                    <TextoMenor textoDescricao='Duis sed lacinia nisi, nec condimentum tellus. Mauris bibendum orci at malesuada tincidunt. Vivamus id finibus augue, non hendrerit risus. Etiam in nunc egestas, sagittis ex ac, dictum ex. Curabitur et pulvinar augue. Mauris nec porttitor felis. Aliquam in eros sed nunc pellentesque posuere...' />
+                    <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
                     <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' />
-                    <TextoMenor textoTitulo='Local do resgate:' textoDescricao='Médio' />
+                    <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
                 </View>
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Localização</Text>
                     <View style={styles.GroupBox2}>
-                        <Text style={styles.TextoClaro}>São Miguel do Gostoso</Text>
-                        <Text style={styles.TextoEscuro}>SP</Text>
+                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_CIDADE}</Text>
+                        <Text style={styles.TextoEscuro}>({select.TB_ANIMAL_LOCALIZACAO_UF})</Text>
                     </View>
                     <View style={styles.GroupBox2}>
-                        <Text style={styles.TextoClaro}>São Miguel do Gostoso</Text>
-                        <Text style={styles.TextoEscuro}>,</Text>
-                        <Text style={styles.TextoClaro}>São Miguel do Gostosok,k,k,j</Text>
+                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_BAIRRO},</Text>
+                    </View>
+                    <View style={styles.GroupBox2}>
+                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_RUA}</Text>
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar />
+                    <BotaoCadastrar texto="Adotar" />
                 </View>
             </View>
         </ScrollView>
@@ -129,7 +158,7 @@ const styles = StyleSheet.create({
 
     },
     Barras: {
-        flex: 0.5,
+        flex: 1,
         borderLeftWidth: 2,
         alignItems: "center",
         borderRightWidth: 2,
@@ -146,13 +175,13 @@ const styles = StyleSheet.create({
     },
     TextoClaro: {
         color: '#299FB8',
-        fontSize: 16,
+        fontSize: 18,
         marginRight: 7,
         marginLeft: 7
     },
     TextoEscuro: {
         color: '#096D82',
-        fontSize: 16,
+        fontSize: 18,
         paddingRight: 5
     },
     ConjuntoBotao: {

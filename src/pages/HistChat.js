@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import axios from 'axios';
-import Contato from '../components/HistChat/Contato';
+import Contato from '../components/histChat/Contato';
 import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -59,11 +59,11 @@ const HisChat = ({ navigation: { navigate } }) => {
           <Text style={styles.titulo}>Chat</Text>
           <View style={styles.searchBar}>
             <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Search" />
-            {pesquisa !== '' ? 
-            <TouchableOpacity onPress={() => setPesquisa('')}>
-              <AntDesign name="close" size={24} color="black" />
-            </TouchableOpacity> 
-            : null}
+            {pesquisa !== '' ?
+              <TouchableOpacity onPress={() => setPesquisa('')}>
+                <AntDesign name="close" size={24} color="black" />
+              </TouchableOpacity>
+              : null}
           </View>
           <View style={styles.contacts}>
             <View style={styles.contact}>

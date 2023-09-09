@@ -1,7 +1,7 @@
-import Navigation from './src/pages/Navegacao/Navigation';
+import Navigation from './src/pages/navegacao';
 
 export default function App() {
   return (
-    <Navigation/>
+    <Navigation />
   );
 }

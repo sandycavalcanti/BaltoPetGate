@@ -1,16 +1,16 @@
 import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useState } from "react";
 import axios from 'axios';
-import CampoSimples from "../../components/components_cadastro/CampoSimples";
-import GroupBox from "../../components/components_cadastro/GroupBox";
-import Campo from "../../components/components_animal/Campo";
-import DropdownSimples from "../../components/components_animal/DropdownSimples";
-import RadioButton3 from "../../components/components_animal/Radiobutton3";
-import RadioButton2 from "../../components/components_animal/radioButton2";
-import BotaoCadastrar from "../../components/components_cadastro/BotaoCadastrar";
-import CampoEndereco from "../../components/components_cadastro/CampoEndereco";
-import CheckBoxComponent from "../../components/components_cadastro/CheckBoxComponent";
-import ContainerCadastro from "../../components/components_cadastro/ContainerCadastro";
+import CampoSimples from "../../components/cadastro/CampoSimples";
+import GroupBox from "../../components/cadastro/GroupBox";
+import Campo from "../../components/animal/Campo";
+import DropdownSimples from "../../components/animal/DropdownSimples";
+import RadioButton3 from "../../components/animal/Radiobutton3";
+import RadioButton2 from "../../components/animal/radioButton2";
+import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
+import CampoEndereco from "../../components/cadastro/CampoEndereco";
+import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
+import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { urlAPI } from "../../constants";
 
 const CadAnimal = ({ navigation: { navigate } }) => {

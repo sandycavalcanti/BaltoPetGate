@@ -2,13 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-const TelaSplash = ({ navigation }) => {
+const Splash = ({ navigation }) => {
 
   useEffect(() => {
     setTimeout(() => {
       navigation.replace('Login');
     }, 4000);
-  }, );
+  },);
 
   const animation = useRef(null);
 
@@ -16,18 +16,18 @@ const TelaSplash = ({ navigation }) => {
 
     <View style={styles.Container}>
       <Image
-        source={require('../../../assets/img/splash.png')}
+        source={require('../../assets/img/splash.png')}
         style={styles.ImagemFundo}
       />
       <View style={styles.ContainerLogo}>
         <Image
-          source={require('../../../assets/img/Logo.png')}
+          source={require('../../assets/img/Logo.png')}
           style={styles.Logo}
         />
       </View>
       <View style={styles.ContainerLottie}>
         <LottieView
-          source={require('../../../assets/animacaoCirculo.json')}
+          source={require('../../assets/animacaoCirculo.json')}
           autoPlay
           loop
           style={styles.Lottie}
@@ -77,6 +77,4 @@ const styles = StyleSheet.create({
   }
 });
 
-
-
-export default TelaSplash;
+export default Splash;

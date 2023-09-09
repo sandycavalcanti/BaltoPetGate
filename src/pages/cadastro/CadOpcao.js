@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, SafeAreaView, ImageBackground, TouchableOpacity } from 'react-native';
-import BotaoOpcaoCadastro from '../../components/components_cadastro/BotaoOpcaoCadastro';
+import BotaoOpcaoCadastro from '../../components/cadastro/BotaoOpcaoCadastro';
 
 const CadOpcao = ({ navigation: { navigate } }) => {
     return (
