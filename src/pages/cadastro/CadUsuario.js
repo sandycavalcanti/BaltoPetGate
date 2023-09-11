@@ -43,6 +43,7 @@ const CadUsuario = () => {
       TB_PESSOA_SENHA: senha,
     }).then(async response => {
       const TokenUsuario = response.data.token;
+      await AsyncStorage.removeItem('token');
       await AsyncStorage.setItem('token', TokenUsuario);
       navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
     }).catch(error => {

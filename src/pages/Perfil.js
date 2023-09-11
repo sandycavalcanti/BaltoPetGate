@@ -85,9 +85,7 @@ const Perfil = ({ navigate, TB_PESSOA_IDD, setPerfilHeight }) => {
         </View>
         <View style={styles.content}>
           <Text style={styles.contentText}>
-            ASDASDASDSAMDOJNASDJ
-            asdwiooooooooooooooooooooooj
-            INASIUDNASINAUIAJNDSJANDJAKSNKSAJNDKJANSDKJANSDKASNDKJASNKJASNDKJANSDKJASNDKJASNDKJ
+            {select.TB_PESSOA_BIO}
           </Text>
         </View>
       </View>
@@ -99,7 +97,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingTop: 10,
-    height: '100%',
     backgroundColor: '#C1E6CD',
   },
   Oval: {
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
   Fundo: {
     position: 'absolute',
     width: '100%',
-    height: 140,
+    height: 100,
     top: 270,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',

@@ -4,8 +4,10 @@ import axios from 'axios';
 import { corBotaoCad, corFundoCampoCad, corTextoBotaoCad, corPlaceholderCad, corDicaCad, valorBordaCampoCad } from '../../constants';
 import { Dropdown } from 'react-native-element-dropdown';
 
+let obrigatorio;
 
 const CampoEndereco = (props) => {
+    obrigatorio = props.obrigatorio;
     const [cep, setCep] = useState('');
     const [uf, setUf] = useState('');
     const [cidade, setCidade] = useState('');
@@ -66,20 +68,27 @@ const CampoEndereco = (props) => {
         }
     };
 
+    let tentativa = 0;
+
     const ListarCidades = async (uf) => {
-        await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
-            .then(response => {
-                const cidadesData = response.data.map(city => ({
-                    label: city.nome,
-                    value: city.nome,
-                }));
-                setCidades(cidadesData);
-            })
-            .catch(error => {
-                console.error('Houve um erro ao buscar cidades:', error);
+        try {
+            const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
+            const cidadesData = response.data.map(city => ({
+                label: city.nome,
+                value: city.nome,
+            }));
+            setCidades(cidadesData);
+        } catch (error) {
+            if (tentativa === 0) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                tentativa += 1;
+                await ListarCidades(uf);
+            } else {
                 ToastAndroid.show('Houve um erro ao buscar cidades', ToastAndroid.SHORT);
-            });
+            }
+        }
     };
+
 
     const [textoDica, setTextoDica] = useState(false);
 
@@ -101,12 +110,16 @@ const CampoEndereco = (props) => {
     };
 
     useEffect(() => {
-        if (props.set1) setTexto(props.val1);
+        if (props.set1 && props.val1) {
+            formatarTextoCampo(props.val1)
+        }
         setUf(props.val2);
+        ListarCidades(props.val2);
         setCidade(props.val3);
         setBairro(props.val4);
         setRua(props.val5);
     }, [])
+
 
     let msg;
     if (props.opcional) msg = 'Localização (Opcional):'
@@ -114,15 +127,18 @@ const CampoEndereco = (props) => {
 
     return (
         <View style={styles.containercampo}>
-            {!props.obrigatorio && <Text style={styles.titulocampo}>{msg}</Text>}
-            <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={!props.obrigatorio ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+            {!obrigatorio && <Text style={styles.titulocampo}>{msg}</Text>}
+            <View>
+                <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={!obrigatorio ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+            </View>
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
             <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>
                 <Text style={styles.textocadastro}>Pesquisar CEP</Text>
             </TouchableOpacity>
             <View style={styles.selecionar}>
                 <Dropdown
-                    style={styles.dropdown}
+                    style={[styles.dropdown, {width: obrigatorio ? '96%' : '100%'}]}
                     placeholderStyle={{ color: corPlaceholderCad, fontSize: 18, }}
                     selectedTextStyle={{ fontSize: 18, }}
                     inputSearchStyle={{ height: 40, fontSize: 18, }}
@@ -138,10 +154,11 @@ const CampoEndereco = (props) => {
                         ListarCidades(item.value)
                     }}
                 />
+                {obrigatorio && <Text style={styles.asteriscoDropdown}>*</Text>}
             </View>
             <View style={styles.selecionar}>
                 <Dropdown
-                    style={styles.dropdown}
+                    style={[styles.dropdown, {width: obrigatorio ? '96%' : '100%'}]}
                     placeholderStyle={{ color: corPlaceholderCad, fontSize: 18, }}
                     selectedTextStyle={{ fontSize: 18, }}
                     inputSearchStyle={{ height: 40, fontSize: 18, }}
@@ -160,11 +177,21 @@ const CampoEndereco = (props) => {
                     onFocus={() => { setCidadeBackup(cidade), setCidade(''); }}
                     onBlur={() => { setCidade(cidadeBackup); }}
                 />
+                {obrigatorio && <Text style={styles.asteriscoDropdown}>*</Text>}
             </View>
-            <TextInput onChangeText={text => { setBairro(text); props.set4(text) }} value={bairro} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
-            <TextInput onChangeText={text => { setRua(text); props.set5(text) }} value={rua} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
+            <View>
+                <TextInput onChangeText={text => { setBairro(text); props.set4(text) }} value={bairro} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
+                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+            </View>
+            <View>
+                <TextInput onChangeText={text => { setRua(text); props.set5(text) }} value={rua} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
+                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+            </View>
             {props.set1 && <>
-                <TextInput onChangeText={text => props.set6(text)} value={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
+                <View>
+                    <TextInput onChangeText={text => props.set6(text)} value={props.val6 && props.val6.toString()} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
+                    {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+                </View>
                 <TextInput onChangeText={text => props.set7(text)} value={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
             </>}
 
@@ -224,6 +251,20 @@ const styles = StyleSheet.create({
         height: 40,
         paddingHorizontal: 10,
         fontSize: 18,
+    },
+    asterisco: {
+        position: 'absolute',
+        fontSize: 25,
+        color: 'red',
+        right: 10,
+        bottom: 5,
+    },
+    asteriscoDropdown: {
+        position: 'absolute',
+        fontSize: 25,
+        color: 'red',
+        right: 10,
+        bottom: 1,
     },
 });
 

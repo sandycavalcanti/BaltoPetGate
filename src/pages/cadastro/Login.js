@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, SafeAreaView, ImageBackground, TouchableOpacity, TextInput, TouchableWithoutFeedback, ToastAndroid } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator, ImageBackground, TouchableOpacity, TextInput, TouchableWithoutFeedback, ToastAndroid } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad } from "../../constants";
+import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, corBordaBoxCad } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -12,6 +12,7 @@ const Login = ({ navigation: { navigate } }) => {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [mensagem, setMensagem] = useState("");
+    const [carregando, setCarregando] = useState(false);
 
     const Logar = () => {
         if (!email || !senha) {
@@ -26,9 +27,13 @@ const Login = ({ navigation: { navigate } }) => {
             TB_PESSOA_EMAIL: email,
             TB_PESSOA_SENHA: senha,
         }).then(async (response) => {
+            setCarregando(true);
             const TokenUsuario = response.data.token;
+            await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
-            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
+            setTimeout(() => {
+                navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
+            }, 1000);
         }).catch(error => {
             let erro = error.response.data.message;
             ToastAndroid.show(erro, ToastAndroid.SHORT);
@@ -89,6 +94,13 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={() => navigate("CadOpcao")}>
                 <Text style={styles.textocad}> Não tenho uma conta</Text>
             </TouchableOpacity>
+
+            {carregando &&
+                <View style={styles.carregandoContainer}>
+                    <View style={styles.carregando}>
+                        <ActivityIndicator size="large" color={corBordaBoxCad} />
+                    </View>
+                </View>}
 
             <TouchableOpacity onPress={() => navigate("Menu")}>
                 <Text>PULAR</Text>
@@ -183,6 +195,24 @@ const styles = StyleSheet.create({
     },
     mensagem: {
         color: 'red',
+    },
+    carregandoContainer: {
+        flex: 1,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    carregando: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75,
+        height: 75,
+        borderRadius: 100,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
     }
 });
 

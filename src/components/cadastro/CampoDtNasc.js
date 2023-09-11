@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 
 const CampoDtNasc = (props) => {
     const [data, setData] = useState('');
 
+    useEffect(() => {
+        if (props.val) {
+            const dataOriginal = props.val;
+            const partesData = dataOriginal.split("-");
+
+            const novaData = partesData[2] + partesData[1] + partesData[0];
+            formatarDataCampo(novaData)
+        }
+    }, [])
     const formatarDataCampo = (text) => {
         const dataFormatadaCampo = text.replace(/\D/g, '');
         props.set(1);
