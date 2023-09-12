@@ -33,7 +33,7 @@ const Login = ({ navigation: { navigate } }) => {
             await AsyncStorage.setItem('token', TokenUsuario);
             setTimeout(() => {
                 navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            }, 1000);
+            }, 1500);
         }).catch(error => {
             let erro = error.response.data.message;
             ToastAndroid.show(erro, ToastAndroid.SHORT);

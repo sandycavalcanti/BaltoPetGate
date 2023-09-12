@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
-import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
 import CampoTelefone from '../../components/cadastro/CampoTelefone';
@@ -14,9 +13,14 @@ import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
+import { useRoute } from '@react-navigation/native';
 
-const CompletarCad = () => {
-  const navigation = useNavigation();
+let TB_PESSOA_IDD;
+
+const AlterarCad = ({ navigation: { navigate } }) => {
+  const route = useRoute();
+  const { modoAlterar } = route.params;
+
   const [mensagem, setMensagem] = useState('');
 
   const [email, setEmail] = useState('');
@@ -37,7 +41,10 @@ const CompletarCad = () => {
   const [facebook, setFacebook] = useState('');
 
   const Alterar = async () => {
-    const camposObrigatorios = [email, dtNasc, nome, cpf, telefone1, whatsapp, uf, cidade, bairro, rua, numero];
+    let camposObrigatorios = [];
+    if (modoAlterarCad) {
+      camposObrigatorios = [email, dtNasc, nome, cpf, telefone1, whatsapp, uf, cidade, bairro, rua, numero];
+    }
     const camposCadastro = {
       email, nome, cep, uf, cidade, bairro, rua, numero, complemento,
       dtNasc, cpf, facebook, instagram, whatsapp, telefone1, telefone2
@@ -51,7 +58,6 @@ const CompletarCad = () => {
   }
 
   let info = [];
-  let TB_PESSOA_IDD;
 
   const PegarInfo = async () => {
     const decodedToken = await DecodificarToken();
@@ -82,12 +88,9 @@ const CompletarCad = () => {
     })
   }
 
-  useEffect(() => {
-    PegarInfo();
-  }, []);
-
   const InserirDados = async () => {
-    await axios.put('http://26.7.171.108:3000/' + 'altpessoa/' + TB_PESSOA_IDD, {
+    const url = urlAPI + 'altpessoa/' + TB_PESSOA_IDD;
+    await axios.put(url, {
       TB_PESSOA_NOME: nome,
       TB_PESSOA_EMAIL: email,
       TB_PESSOA_CEP: cep,
@@ -105,8 +108,7 @@ const CompletarCad = () => {
       TB_PESSOA_TELEFONE1: telefone1,
       TB_PESSOA_TELEFONE2: telefone2
     }).then(response => {
-      // navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-      console.log('response');
+      navigate('QuestionarioAdocao');
     }).catch(error => {
       let erro = error.response.data.message;
       ToastAndroid.show(erro, ToastAndroid.SHORT);
@@ -122,34 +124,34 @@ const CompletarCad = () => {
         setCarregando(false);
       })
       .catch(error => {
-        console.error(error);
+        ToastAndroid.show('Houve um erro ao carregar. Tente novamente.', ToastAndroid.SHORT);
       });
   }, []);
 
   return (
-    <ContainerCadastro titulo="Complete seu cadastro">
-      {carregando ? (
+    <ContainerCadastro titulo={modoAlterar ? "Alterar informações" : "Complete seu cadastro"}>
+      {carregando ?
         <ActivityIndicator size="large" color={corBordaBoxCad} />
-      ) : (
+        :
         <>
           <GroupBox titulo="Informações pessoais">
-            <Text style={styles.titulocampo}>Confirme seu nome completo e seu email:</Text>
-            <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} />
-            <CampoSimples set={setEmail} placeholder="Email" val={email} />
-            <CampoDtNasc set={setDtNasc} val={dtNasc} />
-            <CampoNumFormatado set={setCpf} tipo='cpf' val={cpf} />
+            {!modoAlterar && <Text style={styles.titulocampo}>Confirme seu nome completo e seu email:</Text>}
+            <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} opcional={modoAlterar ? true : false} />
+            <CampoSimples set={setEmail} placeholder="Email" val={email} opcional={modoAlterar ? true : false} />
+            <CampoDtNasc set={setDtNasc} val={dtNasc} opcional={modoAlterar ? true : false} />
+            <CampoNumFormatado set={setCpf} tipo='cpf' val={cpf} opcional={modoAlterar ? true : false} />
           </GroupBox>
           <GroupBox titulo="Informações de endereço">
-            <CampoEndereco obrigatorio val1={cep} val2={uf} val3={cidade} val4={bairro} val5={rua} val6={numero} val7={complemento}
+            <CampoEndereco val1={cep} val2={uf} val3={cidade} val4={bairro} val5={rua} val6={numero} val7={complemento} obrigatorio={modoAlterar ? false : true} opcional={modoAlterar ? true : false}
               set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
           </GroupBox>
           <GroupBox titulo="Informações de contato">
-            <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} val1={telefone1} val2={telefone2} val3={whatsapp} />
+            <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} val1={telefone1} val2={telefone2} val3={whatsapp} opcional={modoAlterar ? true : false} />
             <CampoRede set1={setInstagram} set2={setFacebook} opcional val1={instagram} val2={facebook} />
           </GroupBox>
           {mensagem && <Text style={{ color: 'red' }}>{mensagem}</Text>}
-          <BotaoCadastrar onPress={Alterar} texto="Continuar" />
-        </>)}
+          <BotaoCadastrar onPress={Alterar} texto={modoAlterar ? "Alterar" : "Continuar"} />
+        </>}
     </ContainerCadastro>
   )
 }
@@ -163,4 +165,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CompletarCad
+export default AlterarCad

@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 const Campo = (props) => {
     return (
         <View>
-            <TextInput onChangeText={props.set} placeholderTextColor={"#8EBF81"}
+            <TextInput onChangeText={text => props.set(text)} placeholderTextColor={"#8EBF81"}
                 style={styles.campo} {...props} />
             {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
         </View>
@@ -11,7 +11,7 @@ const Campo = (props) => {
 }
 const styles = StyleSheet.create({
     campo: {
-        flex: -1,
+        flex: 1,
         fontSize: 18,
         paddingHorizontal: 10,
 

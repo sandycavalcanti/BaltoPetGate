@@ -27,43 +27,52 @@ const Postagem = () => {
 
   // Salvar Banco de Dados
   // Criando um estado para armazenar a string base64 da imagem
-const [imagemBase64, setImagemBase64] = useState(null);
+  const [imagemBase64, setImagemBase64] = useState(null);
 
-// Definindo uma função para converter a imagem em uma string base64
-const converterImagem = async (uri) => {
-  // Criando um objeto FileReader
-  let reader = new FileReader();
-  // Definindo o que fazer quando a leitura for concluída
-  reader.onloadend = () => {
-    // Atualizando o estado da string base64 com o resultado da leitura
-    setImagemBase64(reader.result);
+  const converterImagem = async (uri) => {
+    // Verifica se a URI é válida
+    if (uri) {
+      // Criando um objeto FileReader
+      let reader = new FileReader();
+      // Definindo o que fazer quando a leitura for concluída
+      reader.onloadend = () => {
+        // Verifica se reader.result não é nulo antes de atualizar o estado da string base64
+        if (reader.result) {
+          // Atualizando o estado da string base64 com o resultado da leitura
+          setImagemBase64(reader.result);
+        } else {
+          console.error('Erro ao converter imagem para base64: resultado nulo');
+        }
+      };
+      // Lendo a imagem como uma string base64
+      reader.readAsDataURL(uri);
+    } else {
+      console.error('URI da imagem inválida');
+    }
   };
-  // Lendo a imagem como uma string base64
-  reader.readAsDataURL(uri);
-};
 
-// Chamando a função para converter a imagem quando ela for escolhida
-useEffect(() => {
-  if (imagem) {
-    converterImagem(imagem);
-  }
-}, [imagem]);
+  // Chamando a função para converter a imagem quando ela for escolhida
+  useEffect(() => {
+    if (imagem) {
+      converterImagem(imagem);
+    }
+  }, [imagem]);
 
-// Alterando a função InserirDados para enviar a string base64 da imagem junto com o comentário
-const InserirDados = () => {
-  axios
-    .post("https://apibalto.vercel.app/" + "cadpostagem", {
-      TB_PESSOA_ID: 1,
-      TB_POSTAGEM_TEXTO: comentario,
-      TB_POSTAGEM_IMAGEM: imagemBase64,
-    })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+  // Alterando a função InserirDados para enviar a string base64 da imagem junto com o comentário
+  const InserirDados = () => {
+    axios
+      .post("https://apibalto.vercel.app/" + "cadpostagem", {
+        TB_PESSOA_ID: 1,
+        TB_POSTAGEM_TEXTO: comentario,
+        TB_POSTAGEM_IMG1: imagemBase64,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 
   // Definindo um estado para armazenar a lista de postagens
@@ -85,26 +94,36 @@ const InserirDados = () => {
   };
 
   // Definindo uma função para escolher uma imagem da galeria ou da câmera
-  const escolherImagem = async () => {
-    // Chamando a função para pedir permissão
-    await pedirPermissao();
-    // Criando as opções para o ImagePicker
-    const opcoes = {
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    };
-
-    // Chamando o método launchImageLibraryAsync do ImagePicker
-    let resposta = await ImagePicker.launchImageLibraryAsync(opcoes);
-
-    // Verificando se houve algum erro ou cancelamento
-    if (!resposta.cancelled) {
-      // Caso contrário, atualizando o estado da imagem com o caminho da imagem escolhida
-      setImagem(resposta.uri);
-    }
+const escolherImagem = async () => {
+  // Chamando a função para pedir permissão
+  await pedirPermissao();
+  // Criando as opções para o ImagePicker
+  const opcoes = {
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
   };
+
+  // Chamando o método launchImageLibraryAsync do ImagePicker
+  let resposta = await ImagePicker.launchImageLibraryAsync(opcoes);
+
+  // Verificando se houve algum erro ou cancelamento
+  if (!resposta.canceled) {
+    // Verificando se há um item na matriz assets
+    if (resposta.assets.length > 0) {
+      // Acessando a matriz "assets" para obter o caminho da imagem escolhida
+      const imagemEscolhida = resposta.assets[0];
+      if (imagemEscolhida) {
+        // Atualizando o estado da imagem com o caminho da imagem escolhida
+        setImagem(imagemEscolhida.uri);
+      }
+    } else {
+      alert("Não foi possível obter a imagem selecionada.");
+    }
+  }
+};
+
 
   // Definindo uma função para editar o comentário
   const editarComentario = (texto) => {
@@ -173,25 +192,25 @@ const InserirDados = () => {
     setModalVisible(false);
     // Criando uma função para confirmar a exclusão da postagem
     // Alterando a função confirmarDeletar para fazer uma requisição HTTP para o servidor com o id da postagem que será excluída
-const confirmarDeletar = () => {
-  // Obtendo o id da postagem pelo índice na lista de postagens
-  let id = postagens[indice].id;
-  // Fazendo uma requisição HTTP para o servidor com o método delete e o id da postagem
-  axios
-    .delete("https://apibalto.vercel.app/" + "delpostagem/" + id)
-    .then((response) => {
-      console.log(response);
-      // Criando uma cópia da lista de postagens
-      let postagensAtualizadas = [...postagens];
-      // Removendo a postagem pelo índice da cópia
-      postagensAtualizadas.splice(indice, 1);
-      // Atualizando o estado da lista de postagens com a cópia alterada
-      setPostagens(postagensAtualizadas);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+    const confirmarDeletar = () => {
+      // Obtendo o id da postagem pelo índice na lista de postagens
+      let id = postagens[indice].id;
+      // Fazendo uma requisição HTTP para o servidor com o método delete e o id da postagem
+      axios
+        .delete("https://apibalto.vercel.app/" + "delpostagem/" + id)
+        .then((response) => {
+          console.log(response);
+          // Criando uma cópia da lista de postagens
+          let postagensAtualizadas = [...postagens];
+          // Removendo a postagem pelo índice da cópia
+          postagensAtualizadas.splice(indice, 1);
+          // Atualizando o estado da lista de postagens com a cópia alterada
+          setPostagens(postagensAtualizadas);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
 
     // Mostrando um alerta para confirmar a exclusão da postagem
     Alert.alert(

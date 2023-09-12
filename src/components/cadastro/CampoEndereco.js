@@ -4,10 +4,10 @@ import axios from 'axios';
 import { corBotaoCad, corFundoCampoCad, corTextoBotaoCad, corPlaceholderCad, corDicaCad, valorBordaCampoCad } from '../../constants';
 import { Dropdown } from 'react-native-element-dropdown';
 
-let obrigatorio;
+let opcional;
 
 const CampoEndereco = (props) => {
-    obrigatorio = props.obrigatorio;
+    opcional = props.opcional;
     const [cep, setCep] = useState('');
     const [uf, setUf] = useState('');
     const [cidade, setCidade] = useState('');
@@ -44,7 +44,6 @@ const CampoEndereco = (props) => {
         { label: 'TO', value: 'TO' },
     ];
     const [cidades, setCidades] = useState([]);
-    const [cidadeBackup, setCidadeBackup] = useState('');
 
     const BuscarEndereco = async (cep) => {
         try {
@@ -89,7 +88,6 @@ const CampoEndereco = (props) => {
         }
     };
 
-
     const [textoDica, setTextoDica] = useState(false);
 
     const [texto, setTexto] = useState('');
@@ -120,17 +118,12 @@ const CampoEndereco = (props) => {
         setRua(props.val5);
     }, [])
 
-
-    let msg;
-    if (props.opcional) msg = 'Localização (Opcional):'
-    else msg = 'Localização'
-
     return (
         <View style={styles.containercampo}>
-            {!obrigatorio && <Text style={styles.titulocampo}>{msg}</Text>}
+            {opcional && <Text style={styles.titulocampo}>Localização (Opcional):</Text>}
             <View>
-                <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={!obrigatorio ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
-                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+                <TextInput onChangeText={text => formatarTextoCampo(text)} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={opcional ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+                {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
             <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>
@@ -138,7 +131,7 @@ const CampoEndereco = (props) => {
             </TouchableOpacity>
             <View style={styles.selecionar}>
                 <Dropdown
-                    style={[styles.dropdown, {width: obrigatorio ? '96%' : '100%'}]}
+                    style={[styles.dropdown, { width: !opcional ? '96%' : '100%' }]}
                     placeholderStyle={{ color: corPlaceholderCad, fontSize: 18, }}
                     selectedTextStyle={{ fontSize: 18, }}
                     inputSearchStyle={{ height: 40, fontSize: 18, }}
@@ -154,11 +147,11 @@ const CampoEndereco = (props) => {
                         ListarCidades(item.value)
                     }}
                 />
-                {obrigatorio && <Text style={styles.asteriscoDropdown}>*</Text>}
+                {!opcional && <Text style={styles.asteriscoDropdown}>*</Text>}
             </View>
             <View style={styles.selecionar}>
                 <Dropdown
-                    style={[styles.dropdown, {width: obrigatorio ? '96%' : '100%'}]}
+                    style={[styles.dropdown, { width: !opcional ? '96%' : '100%' }]}
                     placeholderStyle={{ color: corPlaceholderCad, fontSize: 18, }}
                     selectedTextStyle={{ fontSize: 18, }}
                     inputSearchStyle={{ height: 40, fontSize: 18, }}
@@ -174,23 +167,21 @@ const CampoEndereco = (props) => {
                         setCidade(item.value);
                         props.set3(item.value);
                     }}
-                    onFocus={() => { setCidadeBackup(cidade), setCidade(''); }}
-                    onBlur={() => { setCidade(cidadeBackup); }}
                 />
-                {obrigatorio && <Text style={styles.asteriscoDropdown}>*</Text>}
+                {!opcional && <Text style={styles.asteriscoDropdown}>*</Text>}
             </View>
             <View>
                 <TextInput onChangeText={text => { setBairro(text); props.set4(text) }} value={bairro} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
-                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+                {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             <View>
                 <TextInput onChangeText={text => { setRua(text); props.set5(text) }} value={rua} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
-                {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+                {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             {props.set1 && <>
                 <View>
                     <TextInput onChangeText={text => props.set6(text)} value={props.val6 && props.val6.toString()} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
-                    {obrigatorio && <Text style={styles.asterisco}>*</Text>}
+                    {!opcional && <Text style={styles.asterisco}>*</Text>}
                 </View>
                 <TextInput onChangeText={text => props.set7(text)} value={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
             </>}

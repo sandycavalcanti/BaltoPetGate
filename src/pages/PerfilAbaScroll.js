@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, Platform, TouchableOpacity, Alert, StatusBar, SafeAreaView, ToastAndroid } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, ActivityIndicator, Platform, TouchableOpacity, Alert, StatusBar, SafeAreaView, ToastAndroid } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import Perfil from './Perfil';
 import axios from 'axios';
-import { urlAPI } from '../constants';
+import { corBordaBoxCad, urlAPI } from '../constants';
 import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import DecodificarToken from '../utils/DecodificarToken';
@@ -37,6 +37,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   const _tabIndex = useRef(0);
   const [perfilHeight, setPerfilHeight] = useState(450);
 
+  const [carregando, setCarregando] = useState(true);
   HeaderHeight = perfilHeight;
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
@@ -63,10 +64,6 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       console.error('Erro ao selecionar:', erro);
     })
   };
-
-  useEffect(() => {
-    Selecionar();
-  }, []);
 
   // PanResponder for header
   const headerPanResponder = useRef(
@@ -207,7 +204,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       <Animated.View
         {...headerPanResponder.panHandlers}
         style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <Perfil navigate={navigate} TB_PESSOA_IDD={TB_PESSOA_IDD} setPerfilHeight={setPerfilHeight} />
+        <Perfil navigate={navigate} TB_PESSOA_IDD={TB_PESSOA_IDD} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -312,11 +309,27 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
     );
   };
 
+  useEffect(() => {
+    Selecionar()
+      .then(() => {
+        console.log('pronto')
+        setCarregando(false);
+      })
+      .catch(error => {
+        ToastAndroid.show('Houve um erro ao carregar. Tente novamente.', ToastAndroid.SHORT);
+      });
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        {renderTabView()}
-        {renderHeader()}
+        {carregando ?
+          <ActivityIndicator size="large" color={corBordaBoxCad} />
+          : <>
+            {renderTabView()}
+            {renderHeader()}
+          </>
+        }
       </View>
     </SafeAreaView>
   );

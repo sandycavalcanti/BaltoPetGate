@@ -8,7 +8,7 @@ const Splash = ({ navigation }) => {
     setTimeout(() => {
       navigation.replace('Login');
     }, 4000);
-  },);
+  });
 
   const animation = useRef(null);
 

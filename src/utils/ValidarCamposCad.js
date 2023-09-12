@@ -60,9 +60,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (dtNasc && dtNasc == 1) {
             mensagemErro += "Data de nascimento inválida.\n";
         }
-        if (cpf && (cpf == 1 || !ValidarCpf(cpf))) {
-            mensagemErro += "CPF inválido.\n";
-        }
+        // if (cpf && (cpf == 1 || !ValidarCpf(cpf))) {
+        //     mensagemErro += "CPF inválido.\n";
+        // }
         if (crmv && crmv == 1) {
             mensagemErro += "CRMV inválido.\n";
         }
@@ -72,9 +72,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nomePerfil && !criteriosNomePerfil.test(nomePerfil)) {
             mensagemErro += "Nome de perfil inválido.\n";
         }
-        if (cnpj && (cnpj == 1 || !ValidarCnpj(cnpj))) {
-            mensagemErro += "CNPJ inválido.\n";
-        }
+        // if (cnpj && (cnpj == 1 || !ValidarCnpj(cnpj))) {
+        //     mensagemErro += "CNPJ inválido.\n";
+        // }
         if (telefone1 && !criteriosTelefone.test(telefone1)) {
             mensagemErro += "Primeiro número de telefone inválido.\n";
         }

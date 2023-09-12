@@ -12,6 +12,7 @@ import axios from "axios";
 function Ficha_animal() {
     const route = useRoute();
     const { id } = route.params;
+    let tipoIdade;
 
     const [select, setSelect] = useState([]);
 
@@ -29,23 +30,33 @@ function Ficha_animal() {
         Selecionar();
     }, [])
 
+    if (select.TB_ANIMAL_IDADE_TIPO == 'MES' && select.TB_ANIMAL_IDADE == 1) {
+        tipoIdade = 'Mês'
+    } else if (select.TB_ANIMAL_IDADE_TIPO == 'ANO' && select.TB_ANIMAL_IDADE == 1) {
+        tipoIdade = 'Ano'
+    } else if (select.TB_ANIMAL_IDADE_TIPO == 'MES') {
+        tipoIdade = 'Meses'
+    } else {
+        tipoIdade = 'Anos'
+    }
+
     return (
         <ScrollView>
             <View style={styles.Container}>
                 <Image style={styles.Imagem} resizeMode='cover' source={require('../../assets/img/dog.png')} />
                 <View style={styles.Conjunto1}>
                     <TextoComum textoTitulo='Nome:' textoDescricao={select.TB_ANIMAL_NOME} />
-                    <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE} />
+                    <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE == 'PEQUENO' ? 'Pequeno' : select.TB_ANIMAL_PORTE == 'MEDIO' ? 'Médio' : 'Grande'} />
                 </View>
                 <View style={styles.Conjunto2}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TextoComum textoTitulo={select.TB_ANIMAL_PESO} textoDescricao='Kg' />
                     </View>
                     <View style={styles.Barras}>
-                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO} />
+                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'MACHO' ? 'Macho' : 'Fêmea'} />
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={select.TB_ANIMAL_IDADE_TIPO} />
+                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade} />
                     </View>
                 </View>
                 <View style={styles.Conjunto3}>
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
     },
     Conjunto4: {
         marginTop: 2,
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,

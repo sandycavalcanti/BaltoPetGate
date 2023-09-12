@@ -1,17 +1,20 @@
 import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 import CampoSimples from "../../components/cadastro/CampoSimples";
 import GroupBox from "../../components/cadastro/GroupBox";
 import Campo from "../../components/animal/Campo";
 import DropdownSimples from "../../components/animal/DropdownSimples";
-import RadioButton3 from "../../components/animal/Radiobutton3";
-import RadioButton2 from "../../components/animal/radioButton2";
+import RadioButton3 from "../../components/animal/RadioButton3";
+import RadioButton2 from "../../components/animal/RadioButton2";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import CampoEndereco from "../../components/cadastro/CampoEndereco";
 import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
-import { urlAPI } from "../../constants";
+import { urlAPI, urlLocal } from "../../constants";
+import DecodificarToken from "../../utils/DecodificarToken";
+
+let TB_PESSOA_IDD;
 
 const CadAnimal = ({ navigation: { navigate } }) => {
 
@@ -40,6 +43,16 @@ const CadAnimal = ({ navigation: { navigate } }) => {
         InserirDados();
     }
 
+
+    const PegarId = async () => {
+        const decodedToken = await DecodificarToken();
+        TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
+    }
+
+    useEffect(() => {
+        PegarId();
+    }, []);
+
     const TipoIdade = [
         { label: 'Ano(s)', value: 'ANO' },
         { label: 'Mes(es)', value: 'MES' }
@@ -54,20 +67,19 @@ const CadAnimal = ({ navigation: { navigate } }) => {
         { label: 'Gato', value: 'GATO' }
     ];
     const Sexo = [
-        { label: 'Femea', value: 'FEMEA' },
+        { label: 'Fêmea', value: 'FEMEA' },
         { label: 'Macho', value: 'MACHO' }
     ];
 
     const InserirDados = async () => {
         try {
             const response = await axios.post(urlAPI + 'cadanimal', {
-                TB_PESSOA_ID: 1,
+                TB_PESSOA_ID: TB_PESSOA_IDD,
                 TB_ANIMAL_NOME: nome,
                 TB_ANIMAL_IDADE: idade,
                 TB_ANIMAL_IDADE_TIPO: idadeTipo,
                 TB_ANIMAL_PORTE: porte,
                 TB_ANIMAL_PESO: peso,
-                TB_ANIMAL_COR: cor,
                 TB_ANIMAL_SEXO: sexo,
                 TB_ANIMAL_ESPECIE: especie,
                 TB_ANIMAL_SAUDE: saude,
@@ -91,20 +103,20 @@ const CadAnimal = ({ navigation: { navigate } }) => {
 
     return (
         <ScrollView>
-        <ContainerCadastro titulo='Cadastro animal'>
+            <ContainerCadastro titulo='Cadastro animal'>
                 <GroupBox titulo='Informações'>
-                    <CampoSimples placeholder="Nome do animal" set={text => setNome(text)} />
+                    <CampoSimples placeholder="Nome do animal" set={setNome} />
 
                     <View style={styles.containerCampos}>
-                        <Campo placeholder="Idade" keyboardType="numeric" set={text => setIdade(text)} />
-                        <DropdownSimples data={TipoIdade} set={setIdadeTipo} texto='Ano(s)' />
+                        <Campo placeholder="Idade" keyboardType="numeric" set={setIdade} />
+                        <DropdownSimples data={TipoIdade} set={setIdadeTipo} texto='Ano(s) ou Mes(es)' />
                     </View>
                     <View style={styles.ContainerDublo}>
                         <View style={styles.campo}>
                             <DropdownSimples data={Porte} texto='Porte' set={setPorte} />
                         </View>
                         <View style={styles.campo}>
-                            <Campo placeholder="Peso" keyboardType="numeric" set={text => setPeso(text)} />
+                            <Campo placeholder="Peso" keyboardType="numeric" set={setPeso} />
                             <Text style={styles.Texto}>Kg</Text>
                         </View>
                     </View>
@@ -115,12 +127,12 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 </GroupBox>
 
                 <GroupBox titulo='Descrição'>
-                    <CampoSimples placeholder="Cor(es)" set={text => setCor(text)} />
-                    <CampoSimples placeholder="Minha historia" set={text => setDescricao(text)} />
-                    <CampoSimples placeholder="Local do resgate" set={text => setLocalResgate(text)} />
-                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={text => setCuidadoEspecial(text)} />
+                    <CampoSimples placeholder="Cor(es)" set={setCor} />
+                    <CampoSimples placeholder="Minha historia" set={setDescricao} />
+                    <CampoSimples placeholder="Local do resgate" set={setLocalResgate} />
+                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={setCuidadoEspecial} />
                 </GroupBox>
-                <GroupBox titulo='Saude'>
+                <GroupBox titulo='Saúde'>
                     <RadioButton2 set={setSaude} />
                 </GroupBox>
                 <GroupBox titulo='Castrado'>
@@ -133,10 +145,9 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     <RadioButton3 set={setMicrochip} />
                 </GroupBox>
                 <GroupBox titulo='Localização'>
-                    <CampoEndereco texto="Localização (Opcional):"
-                        set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
+                    <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
-                <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta}/>
+                <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} />
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
             </ContainerCadastro>
         </ScrollView>
@@ -165,7 +176,7 @@ const styles = StyleSheet.create({
     },
     containerCampos: {
         width: '95%',
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         flexDirection: "row",
         backgroundColor: '#fff',
         borderRadius: 15,

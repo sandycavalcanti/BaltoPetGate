@@ -8,26 +8,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
+let scrollY = 0;
+let modoAlterar = true;
 
-const Perfil = ({ navigate, TB_PESSOA_IDD, setPerfilHeight }) => {
+const Perfil = (props) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [select, setSelect] = useState([]);
+  const [valorScroll, setValorScroll] = useState(0);
+  const navigate = props.navigate;
+  scrollY = props.scrollY;
 
   useEffect(() => {
-    if (TB_PESSOA_IDD) {
-      axios.post(urlAPI + 'selpessoa/filtrar', {
-        TB_PESSOA_ID: TB_PESSOA_IDD,
-      }).then((response) => {
-        setSelect(response.data[0]);
-      }).catch((error) => {
-        setSelect(error.response.data.message);
-      });
-    }
-  }, [TB_PESSOA_IDD]);
+    axios.post(urlAPI + 'selpessoa/filtrar', {
+      TB_PESSOA_ID: props.TB_PESSOA_IDD,
+    }).then((response) => {
+      setSelect(response.data[0]);
+    }).catch((error) => {
+      setSelect(error.response.data.message);
+    });
+  }, [props.TB_PESSOA_IDD]);
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;
-    setPerfilHeight(height);
+    props.setPerfilHeight(height);
   };
 
   const SairDaConta = async () => {
@@ -35,25 +38,42 @@ const Perfil = ({ navigate, TB_PESSOA_IDD, setPerfilHeight }) => {
     navigate('Login');
   }
 
+  useEffect(() => {
+    let timeoutId = null;
+
+    const listener = scrollY.addListener((value) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const valorScrollInteiro = Math.trunc(value.value);
+        setValorScroll(valorScrollInteiro);
+      }, 100);
+    });
+    return () => {
+      scrollY.removeListener(listener);
+    };
+  }, [scrollY]);
+
   const Dropdown = () => {
     return (
-      <Modal visible={dropdownVisible} transparent={true} animationType="none" onRequestClose={() => setDropdownVisible(false)}>
-        <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => setDropdownVisible(false)}>
-          <View style={[styles.dropdown, { top: 70, right: 25 }]}>
-            <TouchableOpacity style={styles.dropdownButton}>
-              <Text style={styles.textDropdownButton} onPress={() => navigate('CompletarCad')}>Alterar minhas informações</Text>
-            </TouchableOpacity>
-            <Divider width={1} color="black" />
-            <TouchableOpacity style={styles.dropdownButton}>
-              <Text style={styles.textDropdownButton}>Desativar conta</Text>
-            </TouchableOpacity>
-            <Divider width={1} color="black" />
-            <TouchableOpacity style={styles.dropdownButton} onPress={SairDaConta}>
-              <Text style={styles.textDropdownButton}>Sair da conta</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <View style={{ position: 'absolute' }}>
+        <Modal visible={dropdownVisible} transparent={true} animationType="none" onRequestClose={() => setDropdownVisible(false)} >
+          <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => setDropdownVisible(false)}>
+            <View style={[styles.dropdown, { top: 40 - valorScroll, right: 25 }]}>
+              <TouchableOpacity style={styles.dropdownButton}>
+                <Text style={styles.textDropdownButton} onPress={() => navigate('AlterarCad', { modoAlterar })}>Alterar minhas informações</Text>
+              </TouchableOpacity>
+              <Divider width={1} color="black" />
+              <TouchableOpacity style={styles.dropdownButton}>
+                <Text style={styles.textDropdownButton}>Desativar conta</Text>
+              </TouchableOpacity>
+              <Divider width={1} color="black" />
+              <TouchableOpacity style={styles.dropdownButton} onPress={SairDaConta}>
+                <Text style={styles.textDropdownButton}>Sair da conta</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
     )
   }
 
@@ -74,6 +94,8 @@ const Perfil = ({ navigate, TB_PESSOA_IDD, setPerfilHeight }) => {
         <View style={styles.profileContainer}>
           <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/200' }} />
           <Text style={styles.profileName}>{select.TB_PESSOA_NOME_PERFIL}</Text>
+
+          {/* <Text style={{ fontSize: 30 }}>Valor de scrollY: {scrollY}</Text> */}
         </View>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
@@ -170,8 +192,6 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: 'absolute',
-    top: 40,
-    right: 25,
     backgroundColor: 'white',
     borderColor: '#B18888',
     borderWidth: 1,

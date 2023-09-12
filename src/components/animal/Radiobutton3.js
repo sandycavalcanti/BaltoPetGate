@@ -1,32 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { corBotaoCad, corPlaceholderCad } from '../../constants';
 
 const RadioButton3 = (props) => {
+  const options = ['SIM', 'NAO', 'INDEFINIDO'];
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionPress = (option) => {
-    props.set(option)
+    props.set(option);
+    setSelectedOption(option);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === 'SIM' && styles.selectedOption]}
-        onPress={() => handleOptionPress('SIM')}>
-        <Text style={styles.optionText}>Sim</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === 'NAO' && styles.selectedOption]}
-        onPress={() => handleOptionPress('NAO')}
-      >
-        <Text style={styles.optionText}>Não</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === 'INDEFINIDO' && styles.selectedOption]}
-        onPress={() => handleOptionPress('INDEFINIDO')}
-      >
-        <Text style={styles.optionText}>Não sei informar</Text>
-      </TouchableOpacity>
+      {options.map((option) => (
+        <TouchableOpacity key={option}
+          style={[styles.optionButton, selectedOption === option && styles.selectedOption]}
+          onPress={() => handleOptionPress(option)}>
+          <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
+            {option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
@@ -46,10 +41,13 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
-    color:"#8EBF81"
+    color: corPlaceholderCad,
   },
   selectedOption: {
-    backgroundColor: 'lightblue',
+    backgroundColor: corBotaoCad,
+  },
+  selectedText: {
+    color: '#FFF',
   },
 });
 

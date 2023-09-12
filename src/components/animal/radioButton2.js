@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { corBotaoCad, corPlaceholderCad } from '../../constants';
 
 const RadioButton2 = (props) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionPress = (option) => {
     props.set(option)
+    setSelectedOption(option)
   };
-
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.optionButton, selectedOption === true && styles.selectedOption]}
         onPress={() => handleOptionPress(true)}>
-        <Text style={styles.optionText}>Saudavel</Text>
+        <Text style={[styles.optionText, selectedOption === true && styles.selectedText]}>Saudável</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.optionButton, selectedOption === false && styles.selectedOption]}
         onPress={() => handleOptionPress(false)}
       >
-        <Text style={styles.optionText}>Não Saudavel</Text>
+        <Text style={[styles.optionText, selectedOption === false && styles.selectedText]}>Não Saudável</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,11 +42,14 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
-    color:"#8EBF81"
+    color: corPlaceholderCad
   },
   selectedOption: {
-    backgroundColor: 'lightblue',
+    backgroundColor: corBotaoCad,
   },
+  selectedText: {
+    color: '#FFF'
+  }
 });
 
 export default RadioButton2;

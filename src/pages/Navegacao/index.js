@@ -22,7 +22,8 @@ import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import PerfilAbaScroll from '../PerfilAbaScroll';
-import CompletarCad from '../cadastro/CompletarCad';
+import AlterarCad from '../cadastro/AlterarCad';
+import QuestionarioAdocao from '../cadastro/QuestionarioAdocao';
 
 import Teste from '../Teste';
 
@@ -54,7 +55,8 @@ export default function Navigation() {
         <Stack.Screen name="HisChat" component={HisChat} />
         <Stack.Screen name="PerfilAbaScroll" component={PerfilAbaScroll} />
         <Stack.Screen name="Teste" component={Teste} />
-        <Stack.Screen name="CompletarCad" component={CompletarCad} />
+        <Stack.Screen name="AlterarCad" component={AlterarCad} />
+        <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
       </Stack.Navigator>
     </NavigationContainer>
   );
