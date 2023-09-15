@@ -40,7 +40,7 @@ const CampoTelefone = (props) => {
             <TextInput onChangeText={(text) => formatarTextoCampo(text, props.set2, setTexto2)} value={texto2} maxLength={16} placeholder={"Outro Telefone (Opcional)"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' placeholderTextColor={corPlaceholderCad} style={styles.campo} />
             <View>
                 <TextInput onChangeText={(text) => formatarTextoCampo(text, props.set3, setTexto3)} value={texto3} maxLength={16} placeholder={props.opcional ? "WhatsApp (Opcional)" : "WhatsApp"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo} keyboardType='numeric' />
-                {props.opcional ? <></> : <Text style={styles.asterisco}>*</Text>}
+                {!props.opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             {textoDica && <Text style={styles.dica}>Insira o DDD</Text>}
         </View>

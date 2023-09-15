@@ -1,51 +1,49 @@
-import { useState } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, FlatList } from 'react-native';
+import { useRef, useState } from 'react';
+import { Text, TouchableOpacity, Modal, StyleSheet, View, TextInput, FlatList, Animated, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Octicons, Feather, Ionicons } from '@expo/vector-icons';
+import { Octicons, Feather, Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { corFundoNavegacao } from '../../constants';
+import { Divider } from "react-native-elements";
 import Home from './Home';
 import Explorar from './Explorar';
 import Mapa from './Mapa';
 import Animal from './Animal';
 
-const OpcoesDropdown = ({ isOpen, navigate }) => {
-    if (!isOpen) return null;
-
-    // Lista de opções com ícones
-    const opcoes = [
-        { nome: 'Fazer uma postagem', icone: <Feather name='heart' size={24} color="black" />, navigation: 'Postagem' },
-        { nome: 'Cadastrar um animal', icone: <Feather name='check-circle' size={24} color="black" />, navigation: 'CadastroAnimal' },
-        { nome: 'Opção 2', icone: <Feather name='settings' size={24} color="black" />, navigation: 'Ficha' },
-    ];
-
-    return (
-        <View style={styles.dropdown}>
-            <FlatList
-                data={opcoes}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.opcao} onPress={() => navigate(item.navigation)}>
-                        {item.icone}
-                        <Text style={{ marginLeft: 5, }}>{item.nome}</Text>
-                    </TouchableOpacity>
-                )}
-            />
-        </View>
-    );
-};
-
 const Tab = createBottomTabNavigator();
 
 const Menu = ({ navigation: { navigate } }) => {
 
-    const HeaderExplorar = () => {
-        const [dropdownAberto, setDropdownAberto] = useState(false);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
 
-        const toggleDropdown = () => {
-            setDropdownAberto(!dropdownAberto);
-        };
+    const Dropdown = () => {
+        return (
+            <View style={{ position: 'absolute' }}>
+                <Modal visible={dropdownVisible} transparent={true} animationType="none" onRequestClose={() => setDropdownVisible(false)} >
+                    <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => setDropdownVisible(false)}>
+                        <View style={[styles.dropdown, { top: 45, right: 15 }]}>
+                            <TouchableOpacity style={styles.dropdownButton}>
+                                <Ionicons name="paw-outline" size={28} color="black" />
+                                <Text style={styles.textDropdownButton} onPress={() => navigate('CadastroAnimal')}>Cadastrar um animal</Text>
+                            </TouchableOpacity>
+                            <Divider width={1} color="black" />
+                            <TouchableOpacity style={styles.dropdownButton}>
+                                <AntDesign name="picture" size={28} color="black" />
+                                <Text style={styles.textDropdownButton} onPress={() => navigate('Postagem')}>Fazer uma postagem</Text>
+                            </TouchableOpacity>
+                            <Divider width={1} color="black" />
+                            <TouchableOpacity style={styles.dropdownButton}>
+                                <Feather name="map-pin" size={28} color="black" />
+                                <Text style={styles.textDropdownButton}>Cadastrar um ponto de alimentação</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+            </View>
+        )
+    }
+
+    const HeaderExplorar = () => {
 
         return (
             <View style={styles.headerEsquerda}>
@@ -56,10 +54,10 @@ const Menu = ({ navigation: { navigate } }) => {
                     <MaterialIcons style={styles.IconePesquisa} name="search" size={25} color="#097396" />
                     <TextInput placeholder='Pesquisar' style={styles.campo} />
                 </View>
-                <TouchableOpacity onPress={toggleDropdown} style={styles.Botao}>
+                <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={styles.Botao}>
                     <Octicons name="diff-added" size={30} color="white" />
                 </TouchableOpacity>
-                <OpcoesDropdown isOpen={dropdownAberto} navigate={navigate} />
+                <Dropdown />
             </View>
         )
     }
@@ -170,6 +168,31 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 10,
     },
+    dropdown: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        borderColor: '#B18888',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingTop: 10,
+        paddingBottom: 5,
+    },
+    dropdownButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        width: 225,
+        marginLeft: 10,
+    },
+    dropdownBackdrop: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textDropdownButton: {
+        marginLeft: 10,
+        fontSize: 15,
+    }
 });
 
 export default Menu

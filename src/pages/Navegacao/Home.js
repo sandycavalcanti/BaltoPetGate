@@ -8,21 +8,17 @@ let modoAlterar = false;
 
 function Home({ navigation: { navigate } }) {
 
-  const [select, setSelect] = useState();
+  const [select, setSelect] = useState([]);
 
-  const Selecionar = async () => {
-    try {
-      await axios.get(urlAPI + 'selpessoa')
-        .then((response) => {
-          setSelect(response.data);
-        }).catch((error) => {
-          let erro = error.response.data.message;
-          console.error('Erro ao selecionar:', erro);
-        })
-    } catch (error) {
-      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
-    }
-  };
+  const Selecionar = () => {
+    axios.get(urlAPI + 'selpessoa')
+      .then((response) => {
+        setSelect(response.data);
+      }).catch((error) => {
+        let erro = error.response.data.message;
+        console.error('Erro ao selecionar:', erro);
+      })
+  }
 
   return (
     <ScrollView style={{ flex: 1 }}>

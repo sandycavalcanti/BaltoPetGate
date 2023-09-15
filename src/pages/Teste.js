@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { View } from "react-native"
 
-const App = () => {
+const Teste = () => {
+  return (
+    <View>
 
-    return (
-        <ScrollView >
-            <View style={{ height: 1000, backgroundColor: '#f0f', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 30 }}>TESSTTE</Text>
-            </View>
-            {/* Adicione o conteúdo da sua página aqui */}
-        </ScrollView>
-    );
-};
+    </View>
+  )
+}
 
-export default App;
+export default Teste

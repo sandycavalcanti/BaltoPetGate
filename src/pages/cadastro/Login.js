@@ -6,6 +6,11 @@ import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, 
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
+import JWT from 'expo-jwt';
+import { chaveToken } from "../../constants";
+
+
 const Login = ({ navigation: { navigate } }) => {
     const navigation = useNavigation();
 
@@ -102,7 +107,16 @@ const Login = ({ navigation: { navigate } }) => {
                     </View>
                 </View>}
 
-            <TouchableOpacity onPress={() => navigate("Menu")}>
+            <TouchableOpacity onPress={async () => {
+                const TokenUsuario = await AsyncStorage.getItem('token');
+                if (TokenUsuario == null) {
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxNSwiVEJfVElQT19JREQiOjEsImlhdCI6MTY5NDcxMjMwMywiZXhwIjoxNjk5ODk2MzAzfQ.9fxNd1tW70-m3LXUVDD7nnb4IgH0cyoMgX78rhVtfaE');
+                    setTimeout(() => {
+                        navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
+                    }, 1500);
+                }
+                navigate("Menu")
+            }}>
                 <Text>PULAR</Text>
             </TouchableOpacity>
         </SafeAreaView>

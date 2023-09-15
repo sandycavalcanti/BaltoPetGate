@@ -135,7 +135,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
         :
         <>
           <GroupBox titulo="Informações pessoais">
-            {!modoAlterar && <Text style={styles.titulocampo}>Confirme seu nome completo e seu email:</Text>}
+            {!modoAlterar && <Text style={styles.titulocampo}>Confirme ou complete suas informações</Text>}
             <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} opcional={modoAlterar ? true : false} />
             <CampoSimples set={setEmail} placeholder="Email" val={email} opcional={modoAlterar ? true : false} />
             <CampoDtNasc set={setDtNasc} val={dtNasc} opcional={modoAlterar ? true : false} />
