@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
+import { ScrollView, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
@@ -7,6 +7,7 @@ import CampoTelefone from '../../components/cadastro/CampoTelefone';
 import CampoRede from '../../components/cadastro/CampoRede';
 import CampoEndereco from '../../components/cadastro/CampoEndereco';
 import GroupBox from '../../components/cadastro/GroupBox';
+import RadioButtonSimNao from '../../components/QuestAdocao/RadioButtonSimNao';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
 import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
@@ -58,10 +59,6 @@ const QuestionarioAdocao = () => {
         TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
     }
 
-    useEffect(() => {
-        PegarId();
-    }, []);
-
     const InserirDados = async () => {
         await axios.put(urlAPI + 'altpessoa/' + TB_PESSOA_IDD, {
 
@@ -78,7 +75,7 @@ const QuestionarioAdocao = () => {
     const [carregando, setCarregando] = useState(true);
 
     useEffect(() => {
-        PegarInfo()
+        PegarId()
             .then(() => {
                 setCarregando(false);
             })
@@ -92,17 +89,27 @@ const QuestionarioAdocao = () => {
             {carregando ? (
                 <ActivityIndicator size="large" color={corBordaBoxCad} />
             ) : (
-                <>
-                    <GroupBox titulo="Informações pessoais">
-                        <Text style={styles.titulocampo}>Confirme seu nome completo e seu email:</Text>
-                        <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} />
-                    </GroupBox>
-                    <GroupBox titulo="Informações de endereço">
-                        <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} />
-                    </GroupBox>
-                    {mensagem && <Text style={{ color: 'red' }}>{mensagem}</Text>}
-                    <BotaoCadastrar onPress={Alterar} texto="Continuar" />
-                </>)}
+            <>
+                <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
+                    <RadioButtonSimNao />
+                </GroupBox>
+                <GroupBox titulo='Moradia'>
+
+                </GroupBox>
+                <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?'>
+
+                </GroupBox>
+                <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?'>
+
+                </GroupBox>
+                <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?'>
+
+                </GroupBox>
+                <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
+
+                </GroupBox>
+            </>
+            )}
         </ContainerCadastro>
     )
 }
