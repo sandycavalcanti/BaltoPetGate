@@ -37,7 +37,7 @@ export default function App() {
       base64: true,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       SetPic(result.base64);
     }
   };
@@ -62,10 +62,10 @@ export default function App() {
           Upload Image
         </Button>
 
-        <Button 
-        mode="contained" 
-        style={{marginLeft: 20}}
-        onPress={() => removeImage()}>
+        <Button
+          mode="contained"
+          style={{ marginLeft: 20 }}
+          onPress={() => removeImage()}>
           Remove Image
         </Button>
       </View>

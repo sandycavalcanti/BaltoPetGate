@@ -28,6 +28,7 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={() => navigate('HisChat')} style={{ marginVertical: 5 }}><Text>Ir para chats</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('Teste')} style={{ marginVertical: 5 }}><Text>Ir para teste</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('AlterarCad', { modoAlterar })} style={{ marginVertical: 5 }}><Text>Completar Cadastro</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('uploadimg')} style={{ marginVertical: 5 }}><Text>UploadImg</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
             <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>

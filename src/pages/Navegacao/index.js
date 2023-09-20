@@ -25,6 +25,7 @@ import PerfilAbaScroll from '../PerfilAbaScroll';
 import AlterarCad from '../cadastro/AlterarCad';
 import QuestionarioAdocao from '../cadastro/QuestionarioAdocao';
 
+import uploadimg from '../uploadimg';
 import Teste from '../Teste';
 
 const Stack = createNativeStackNavigator();
@@ -57,6 +58,7 @@ export default function Navigation() {
         <Stack.Screen name="Teste" component={Teste} />
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
+        <Stack.Screen name="uploadimg" component={uploadimg} />
       </Stack.Navigator>
     </NavigationContainer>
   );
