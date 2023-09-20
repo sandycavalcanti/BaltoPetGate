@@ -3,11 +3,8 @@ import { ScrollView, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid
 import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
-import CampoTelefone from '../../components/cadastro/CampoTelefone';
-import CampoRede from '../../components/cadastro/CampoRede';
-import CampoEndereco from '../../components/cadastro/CampoEndereco';
 import GroupBox from '../../components/cadastro/GroupBox';
-import RadioButtonSimNao from '../../components/QuestAdocao/RadioButtonSimNao';
+import RadioButton from '../../components/QuestAdocao/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
 import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
@@ -84,31 +81,37 @@ const QuestionarioAdocao = () => {
             });
     }, []);
 
+    const SimNao = ['SIM', 'NAO'];
+    const Moradia = ['CASA', 'APARTAMENTO'];
+    const Tamanho = ['POUCO', 'MEDIO', 'MUITO'];
+
     return (
         <ContainerCadastro titulo="Responda a esse questionário">
             {carregando ? (
                 <ActivityIndicator size="large" color={corBordaBoxCad} />
             ) : (
-            <>
-                <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
-                    <RadioButtonSimNao />
-                </GroupBox>
-                <GroupBox titulo='Moradia'>
+                <>
+                    <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
+                        <RadioButton opcoes={SimNao} />
+                    </GroupBox>
+                    <GroupBox titulo='Moradia'>
+                        <RadioButton opcoes={Moradia} />
+                    </GroupBox>
+                    <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?' >
 
-                </GroupBox>
-                <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?'>
+                    </GroupBox>
+                    <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?' >
+                        <RadioButton opcoes={Tamanho} />
+                    </GroupBox>
+                    <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?' >
+                        <CampoSimples />
+                    </GroupBox>
+                    <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
+                        <RadioButton opcoes={SimNao} />
+                    </GroupBox>
 
-                </GroupBox>
-                <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?'>
-
-                </GroupBox>
-                <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?'>
-
-                </GroupBox>
-                <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
-
-                </GroupBox>
-            </>
+                    <BotaoCadastrar />
+                </>
             )}
         </ContainerCadastro>
     )

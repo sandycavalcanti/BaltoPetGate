@@ -3,11 +3,12 @@ import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, ActivityInd
 import { TabView, TabBar } from 'react-native-tab-view';
 import Perfil from './Perfil';
 import axios from 'axios';
-import { corBordaBoxCad, urlAPI } from '../constants';
+import { corBordaBoxCad, corFundo, corFundoCad, urlAPI } from '../constants';
 import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import DecodificarToken from '../utils/DecodificarToken';
 import AnimalPost from '../components/perfil/AnimalPost';
+import { useRoute } from '@react-navigation/native';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -16,9 +17,11 @@ const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeigh
 const tab1ItemSize = (windowWidth - 30);
 const tab2ItemSize = (windowWidth - 40) / 3;
 let HeaderHeight
-let TB_PESSOA_IDD;
 
 const PerfilAbaScroll = ({ navigation: { navigate } }) => {
+  const route = useRoute();
+  const { id } = route.params;
+
   // stats
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
@@ -43,10 +46,8 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   const [selectPostagem, setSelectPostagem] = useState([]);
 
   const Selecionar = async () => {
-    const decodedToken = await DecodificarToken();
-    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
     axios.post(urlAPI + 'selanimal/filtrar', {
-      TB_PESSOA_ID: TB_PESSOA_IDD
+      TB_PESSOA_ID: id
     }).then((response) => {
       setSelectAnimal(response.data);
     }).catch((error) => {
@@ -55,7 +56,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       console.error('Erro ao selecionar:', erro);
     })
     axios.post(urlAPI + 'selpostagem/filtrar', {
-      TB_PESSOA_ID: TB_PESSOA_IDD
+      TB_PESSOA_ID: id
     }).then((response) => {
       setSelectPostagem(response.data);
     }).catch((error) => {
@@ -64,6 +65,10 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       console.error('Erro ao selecionar:', erro);
     })
   };
+
+  useEffect(() => {
+    Selecionar()
+  }, []);
 
   // PanResponder for header
   const headerPanResponder = useRef(
@@ -204,7 +209,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
       <Animated.View
         {...headerPanResponder.panHandlers}
         style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <Perfil navigate={navigate} TB_PESSOA_IDD={TB_PESSOA_IDD} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <Perfil navigate={navigate} TB_PESSOA_IDD={id} setPerfilHeight={setPerfilHeight} scrollY={scrollY} setCarregando={setCarregando} />
       </Animated.View>
     );
   };
@@ -309,27 +314,14 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
     );
   };
 
-  useEffect(() => {
-    Selecionar()
-      .then(() => {
-        console.log('pronto')
-        setCarregando(false);
-      })
-      .catch(error => {
-        ToastAndroid.show('Houve um erro ao carregar. Tente novamente.', ToastAndroid.SHORT);
-      });
-  }, []);
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        {carregando ?
+        <View style={[styles.carregandoView, { display: carregando ? 'flex' : 'none' }]}>
           <ActivityIndicator size="large" color={corBordaBoxCad} />
-          : <>
-            {renderTabView()}
-            {renderHeader()}
-          </>
-        }
+        </View>
+        {renderTabView()}
+        {renderHeader()}
       </View>
     </SafeAreaView>
   );
@@ -360,6 +352,15 @@ const styles = StyleSheet.create({
   indicator: {
     backgroundColor: '#222'
   },
+  carregandoView: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: corFundo,
+    zIndex: 10,
+  }
 });
 
 export default PerfilAbaScroll;

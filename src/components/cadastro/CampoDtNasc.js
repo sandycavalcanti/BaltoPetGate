@@ -14,6 +14,7 @@ const CampoDtNasc = (props) => {
             formatarDataCampo(novaData)
         }
     }, [])
+    
     const formatarDataCampo = (text) => {
         const dataFormatadaCampo = text.replace(/\D/g, '');
         props.set(1);
@@ -53,7 +54,7 @@ const CampoDtNasc = (props) => {
             <TextInput onChangeText={(text) => formatarDataCampo(text)} value={data} keyboardType="numeric"
                 placeholder="Data de nascimento" maxLength={10} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)}
                 placeholderTextColor={corPlaceholderCad} style={styles.campo} {...props} />
-            {props.opcional ? <Text style={styles.asterisco}></Text> : <Text style={styles.asterisco}>*</Text>}
+            {!props.opcional && <Text style={styles.asterisco}>*</Text>}
             {textoDica && <Text style={styles.dica}>Insira a data no formato DD/MM/YYYY</Text>}
         </View>
     )
