@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-const QuantidadePasseios = () => {
+const BotaoQuantidade = () => {
   const [quantidade, setQuantidade] = useState(0);
 
   const aumentarQuantidade = () => {
@@ -27,4 +27,4 @@ const QuantidadePasseios = () => {
   );
 };
 
-export default QuantidadePasseios;
+export default BotaoQuantidade;
