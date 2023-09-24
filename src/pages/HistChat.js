@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import axios from 'axios';
-import Contato from '../components/histChat/Contato';
+import Contato from '../components/HistChat/Contato';
 import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
 

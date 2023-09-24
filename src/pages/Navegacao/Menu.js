@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, Modal, StyleSheet, View, TextInput, FlatList, Animated, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,10 +9,20 @@ import Home from './Home';
 import Explorar from './Explorar';
 import Mapa from './Mapa';
 import Animal from './Animal';
+import DecodificarToken from '../../utils/DecodificarToken';
 
 const Tab = createBottomTabNavigator();
+let id;
 
 const Menu = ({ navigation: { navigate } }) => {
+
+    useEffect(() => {
+        const PegarId = async () => {
+            const decodedToken = await DecodificarToken();
+            id = decodedToken.TB_PESSOA_IDD;
+        }
+        PegarId()
+    }, []);
 
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -47,7 +57,7 @@ const Menu = ({ navigation: { navigate } }) => {
 
         return (
             <View style={styles.headerEsquerda}>
-                <TouchableOpacity style={styles.Botao} onPress={() => navigate('PerfilAbaScroll')}>
+                <TouchableOpacity style={styles.Botao} onPress={() => navigate('PerfilAbaScroll', { id })}>
                     <Octicons name="person" size={35} color="white" />
                 </TouchableOpacity>
                 <View style={styles.barraPesquisa}>
