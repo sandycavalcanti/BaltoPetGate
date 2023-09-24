@@ -1,9 +1,10 @@
-import { Text, TouchableOpacity, StyleSheet, View ,Alert} from 'react-native'
-import ContainerCadastro from '../../components/components_cadastro/ContainerCadastro';
-import CampoSimples from '../../components/components_cadastro/CampoSimples';
-import BotaoCadastrar from '../../components/components_cadastro/BotaoCadastrar';
+import { Text, TouchableOpacity, StyleSheet, View, Alert } from 'react-native'
+import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
+import CampoSimples from '../../components/cadastro/CampoSimples';
+import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
 import { useState } from 'react';
 import axios from 'axios';
+import { urlAPI } from '../../constants';
 
 const RecSenha = ({ navigation: { navigate } }) => {
 
@@ -13,7 +14,7 @@ const RecSenha = ({ navigation: { navigate } }) => {
 
   const generateCode = async () => {
     try {
-      const response = await axios.post('http://172.18.101.5:3001/generate-code', { email });
+      const response = await axios.post(urlAPI + 'send-code', { email });
       Alert.alert('Sucesso', 'Código gerado e enviado por email.');
     } catch (error) {
       Alert.alert('Erro', 'Ocorreu um erro ao gerar o código.');
@@ -23,7 +24,7 @@ const RecSenha = ({ navigation: { navigate } }) => {
 
   const resetPassword = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/reset-password', { email, code, newPassword });
+      const response = await axios.post(urlAPI + 'change-password', { email, code, newPassword });
       Alert.alert('Sucesso', 'Senha alterada com sucesso.');
     } catch (error) {
       Alert.alert('Erro', 'Ocorreu um erro ao alterar a senha.');
