@@ -60,12 +60,13 @@ const RadioButton = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
+    display: 'flex',
   },
   optionButton: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     paddingVertical: 10,
     borderRadius: 15,
     margin: 5,

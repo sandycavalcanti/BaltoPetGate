@@ -21,12 +21,12 @@ const BotaoQuantidade = (props) => {
 
   return (
     <View style={styles.Container}>
+    <TouchableOpacity style={styles.Menos} onPress={diminuirQuantidade}>
+      <Text style={styles.Texto}>-</Text>
+    </TouchableOpacity>
+      <Text style={styles.Texto}>{quantidade}</Text>
       <TouchableOpacity style={styles.Mais} onPress={aumentarQuantidade}>
         <Text style={styles.Texto}>+</Text>
-      </TouchableOpacity>
-      <Text style={styles.Texto}>{quantidade}</Text>
-      <TouchableOpacity style={styles.Menos} onPress={diminuirQuantidade}>
-        <Text style={styles.Texto}>-</Text>
       </TouchableOpacity>
     </View>
   );
@@ -36,11 +36,12 @@ const styles = StyleSheet.create({
     justifyContent:'space-evenly',
     display: 'flex',
     flexDirection: 'row',
-    width: '90%',
+    width: '80%',
     borderColor: corBordaBoxCad,
     borderWidth: 1,
     borderRadius: 15,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     backgroundColor: '#fff'
   },
   Mais: {
