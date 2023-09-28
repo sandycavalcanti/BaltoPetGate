@@ -1,11 +1,13 @@
+import AnimalPost from '../../components/perfil/AnimalPost';
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { corFundoCad } from "../../constants";
 
 const Animal = ({ navigation: { navigate } }) => {
-
     return (
         <View style={styles.container}>
-            <Text>Animal</Text>
+           
+            {/* Renderize AnimalPost aqui */}
+            <AnimalPost navigate={navigate} />
         </View>
     );
 }
@@ -16,7 +18,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '100%',
+        height: '80%',
     },
 });
 
