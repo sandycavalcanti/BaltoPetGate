@@ -1,73 +1,51 @@
-import { useState } from 'react';
-import { View, Button, Image, StyleSheet } from 'react-native';
-import ImagePicker from 'react-native-image-picker';
+import React, { useState, useEffect } from 'react';
+import { Button, Image, View, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { urlLocal } from '../constants';
 
-const App = () => {
-  const [imageUri, setImageUri] = useState(null);
+export default function App() {
+  const [image, setImage] = useState(null);
 
-  // Função para abrir o seletor de imagem
-  const selectImage = () => {
-    const options = {
-      title: 'Selecionar imagem',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-
-    ImagePicker.showImagePicker(options, (response) => {
-      if (response.didCancel) {
-        console.log('Seleção de imagem cancelada');
-      } else if (response.error) { 
-        console.log('Erro ao selecionar imagem:', response.error);
-      } else {
-        // Obtém o URI da imagem selecionada
-        const uri = response.uri;
-        setImageUri(uri);
-
-        // Envia a imagem para a rota de upload
-        enviarImagem(uri);
-      }
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
-  };
 
-  // Função para enviar a imagem para a rota de upload
-  const enviarImagem = async (imageUri) => {
-    try {
-      const formData = new FormData();
-      formData.append('image', {
-        uri: imageUri,
-        type: 'image/jpeg', // ou o tipo de arquivo correto
-        name: 'imagem.jpg',
-      });
+    console.log(result);
 
-      const response = await axios.put('http://seuservidor/upload', formData);
-      console.log('Resposta do servidor:', response.data);
-    } catch (error) {
-      console.error('Erro ao enviar imagem:', error);
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
   };
 
+  const Enviar = async () => {
+    const formData = new global.FormData();
+    formData.append(
+      "image", { name: "image.jpeg", type: "image/jpg", uri: image }
+    )
+    console.log(formData)
+    return fetch(urlLocal + 'upload', {
+      method: "PUT",
+      // Needs this header
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData
+    }).then(response => {
+      // console.log(response)
+    })
+  }
+
   return (
-    <View style={styles.container}>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-      <Button title="Selecionar imagem" onPress={selectImage} />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button title="Pick an image from camera roll" onPress={pickImage} />
+      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      <Button title="Enviar" onPress={Enviar} />
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginVertical: 20,
-  },
-});
-
-export default App;
+}
