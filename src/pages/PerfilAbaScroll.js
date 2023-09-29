@@ -18,14 +18,14 @@ let HeaderHeight
 
 const PerfilAbaScroll = ({ navigation: { navigate } }) => {
   const route = useRoute();
-  const { id } = route.params;
+  const { id } = 1;
 
   // stats
   const [tabIndex, setIndex] = useState(0);
-  const [routes] = useState([
+  const routes = [
     { key: 'tab1', title: 'Animais' },
     { key: 'tab2', title: 'Postagens' },
-  ]);
+  ];
   const [canScroll, setCanScroll] = useState(true);
 
   // ref

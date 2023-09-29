@@ -23,7 +23,7 @@ import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import PerfilAbaScroll from '../PerfilAbaScroll';
 import AlterarCad from '../cadastro/AlterarCad';
-import QuestionarioAdocao from '../cadastro/QuestionarioAdocao';
+import QuestionarioAdocao from '../cadastro/QuestAdocao';
 
 import Teste from '../Teste';
 
