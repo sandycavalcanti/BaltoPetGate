@@ -105,7 +105,7 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={async () => {
                 const TokenUsuario = await AsyncStorage.getItem('token');
                 if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxNSwiVEJfVElQT19JREQiOjEsImlhdCI6MTY5NDcxMjMwMywiZXhwIjoxNjk5ODk2MzAzfQ.9fxNd1tW70-m3LXUVDD7nnb4IgH0cyoMgX78rhVtfaE');
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk1OTcxMDQzLCJleHAiOjE3MDExNTUwNDN9.JxRRf2QN8zoZNe3qlGodeS0nN0j5n_Gqm35nd59zJ1A');
                     setTimeout(() => {
                         navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
                     }, 1500);

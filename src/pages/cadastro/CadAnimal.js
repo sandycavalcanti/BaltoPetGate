@@ -13,6 +13,7 @@ import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
+import { MultiSelect } from 'react-native-element-dropdown';
 
 let TB_PESSOA_IDD;
 
@@ -39,6 +40,15 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const [rua, setRua] = useState('');
     const [alerta, setAlerta] = useState(false);
 
+    const [situacoesBanco, setSituacoesBanco] = useState([]);
+    const [traumasBanco, setTraumasBanco] = useState([]);
+    const [temperamentosBanco, setTemperamentosBanco] = useState([]);
+
+
+    const [situacoes, setSituacoes] = useState([]);
+    const [traumas, setTraumas] = useState([]);
+    const [temperamentos, setTemperamentos] = useState([]);
+
     const Cadastrar = () => {
         InserirDados();
     }
@@ -48,8 +58,45 @@ const CadAnimal = ({ navigation: { navigate } }) => {
         TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
     }
 
+    const ListarOpcoes = async () => {
+        axios.get(urlAPI + 'selsituacao')
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(item => ({
+                    label: item.TB_SITUACAO_DESCRICAO,
+                    value: item.TB_SITUACAO_ID,
+                }));
+                setSituacoesBanco(options)
+            }).catch(error => {
+                console.error(error)
+            });
+        axios.get(urlAPI + 'seltrauma')
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(item => ({
+                    label: item.TB_TRAUMA_DESCRICAO,
+                    value: item.TB_TRAUMA_ID,
+                }));
+                setTraumasBanco(options)
+            }).catch(error => {
+                console.error(error)
+            });
+        axios.get(urlAPI + 'seltemperamento')
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(item => ({
+                    label: item.TB_TEMPERAMENTO_TIPO,
+                    value: item.TB_TEMPERAMENTO_ID,
+                }));
+                setTemperamentosBanco(options)
+            }).catch(error => {
+                console.error(error)
+            });
+    }
+
     useEffect(() => {
         PegarId();
+        ListarOpcoes();
     }, []);
 
     const TipoIdade = [
@@ -143,6 +190,57 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 <GroupBox titulo='Microchipado'>
                     <RadioButton3 set={setMicrochip} />
                 </GroupBox>
+                <GroupBox titulo='Temperamentos'>
+                    <MultiSelect
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        iconStyle={styles.iconStyle}
+                        data={temperamentosBanco}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Selecione os temperamentos"
+                        value={temperamentos}
+                        onChange={item => {
+                            setTemperamentos(item);
+                        }}
+                        selectedStyle={styles.selectedStyle}
+                    />
+                </GroupBox>
+                <GroupBox titulo='Situações'>
+                    <MultiSelect
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        iconStyle={styles.iconStyle}
+                        data={situacoesBanco}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Selecione os temperamentos"
+                        value={situacoes}
+                        onChange={item => {
+                            setSituacoes(item);
+                        }}
+                        selectedStyle={styles.selectedStyle}
+                    />
+                </GroupBox>
+                <GroupBox titulo='Traumas (Opcional)'>
+                    <MultiSelect
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        iconStyle={styles.iconStyle}
+                        data={traumasBanco}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Selecione os temperamentos"
+                        value={traumas}
+                        onChange={item => {
+                            setTraumas(item);
+                        }}
+                        selectedStyle={styles.selectedStyle}
+                    />
+                </GroupBox>
                 <GroupBox titulo='Localização'>
                     <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
@@ -191,6 +289,29 @@ const styles = StyleSheet.create({
         color: '#447837',
         left: 20,
         fontSize: 18
+    },
+    dropdown: {
+        height: 40,
+        backgroundColor: '#fff',
+        borderBottomColor: 'gray',
+        borderBottomWidth: 0.5,
+        width: '95%',
+        borderRadius: 25,
+        paddingLeft: 10,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 14,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    selectedStyle: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
     },
 });
 
