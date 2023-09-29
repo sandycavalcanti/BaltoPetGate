@@ -216,15 +216,18 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
 
   const renderTab1Item = ({ item, index }) => {
     return (
-      <AnimalPost texto={item.TB_ANIMAL_NOME} id={item.TB_ANIMAL_ID} navigate={navigate} data={item.createdAt} />
+      <>
+        <AnimalPost texto={item.TB_ANIMAL_NOME} id={item.TB_ANIMAL_ID} navigate={navigate} data={item.createdAt} />
+      </>
     );
   };
 
   const renderTab2Item = ({ item, index }) => {
+    console.log(item)
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        <Perfil_post />
-        <Post textoPost={item.TB_POSTAGEM_TEXTO} />
+        {/* <Perfil_post /> */}
+        <Post data={item} />
       </View>
     );
   };

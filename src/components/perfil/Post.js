@@ -5,33 +5,33 @@ const Post = (props) => {
     return (
         <View>
             <View style={styles.profileContainer}>
-              <View
-                style={{
-                  backgroundColor: "#B2EDC5",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingLeft: 80,
-                  height: 70, // Aumenta a altura do contêiner
-                  width: '100%',
-                }}
-              >
-                 <View style={styles.ContainerTexto}>
-                    <Text style={styles.TextoPerfil}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
-                </View>
+                <View
+                    style={{
+                        backgroundColor: "#B2EDC5",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingLeft: 80,
+                        height: 70, // Aumenta a altura do contêiner
+                        width: '100%',
+                    }}
+                >
+                    <View style={styles.ContainerTexto}>
+                        <Text style={styles.TextoPerfil}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
+                    </View>
 
-              </View>
-              <Image
-                style={styles.profileImage}
-                resizeMode="cover"
-                source={require("../../../assets/img/teste.jpg")} // Substitua por sua imagem de perfil
-              />
+                </View>
+                <Image
+                    style={styles.profileImage}
+                    resizeMode="cover"
+                    source={{ uri: 'https://via.placeholder.com/100' }} // Substitua por sua imagem de perfil
+                />
             </View>
             <View style={styles.Container}>
                 <View style={styles.ContainerImagem}>
-                    <Image style={styles.Imagem} resizeMode='cover' source={require('../../../assets/img/teste.jpg')} />
+                    <Image style={styles.Imagem} resizeMode='cover' source={{ uri: 'https://via.placeholder.com/500' }} />
                 </View>
                 <View style={styles.ContainerTexto}>
-                    <Text style={styles.Texto}>{props.data.TB_POSTAGEM_STATUS}</Text>
+                    <Text style={styles.Texto}>{props.data.TB_POSTAGEM_TEXTO}</Text>
                 </View>
             </View>
             <View style={styles.ContainerData}>
@@ -43,18 +43,18 @@ const Post = (props) => {
 
 const styles = StyleSheet.create({
     profileContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 10, // Adiciona espaço entre a imagem do perfil e a postagem
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10, // Adiciona espaço entre a imagem do perfil e a postagem
     },
     profileImage: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      marginRight: 10,
-      position: 'absolute',
-      left: 10,
-      zIndex: 1, // Traz a imagem para frente
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 10,
+        position: 'absolute',
+        left: 10,
+        zIndex: 1, // Traz a imagem para frente
     },
     ContainerTexto: {
         padding: 20
@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
     Data: {
         color: '#216357'
     },
-    Imagem:{
-        width:'100%',
-        height:'auto',
-        aspectRatio:1
+    Imagem: {
+        width: '100%',
+        height: 'auto',
+        aspectRatio: 1
     }
 });
 

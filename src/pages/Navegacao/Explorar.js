@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
 import axios from 'axios';
-import { corFundoCad, urlAPI } from "../../constants";
+import { corFundoCad, urlAPI, urlLocal } from "../../constants";
 import Post from '../../components/perfil/Post'; // Certifique-se de que este caminho está correto
 
-export default function Explorar(){
+export default function Explorar() {
 
   const handlePostPress = (post) => {
     console.log('Post pressionado:', post);
@@ -14,11 +14,11 @@ export default function Explorar(){
 
   const Selecionar = () => {
     axios.get(urlAPI + 'selpostagem')
-    .then((response) => {
-      setSelect(response.data)
-    }).catch((error) => {
-      console.error('Error:', error)
-    })
+      .then((response) => {
+        setSelect(response.data)
+      }).catch((error) => {
+        console.error('Error:', error)
+      })
   }
 
   useEffect(() => {
