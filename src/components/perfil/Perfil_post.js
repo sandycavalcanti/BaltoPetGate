@@ -19,7 +19,7 @@ const DropdownButton = ({ options }) => {
         onPress={() => setIsOpen(!isOpen)}
       >
 
-        <Feather name="more-vertical" size={30} color="#B66F6F" />
+        <Feather name="more-vertical" size={30} color="#B66F6F"/>
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.dropdownOptions}>

@@ -1,8 +1,9 @@
 import AnimalPost from '../../components/perfil/AnimalPost';
-import { TouchableOpacity, Text, View, StyleSheet, FlatList } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { corFundoCad, urlAPI } from '../../constants';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Perfil_post from '../../components/perfil/Perfil_post';
 
 const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
@@ -22,13 +23,18 @@ const Animal = ({ navigation: { navigate } }) => {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={select}
-                renderItem={({ item }) => (
-                    <AnimalPost navigate={navigate} data={item} /> 
-                )}
-                keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
-            />
+            <ScrollView>
+                <FlatList
+                    data={select}
+                    renderItem={({ item }) => (
+                        <>
+                            <Perfil_post/>
+                            <AnimalPost navigate={navigate} data={item} /> 
+                        </>
+                    )}
+                    keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+                />
+            </ScrollView>
         </View>
     );
 }

@@ -4,27 +4,6 @@ import { shadow } from 'react-native-paper';
 const Post = (props) => {
     return (
         <View style={styles.profileContainer}>
-           {/*   <View style={styles.profileContainer}>
-               <View style={{
-                        backgroundColor: "#B2EDC5",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingLeft: 80,
-                        height: 70, // Aumenta a altura do contêiner
-                        width: '100%',
-                    }}
-                >
-                    <View style={styles.ContainerTexto}>
-                        <Text style={styles.TextoPerfil}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
-                    </View>
-
-                </View> 
-                <Image
-                    style={styles.profileImage}
-                    resizeMode="cover"
-                    source={{ uri: 'https://via.placeholder.com/100' }} // Substitua por sua imagem de perfil
-                />
-            </View>*/}
             <View style={styles.Container}>
                 <View style={styles.ContainerImagem}>
                     <Image style={styles.Imagem} resizeMode='cover' source={{ uri: 'https://via.placeholder.com/500' }} />
@@ -44,7 +23,7 @@ const styles = StyleSheet.create({
     profileContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10, // Adiciona espaço entre a imagem do perfil e a postagem
+        backgroundColor: '#CEF7FF'
     },
     profileImage: {
         width: 50,
