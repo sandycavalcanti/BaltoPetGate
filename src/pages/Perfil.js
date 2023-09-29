@@ -100,10 +100,10 @@ const Perfil = (props) => {
           <Dropdown />
         </View>
         <View style={styles.profileContainer}>
-          <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/200' }} />
+          <>
+            <Image style={styles.profileImage} source={{ uri: urlAPI + 'selpessoaimg/' + props.TB_PESSOA_IDD }} />
+          </>
           <Text style={styles.profileName}>{select.TB_PESSOA_NOME_PERFIL}</Text>
-
-          {/* <Text style={{ fontSize: 30 }}>Valor de scrollY: {scrollY}</Text> */}
         </View>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
@@ -150,17 +150,22 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   profileContainer: {
     width: 250,
     alignItems: 'center',
+    shadowColor: '#171717',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 3,
   },
   profileImage: {
     width: 200,
     height: 200,
     borderRadius: 100,
     marginBottom: 10,
+
   },
   profileName: {
     fontSize: 20,

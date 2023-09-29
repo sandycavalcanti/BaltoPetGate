@@ -14,8 +14,6 @@ const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
-const tab1ItemSize = (windowWidth - 30);
-const tab2ItemSize = (windowWidth - 40) / 3;
 let HeaderHeight
 
 const PerfilAbaScroll = ({ navigation: { navigate } }) => {
@@ -216,15 +214,17 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
 
   const renderTab1Item = ({ item, index }) => {
     return (
-      <AnimalPost texto={item.TB_ANIMAL_NOME} id={item.TB_ANIMAL_ID} navigate={navigate} data={item.createdAt} />
+      <>
+        <AnimalPost navigate={navigate} data={item} />
+      </>
     );
   };
 
   const renderTab2Item = ({ item, index }) => {
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        <Perfil_post />
-        <Post textoPost={item.TB_POSTAGEM_TEXTO} />
+        {/* <Perfil_post /> */}
+        <Post data={item} />
       </View>
     );
   };
@@ -280,9 +280,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
         onMomentumScrollBegin={() => isListGliding.current = true}
         onScrollEndDrag={() => syncScrollOffset()}
         onMomentumScrollEnd={() => { isListGliding.current = false; syncScrollOffset() }}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-        ListHeaderComponent={() => <View style={{ height: 10 }} />}
-        contentContainerStyle={{ paddingTop: HeaderHeight + TabBarHeight, paddingHorizontal: 10, minHeight: windowHeight - SafeStatusBar + HeaderHeight }}
+        contentContainerStyle={{ paddingTop: HeaderHeight + TabBarHeight, minHeight: windowHeight - SafeStatusBar + HeaderHeight }}
         showsHorizontalScrollIndicator={false}
         data={data}
         renderItem={renderItem}
@@ -330,6 +328,7 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: corFundo
   },
   header: {
     height: HeaderHeight,
