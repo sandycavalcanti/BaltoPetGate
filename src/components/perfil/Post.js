@@ -1,40 +1,50 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { shadow } from 'react-native-paper';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { format } from "date-fns";
+import { corBordaBoxCad, urlAPI } from '../../constants';
+import { useEffect, useState } from 'react';
+
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 
 const Post = (props) => {
+    const dataOriginal = props.data.createdAt;
+    let dataFormatada = "";
+
+    if (dataOriginal && !isNaN(new Date(dataOriginal))) {
+        dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
+    }
+
+    const [imageExists, setImageExists] = useState(true);
+    const urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
+
+    useEffect(() => {
+        const checkImageExists = async () => {
+            try {
+                const response = await fetch(urlImg);
+                if (!response.ok) {
+                    setImageExists(false);
+                }
+            } catch (error) {
+                setImageExists(false);
+            }
+        };
+
+        checkImageExists();
+    }, [urlImg]);
+
     return (
         <View style={styles.profileContainer}>
-           {/*   <View style={styles.profileContainer}>
-               <View style={{
-                        backgroundColor: "#B2EDC5",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingLeft: 80,
-                        height: 70, // Aumenta a altura do contêiner
-                        width: '100%',
-                    }}
-                >
-                    <View style={styles.ContainerTexto}>
-                        <Text style={styles.TextoPerfil}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
-                    </View>
-
-                </View> 
-                <Image
-                    style={styles.profileImage}
-                    resizeMode="cover"
-                    source={{ uri: 'https://via.placeholder.com/100' }} // Substitua por sua imagem de perfil
-                />
-            </View>*/}
             <View style={styles.Container}>
-                <View style={styles.ContainerImagem}>
-                    <Image style={styles.Imagem} resizeMode='cover' source={{ uri: 'https://via.placeholder.com/500' }} />
-                </View>
+                {imageExists &&
+                    <View style={styles.ContainerImagem}>
+                        <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
+                    </View>}
                 <View style={styles.ContainerTexto}>
-                    <Text style={styles.Texto}>{props.data.TB_POSTAGEM_TEXTO}</Text>
+                    <Text style={[styles.Texto, { textAlign: imageExists ? 'left' : 'center' }]}>{props.data.TB_POSTAGEM_TEXTO}</Text>
                 </View>
-            </View>
-            <View style={styles.ContainerData}>
-                <Text style={styles.Data}>12/09</Text>
+                <View style={styles.ContainerData}>
+                    <Text style={styles.Data}>{dataFormatada}</Text>
+                </View>
             </View>
         </View>
     )
@@ -44,7 +54,7 @@ const styles = StyleSheet.create({
     profileContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10, // Adiciona espaço entre a imagem do perfil e a postagem
+        marginBottom: 10,
     },
     profileImage: {
         width: 50,
@@ -56,7 +66,9 @@ const styles = StyleSheet.create({
         zIndex: 1, // Traz a imagem para frente
     },
     ContainerTexto: {
-        padding: 20
+        width: windowWidth,
+        padding: 20,
+        marginBottom: 5,
     },
     TextoPerfil: {
         color: '#000000',
@@ -66,17 +78,16 @@ const styles = StyleSheet.create({
         color: '#216357'
     },
     ContainerData: {
-        padding: 10,
-        paddingRight: 15,
-        borderColor: '#FFBEBE',
-        borderTopWidth: 1,
-        alignItems: 'flex-end'
+        marginRight: 10,
+        position: 'absolute',
+        right: 0,
+        bottom: 0,
     },
     Data: {
-        color: '#216357'
+        color: '#fff',
     },
     Imagem: {
-        width: '100%',
+        width: windowWidth,
         height: 'auto',
         aspectRatio: 1
     }

@@ -5,11 +5,7 @@ import { corFundoCad, urlAPI, urlLocal } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post'; // Certifique-se de que este caminho está correto
 
-export default function Explorar() {
-
-  const handlePostPress = (post) => {
-    console.log('Post pressionado:', post);
-  };
+export default function Explorar({ navigation: { navigate } }) {
 
   const [select, setSelect] = useState([]);
 
@@ -31,10 +27,10 @@ export default function Explorar() {
       <FlatList style={styles.Lista}
         data={select}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handlePostPress(item)}>
-              <Perfil_post/>
+          <>
+            <Perfil_post navigate={navigate} data={item} />
             <Post data={item} />
-          </TouchableOpacity>
+          </>
         )}
         keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
       />
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 0,
   },
-  Lista:{
+  Lista: {
     width: '100%'
   }
 });

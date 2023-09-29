@@ -100,10 +100,8 @@ const Perfil = (props) => {
           <Dropdown />
         </View>
         <View style={styles.profileContainer}>
-          <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/200' }} />
+          <Image style={styles.profileImage} source={{ uri: urlAPI + 'selpessoaimg/' + props.TB_PESSOA_IDD }} />
           <Text style={styles.profileName}>{select.TB_PESSOA_NOME_PERFIL}</Text>
-
-          {/* <Text style={{ fontSize: 30 }}>Valor de scrollY: {scrollY}</Text> */}
         </View>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>

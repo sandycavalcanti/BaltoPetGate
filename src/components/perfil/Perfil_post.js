@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { shadow } from 'react-native-paper';
 import { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
+import { urlAPI } from '../../constants';
 
 const DropdownButton = ({ options }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,11 +15,7 @@ const DropdownButton = ({ options }) => {
 
   return (
     <View style={styles.dropdownContainer}>
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-
+      <TouchableOpacity style={styles.dropdownHeader} onPress={() => setIsOpen(!isOpen)}>
         <Feather name="more-vertical" size={30} color="#B66F6F" />
       </TouchableOpacity>
       {isOpen && (
@@ -44,13 +41,19 @@ const Perfil_post = (props) => {
 
   return (
     <View style={styles.Container}>
-      <View style={styles.ImagemCirculo}></View>
-      <View style={styles.ContainerTexto}><Text style={styles.Texto}>ttttttrt</Text></View>
+      <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })}>
+        <View style={styles.ImagemCirculo}>
+          <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID }} />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })}>
+        <View style={styles.ContainerTexto}>
+          <Text style={styles.Texto}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
+        </View>
+      </TouchableOpacity>
       <View style={styles.ContainerIcon}>
         <DropdownButton options={dropdownOptions} />
       </View>
-
-
     </View>
   )
 }
@@ -69,13 +72,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5
   },
   ImagemCirculo: {
-    backgroundColor: '#000',
     width: 50,
     height: 50,
     borderRadius: 25,
     borderColor: '#fff',
     borderWidth: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   ContainerTexto: {
     height: 'auto',
@@ -110,13 +113,18 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
     marginTop: 5,
+    zIndex: 10,
   },
   optionButton: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-
+  Imagem: {
+    width: 'auto',
+    height: 50,
+    aspectRatio: 1,
+  },
 });
 
 export default Perfil_post;
