@@ -54,16 +54,9 @@ const styles = StyleSheet.create({
     profileContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
-    },
-    profileImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        marginRight: 10,
-        position: 'absolute',
-        left: 10,
-        zIndex: 1, // Traz a imagem para frente
+        backgroundColor: '#CEF7FF',
+        borderColor: "#fff",
+        borderTopWidth: 1,
     },
     ContainerTexto: {
         width: windowWidth,
@@ -78,13 +71,14 @@ const styles = StyleSheet.create({
         color: '#216357'
     },
     ContainerData: {
-        marginRight: 10,
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
+        padding: 10,
+        paddingRight: 15,
+        borderColor: "#FFBEBE",
+        borderTopWidth: 1,
+        alignItems: "flex-end",
     },
     Data: {
-        color: '#fff',
+        color: "#216357",
     },
     Imagem: {
         width: windowWidth,

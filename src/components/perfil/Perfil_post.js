@@ -60,7 +60,7 @@ const Perfil_post = (props) => {
 
 const styles = StyleSheet.create({
   Container: {
-    width: '90%',
+    width: '100%',
     backgroundColor: '#B2EDC5',
     borderColor: 'white',
     borderTopWidth: 1,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 5,
   },
   ImagemCirculo: {
     width: 50,

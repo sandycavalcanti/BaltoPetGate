@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { memo } from "react";
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from "react-native";
+import { memo, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { urlAPI } from "../../constants";
+import Temperamento from "./Temperamento";
+import axios from "axios";
 
 const AnimalPost = memo((props) => {
   const dataOriginal = props.data.createdAt;
@@ -12,36 +14,46 @@ const AnimalPost = memo((props) => {
     dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
   }
 
+  const [temperamento, setTemperamento] = useState([])
+
+  const Selecionar = () => {
+    axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID)
+      .then(response => {
+        setTemperamento(response.data);
+      }).catch(error => {
+        console.error(error);
+      })
+  }
+
+  useEffect(() => {
+    Selecionar();
+  }, []);
+
   return (
-    <View>
-      <View style={styles.Container}>
-        <View style={[styles.HeaderPerfil, { height: 60 }]}>
-          <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })} style={styles.HeaderPerfil}>
-            <Image style={styles.profileImage} resizeMode="cover" source={{ uri: urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID }} />
-            <Text style={{ color: "#000000", fontSize: 20 }}>
-              {props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}
-            </Text>
-          </TouchableOpacity>
+    <View style={styles.Container}>
+      <TouchableWithoutFeedback onPress={() => props.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
+        <View style={styles.ContainerImagem}>
+          <Image style={styles.Imagem} resizeMode="cover" source={{ uri: urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID }} />
         </View>
-        <TouchableOpacity onPress={() => props.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
-          <View style={styles.ContainerImagem}>
-            <Image style={styles.Imagem} resizeMode="cover" source={{ uri: urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID }} />
-          </View>
-        </TouchableOpacity>
-        <View style={styles.Content}>
-          <View style={styles.ContainerTexto}>
-            <Text style={styles.Texto}>Nome do animal: {props.data.TB_ANIMAL_NOME}</Text>
-          </View>
+      </TouchableWithoutFeedback>
+      <View style={styles.Content}>
+        <View style={styles.ContainerTexto}>
+          <Text style={styles.Texto}>Nome:</Text>
+          <Text style={styles.TextoData}>{props.data.TB_ANIMAL_NOME}</Text>
+        </View>
+        {temperamento.length !== 0 &&
           <View style={styles.ContainerTexto}>
             <Text style={styles.Texto}>Temperamento:</Text>
-            <TouchableOpacity style={{ backgroundColor: "white" }}>
-              <Text style={styles.Texto}> Alegre</Text>
-            </TouchableOpacity>
+            {temperamento.map((item, index) => {
+              return (
+                <Temperamento key={index} texto={item} />
+              )
+            })}
           </View>
-        </View>
-        <View style={styles.ContainerData}>
-          <Text style={styles.Data}>{dataFormatada}</Text>
-        </View>
+        }
+      </View>
+      <View style={styles.ContainerData}>
+        <Text style={styles.Data}>{dataFormatada}</Text>
       </View>
     </View>
   );
@@ -66,6 +78,7 @@ const styles = StyleSheet.create({
   Container: {
     width: "100%",
     height: "auto",
+    backgroundColor: '#CEF7FF'
   },
   ContainerImagem: {
     width: "100%",
@@ -76,13 +89,24 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   ContainerTexto: {
-    padding: 10,
+    paddingTop: 10,
+    paddingHorizontal: 10,
     flexDirection: "row",
+    fontSize: 18,
+    flexWrap: 'wrap',
+    rowGap: 5,
   },
   Texto: {
     color: "#216357",
+    fontSize: 19
+  },
+  TextoData: {
+    color: "#6BC688",
+    fontSize: 19,
+    marginLeft: 10
   },
   ContainerData: {
+    marginTop: 15,
     padding: 10,
     paddingRight: 15,
     borderColor: "#FFBEBE",
@@ -94,15 +118,9 @@ const styles = StyleSheet.create({
   },
   HeaderPerfil: {
     width: "100%",
-    backgroundColor: "#B2EDC5",
     flexDirection: "row",
     alignItems: 'center'
   },
-  Content: {
-    height: "12%",
-    width: "100%",
-    backgroundColor: "#B2EDC5"
-  }
 });
 
 export default AnimalPost;

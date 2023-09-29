@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: corFundoCad,
     alignItems: 'flex-start',
     justifyContent: 'space-evenly',
-    width: '111%',
+    width: '100%',
     height: '100%',
     padding: 0,
   },
