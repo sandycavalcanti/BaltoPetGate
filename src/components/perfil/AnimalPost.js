@@ -1,17 +1,10 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Button,
-} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { memo } from "react";
 import { format } from "date-fns";
+import { urlAPI } from "../../constants";
 
 const AnimalPost = memo((props) => {
-  let id = props.id;
-  const dataOriginal = props.data;
+  const dataOriginal = props.data.createdAt;
   let dataFormatada = "";
 
   // Verifique se dataOriginal é definido e pode ser convertido em um objeto Date válido
@@ -21,41 +14,23 @@ const AnimalPost = memo((props) => {
 
   return (
     <View>
-      <View style={styles.profileContainer}>
-        <Text style={styles.profileName}>{props.profileName}</Text>
-      </View>
       <View style={styles.Container}>
-        <TouchableOpacity onPress={() => props.navigate("Ficha", { id })}>
-          <View
-            style={{
-              height: "12%",
-              width: "100%",
-              backgroundColor: "#B2EDC5",
-              flexDirection: "row",
-            }}
-          >
-            <Image
-              style={styles.profileImage}
-              resizeMode="cover"
-              source={{ uri: 'https://via.placeholder.com/100' }}
-            />
-            <Text style={{ color: "#000000", marginTop: 20, fontSize: 20 }}>
-              Cristina Freitas
+        <View style={[styles.HeaderPerfil, { height: 60 }]}>
+          <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })} style={styles.HeaderPerfil}>
+            <Image style={styles.profileImage} resizeMode="cover" source={{ uri: urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID }} />
+            <Text style={{ color: "#000000", fontSize: 20 }}>
+              {props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}
             </Text>
-          </View>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={() => props.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
           <View style={styles.ContainerImagem}>
-            <Image
-              style={styles.Imagem}
-              resizeMode="cover"
-              source={{ uri: 'https://via.placeholder.com/500' }}
-            />
+            <Image style={styles.Imagem} resizeMode="cover" source={{ uri: urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID }} />
           </View>
         </TouchableOpacity>
-        <View
-          style={{ height: "12%", width: "100%", backgroundColor: "#B2EDC5" }}
-        >
+        <View style={styles.Content}>
           <View style={styles.ContainerTexto}>
-            <Text style={styles.Texto}>Nome do animal: {props.texto}</Text>
+            <Text style={styles.Texto}>Nome do animal: {props.data.TB_ANIMAL_NOME}</Text>
           </View>
           <View style={styles.ContainerTexto}>
             <Text style={styles.Texto}>Temperamento:</Text>
@@ -81,6 +56,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginLeft: 5,
     marginRight: 10,
   },
   profileName: {
@@ -116,6 +92,17 @@ const styles = StyleSheet.create({
   Data: {
     color: "#216357",
   },
+  HeaderPerfil: {
+    width: "100%",
+    backgroundColor: "#B2EDC5",
+    flexDirection: "row",
+    alignItems: 'center'
+  },
+  Content: {
+    height: "12%",
+    width: "100%",
+    backgroundColor: "#B2EDC5"
+  }
 });
 
 export default AnimalPost;

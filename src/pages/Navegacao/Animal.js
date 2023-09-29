@@ -25,7 +25,7 @@ const Animal = ({ navigation: { navigate } }) => {
             <FlatList
                 data={select}
                 renderItem={({ item }) => (
-                    <AnimalPost navigate={navigate} />
+                    <AnimalPost navigate={navigate} data={item} /> 
                 )}
                 keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
             />
