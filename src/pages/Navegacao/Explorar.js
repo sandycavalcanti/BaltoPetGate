@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
 import axios from 'axios';
 import { corFundoCad, urlAPI, urlLocal } from "../../constants";
+import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post'; // Certifique-se de que este caminho está correto
 
 export default function Explorar() {
@@ -27,10 +28,11 @@ export default function Explorar() {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <FlatList style={styles.Lista}
         data={select}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePostPress(item)}>
+              <Perfil_post/>
             <Post data={item} />
           </TouchableOpacity>
         )}
@@ -44,9 +46,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: corFundoCad,
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    width: '100%',
+    justifyContent: 'space-evenly',
+    width: '111%',
     height: '100%',
     padding: 0,
   },
+  Lista:{
+    width: '100%'
+  }
 });

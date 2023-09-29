@@ -3,10 +3,9 @@ import { shadow } from 'react-native-paper';
 
 const Post = (props) => {
     return (
-        <View>
-            <View style={styles.profileContainer}>
-                <View
-                    style={{
+        <View style={styles.profileContainer}>
+           {/*   <View style={styles.profileContainer}>
+               <View style={{
                         backgroundColor: "#B2EDC5",
                         flexDirection: "row",
                         alignItems: "center",
@@ -19,13 +18,13 @@ const Post = (props) => {
                         <Text style={styles.TextoPerfil}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
                     </View>
 
-                </View>
+                </View> 
                 <Image
                     style={styles.profileImage}
                     resizeMode="cover"
                     source={{ uri: 'https://via.placeholder.com/100' }} // Substitua por sua imagem de perfil
                 />
-            </View>
+            </View>*/}
             <View style={styles.Container}>
                 <View style={styles.ContainerImagem}>
                     <Image style={styles.Imagem} resizeMode='cover' source={{ uri: 'https://via.placeholder.com/500' }} />

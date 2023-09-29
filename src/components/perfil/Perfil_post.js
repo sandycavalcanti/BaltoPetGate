@@ -19,7 +19,7 @@ const DropdownButton = ({ options }) => {
         onPress={() => setIsOpen(!isOpen)}
       >
 
-        <Feather name="more-vertical" size={30} color="black" />
+        <Feather name="more-vertical" size={30} color="#B66F6F" />
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.dropdownOptions}>
@@ -45,7 +45,7 @@ const Perfil_post = (props) => {
   return (
     <View style={styles.Container}>
       <View style={styles.ImagemCirculo}></View>
-      <View style={styles.ContainerTexto}><Text style={styles.Texto}>Vanesa Juliana</Text></View>
+      <View style={styles.ContainerTexto}><Text style={styles.Texto}>ttttttrt</Text></View>
       <View style={styles.ContainerIcon}>
         <DropdownButton options={dropdownOptions} />
       </View>
@@ -57,11 +57,12 @@ const Perfil_post = (props) => {
 
 const styles = StyleSheet.create({
   Container: {
-    width: '100%',
+    width: '90%',
     backgroundColor: '#B2EDC5',
     borderColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1,
+    alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     paddingHorizontal: 10,
@@ -69,20 +70,22 @@ const styles = StyleSheet.create({
   },
   ImagemCirculo: {
     backgroundColor: '#000',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     borderRadius: 25,
     borderColor: '#fff',
     borderWidth: 1,
+    alignItems: 'center'
   },
   ContainerTexto: {
     height: 'auto',
     width: 'auto',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   Texto: {
-    color: '#000'
+    color: '#fff',
+    fontSize: 20
   },
   ContainerIcon: {
     alignItems: 'center',
