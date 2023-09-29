@@ -7,7 +7,7 @@ import CampoTelefone from '../../components/cadastro/CampoTelefone';
 import CampoRede from '../../components/cadastro/CampoRede';
 import CampoEndereco from '../../components/cadastro/CampoEndereco';
 import GroupBox from '../../components/cadastro/GroupBox';
-import RadioButtonSimNao from '../../components/QuestAdocao/RadioButtonSimNao';
+import RadioButton from '../../components/QuestAdocao/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
 import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';

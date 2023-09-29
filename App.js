@@ -1,4 +1,4 @@
-import Navigation from './src/pages/navegacao';
+import Navigation from './src/pages/navegacao/index';
 
 export default function App() {
   return (

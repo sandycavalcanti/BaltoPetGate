@@ -2,27 +2,26 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
 
-const RadioButtonSimNao = (props) => {
+const RadioButton = (props) => {
+  const options = ['SIM', 'NAO', 'INDEFINIDO'];
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionPress = (option) => {
-    props.set(option)
-    setSelectedOption(option)
+    props.set(option);
+    setSelectedOption(option);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === true && styles.selectedOption]}
-        onPress={() => handleOptionPress(true)}>
-        <Text style={[styles.optionText, selectedOption === true && styles.selectedText]}>Sim</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === false && styles.selectedOption]}
-        onPress={() => handleOptionPress(false)}
-      >
-        <Text style={[styles.optionText, selectedOption === false && styles.selectedText]}>Não</Text>
-      </TouchableOpacity>
+      {options.map((option) => (
+        <TouchableOpacity key={option}
+          style={[styles.optionButton, selectedOption === option && styles.selectedOption]}
+          onPress={() => handleOptionPress(option)}>
+          <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
+            {option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
@@ -42,14 +41,14 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
-    color: corPlaceholderCad
+    color: corPlaceholderCad,
   },
   selectedOption: {
     backgroundColor: corBotaoCad,
   },
   selectedText: {
-    color: '#FFF'
-  }
+    color: '#FFF',
+  },
 });
 
-export default RadioButtonSimNao;
+export default RadioButton;
