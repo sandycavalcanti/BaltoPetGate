@@ -41,12 +41,12 @@ const Perfil_post = (props) => {
 
   return (
     <View style={styles.Container}>
-      <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })}>
+      <TouchableOpacity onPress={() => props.navigate("Perfil", { id: props.data.TB_PESSOA_ID })}>
         <View style={styles.ImagemCirculo}>
           <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID }} />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => props.navigate("PerfilAbaScroll", { id: props.data.TB_PESSOA_ID })}>
+      <TouchableOpacity onPress={() => props.navigate("Perfil", { id: props.data.TB_PESSOA_ID })}>
         <View style={styles.ContainerTexto}>
           <Text style={styles.Texto}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
         </View>

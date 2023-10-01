@@ -28,9 +28,8 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={Selecionar} style={{ marginVertical: 5 }}><Text>Selecionar pessoas</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('HisChat')} style={{ marginVertical: 5 }}><Text>Ir para chats</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('Teste')} style={{ marginVertical: 5 }}><Text>Ir para teste</Text></TouchableOpacity>
-        <TouchableOpacity onPress={() => 
-        // navigate('AlterarCad', { modoAlterar })
-      navigate('QuestionarioAdocao')} style={{ marginVertical: 5 }}><Text>Completar Cadastro</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('QuestionarioAdocao')} style={{ marginVertical: 5 }}><Text>Questionario Adoção</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('AlterarCad', { modoAlterar })} style={{ marginVertical: 5 }}><Text>Completar Cadastro</Text></TouchableOpacity>
         {select && select.map((user, index) => (
           <View key={index} style={{ marginVertical: 10, alignItems: 'center' }}>
             <Text>{`ID: ${user.TB_PESSOA_ID}`}</Text>
@@ -50,7 +49,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%',
+    // height: '100%',
+    minHeight: 600
   },
 });
 

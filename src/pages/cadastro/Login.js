@@ -6,6 +6,8 @@ import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, 
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+let numeroTentativas = 0;
+
 const Login = ({ navigation: { navigate } }) => {
     const navigation = useNavigation();
 
@@ -18,6 +20,11 @@ const Login = ({ navigation: { navigate } }) => {
         if (!email || !senha) {
             alert("Insira seu email e senha.");
         } else {
+            if (numeroTentativas > 5) {
+                numeroTentativas = 0;
+                return alert("Complete o captcha.");
+            }
+            numeroTentativas += 1;
             Autenticar();
         }
     };

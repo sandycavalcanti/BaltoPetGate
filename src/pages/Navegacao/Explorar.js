@@ -3,7 +3,7 @@ import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
 import axios from 'axios';
 import { corFundoCad, urlAPI, urlLocal } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
-import Post from '../../components/perfil/Post'; // Certifique-se de que este caminho está correto
+import Post from '../../components/perfil/Post';
 
 export default function Explorar({ navigation: { navigate } }) {
 
@@ -32,7 +32,7 @@ export default function Explorar({ navigation: { navigate } }) {
             <Post data={item} />
           </>
         )}
-        keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+        keyExtractor={(item) => item.TB_POSTAGEM_ID}
       />
     </View>
   );

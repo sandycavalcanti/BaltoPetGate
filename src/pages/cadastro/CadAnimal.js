@@ -44,10 +44,11 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const [traumasBanco, setTraumasBanco] = useState([]);
     const [temperamentosBanco, setTemperamentosBanco] = useState([]);
 
-
     const [situacoes, setSituacoes] = useState([]);
     const [traumas, setTraumas] = useState([]);
     const [temperamentos, setTemperamentos] = useState([]);
+
+    const [message, setMessage] = useState('');
 
     const Cadastrar = () => {
         InserirDados();
@@ -139,7 +140,10 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 TB_ANIMAL_CASTRADO: castrado,
                 TB_ANIMAL_MICROCHIP: microchip,
                 TB_ANIMAL_LOCAL_RESGATE: localResgate,
-                TB_ANIMAL_ALERTA: alerta
+                TB_ANIMAL_ALERTA: alerta,
+                TEMPERAMENTOS: temperamentos,
+                SITUACOES: situacoes,
+                TRAUMAS: traumas,
             });
             console.log('Cadastrado:', response.data);
         } catch (error) {
@@ -173,10 +177,10 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 </GroupBox>
 
                 <GroupBox titulo='Descrição'>
-                    <CampoSimples placeholder="Cor(es)" set={setCor} />
+                    {/* <CampoSimples placeholder="Cor(es)" set={setCor} /> */}
                     <CampoSimples placeholder="Minha historia" set={setDescricao} />
                     <CampoSimples placeholder="Local do resgate" set={setLocalResgate} />
-                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={setCuidadoEspecial} />
+                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={setCuidadoEspecial} opcional />
                 </GroupBox>
                 <GroupBox titulo='Saúde'>
                     <RadioButton2 set={setSaude} />
@@ -245,6 +249,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
                 <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} />
+                {message && <Text>{message}</Text>}
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
             </ContainerCadastro>
         </ScrollView>

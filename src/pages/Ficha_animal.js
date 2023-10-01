@@ -12,7 +12,7 @@ import axios from "axios";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-function Ficha_animal() {
+function Ficha_animal({ navigation: { navigate } }) {
     const route = useRoute();
     const { id } = route.params;
     let tipoIdade;
@@ -110,14 +110,14 @@ function Ficha_animal() {
                     </View>
                 }
                 {trauma.length !== 0 &&
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Trauma:' />
-                    {trauma.map((item, index) => {
-                        return (
-                            <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
-                        )
-                    })}
-                </View>
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Trauma:' />
+                        {trauma.map((item, index) => {
+                            return (
+                                <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
+                            )
+                        })}
+                    </View>
                 }
                 {select.TB_ANIMAL_CUIDADO_ESPECIAL &&
                     <View style={styles.Conjunto3}>
@@ -135,7 +135,7 @@ function Ficha_animal() {
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Descrição</Text>
                     <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
-                    <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' />
+                    {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' /> */}
                     <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
                 </View>
                 <View style={styles.GroupBox}>
@@ -153,7 +153,7 @@ function Ficha_animal() {
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar texto="Adotar" />
+                    <BotaoCadastrar onPress={() => navigate('QuestionarioAdocao')} texto="Adotar" />
                 </View>
             </View>
         </ScrollView>

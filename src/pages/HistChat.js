@@ -35,21 +35,15 @@ const HisChat = ({ navigation: { navigate } }) => {
 
   // Função para atualizar a lista de contatos com base no texto da pesquisa
   useEffect(() => {
-
     const Filtrar = (type) => {
       return pessoasJson
         .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
-        .filter((pessoa) => pessoa.TB_TIPO_ID === type);
+        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID));
     }
-    const FiltrarOngs = () => {
-      return pessoasJson
-        .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
-        .filter((pessoa) => [3, 4, 5].includes(pessoa.TB_TIPO_ID));
-    }
-    setUsuarios(Filtrar(1))
-    setVeterinarios(Filtrar(2))
-    setOngs(FiltrarOngs())
-    setCasasderacao(Filtrar(6))
+    setUsuarios(Filtrar([1, 7]))
+    setVeterinarios(Filtrar([2]))
+    setOngs(Filtrar([3, 4, 5]))
+    setCasasderacao(Filtrar([6]))
   }, [pesquisa, pessoasJson]);
 
   return (
@@ -59,18 +53,17 @@ const HisChat = ({ navigation: { navigate } }) => {
           <Text style={styles.titulo}>Chat</Text>
           <View style={styles.searchBar}>
             <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Search" />
-            {pesquisa !== '' ?
+            {pesquisa !== '' &&
               <TouchableOpacity onPress={() => setPesquisa('')}>
                 <AntDesign name="close" size={24} color="black" />
-              </TouchableOpacity>
-              : null}
+              </TouchableOpacity>}
           </View>
           <View style={styles.contacts}>
             <View style={styles.contact}>
               {usuarios.length !== 0 ? <Text style={styles.categoria}>Usuários</Text> : null}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {usuarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
+                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
               </ScrollView>
             </View>
@@ -78,7 +71,7 @@ const HisChat = ({ navigation: { navigate } }) => {
               {veterinarios.length !== 0 ? <Text style={styles.categoria}>Veterinarios</Text> : null}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {veterinarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
+                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
               </ScrollView>
             </View>
@@ -86,7 +79,7 @@ const HisChat = ({ navigation: { navigate } }) => {
               {ongs.length !== 0 ? <Text style={styles.categoria}>Instituições/Protetores/Abrigos</Text> : null}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {ongs.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
+                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
               </ScrollView>
             </View>
@@ -94,7 +87,7 @@ const HisChat = ({ navigation: { navigate } }) => {
               {casasderacao.length !== 0 ? <Text style={styles.categoria}>Casas de ração</Text> : null}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {casasderacao.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
+                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
               </ScrollView>
             </View>
