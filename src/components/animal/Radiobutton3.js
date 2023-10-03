@@ -18,7 +18,9 @@ const RadioButton3 = (props) => {
           style={[styles.optionButton, selectedOption === option && styles.selectedOption]}
           onPress={() => handleOptionPress(option)}>
           <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
-            {option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'}
+            {
+            option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'
+            }
           </Text>
         </TouchableOpacity>
       ))}

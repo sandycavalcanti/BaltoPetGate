@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, Dimensions, Text, View, SafeAreaView, StatusBar, Image, ScrollView, TouchableOpacity, Modal, ToastAndroid } from "react-native";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import axios from "axios";
 import { urlAPI } from "../constants";
@@ -18,15 +18,23 @@ const Perfil = (props) => {
   const navigate = props.navigate;
   scrollY = props.scrollY;
 
-  useEffect(() => {
-    axios.post(urlAPI + 'selpessoa/filtrar', {
+  const PegarInfo = async () => {
+    await axios.post(urlAPI + 'selpessoa/filtrar', {
       TB_PESSOA_ID: props.TB_PESSOA_IDD,
     }).then((response) => {
       setSelect(response.data[0]);
     }).catch((error) => {
       setSelect(error.response.data.message);
     });
-  }, [props.TB_PESSOA_IDD]);
+  }
+  useEffect(() => {
+    PegarInfo()
+      .then(() => {
+        props.setCarregando(false);
+      }).catch(error => {
+        ToastAndroid.show('Houve um erro ao carregar. Tente novamente.', ToastAndroid.SHORT);
+      })
+  }, []);
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;

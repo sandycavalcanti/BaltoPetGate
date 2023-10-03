@@ -3,14 +3,10 @@ import { ScrollView, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid
 import { useNavigation } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
-import CampoTelefone from '../../components/cadastro/CampoTelefone';
-import CampoRede from '../../components/cadastro/CampoRede';
-import CampoEndereco from '../../components/cadastro/CampoEndereco';
 import GroupBox from '../../components/cadastro/GroupBox';
 import RadioButton from '../../components/QuestAdocao/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
-import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
-import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
+import BotaoQuantidade from '../../components/QuestAdocao/BotaoQuantidade';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import axios from 'axios';
@@ -22,29 +18,21 @@ const QuestionarioAdocao = () => {
     const navigation = useNavigation();
     const [mensagem, setMensagem] = useState('');
 
-    const [email, setEmail] = useState('');
-    const [dtNasc, setDtNasc] = useState();
-    const [nome, setNome] = useState('');
-    const [cpf, setCpf] = useState();
-    const [telefone1, setTelefone1] = useState();
-    const [telefone2, setTelefone2] = useState();
-    const [whatsapp, setWhatsapp] = useState();
-    const [cep, setCep] = useState('');
-    const [uf, setUf] = useState('');
-    const [cidade, setCidade] = useState('');
-    const [bairro, setBairro] = useState('');
-    const [rua, setRua] = useState('');
-    const [numero, setNumero] = useState();
-    const [complemento, setComplemento] = useState('');
-    const [instagram, setInstagram] = useState('');
-    const [facebook, setFacebook] = useState('');
+    const [moradia, setMoradia] = useState('');
+    const [espaco, setEspaco] = useState('');
+    const [passear, setPassear] = useState();
+    const [ausencia, setAusencia] = useState('');
+    const [acessoRua, setAcessoRua] = useState();
+    const [ciente, setCiente] = useState();
+    const [quantidade, setQuantidade] = useState();
+
 
     const Alterar = async () => {
-        const camposObrigatorios = [email, dtNasc, nome, cpf, telefone1, whatsapp, uf, cidade, bairro, rua, numero];
+        const camposObrigatorios = [moradia,espaco,passear,ausencia,ciente,acessoRua,quantidade];
         const camposCadastro = {
-            email, nome, cep, uf, cidade, bairro, rua, numero, complemento,
-            dtNasc, cpf, facebook, instagram, whatsapp, telefone1, telefone2
+            moradia,espaco,passear,ausencia,ciente,acessoRua,quantidade
         }
+        console.log(camposCadastro);
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
         if (!mensagemErro) {
             InserirDados();
@@ -53,23 +41,31 @@ const QuestionarioAdocao = () => {
         }
     }
 
+    const InserirDados = async () => {
+        try {
+            const url = urlAPI + 'altpessoa/' + TB_PESSOA_IDD;
+            await axios.put(url, {
+                TB_PESSOA_ANIMAL_CASA: moradia,
+                TB_PESSOA_ANIMAL_ESPACO: espaco,
+                TB_PESSOA_ANIMAL_PASSEAR: passear,
+                TB_PESSOA_ANIMAL_AUSENCIA: ausencia,
+                TB_PESSOA_ANIMAL_FAMILIA: ciente,
+                TB_PESSOA_ANIMAL_RUA: acessoRua,
+                TB_PESSOA_ANIMAL_QUANTIDADE: quantidade,
+            }).then(response => {
+                navigate("Home");
+
+            }).catch(error => {
+            console.error(error);
+            })
+        } catch (error) {
+            console.error('Erro ao cadastrar:', error);
+        }
+    };
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
         TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-    }
-
-    const InserirDados = async () => {
-        await axios.put(urlAPI + 'altpessoa/' + TB_PESSOA_IDD, {
-
-        }).then(response => {
-            // navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            console.log('response');
-        }).catch(error => {
-            let erro = error.response.data.message;
-            ToastAndroid.show(erro, ToastAndroid.SHORT);
-            setMensagem(erro);
-        })
     }
 
     const [carregando, setCarregando] = useState(true);
@@ -84,31 +80,40 @@ const QuestionarioAdocao = () => {
             });
     }, []);
 
+    const SimNao = [true, false];
+    const Moradia = ['CASA', 'APARTAMENTO'];
+    const Tamanho = ['POUCO', 'MEDIO', 'MUITO'];
+
     return (
         <ContainerCadastro titulo="Responda a esse questionário">
             {carregando ? (
                 <ActivityIndicator size="large" color={corBordaBoxCad} />
             ) : (
-            <>
-                <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
-                    <RadioButtonSimNao />
-                </GroupBox>
-                <GroupBox titulo='Moradia'>
+                <>
+                    <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
+                        <RadioButton opcoes={SimNao} set={setCiente}/>
+                    </GroupBox>
+                    <GroupBox titulo='Moradia'>
+                        <RadioButton opcoes={Moradia} set={setMoradia}/>
+                    </GroupBox>
+                    <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?' >
+                        <BotaoQuantidade set={setPassear}/>
+                    </GroupBox>
+                    <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?' >
+                        <RadioButton opcoes={Tamanho} set={setEspaco}/>
+                    </GroupBox>
+                    <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?' >
+                        <CampoSimples set={setAusencia}/>
+                    </GroupBox>
+                    <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
+                        <RadioButton opcoes={SimNao} set={setAcessoRua}/>
+                    </GroupBox>
+                    <GroupBox titulo='Quantos animais você possuí em sua casa?' >
+                        <BotaoQuantidade set={setQuantidade}/>
+                    </GroupBox>
 
-                </GroupBox>
-                <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?'>
-
-                </GroupBox>
-                <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?'>
-
-                </GroupBox>
-                <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?'>
-
-                </GroupBox>
-                <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
-
-                </GroupBox>
-            </>
+                    <BotaoCadastrar onPress={Alterar} texto='Finalizar'/>
+                </>
             )}
         </ContainerCadastro>
     )

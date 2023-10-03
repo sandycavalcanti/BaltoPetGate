@@ -8,25 +8,22 @@ let modoAlterar = false;
 
 function Home({ navigation: { navigate } }) {
 
-  const [select, setSelect] = useState();
+  const [select, setSelect] = useState([]);
 
-  const Selecionar = async () => {
-    try {
-      await axios.get(urlAPI + 'selpessoa')
-        .then((response) => {
-          setSelect(response.data);
-        }).catch((error) => {
-          let erro = error.response.data.message;
-          console.error('Erro ao selecionar:', erro);
-        })
-    } catch (error) {
-      ToastAndroid.show('Seleção deu erro.', ToastAndroid.SHORT);
-    }
-  };
+  const Selecionar = () => {
+    axios.get(urlAPI + 'selpessoa')
+      .then((response) => {
+        setSelect(response.data);
+      }).catch((error) => {
+        let erro = error.response.data.message;
+        console.error('Erro ao selecionar:', erro);
+      })
+  }
 
   return (
     <ScrollView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={() => navigate('Cadastroformulariodiario')} style={{ marginVertical: 5 }}><Text>form diario</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('Login')} style={{ marginVertical: 5 }}><Text>Voltar ao Login</Text></TouchableOpacity>
         <TouchableOpacity onPress={Selecionar} style={{ marginVertical: 5 }}><Text>Selecionar pessoas</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('HisChat')} style={{ marginVertical: 5 }}><Text>Ir para chats</Text></TouchableOpacity>

@@ -5,13 +5,13 @@ import CampoSimples from "../../components/cadastro/CampoSimples";
 import GroupBox from "../../components/cadastro/GroupBox";
 import Campo from "../../components/animal/Campo";
 import DropdownSimples from "../../components/animal/DropdownSimples";
-import RadioButton3 from "../../components/animal/RadioButton3";
-import RadioButton2 from "../../components/animal/RadioButton2";
+import RadioButton3 from "../../components/animal/Radiobutton3";
+import RadioButton2 from "../../components/animal/radioButton2";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import CampoEndereco from "../../components/cadastro/CampoEndereco";
 import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
-import { urlAPI, urlLocal } from "../../constants";
+import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
 
 let TB_PESSOA_IDD;
@@ -42,7 +42,6 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const Cadastrar = () => {
         InserirDados();
     }
-
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();

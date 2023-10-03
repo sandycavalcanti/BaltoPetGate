@@ -14,10 +14,12 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Entypo } from "@expo/vector-icons";
-
-//Baixar Pacote
+import BotaoImg from "../components/FormDiario/BotaoImg";
+import ContainerCadastro from "../components/cadastro/ContainerCadastro";
+import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
 import axios from "axios";
-
+import { corBordaBoxCad, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, valorBordaCampoCad } from "../constants";
+import Campo from "../components/animal/Campo";
 
 // Criando um componente funcional chamado Postagem
 const Postagem = () => {
@@ -279,27 +281,28 @@ const escolherImagem = async () => {
 
   // Retornando a interface do componente
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Criar uma postagem de imagem</Text>
-      <Button title="Escolher imagem" onPress={escolherImagem} />
+      <ContainerCadastro titulo='Faça sua postagem!'>
+      <BotaoImg/>
       {imagem && <Image source={{ uri: imagem }} style={styles.imagem} />}
       <TextInput
-        style={styles.input}
+        style={styles.input} placeholderTextColor={corTextoBotaoCad}
         placeholder="Digite um comentário"
         value={comentario}
         onChangeText={editarComentario}
       />
+      <View style={styles.Botao}>
       {indiceEditando === null ? (
-        <Button title="Postar" onPress={postar} />
+      
+        <BotaoCadastrar title="Postar" onPress={postar} />
       ) : (
-        <Button title="Salvar" onPress={salvarPostagem} />
+        <BotaoCadastrar title="Salvar" onPress={salvarPostagem} />
       )}
+      </View>
       <FlatList
         data={postagens}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-      />
-    </View>
+      /></ContainerCadastro>
   );
 };
 
@@ -309,25 +312,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#94E4E6",
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    margin: 10,
+    backgroundColor: corFundoCad,
   },
   imagem: {
     width: 360,
     height: 300,
   },
-  input: {
-    width: 300,
-    height: 40,
+  input: { 
+    marginTop: '10%',
+    width: '90%',
+    fontSize: 18,
+    paddingHorizontal: 10,
+    padding: 5,
+    borderColor: corTextoBotaoCad,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    margin: 10,
-    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
   },
   item: {
     borderColor: "white",
@@ -341,17 +341,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     margin: 10,
   },
-  botoes: {
+  Botao: {
+    marginTop: '10%',
     flexDirection: "row",
     justifyContent: "space-between",
     margin: 10,
-  },
-  botao: {
-    fontSize: 16,
-    color: "#fff",
-    backgroundColor: "#00f",
-    padding: 10,
-    borderRadius: 5,
   },
 });
 
