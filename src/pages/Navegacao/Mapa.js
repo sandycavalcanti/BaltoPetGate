@@ -1,23 +1,23 @@
-
 import { useState, useEffect } from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { Modal, StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync, LocationObject, watchPositionAsync, LocationAccuracy } from 'expo-location';
 import axios from 'axios';
-import { urlAPI } from '../../constants';
 
 export default function App() {
   const [location, setLocation] = useState(null);
   const [redMarkerCoords, setRedMarkerCoords] = useState(null);
   const [orangeMarkersCoords, setOrangeMarkersCoords] = useState([]);
   const [pinkMarkersCoords, setPinkMarkersCoords] = useState([]);
-  // Remover o estado dos pontos de alimentação
-  // const [feedingPoints, setFeedingPoints] = useState([]);
   const [isOrangeModalVisible, setIsOrangeModalVisible] = useState(false);
   const [isPinkModalVisible, setIsPinkModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [description, setDescription] = useState('');
+  // Novo estado para armazenar a posição do marcador laranja
+  const [orangeMarkerPosition, setOrangeMarkerPosition] = useState(null);
+  // NOVO: estado para armazenar o texto temporário
+  const [tempText, setTempText] = useState('');
 
   async function requestLocationPermissions() {
     const { granted } = await requestForegroundPermissionsAsync();
@@ -45,42 +45,12 @@ export default function App() {
     });
   }, []);
 
-  // Remover a função de adicionar marcadores amarelos
-  // function handleMapPress(e) {
-  //   // Aqui você pode obter as coordenadas do local onde o usuário clicou
-  //   // e armazená-las em um banco de dados ou enviá-las para uma API externa.
-  //   // Por exemplo:
-  //   // saveFeedingPointInDatabase(e.nativeEvent.coordinate);
-  //   setFeedingPoints([...feedingPoints, e.nativeEvent.coordinate]);
-  // }
-
-  let coords = [];
-
-  const getMarkers = async () => {
-    const response = await axios.get(urlAPI + 'selpontoalimentacao')
-    response.data.map((item) => {
-      const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
-      const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
-
-      coords.push({ latitude, longitude });
-      setOrangeMarkersCoords(coords)
-    });
-  }
-
-  useEffect(() => {
-    getMarkers();
-  }, [])
-
-  const insert = async (redMarkerCoords) => {
-    const TB_PONTO_ALIMENTACAO_LATITUDE = redMarkerCoords.latitude.toFixed(6);
-    const TB_PONTO_ALIMENTACAO_LONGITUDE = redMarkerCoords.longitude.toFixed(6);
-
-    const response = await axios.post(urlAPI + 'cadpontoalimentacao', {
-      TB_PESSOA_ID: 1,
-      TB_PONTO_ALIMENTACAO_LATITUDE,
-      TB_PONTO_ALIMENTACAO_LONGITUDE,
-    })
-    console.log(response.data)
+  // NOVO: função para mostrar o texto temporário na tela por 5 segundos
+  function showTempText(text) {
+    setTempText(text);
+    setTimeout(() => {
+      setTempText('');
+    }, 5000);
   }
 
   async function handleSelectImage() {
@@ -104,26 +74,44 @@ export default function App() {
 
   function handleAddOrangeMarker() {
     if (selectedImage && description) {
-      setOrangeMarkersCoords([...orangeMarkersCoords, redMarkerCoords]);
-      setIsOrangeModalVisible(false);
-      // Limpar os campos após adicionar o marcador
-      setSelectedImage(null);
-      setDescription('');
+      // NOVO: chamar a função showTempText com o texto desejado
+      showTempText('Clique em algum lugar do mapa para adicionar o marcador');
+     
+       setSelectedImage(null);
+       setDescription('');
+      setIsPinkModalVisible(false);
     } else {
-      alert('Por favor, selecione uma imagem e adicione uma descrição antes de adicionar um marcador laranja.');
+      alert('Por favor, selecione uma imagem e adicione uma descrição antes de adicionar um marcador rosa.');
     }
   }
 
   function handleAddPinkMarker() {
     if (selectedImage && description) {
-      setPinkMarkersCoords([...pinkMarkersCoords, redMarkerCoords]);
-      setIsPinkModalVisible(false);
-      // Limpar os campos após adicionar o marcador
-      setSelectedImage(null);
+      // NOVO: chamar a função showTempText com o texto desejado
+      showTempText('Clique em algum lugar do mapa para adicionar o marcador');
+      
+       setSelectedImage(null);
       setDescription('');
+      setIsPinkModalVisible(false);
     } else {
       alert('Por favor, selecione uma imagem e adicione uma descrição antes de adicionar um marcador rosa.');
     }
+  }
+
+  // NOVO: função para adicionar um marcador no mapa quando o usuário clicar
+  function handleMapPress(e) {
+    // Verificar se o estado tempText não está vazio
+    if (tempText) {
+      // Usar as informações do estado pinkMarkersCoords para criar um novo marcador rosa
+      setPinkMarkersCoords([...pinkMarkersCoords, e.nativeEvent.coordinate]);
+      // Limpar o estado tempText depois de adicionar o marcador
+      setTempText('');
+    }
+  }
+
+  // Nova função para atualizar o estado orangeMarkerPosition
+  function handleOrangeMarkerPress(e) {
+    setOrangeMarkerPosition(e.nativeEvent.coordinate);
   }
 
   return (
@@ -137,8 +125,10 @@ export default function App() {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005
           }}
-        // Remover a propriedade onPress do mapa
-        // onPress={handleMapPress}
+          // Novo atributo para chamar a função handleOrangeMarkerPress
+          onPress={handleOrangeMarkerPress}
+          // NOVO: atributo para chamar a função handleMapPress
+          onLongPress={handleMapPress}
         >
           <Marker
             coordinate={redMarkerCoords}
@@ -150,7 +140,6 @@ export default function App() {
               pinColor='orange'
             >
               <Callout
-                // Adicionar a propriedade onPress para abrir o modal laranja
                 onPress={() => setIsOrangeModalVisible(true)}
               >
                 <Text>Ponto de Alimentação</Text>
@@ -165,10 +154,9 @@ export default function App() {
             <Marker
               key={index}
               coordinate={coords}
-              pinColor='pink'
+              pinColor='orange'
             >
               <Callout
-                // Adicionar a propriedade onPress para abrir o modal rosa
                 onPress={() => setIsPinkModalVisible(true)}
               >
                 <Text>Animal em Alerta</Text>
@@ -179,23 +167,12 @@ export default function App() {
               </Callout>
             </Marker>
           ))}
-          {/* Remover os marcadores amarelos */}
-          {/* {feedingPoints.map((coords, index) => (
-            <Marker
-              key={index}
-              coordinate={coords}
-              pinColor='yellow'
-            />
-          ))} */}
         </MapView>
+      
       }
       <View style={styles.buttonContainer}>
         <Button
           title="Adicionar marcador laranja"
-          onPress={() => setIsOrangeModalVisible(true)}
-        />
-        <Button
-          title="Adicionar marcador rosa"
           onPress={() => setIsPinkModalVisible(true)}
         />
         <Button
@@ -218,7 +195,7 @@ export default function App() {
             title="Escolher imagem"
             onPress={handleSelectImage}
           />
-          {selectedImage &&
+          {selectedImage && 
             <>
               <Text>Imagem selecionada:</Text>
               <Image
@@ -254,7 +231,7 @@ export default function App() {
             title="Escolher imagem"
             onPress={handleSelectImage}
           />
-          {selectedImage &&
+          {selectedImage && 
             <>
               <Text>Imagem selecionada:</Text>
               <Image
@@ -279,7 +256,13 @@ export default function App() {
           />
         </View>
       </Modal>
-    </View>
+      {/* NOVO: componente para mostrar o estado tempText */}
+      {tempText && 
+        <View style={styles.tempTextView}>
+          <Text style={styles.tempText}>{tempText}</Text>
+        </View>
+      }
+   </View>
   );
 }
 
@@ -290,6 +273,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
