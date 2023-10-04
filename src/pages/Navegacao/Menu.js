@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 let id;
 
 const Menu = ({ navigation: { navigate } }) => {
-    
+
     useEffect(() => {
         const PegarId = async () => {
             const decodedToken = await DecodificarToken();
@@ -25,6 +25,23 @@ const Menu = ({ navigation: { navigate } }) => {
     }, []);
 
     const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+
+    const handleSearchChange = (text) => {
+        // setSearchText(text);
+        console.log(text)
+        // Aqui você pode implementar a lógica para pesquisar os perfis
+        // com base no texto e definir os resultados da pesquisa.
+        // Por exemplo:
+        // setSearchResults(perfis.filter(perfil => perfil.nome.includes(text)));
+    };
+
+    const handleProfileSelect = (perfil) => {
+        // Aqui você pode implementar a lógica para navegar para a tela do perfil
+        // Por exemplo:
+        // navigation.navigate('Perfil', { perfilId: perfil.id });
+    };
 
     const item1 = {
         icone: <Ionicons name="paw-outline" size={28} color="black" />,
@@ -50,7 +67,11 @@ const Menu = ({ navigation: { navigate } }) => {
                 </TouchableOpacity>
                 <View style={styles.barraPesquisa}>
                     <MaterialIcons style={styles.IconePesquisa} name="search" size={25} color="#097396" />
-                    <TextInput placeholder='Pesquisar' style={styles.campo} />
+                    <TextInput
+                        placeholder='Pesquisar'
+                        style={styles.campo}
+                        onChangeText={handleSearchChange}
+                    />
                 </View>
                 <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={styles.Botao}>
                     <Octicons name="diff-added" size={30} color="white" />
@@ -140,4 +161,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Menu
+export default Menu;

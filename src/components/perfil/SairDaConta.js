@@ -12,7 +12,7 @@ const SairDaConta = (props) => {
     }
 
     return (
-        <Modal isVisible={props.val} backdropOpacity={0.2} onBackdropPress={() => props.set(false)} swipeDirection="down">
+        <Modal isVisible={props.val} backdropOpacity={0.2} onBackdropPress={() => props.set(false)} swipeDirection="down" >
             <View style={styles.dropdown}>
                 <Text style={styles.dropdownTitle}>Deseja sair da conta?</Text>
                 <View style={styles.dropdownButtons}>
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignSelf: 'center',
         width: '70%',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative',
     },
     dropdownButton: {
         flexDirection: 'row',

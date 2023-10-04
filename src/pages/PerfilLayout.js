@@ -3,9 +3,11 @@ import { StyleSheet, Dimensions, Text, View, SafeAreaView, Button, StatusBar, Im
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Dropdown from './../components/perfil/Dropdown';
 import SairDaConta from "../components/perfil/SairDaConta";
+import { Alert } from 'react-native';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -69,18 +71,36 @@ const PerfilLayout = (props) => {
     }
     item2 = {
       texto: 'Desativar conta',
-      press: () => navigation.navigate('Postagem')
+      press: () => Alert.alert(
+        "Desativar o Perfil",
+        "Tem certeza de que deseja desativar sua conta? Ela não poderá ser reativada.",
+        [{
+          text: "Não",
+          style: "cancel"
+        },
+        {
+          text: "Sim",
+          onPress: async () => {
+            await AsyncStorage.removeItem('token');
+            await axios.put(urlAPI + 'delpessoa/' + props.data.TB_PESSOA_ID);
+            navigation.navigate('Login');
+          }
+        }]
+      )
     }
     item3 = {
       texto: 'Sair da conta',
-      press: () => { setModalVisible(true); setDropdownVisible(false) }
+      press: () => { setModalVisible(true); setDropdownVisible(false); }
     }
   } else {
     item1 = {
       texto: 'Denunciar perfil',
       press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
     }
-    item2 = null;
+    item2 = {
+      texto: 'Bloquear pessoa',
+      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
+    }
     item3 = null;
   }
 
@@ -97,23 +117,29 @@ const PerfilLayout = (props) => {
             <Entypo name="dots-three-vertical" size={26} color="black" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
-          <SairDaConta val={modalVisible} set={setModalVisible}/>
+          <SairDaConta val={modalVisible} set={setModalVisible} />
         </View>
         <View style={styles.profileContainer}>
           <Image style={styles.profileImage} source={{ uri: urlImg }} />
           <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
-        {props.pessoal ?
-          null
-          :
-          <View style={styles.buttons}>
-            <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
-              <Text style={styles.buttonText}>Seguir</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => console.log('Postadas button pressed')}>
-              <Text style={styles.buttonText}>Iniciar Chat</Text>
-            </TouchableOpacity>
-          </View>}
+        <View style={styles.buttons}>
+          {props.pessoal ?
+            <>
+              <TouchableOpacity style={[styles.button, { width: '90%' }]} onPress={() => console.log('Iniciar sesión button pressed')}>
+                <Text style={styles.buttonText}>Alterar perfil</Text>
+              </TouchableOpacity>
+            </>
+            :
+            <>
+              <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
+                <Text style={styles.buttonText}>Seguir</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => console.log('Postadas button pressed')}>
+                <Text style={styles.buttonText}>Iniciar Chat</Text>
+              </TouchableOpacity>
+            </>}
+        </View>
         <View style={styles.content}>
           <Text style={styles.contentText}>
             {props.data.TB_PESSOA_BIO}

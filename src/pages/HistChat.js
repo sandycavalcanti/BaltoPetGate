@@ -18,7 +18,7 @@ const HisChat = ({ navigation: { navigate } }) => {
   useEffect(() => {
     const Selecionar = async () => {
       try {
-        await axios.get(urlAPI + 'selpessoa')
+        await axios.get(urlAPI + 'selpessoas')
           .then((response) => {
             setPessoasJson(response.data);
           }).catch((error) => {
@@ -40,10 +40,10 @@ const HisChat = ({ navigation: { navigate } }) => {
         .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
         .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID));
     }
-    setUsuarios(Filtrar([1, 7]))
-    setVeterinarios(Filtrar([2]))
-    setOngs(Filtrar([3, 4, 5]))
-    setCasasderacao(Filtrar([6]))
+    setUsuarios(Filtrar([1, 7]));
+    setVeterinarios(Filtrar([2]));
+    setOngs(Filtrar([3, 4, 5]));
+    setCasasderacao(Filtrar([6]));
   }, [pesquisa, pessoasJson]);
 
   return (
