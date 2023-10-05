@@ -1,76 +1,72 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, Touchable, View, ToastAndroid, Alert } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Avatar, Button } from 'react-native-paper';
-import { TouchableHighlight } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-
-const MyTouchableHighlight = (props) => {
-  const child = React.Children.only(props.children);
-  return (
-    <TouchableHighlight {...props}>
-      {child}
-    </TouchableHighlight>
-  );
-};
+import axios from 'axios';
+import { urlAPI } from '../constants';
 
 export default function App() {
-  const [Pic, SetPic] = React.useState('');
-  //For show toast msg
-  const setToasMsg = msg => {
-    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
-  };
+  const [image, setImage] = useState(null);
 
-  const uploadImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      setToasMsg('Permission to access camera roll is required!');
-      return;
-    }
-
+  const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
-      base64: true,
     });
 
     if (!result.canceled) {
-      SetPic(result.base64);
+      setImage(result.assets[0].uri);
     }
   };
 
   const removeImage = () => {
-    SetPic('')
-    setToasMsg('Imagem removida');
+    setImage(null)
+    ToastAndroid.show('Imagem removida', ToastAndroid.SHORT);
+  }
+
+  const Cadastrar = async () => {
+    const formData = new FormData();
+    let imagem = {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    };
+
+    formData.append('TB_PESSOA_NOME', 'É O GATOOOOOOOOOPOOO');
+    formData.append('TB_PESSOA_NOME_PERFIL', 'TESTANDOO');
+    formData.append('TB_TIPO_ID', 1);
+    formData.append('TB_PESSOA_EMAIL', 'GATO1');
+    formData.append('TB_PESSOA_SENHA', '123');
+    formData.append('img', imagem);
+
+    await axios.post(urlAPI + 'cadpessoa', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(response => {
+      console.log(response.data.message)
+    }).catch(error => {
+      console.error(error)
+      console.error(error.response.data)
+    })
   }
 
   return (
-    <View style={styles.centerContent}>
+    <View style={styles.centerContent} >
       <View>
-        <MyTouchableHighlight
-          onPress={() => uploadImage()}
-          underlayColor="rgba(0,0,0,0)"
-        >
-          <Avatar.Image size={250} source={{ uri: 'data:image/png;base64,' + Pic }} />
-        </MyTouchableHighlight>
+        <TouchableOpacity onPress={() => pickImage()}>
+          <Avatar.Image size={250} source={{ uri: image }} />
+        </TouchableOpacity>
       </View>
       <View style={[styles.centerContent, { marginTop: 25, flexDirection: 'row' }]}>
-        <Button mode="contained" onPress={() => uploadImage()}>
-          Upload Image
+        <Button mode="contained" onPress={Cadastrar}>
+          Cadastrar
         </Button>
-
-        <Button
-          mode="contained"
-          style={{ marginLeft: 20 }}
-          onPress={() => removeImage()}>
+        <Button mode="contained" style={{ marginLeft: 20 }} onPress={() => removeImage()}>
           Remove Image
         </Button>
       </View>
-      <StatusBar style="auto" />
-    </View>
+    </View >
   );
 }
 

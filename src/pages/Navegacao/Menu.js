@@ -34,12 +34,12 @@ const Menu = ({ navigation: { navigate } }) => {
                         <View style={[styles.dropdown, { top: 45, right: 15 }]}>
                             <TouchableOpacity style={styles.dropdownButton}>
                                 <Ionicons name="paw-outline" size={28} color="black" />
-                                <Text style={styles.textDropdownButton} onPress={() => navigate('CadastroAnimal')}>Cadastrar um animal</Text>
+                                <Text style={styles.textDropdownButton} onPress={() => { navigate('CadastroAnimal'); setDropdownVisible(false) }}>Cadastrar um animal</Text>
                             </TouchableOpacity>
                             <Divider width={1} color="black" />
                             <TouchableOpacity style={styles.dropdownButton}>
                                 <AntDesign name="picture" size={28} color="black" />
-                                <Text style={styles.textDropdownButton} onPress={() => navigate('Postagem')}>Fazer uma postagem</Text>
+                                <Text style={styles.textDropdownButton} onPress={() => { navigate('Postagem'); setDropdownVisible(false) }}>Fazer uma postagem</Text>
                             </TouchableOpacity>
                             <Divider width={1} color="black" />
                             <TouchableOpacity style={styles.dropdownButton}>

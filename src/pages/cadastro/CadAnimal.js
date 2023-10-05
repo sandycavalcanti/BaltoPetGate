@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
+import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView, Image } from "react-native";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import CampoSimples from "../../components/cadastro/CampoSimples";
@@ -13,6 +13,10 @@ import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
+import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
+import * as ImagePicker from 'expo-image-picker';
+import { Avatar } from 'react-native-paper';
+import Mensagem from "./Mensagem";
 
 let TB_PESSOA_IDD;
 
@@ -71,38 +75,69 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     ];
 
     const InserirDados = async () => {
-        try {
-            const response = await axios.post(urlAPI + 'cadanimal', {
-                TB_PESSOA_ID: TB_PESSOA_IDD,
-                TB_ANIMAL_NOME: nome,
-                TB_ANIMAL_IDADE: idade,
-                TB_ANIMAL_IDADE_TIPO: idadeTipo,
-                TB_ANIMAL_PORTE: porte,
-                TB_ANIMAL_PESO: peso,
-                TB_ANIMAL_SEXO: sexo,
-                TB_ANIMAL_ESPECIE: especie,
-                TB_ANIMAL_SAUDE: saude,
-                TB_ANIMAL_DESCRICAO: descricao,
-                TB_ANIMAL_LOCALIZACAO_UF: uf,
-                TB_ANIMAL_LOCALIZACAO_CIDADE: cidade,
-                TB_ANIMAL_LOCALIZACAO_BAIRRO: bairro,
-                TB_ANIMAL_LOCALIZACAO_RUA: rua,
-                TB_ANIMAL_CUIDADO_ESPECIAL: cuidadoEspecial,
-                TB_ANIMAL_VERMIFUGADO: vermifugado,
-                TB_ANIMAL_CASTRADO: castrado,
-                TB_ANIMAL_MICROCHIP: microchip,
-                TB_ANIMAL_LOCAL_RESGATE: localResgate,
-                TB_ANIMAL_ALERTA: alerta
-            });
-            console.log('Cadastrado:', response.data);
-        } catch (error) {
-            console.error('Erro ao cadastrar:', error);
+        const formData = new FormData();
+        let imagem = {
+            uri: image,
+            type: 'image/jpeg',
+            name: 'image.jpg',
+        };
+
+        formData.append('TB_PESSOA_ID', TB_PESSOA_IDD);
+        formData.append('TB_ANIMAL_NOME', nome);
+        formData.append('TB_ANIMAL_IDADE', idade);
+        formData.append('TB_ANIMAL_IDADE_TIPO', idadeTipo);
+        formData.append('TB_ANIMAL_PORTE', porte);
+        formData.append('TB_ANIMAL_PESO', peso);
+        formData.append('TB_ANIMAL_SEXO', sexo);
+        formData.append('TB_ANIMAL_ESPECIE', especie);
+        formData.append('TB_ANIMAL_SAUDE', saude);
+        formData.append('TB_ANIMAL_DESCRICAO', descricao);
+        formData.append('TB_ANIMAL_LOCALIZACAO_UF', uf);
+        formData.append('TB_ANIMAL_LOCALIZACAO_CIDADE', cidade);
+        formData.append('TB_ANIMAL_LOCALIZACAO_BAIRRO', bairro);
+        formData.append('TB_ANIMAL_LOCALIZACAO_RUA', rua);
+        formData.append('TB_ANIMAL_CUIDADO_ESPECIAL', cuidadoEspecial);
+        formData.append('TB_ANIMAL_VERMIFUGADO', vermifugado);
+        formData.append('TB_ANIMAL_CASTRADO', castrado);
+        formData.append('TB_ANIMAL_MICROCHIP', microchip);
+        formData.append('TB_ANIMAL_LOCAL_RESGATE', localResgate);
+        formData.append('TB_ANIMAL_ALERTA', alerta);
+        formData.append('img', imagem);
+
+        await axios.post(urlAPI + 'cadanimal', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        }).then(response => {
+            console.log(response.data.message);
+            setMessage('Cadastrado');
+        }).catch(error => {
+            console.error('Erro ao cadastrar:', error)
+            console.error(error.response.data)
+        })
+    };
+
+    const [image, setImage] = useState(null);
+    const [message, setMessage] = useState('');
+
+    const escolherImg = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
         }
     };
 
     return (
         <ScrollView>
             <ContainerCadastro titulo='Cadastro animal'>
+                <GroupBox titulo='Insira uma imagem do animal'>
+                    {image && <Image style={styles.Imagem} source={{ uri: image }} />}
+                    <BotaoArquivo onPress={escolherImg} />
+                </GroupBox>
                 <GroupBox titulo='Informações'>
                     <CampoSimples placeholder="Nome do animal" set={setNome} />
 
@@ -147,6 +182,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
                 <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} />
+                <Mensagem texto={message} />
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
             </ContainerCadastro>
         </ScrollView>
@@ -192,6 +228,11 @@ const styles = StyleSheet.create({
         left: 20,
         fontSize: 18
     },
+    Imagem: {
+        width: 250,
+        height: 250,
+        marginTop: 20
+    }
 });
 
 export default CadAnimal;

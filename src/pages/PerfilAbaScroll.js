@@ -66,9 +66,9 @@ const PerfilAbaScroll = ({ navigation: { navigate } }) => {
     })
   };
 
-  useEffect(() => {
-    Selecionar()
-  }, []);
+    useEffect(() => {
+      Selecionar()
+    }, []);
 
   // PanResponder for header
   const headerPanResponder = useRef(

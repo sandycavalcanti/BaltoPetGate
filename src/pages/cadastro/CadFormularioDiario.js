@@ -7,7 +7,7 @@ import GroupBox from "../../components/cadastro/GroupBox";
 import Campo from "../../components/animal/Campo";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 
-const CadFormularioDiario = ({navigation: {navigate }}) => {
+const CadFormularioDiario = ({ navigation: { navigate } }) => {
 
     const [formdiario, setForm_diario] = useState('');
     const [dataabastecimento, setDt_abastecimento] = useState('');
@@ -23,14 +23,14 @@ const CadFormularioDiario = ({navigation: {navigate }}) => {
                 TB_FORMULARIO_DIARIO_DT_ABASTECIMENTO: dataabastecimento,
                 TB_FORMULARIO_DIARIO_DT_ENVIO: dataenvio,
                 TB_PONTO_ALIMENTACAO_ID: 1,
-    });
-    console.log('Cadastrado:', response.data);
-    } catch (error) {
-        console.error('Erro ao cadastrar:', error);
+            });
+            console.log('Cadastrado:', response.data);
+        } catch (error) {
+            console.error('Erro ao cadastrar:', error);
+        }
     }
-}
 
-return (
+    return (
         <ContainerCadastro titulo='Formulário diario'>
             <GroupBox titulo='informações'>
                 <CampoSimples placeholder="Data do abastecimento" set={text => setDt_abastecimento(text)} />
@@ -40,10 +40,10 @@ return (
                     <Campo placeholder='dataenvio' set={text => setDt_envio(text)} />
                 </View>
             </GroupBox>
-            <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar'/>
+            <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
         </ContainerCadastro>
 
-);
+    );
 }
 
 const styles = StyleSheet.create({
@@ -66,21 +66,21 @@ const styles = StyleSheet.create({
         marginVertical: 5,
 
     },
-    containerCampos:{
+    containerCampos: {
         width: '95%',
-        justifyContent:"space-around",
-        flexDirection:"row",
+        justifyContent: "space-around",
+        flexDirection: "row",
         backgroundColor: '#fff',
         borderRadius: 15,
         alignItems: "center"
     },
-    ContainerDublo:{
+    ContainerDublo: {
         width: '95%',
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
     },
-    Texto:{
+    Texto: {
         color: '#447837',
         left: 20,
         fontSize: 18

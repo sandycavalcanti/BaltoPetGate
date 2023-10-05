@@ -52,7 +52,6 @@ const QuestionarioAdocao = () => {
         }
     }
 
-
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
         TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;

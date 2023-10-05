@@ -15,6 +15,7 @@ import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { urlAPI } from '../../constants';
 import axios from 'axios';
+import Mensagem from './Mensagem';
 
 const CadVeterinario = () => {
   const navigation = useNavigation();
@@ -110,7 +111,7 @@ const CadVeterinario = () => {
         <CampoSimples set={setEmail} placeholder={"Email"} keyboardType='email-address' />
         <CampoSenha set1={setSenha} set2={setSenhaConfirmacao} />
       </GroupBox>
-      {mensagem && <Text style={{ color: 'red' }}>{mensagem}</Text>}
+      <Mensagem texto={message} />
       <BotaoCadastrar onPress={Cadastrar} />
     </ContainerCadastro>
   )
