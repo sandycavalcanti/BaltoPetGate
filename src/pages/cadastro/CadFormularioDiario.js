@@ -32,7 +32,7 @@ const CadFormularioDiario = ({ navigation: { navigate } }) => {
 
     return (
         <ContainerCadastro titulo='Formulário diario'>
-            <GroupBox titulo='informações'>
+            <GroupBox titulo='Horário do abastecimento'>
                 <CampoSimples placeholder="Data do abastecimento" set={text => setDt_abastecimento(text)} />
 
                 <View style={styles.containerCampos}>

@@ -1,12 +1,31 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Image, TextInput, ScrollView, SafeAreaView } from 'react-native';
+import { urlAPI } from '../../constants';
 
 const Contato = (props) => {
+
+  const [urlImg, setUrlImg] = useState(urlAPI + 'selpessoaimg/' + props.id);
+
+  useEffect(() => {
+    const checkImageExists = async () => {
+      try {
+        const response = await fetch(urlImg);
+        if (!response.ok) {
+          setUrlImg('https://via.placeholder.com/100');
+        }
+      } catch (error) {
+        setUrlImg('https://via.placeholder.com/100');
+      }
+    };
+
+    checkImageExists();
+  }, [urlImg]);
+
   return (
     <View style={styles.container}>
       <Image
         style={styles.contactImage}
-        source={{ uri: 'https://via.placeholder.com/50' }}
+        source={{ uri: urlImg }}
       />
       <Text style={styles.contactName}>{props.nome}</Text>
     </View>

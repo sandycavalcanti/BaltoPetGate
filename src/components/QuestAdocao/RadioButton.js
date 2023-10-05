@@ -2,14 +2,46 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
 
-const RadioButton3 = (props) => {
-  const options = ['SIM', 'NAO', 'INDEFINIDO'];
+const RadioButton = (props) => {
+  const options = props.opcoes;
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionPress = (option) => {
     props.set(option);
     setSelectedOption(option);
   };
+
+  const Opcoes = (option) => {
+    switch (option) {
+      case 'SIM':
+        return 'Sim';
+        break;
+      case 'NAO':
+        return 'Não';
+        break;
+      case 'INDEFINIDO':
+        return 'Não sei informar';
+        break;
+      case 'CASA':
+        return 'Casa';
+        break;
+      case 'APARTAMENTO':
+        return 'Apartamento';
+        break;
+      case 'POUCO':
+        return 'Pouco';
+        break;
+      case 'MEDIO':
+        return 'Médio';
+        break;
+      case 'MUITO':
+        return 'Muito';
+        break;
+      default:
+        return option;
+        break;
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -18,9 +50,7 @@ const RadioButton3 = (props) => {
           style={[styles.optionButton, selectedOption === option && styles.selectedOption]}
           onPress={() => handleOptionPress(option)}>
           <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
-            {
-            option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'
-            }
+            {Opcoes(option)}
           </Text>
         </TouchableOpacity>
       ))}
@@ -30,12 +60,13 @@ const RadioButton3 = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
+    display: 'flex',
   },
   optionButton: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     paddingVertical: 10,
     borderRadius: 15,
     margin: 5,
@@ -53,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RadioButton3;
+export default RadioButton;

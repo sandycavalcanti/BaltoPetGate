@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, Dimensions, Image, ScrollView } from "react-native";
 import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
@@ -9,12 +9,18 @@ import { useRoute } from '@react-navigation/native';
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function Ficha_animal() {
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
+function Ficha_animal({ navigation: { navigate } }) {
     const route = useRoute();
     const { id } = route.params;
     let tipoIdade;
 
     const [select, setSelect] = useState([]);
+    const [temperamento, setTemperamento] = useState([]);
+    const [trauma, setTrauma] = useState([]);
+    const [situacao, setSituacao] = useState([]);
 
     const Selecionar = async () => {
         await axios.post(urlAPI + 'selanimal/filtrar', {
@@ -26,8 +32,30 @@ function Ficha_animal() {
         })
     };
 
+    const Multiplo = () => {
+        axios.get(urlAPI + 'seltemperamentos/' + id
+        ).then((response) => {
+            setTemperamento(response.data)
+        }).catch((error) => {
+            console.error(error);
+        });
+        axios.get(urlAPI + 'selsituacoes/' + id
+        ).then((response) => {
+            setSituacao(response.data)
+        }).catch((error) => {
+            console.error(error);
+        });
+        axios.get(urlAPI + 'seltraumas/' + id
+        ).then((response) => {
+            setTrauma(response.data)
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
     useEffect(() => {
         Selecionar();
+        Multiplo();
     }, [])
 
     if (select.TB_ANIMAL_IDADE_TIPO == 'MES' && select.TB_ANIMAL_IDADE == 1) {
@@ -40,10 +68,12 @@ function Ficha_animal() {
         tipoIdade = 'Anos'
     }
 
+    const urlImg = urlAPI + 'selanimalimg/' + id;
+
     return (
         <ScrollView>
             <View style={styles.Container}>
-                <Image style={styles.Imagem} resizeMode='cover' source={require('../../assets/img/dog.png')} />
+                <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
                 <View style={styles.Conjunto1}>
                     <TextoComum textoTitulo='Nome:' textoDescricao={select.TB_ANIMAL_NOME} />
                     <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE == 'PEQUENO' ? 'Pequeno' : select.TB_ANIMAL_PORTE == 'MEDIO' ? 'Médio' : 'Grande'} />
@@ -53,28 +83,47 @@ function Ficha_animal() {
                         <TextoComum textoTitulo={select.TB_ANIMAL_PESO} textoDescricao='Kg' />
                     </View>
                     <View style={styles.Barras}>
-                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'MACHO' ? 'Macho' : 'Fêmea'} />
+                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'FEMEA' ? 'Fêmea' : 'Macho'} />
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade} />
                     </View>
                 </View>
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Temperamento:' />
-                    <TextoMultiplo textoMultiplo='Aaaaaa' />
-                </View>
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Situação:' />
-                    <TextoMultiplo textoMultiplo='Aaaaaa' />
-                </View>
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Trauma:' />
-                    <TextoMultiplo textoMultiplo='Aaaaaa' />
-                </View>
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Cuidado:' />
-                    <TextoMultiplo textoMultiplo='Aaaaaa' />
-                </View>
+                {temperamento.length !== 0 &&
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Temperamento:' />
+                        {temperamento.map((item, index) => {
+                            return (
+                                <TextoMultiplo key={index} textoMultiplo={item.TB_TEMPERAMENTO.TB_TEMPERAMENTO_TIPO} />
+                            )
+                        })}
+                    </View>
+                }
+                {situacao.length !== 0 &&
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Situação:' />
+                        {situacao.map((item, index) => {
+                            return (
+                                <TextoMultiplo key={index} textoMultiplo={item.TB_SITUACAO.TB_SITUACAO_DESCRICAO} />
+                            )
+                        })}
+                    </View>
+                }
+                {trauma.length !== 0 &&
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Trauma:' />
+                        {trauma.map((item, index) => {
+                            return (
+                                <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
+                            )
+                        })}
+                    </View>
+                }
+                {select.TB_ANIMAL_CUIDADO_ESPECIAL &&
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Cuidado:' />
+                        <TextoMultiplo textoMultiplo={select.TB_ANIMAL_CUIDADO_ESPECIAL} />
+                    </View>}
                 <View style={styles.Conjunto4}>
                     {select.TB_ANIMAL_CASTRADO == 'SIM' &&
                         <TextosOpcionais textosOpcionais='Castrado(a)' />}
@@ -86,24 +135,25 @@ function Ficha_animal() {
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Descrição</Text>
                     <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
-                    <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' />
+                    {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' /> */}
                     <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
                 </View>
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Localização</Text>
                     <View style={styles.GroupBox2}>
                         <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_CIDADE}</Text>
-                        <Text style={styles.TextoEscuro}>({select.TB_ANIMAL_LOCALIZACAO_UF})</Text>
+                        <Text style={styles.TextoEscuro}>{select.TB_ANIMAL_LOCALIZACAO_UF}</Text>
                     </View>
                     <View style={styles.GroupBox2}>
                         <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_BAIRRO},</Text>
                     </View>
                     <View style={styles.GroupBox2}>
-                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_RUA}</Text>
+                        {select.TB_ANIMAL_LOCALIZACAO_RUA &&
+                            <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_RUA}</Text>}
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar texto="Adotar" />
+                    <BotaoCadastrar onPress={() => navigate('QuestionarioAdocao')} texto="Adotar" />
                 </View>
             </View>
         </ScrollView>
@@ -176,7 +226,10 @@ const styles = StyleSheet.create({
         borderColor: corBordaBoxCad
     },
     Imagem: {
-        width: '100%'
+        width: windowWidth,
+        height: windowWidth,
+        borderColor: '#fff',
+        borderWidth: 3,
     },
     GroupBox2: {
         margin: '1%',
