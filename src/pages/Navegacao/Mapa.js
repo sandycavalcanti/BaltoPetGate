@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { Modal, StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
+import { Modal, StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync, LocationObject, watchPositionAsync, LocationAccuracy } from 'expo-location';
 import axios from 'axios';
@@ -15,12 +15,11 @@ export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [description, setDescription] = useState('');
   // Novo estado para armazenar a posição do marcador laranja
-  const [orangeMarkerPosition, setOrangeMarkerPosition] = useState(null);
-  // NOVO: estado para armazenar o texto temporário
   const [tempText, setTempText] = useState('');
-
+  let allow;
   async function requestLocationPermissions() {
     const { granted } = await requestForegroundPermissionsAsync();
+    allow = granted;
 
     if (granted) {
       const currentPosition = await getCurrentPositionAsync();
@@ -76,9 +75,9 @@ export default function App() {
     if (selectedImage && description) {
       // NOVO: chamar a função showTempText com o texto desejado
       showTempText('Clique em algum lugar do mapa para adicionar o marcador');
-     
-       setSelectedImage(null);
-       setDescription('');
+
+      setSelectedImage(null);
+      setDescription('');
       setIsPinkModalVisible(false);
     } else {
       alert('Por favor, selecione uma imagem e adicione uma descrição antes de adicionar um marcador rosa.');
@@ -89,8 +88,8 @@ export default function App() {
     if (selectedImage && description) {
       // NOVO: chamar a função showTempText com o texto desejado
       showTempText('Clique em algum lugar do mapa para adicionar o marcador');
-      
-       setSelectedImage(null);
+
+      setSelectedImage(null);
       setDescription('');
       setIsPinkModalVisible(false);
     } else {
@@ -111,158 +110,105 @@ export default function App() {
 
   // Nova função para atualizar o estado orangeMarkerPosition
   function handleOrangeMarkerPress(e) {
-    setOrangeMarkerPosition(e.nativeEvent.coordinate);
+    setOrangeMarkersCoords([...orangeMarkersCoords, e.nativeEvent.coordinate]);
   }
 
   return (
     <View style={styles.container}>
-      {location &&
-        <MapView
-          style={{ width: '100%', height: '100%' }}
-          initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005
-          }}
-          // Novo atributo para chamar a função handleOrangeMarkerPress
-          onPress={handleOrangeMarkerPress}
-          // NOVO: atributo para chamar a função handleMapPress
-          onLongPress={handleMapPress}
-        >
-          <Marker
-            coordinate={redMarkerCoords}
-          />
-          {orangeMarkersCoords.map((coords, index) => (
-            <Marker
-              key={index}
-              coordinate={coords}
-              pinColor='orange'
+      {!allow ?
+        <>
+          {location &&
+            <MapView
+              style={{ width: '100%', height: '100%' }}
+              initialRegion={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005
+              }}
+              // Novo atributo para chamar a função handleOrangeMarkerPress
+              onPress={handleOrangeMarkerPress}
+              // NOVO: atributo para chamar a função handleMapPress
+              onLongPress={handleMapPress}
             >
-              <Callout
-                onPress={() => setIsOrangeModalVisible(true)}
-              >
-                <Text>Ponto de Alimentação</Text>
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={{ width: 100, height: 100 }}
-                />
-              </Callout>
-            </Marker>
-          ))}
-          {pinkMarkersCoords.map((coords, index) => (
-            <Marker
-              key={index}
-              coordinate={coords}
-              pinColor='orange'
-            >
-              <Callout
-                onPress={() => setIsPinkModalVisible(true)}
-              >
-                <Text>Animal em Alerta</Text>
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={{ width: 100, height: 100 }}
-                />
-              </Callout>
-            </Marker>
-          ))}
-        </MapView>
-      
-      }
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Adicionar marcador laranja"
-          onPress={() => setIsPinkModalVisible(true)}
-        />
-        <Button
-          title="Mover marcador vermelho"
-          onPress={() =>
-            setRedMarkerCoords({
-              latitude: redMarkerCoords.latitude + 0.001,
-              longitude: redMarkerCoords.longitude + 0.001,
-            })}
-        />
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={isOrangeModalVisible}
-      >
-        <View style={styles.modalContainer}>
-          <Text>Selecione uma imagem:</Text>
-          <Button
-            title="Escolher imagem"
-            onPress={handleSelectImage}
-          />
-          {selectedImage && 
-            <>
-              <Text>Imagem selecionada:</Text>
-              <Image
-                source={{ uri: selectedImage }}
-                style={{ width: 200, height: 200 }}
+              <Marker
+                coordinate={redMarkerCoords}
               />
-            </>
+              {orangeMarkersCoords.map((coords, index) => (
+                <Marker key={index} coordinate={coords} pinColor='orange'>
+                  <Callout onPress={() => setIsOrangeModalVisible(true)}>
+                    <Text>Ponto de Alimentação</Text>
+                    <Image source={{ uri: selectedImage }} style={{ width: 100, height: 100 }} />
+                  </Callout>
+                </Marker>
+              ))}
+              {pinkMarkersCoords.map((coords, index) => (
+                <Marker key={index} coordinate={coords} pinColor='orange'>
+                  <Callout onPress={() => setIsPinkModalVisible(true)}>
+                    <Text>Animal em Alerta</Text>
+                    <Image source={{ uri: selectedImage }} style={{ width: 100, height: 100 }} />
+                  </Callout>
+                </Marker>
+              ))}
+            </MapView>
+
           }
-          <Text>Adicione uma descrição:</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={setDescription}
-            value={description}
-          />
-          <Button
-            title="Confirmar"
-            onPress={handleAddOrangeMarker}
-          />
-          <Button
-            title="Cancelar"
-            onPress={() => setIsOrangeModalVisible(false)}
-          />
-        </View>
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={isPinkModalVisible}
-      >
-        <View style={styles.modalContainer}>
-          <Text>Selecione uma imagem:</Text>
-          <Button
-            title="Escolher imagem"
-            onPress={handleSelectImage}
-          />
-          {selectedImage && 
-            <>
-              <Text>Imagem selecionada:</Text>
-              <Image
-                source={{ uri: selectedImage }}
-                style={{ width: 200, height: 200 }}
-              />
-            </>
+          <View style={styles.buttonContainer}>
+            <Button title="Adicionar marcador laranja" onPress={() => setIsPinkModalVisible(true)} />
+            <Button title="Mover marcador vermelho"
+              onPress={() =>
+                setRedMarkerCoords({
+                  latitude: redMarkerCoords.latitude + 0.001,
+                  longitude: redMarkerCoords.longitude + 0.001,
+                })} />
+          </View>
+          <Modal animationType="slide" transparent={false} visible={isOrangeModalVisible} >
+            <View style={styles.modalContainer}>
+              <Text>Selecione uma imagem:</Text>
+              <Button title="Escolher imagem" onPress={handleSelectImage} />
+              {selectedImage &&
+                <>
+                  <Text>Imagem selecionada:</Text>
+                  <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />
+                </>
+              }
+              <Text>Adicione uma descrição:</Text>
+              <TextInput style={styles.input} onChangeText={setDescription} value={description} />
+              <Button title="Confirmar" onPress={handleAddOrangeMarker} />
+              <Button title="Cancelar" onPress={() => setIsOrangeModalVisible(false)} />
+            </View>
+          </Modal>
+          <Modal animationType="slide" transparent={false} visible={isPinkModalVisible}>
+            <View style={styles.modalContainer}>
+              <Text>Selecione uma imagem:</Text>
+              <Button title="Escolher imagem" onPress={handleSelectImage} />
+              {selectedImage &&
+                <>
+                  <Text>Imagem selecionada:</Text>
+                  <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />
+                </>
+              }
+              <Text>Adicione uma descrição:</Text>
+              <TextInput style={styles.input} onChangeText={setDescription} value={description} />
+              <Button title="Confirmar" onPress={handleAddPinkMarker} />
+              <Button title="Cancelar" onPress={() => setIsPinkModalVisible(false)} />
+            </View>
+          </Modal>
+          {/* NOVO: componente para mostrar o estado tempText */}
+          {tempText &&
+            <View style={styles.tempTextView}>
+              <Text style={styles.tempText}>{tempText}</Text>
+            </View>
           }
-          <Text>Adicione uma descrição:</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={setDescription}
-            value={description}
-          />
-          <Button
-            title="Confirmar"
-            onPress={handleAddPinkMarker}
-          />
-          <Button
-            title="Cancelar"
-            onPress={() => setIsPinkModalVisible(false)}
-          />
-        </View>
-      </Modal>
-      {/* NOVO: componente para mostrar o estado tempText */}
-      {tempText && 
-        <View style={styles.tempTextView}>
-          <Text style={styles.tempText}>{tempText}</Text>
-        </View>
+        </>
+        :
+        <>
+          <TouchableOpacity onPress={requestLocationPermissions}>
+            <Text>Permita o acesso a localização</Text>
+          </TouchableOpacity>
+        </>
       }
-   </View>
+    </View>
   );
 }
 
@@ -276,7 +222,7 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 50,
     left: 20,
     right: 20,
   },

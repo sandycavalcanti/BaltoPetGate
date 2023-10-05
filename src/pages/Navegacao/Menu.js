@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, Modal, StyleSheet, View, TextInput } from 'react-native';
+import { Text, TouchableOpacity, Modal, StyleSheet, View, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Octicons, Feather, Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
@@ -27,14 +27,10 @@ const Menu = ({ navigation: { navigate } }) => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [pesquisa, setPesquisa] = useState('');
 
     const handleSearchChange = (text) => {
-        // setSearchText(text);
-        console.log(text)
-        // Aqui você pode implementar a lógica para pesquisar os perfis
-        // com base no texto e definir os resultados da pesquisa.
-        // Por exemplo:
-        // setSearchResults(perfis.filter(perfil => perfil.nome.includes(text)));
+        setPesquisa(text)
     };
 
     const handleProfileSelect = (perfil) => {
@@ -71,6 +67,7 @@ const Menu = ({ navigation: { navigate } }) => {
                         placeholder='Pesquisar'
                         style={styles.campo}
                         onChangeText={handleSearchChange}
+                    // value={pesquisa}
                     />
                 </View>
                 <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={styles.Botao}>
@@ -83,7 +80,7 @@ const Menu = ({ navigation: { navigate } }) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container }}>
+            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container, tabBarHideOnKeyboard: true }}>
                 <Tab.Screen
                     name="Home"
                     component={Home}
