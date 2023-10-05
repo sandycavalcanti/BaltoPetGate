@@ -14,6 +14,7 @@ import { corBordaBoxCad, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import { useRoute } from '@react-navigation/native';
+import Mensagem from './Mensagem';
 
 let TB_PESSOA_IDD;
 
@@ -149,7 +150,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
             <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} val1={telefone1} val2={telefone2} val3={whatsapp} opcional={modoAlterar ? true : false} />
             <CampoRede set1={setInstagram} set2={setFacebook} opcional val1={instagram} val2={facebook} />
           </GroupBox>
-          {mensagem && <Text style={{ color: 'red' }}>{mensagem}</Text>}
+          <Mensagem texto={message}/>
           <BotaoCadastrar onPress={Alterar} texto={modoAlterar ? "Alterar" : "Continuar"} />
         </>}
     </ContainerCadastro>
