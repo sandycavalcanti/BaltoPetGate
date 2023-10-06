@@ -28,6 +28,7 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={Selecionar} style={{ marginVertical: 5 }}><Text>Selecionar pessoas</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('HisChat')} style={{ marginVertical: 5 }}><Text>Ir para chats</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('Teste')} style={{ marginVertical: 5 }}><Text>Ir para teste</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('InfoChat')} style={{ marginVertical: 5 }}><Text>Info chat</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('QuestionarioAdocao')} style={{ marginVertical: 5 }}><Text>Questionario Adoção</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('AlterarCad', { modoAlterar })} style={{ marginVertical: 5 }}><Text>Completar Cadastro</Text></TouchableOpacity>
         {select && select.map((user, index) => (

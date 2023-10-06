@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Splash from '../Splash';
 import Menu from './Menu';
 import HisChat from '../HistChat';
+import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
@@ -52,6 +53,7 @@ export default function Navigation() {
         <Stack.Screen name="CriarSenha" component={CriarSenha} />
         <Stack.Screen name="Postagem" component={Postagem} />
         <Stack.Screen name="HisChat" component={HisChat} />
+        <Stack.Screen name="InfoChat" component={InfoChat} />
         <Stack.Screen name="Teste" component={Teste} />
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
