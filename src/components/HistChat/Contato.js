@@ -37,12 +37,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
+    marginLeft: 10,
   },
   contactImage: {
     width: 80,
     height: 80,
     borderRadius: 250,
-    marginRight: 10,
     borderColor: 'white',
     borderWidth: 1,
   },

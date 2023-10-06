@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, ActivityInd
 import { TabView, TabBar } from 'react-native-tab-view';
 import PerfilLayout from './PerfilLayout';
 import axios from 'axios';
-import { corBordaBoxCad, corFundo, corFundoCad, urlAPI } from '../constants';
+import { corBordaBoxCad, corFundo, corFundoCad, urlAPI, urlLocal } from '../constants';
 import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import AnimalPost from '../components/perfil/AnimalPost';
@@ -18,6 +18,7 @@ const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 let HeaderHeight
 const PullToRefreshDist = 150;
+let TB_PESSOA_IDD;
 
 const Perfil = ({ navigation: { navigate } }) => {
   const route = useRoute();
@@ -39,7 +40,6 @@ const Perfil = ({ navigation: { navigate } }) => {
   const _tabIndex = useRef(0);
   const refreshStatusRef = useRef(false);
 
-  let TB_PESSOA_IDD;
   const [pessoal, setPessoal] = useState(false);
   const [perfilHeight, setPerfilHeight] = useState(450);
   HeaderHeight = perfilHeight;
@@ -74,19 +74,24 @@ const Perfil = ({ navigation: { navigate } }) => {
       const decodedToken = await DecodificarToken();
       TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
       if (TB_PESSOA_IDD === id) setPessoal(true);
-      await axios.post(urlAPI + 'selpessoa/filtrar', {
-        TB_PESSOA_ID: id,
-      }).then((response) => {
-        setSelectPessoa(response.data[0]);
-      }).catch((error) => {
-        setSelectPessoa(error.response.data.message);
-      });
-      await SelecionarPublicacoes();
+      await axios.get(urlLocal + 'selpessoa/' + id)
+        .then(async (response) => {
+          setSelectPessoa(response.data[0]);
+          await SelecionarPublicacoes();
+        }).catch((error) => {
+          try {
+            setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
+          } catch (error) {
+            ToastAndroid.show('Conecte-se à Internet', ToastAndroid.SHORT);
+            setSelectPessoa('Conecte-se à Internet')
+          }
+        });
     };
-
+    
     Selecionar().then(() => {
       setCarregando(false)
     });
+    console.log(selectPessoa)
   }, []);
 
 
@@ -157,7 +162,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout pessoal={pessoal} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+          <PerfilLayout pessoal={pessoal} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -220,14 +225,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   };
   const renderCustomRefresh = () => {
     return Platform.select({
-      ios: (
-        <AnimatedIndicator style={{ top: -50, position: 'absolute', alignSelf: 'center', transform: [{ translateY: scrollY.interpolate({ inputRange: [-100, 0], outputRange: [120, 0], extrapolate: 'clamp' }), },], }} animating />
-      ),
-      android: (
-        <Animated.View style={{ transform: [{ translateY: headerMoveScrollY.interpolate({ inputRange: [-300, 0], outputRange: [150, 0], extrapolate: 'clamp', }), },], backgroundColor: '#eee', height: 38, width: 38, borderRadius: 19, borderWidth: 2, borderColor: '#ddd', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', top: -50, position: 'absolute' }}>
-          <ActivityIndicator animating />
-        </Animated.View>
-      ),
+      ios: (<AnimatedIndicator style={{ top: -50, position: 'absolute', alignSelf: 'center', transform: [{ translateY: scrollY.interpolate({ inputRange: [-100, 0], outputRange: [120, 0], extrapolate: 'clamp' }), },], }} animating />),
+      android: (<Animated.View style={{ transform: [{ translateY: headerMoveScrollY.interpolate({ inputRange: [-300, 0], outputRange: [150, 0], extrapolate: 'clamp', }), },], backgroundColor: '#eee', height: 38, width: 38, borderRadius: 19, borderWidth: 2, borderColor: '#ddd', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', top: -50, position: 'absolute' }}><ActivityIndicator animating /></Animated.View>),
     });
   };
 

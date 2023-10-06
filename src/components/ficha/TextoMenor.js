@@ -6,7 +6,7 @@ const TextoMenor = (props) => {
             <Text style={styles.Titulo}>
                 {props.textoTitulo}
             </Text>
-            <Text style={styles.Descricao}>
+            <Text s>
                 {props.textoDescricao}
             </Text>
         </View>

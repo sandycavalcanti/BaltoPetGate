@@ -16,19 +16,16 @@ const HisChat = ({ navigation: { navigate } }) => {
   const [pesquisa, setPesquisa] = useState("");
 
   useEffect(() => {
-    const Selecionar = async () => {
-      try {
-        await axios.get(urlAPI + 'selpessoas')
-          .then((response) => {
-            setPessoasJson(response.data);
-          }).catch((error) => {
-            let erro = error.response.data.message;
-            setPessoasJson(erro)
-            console.error('Erro ao selecionar:', erro);
-          })
-      } catch (error) {
-        console.error('Erro ao selecionar:', error);
-      }
+    const Selecionar = () => {
+      axios.get(urlAPI + 'selpessoas')
+        .then((response) => {
+          setPessoasJson(response.data);
+        })
+        .catch((error) => {
+          let erro = error.response.data.message;
+          setPessoasJson(erro)
+          console.error('Erro ao selecionar:', error.response.data);
+        })
     };
     Selecionar();
   }, []);
@@ -59,38 +56,38 @@ const HisChat = ({ navigation: { navigate } }) => {
               </TouchableOpacity>}
           </View>
           <View style={styles.contacts}>
-            <View style={styles.contact}>
-              {usuarios.length !== 0 ? <Text style={styles.categoria}>Usuários</Text> : null}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {usuarios.length !== 0 ? <Text style={styles.categoria}>Usuários</Text> : null}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.contact}>
                 {usuarios.map((pessoa) => (
                   <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
-              </ScrollView>
-            </View>
-            <View style={styles.contact}>
-              {veterinarios.length !== 0 ? <Text style={styles.categoria}>Veterinarios</Text> : null}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              </View>
+            </ScrollView>
+            {veterinarios.length !== 0 ? <Text style={styles.categoria}>Veterinários</Text> : null}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.contact}>
                 {veterinarios.map((pessoa) => (
                   <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
-              </ScrollView>
-            </View>
-            <View style={styles.contact}>
-              {ongs.length !== 0 ? <Text style={styles.categoria}>Instituições/Protetores/Abrigos</Text> : null}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              </View>
+            </ScrollView>
+            {ongs.length !== 0 ? <Text style={styles.categoria}>Instituições/Protetores/Abrigos</Text> : null}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.contact}>
                 {ongs.map((pessoa) => (
                   <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
-              </ScrollView>
-            </View>
-            <View style={styles.contact}>
-              {casasderacao.length !== 0 ? <Text style={styles.categoria}>Casas de ração</Text> : null}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              </View>
+            </ScrollView>
+            {casasderacao.length !== 0 ? <Text style={styles.categoria}>Casas de ração</Text> : null}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.contact}>
                 {casasderacao.map((pessoa) => (
                   <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
                 ))}
-              </ScrollView>
-            </View>
+              </View>
+            </ScrollView>
           </View>
         </View>
       </SafeAreaView>
@@ -122,15 +119,16 @@ const styles = StyleSheet.create({
   },
   contacts: {
     flex: 1,
-    padding: 10,
+    marginTop: 10
   },
   contact: {
+    flexDirection: 'row',
     alignItems: 'flex-start',
   },
   categoria: {
     fontSize: 20,
     color: "white",
-    marginLeft: 10
+    marginLeft: 20
   },
   groupBox: {
     minHeight: windowHeight - 80,

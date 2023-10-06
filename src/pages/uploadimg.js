@@ -41,7 +41,7 @@ export default function App() {
     formData.append('TB_PESSOA_SENHA', '123');
     formData.append('img', imagem);
 
-    await axios.post(urlAPI + 'cadpessoa', formData, {
+    await axios.put(urlAPI + 'altpessoa/14', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then(response => {
       console.log(response.data.message)

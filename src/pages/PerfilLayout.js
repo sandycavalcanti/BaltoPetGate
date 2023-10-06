@@ -37,7 +37,7 @@ const PerfilLayout = (props) => {
       }
     };
     checkImageExists();
-  }, [urlImg]);
+  }, []);
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;
