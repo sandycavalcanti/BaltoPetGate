@@ -22,6 +22,7 @@ import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
+import InfoChat from '../InfoChat';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
 
 import Teste from '../Teste';
@@ -52,6 +53,7 @@ export default function Navigation() {
         <Stack.Screen name="CriarSenha" component={CriarSenha} />
         <Stack.Screen name="Postagem" component={Postagem} />
         <Stack.Screen name="HisChat" component={HisChat} />
+        <Stack.Screen name="InfoChat" component={InfoChat} />
         <Stack.Screen name="Teste" component={Teste} />
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
