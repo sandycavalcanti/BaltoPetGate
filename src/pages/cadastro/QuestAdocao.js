@@ -111,7 +111,7 @@ const QuestionarioAdocao = () => {
                         <BotaoQuantidade set={setQuantidade}/>
                     </GroupBox>
 
-                    <BotaoCadastrar />
+                    <BotaoCadastrar onPress={Alterar} texto='Enviar'/>
                 </>
             )}
         </ContainerCadastro>

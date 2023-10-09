@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Splash from '../Splash';
 import Menu from './Menu';
 import HisChat from '../HistChat';
+import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
@@ -22,7 +23,6 @@ import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
-import InfoChat from '../InfoChat';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
 
 import Teste from '../Teste';

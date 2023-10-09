@@ -1,6 +1,8 @@
 export const corFundoCad = "#a5cbd3";
 export const corTituloCad = "#5D8366";
 export const corBotaoCad = "#E0A8A8";
+export const corBotaoAceitar = "#E0A8A8";
+export const corBotaoNegar = "#E0A8A8";
 export const corTextoBotaoCad = "#fff";
 export const corFundoCampoCad = "#fff";
 export const corPlaceholderCad = "#8EBF81";
