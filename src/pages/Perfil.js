@@ -91,7 +91,6 @@ const Perfil = ({ navigation: { navigate } }) => {
     Selecionar().then(() => {
       setCarregando(false)
     });
-    console.log(selectPessoa)
   }, []);
 
 

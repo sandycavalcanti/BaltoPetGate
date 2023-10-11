@@ -31,6 +31,7 @@ const Contato = (props) => {
     </View>
   )
 }
+
 const styles = StyleSheet.create({
   container: {
     width: 100,
@@ -50,9 +51,9 @@ const styles = StyleSheet.create({
     width: 90,
     paddingVertical: 6,
     fontSize: 18,
-    marginBottom: 14,
     color: "#697C55",
     textAlign: 'center'
   },
 });
+
 export default Contato;

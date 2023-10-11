@@ -17,6 +17,7 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={() => navigate('QuestionarioAdocao')}><Text>Questionario Adoção</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('AlterarCad', { modoAlterar: false })}><Text>Completar Cadastro</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('uploadimg')}><Text>Upload Img</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate('TesteChat')}><Text>TesteChat</Text></TouchableOpacity>
       </SafeAreaView>
     </ScrollView>
   );

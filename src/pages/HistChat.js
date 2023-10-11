@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import axios from 'axios';
-import Contato from '../components/HistChat/Contato'
-import { corBordaBoxCad, urlAPI } from '../constants';
+import { corBordaBoxCad, urlAPI, urlLocal } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
+import DecodificarToken from '../utils/DecodificarToken';
+import GrupoContatos from '../components/chat/GrupoContatos';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+let TB_PESSOA_IDD;
 
 const HisChat = ({ navigation: { navigate } }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -15,18 +17,26 @@ const HisChat = ({ navigation: { navigate } }) => {
   const [pessoasJson, setPessoasJson] = useState([]);
   const [pesquisa, setPesquisa] = useState("");
 
+  const [carregando, setCarregando] = useState(true);
+
+  const Selecionar = async () => {
+    const decodedToken = await DecodificarToken();
+    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
+    await axios.get(urlLocal + 'selchat/' + TB_PESSOA_IDD)
+      .then(response => {
+        setPessoasJson(response.data);
+        setTimeout(() => {
+          setCarregando(false);
+        }, 600)
+      })
+      .catch(error => {
+        let erro = error.response.data.message;
+        setPessoasJson(erro);
+        console.error('Erro ao selecionar:', error.response.data);
+      })
+  };
+
   useEffect(() => {
-    const Selecionar = () => {
-      axios.get(urlAPI + 'selpessoas')
-        .then((response) => {
-          setPessoasJson(response.data);
-        })
-        .catch((error) => {
-          let erro = error.response.data.message;
-          setPessoasJson(erro)
-          console.error('Erro ao selecionar:', error.response.data);
-        })
-    };
     Selecionar();
   }, []);
 
@@ -55,43 +65,19 @@ const HisChat = ({ navigation: { navigate } }) => {
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>}
           </View>
+          {carregando &&
+            <View style={styles.carregando}>
+              <ActivityIndicator size="large" color={corBordaBoxCad} />
+            </View>}
           <View style={styles.contacts}>
-            {usuarios.length !== 0 ? <Text style={styles.categoria}>Usuários</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {usuarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {veterinarios.length !== 0 ? <Text style={styles.categoria}>Veterinários</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {veterinarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {ongs.length !== 0 ? <Text style={styles.categoria}>Instituições/Protetores/Abrigos</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {ongs.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {casasderacao.length !== 0 ? <Text style={styles.categoria}>Casas de ração</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {casasderacao.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
+            <GrupoContatos data={usuarios} titulo="Usuários" />
+            <GrupoContatos data={veterinarios} titulo="Veterinários" />
+            <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
+            <GrupoContatos data={casasderacao} titulo="Casas de ração" />
           </View>
         </View>
       </SafeAreaView>
-    </ScrollView>
+    </ScrollView >
   );
 };
 
@@ -118,17 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contacts: {
-    flex: 1,
     marginTop: 10
-  },
-  contact: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  categoria: {
-    fontSize: 20,
-    color: "white",
-    marginLeft: 20
   },
   groupBox: {
     minHeight: windowHeight - 80,
@@ -153,6 +129,17 @@ const styles = StyleSheet.create({
     fontSize: 30,
     backgroundColor: '#A9DDE8',
   },
+  carregando: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#A9DDE8',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  }
 });
 
 export default HisChat;

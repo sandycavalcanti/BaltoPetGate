@@ -23,10 +23,12 @@ import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
+import Chat from '../Chat';
 
 import uploadimg from '../uploadimg';
 import Teste from '../Teste';
-
+import Reativar from '../Reativar';
+import TesteChat from '../TesteChat';
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
@@ -53,9 +55,12 @@ export default function Navigation() {
         <Stack.Screen name="CriarSenha" component={CriarSenha} />
         <Stack.Screen name="Postagem" component={Postagem} />
         <Stack.Screen name="HisChat" component={HisChat} />
+        <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Teste" component={Teste} />
+        <Stack.Screen name="Reativar" component={Reativar} />
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
+        <Stack.Screen name="TesteChat" component={TesteChat} />
         <Stack.Screen name="uploadimg" component={uploadimg} />
       </Stack.Navigator>
     </NavigationContainer>

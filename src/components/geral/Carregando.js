@@ -4,7 +4,7 @@ import LottieView from 'lottie-react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { corBordaBoxCad, corFundo } from '../../constants';
 
-const Splash = (props) => {
+const Carregando = (props) => {
 
     return (
         <>
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Splash;
+export default Carregando;

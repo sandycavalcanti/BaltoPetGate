@@ -21,23 +21,25 @@ const PerfilLayout = (props) => {
   const [valorScroll, setValorScroll] = useState(0);
   scrollY = props.scrollY;
 
-  const [urlImg, setUrlImg] = useState(urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID);
+  const [imageExists, setImageExists] = useState(true);
+  const urlImg = urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID;
 
   useEffect(() => {
     const checkImageExists = async () => {
       try {
         const response = await fetch(urlImg);
         if (!response.ok) {
-          setUrlImg('https://via.placeholder.com/100');
-        } else {
-          setUrlImg(urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID);
+          setImageExists(false);
         }
+        console.log(response.ok, urlImg, response)
       } catch (error) {
-        setUrlImg('https://via.placeholder.com/100');
+        setImageExists(false);
       }
     };
+
     checkImageExists();
-  }, []);
+  }, [urlImg]);
+
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;
@@ -120,7 +122,7 @@ const PerfilLayout = (props) => {
           <SairDaConta val={modalVisible} set={setModalVisible} />
         </View>
         <View style={styles.profileContainer}>
-          <Image style={styles.profileImage} source={{ uri: urlImg }} />
+          {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} />}
           <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
         <View style={styles.buttons}>
