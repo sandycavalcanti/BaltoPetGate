@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, SafeAreaView, Button, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Button, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
@@ -20,9 +21,11 @@ const PerfilLayout = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
   scrollY = props.scrollY;
+  const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
+  const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
 
   const [imageExists, setImageExists] = useState(true);
-  const urlImg = urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID;
+  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
 
   useEffect(() => {
     const checkImageExists = async () => {
@@ -30,8 +33,9 @@ const PerfilLayout = (props) => {
         const response = await fetch(urlImg);
         if (!response.ok) {
           setImageExists(false);
+        } else {
+          setImageExists(true);
         }
-        console.log(response.ok, urlImg, response)
       } catch (error) {
         setImageExists(false);
       }
@@ -84,7 +88,7 @@ const PerfilLayout = (props) => {
           text: "Sim",
           onPress: async () => {
             await AsyncStorage.removeItem('token');
-            await axios.put(urlAPI + 'delpessoa/' + props.data.TB_PESSOA_ID);
+            await axios.put(urlAPI + 'delpessoa/' + TB_PESSOA_ID);
             navigation.navigate('Login');
           }
         }]
@@ -97,13 +101,45 @@ const PerfilLayout = (props) => {
   } else {
     item1 = {
       texto: 'Denunciar perfil',
-      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
+      press: () => { }
     }
     item2 = {
       texto: 'Bloquear pessoa',
-      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
+      press: () => { }
     }
     item3 = null;
+  }
+
+  const IniciarChat = () => {
+    axios.post(urlAPI + 'selchat/filtrar', {
+      TB_PESSOA_IDD,
+      TB_PESSOA_ID,
+    }).then(response => {
+      const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
+      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+    }).catch(error => {
+      if (error.response.status === 404) {
+        CadastrarChat();
+      } else {
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.log('Erro ao selecionar:', erro.error);
+      }
+    });
+  }
+
+  const CadastrarChat = async () => {
+    await axios.post(urlAPI + 'cadchat', {
+      TB_PESSOA_REMETENTE_ID: TB_PESSOA_IDD,
+      TB_PESSOA_DESTINATARIO_ID: TB_PESSOA_ID,
+    }).then(response => {
+      const TB_CHAT_ID = response.data.Cadastrar.TB_CHAT_ID;
+      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+    }).catch(error => {
+      let erro = error.response.data;
+      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+      console.log('Erro ao selecionar:', erro.error);
+    });
   }
 
   return (
@@ -137,7 +173,7 @@ const PerfilLayout = (props) => {
               <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
                 <Text style={styles.buttonText}>Seguir</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => console.log('Postadas button pressed')}>
+              <TouchableOpacity style={styles.button} onPress={IniciarChat}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}
@@ -155,7 +191,6 @@ const PerfilLayout = (props) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingTop: 10,
     backgroundColor: '#C1E6CD',
   },
   Oval: {
@@ -177,7 +212,8 @@ const styles = StyleSheet.create({
     shadowColor: '#519546',
   },
   header: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

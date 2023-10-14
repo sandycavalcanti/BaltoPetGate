@@ -1,58 +1,41 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { shadow } from 'react-native-paper';
-import { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { urlAPI } from '../../constants';
-
-const DropdownButton = ({ options }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const handleOptionPress = (option) => {
-    setSelectedOption(option);
-    setIsOpen(false);
-  };
-
-  return (
-    <View style={styles.dropdownContainer}>
-      <TouchableOpacity style={styles.dropdownHeader} onPress={() => setIsOpen(!isOpen)}>
-        <Feather name="more-vertical" size={30} color="#B66F6F" />
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.dropdownOptions}>
-          {options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(option)}
-            >
-              <Text>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
+import ModalDropdown from 'react-native-modal-dropdown';
+import { Divider } from 'react-native-elements';
 
 const Perfil_post = (props) => {
+  const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
+  const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
 
-  const dropdownOptions = ['Opção 1', 'Opção 2', 'Opção 3'];
+  const NavegarParaPerfil = () => {
+    props.navigate("Perfil", { id: TB_PESSOA_ID });
+  }
+
+  const onSelect = (index, value) => {
+    if (index == 0) {
+      NavegarParaPerfil()
+    }
+  }
 
   return (
     <View style={styles.Container}>
-      <TouchableOpacity onPress={() => props.navigate("Perfil", { id: props.data.TB_PESSOA_ID })}>
+      <TouchableOpacity onPress={NavegarParaPerfil}>
         <View style={styles.ImagemCirculo}>
-          <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID }} />
+          <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlAPI + 'selpessoaimg/' + TB_PESSOA_ID }} />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => props.navigate("Perfil", { id: props.data.TB_PESSOA_ID })}>
+      <TouchableOpacity onPress={NavegarParaPerfil}>
         <View style={styles.ContainerTexto}>
           <Text style={styles.Texto}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
       </TouchableOpacity>
       <View style={styles.ContainerIcon}>
-        <DropdownButton options={dropdownOptions} />
+        <ModalDropdown options={dropdownOptions} defaultIndex={null} onSelect={onSelect} renderSeparator={() => <Divider width={1} color='gray' />} dropdownStyle={styles.dropdownOptions} dropdownTextStyle={{ fontSize: 16, paddingLeft: 10, paddingRight: 20, color: '#000' }}>
+          <View style={styles.dropdownHeader}>
+            <Feather name="more-vertical" size={30} color="#B66F6F" />
+          </View>
+        </ModalDropdown>
       </View>
     </View>
   )
@@ -100,25 +83,15 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
   },
-  selectedOptionText: {
-    textAlign: 'center',
-  },
   dropdownOptions: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    width: '100%',
+    height: 140,
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#444',
     borderRadius: 4,
-    marginTop: 5,
+    marginTop: -20,
+    paddingTop: 5,
     zIndex: 10,
-  },
-  optionButton: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   Imagem: {
     width: 'auto',

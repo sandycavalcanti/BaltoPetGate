@@ -2,16 +2,17 @@ import React, { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getLocationAsync, pickImageAsync, takePictureAsync } from './mediaUtils';
+import { AntDesign } from '@expo/vector-icons';
 
 const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle, onSend }) => {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const onActionsPress = useCallback(() => {
     const options = [
-      'Choose From Library',
-      'Take Picture',
-      'Send Location',
-      'Cancel',
+      'Enviar Imagem',
+      'Tirar Foto',
+      'Enviar Localização',
+      'Cancelar',
     ];
     const cancelButtonIndex = options.length - 1;
     showActionSheetWithOptions(
@@ -37,9 +38,7 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
       return renderIcon();
     }
     return (
-      <View style={[styles.wrapper, wrapperStyle]}>
-        <Text style={[styles.iconText, iconTextStyle]}>+</Text>
-      </View>
+      <AntDesign name="plussquareo" size={35} color="#fafafa" style={wrapperStyle} />
     );
   }, []);
 
@@ -54,10 +53,10 @@ export default CustomActions;
 
 const styles = StyleSheet.create({
   container: {
-    width: 26,
-    height: 26,
+    width: 35,
+    height: 35,
     marginLeft: 10,
-    marginBottom: 10,
+    marginBottom: 7,
   },
   wrapper: {
     borderRadius: 13,

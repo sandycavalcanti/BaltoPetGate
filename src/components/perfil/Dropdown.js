@@ -3,14 +3,15 @@ import { Text, TouchableOpacity, Modal, StyleSheet, View } from 'react-native';
 import { Divider } from "react-native-elements";
 
 const Dropdown = (props) => {
-    let valorScroll = 0;
+    let valorScroll = valorDireita = 0;
     if (props.valorScroll) valorScroll = props.valorScroll;
+    if (props.valorDireita) valorDireita = props.valorDireita;
 
     return (
         <View style={{ position: 'absolute' }}>
             <Modal visible={props.val} transparent={true} animationType="none" onRequestClose={() => props.set(false)} >
                 <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => props.set(false)} >
-                    <View style={[styles.dropdown, { top: 45 - valorScroll, right: 15 }]}>
+                    <View style={[styles.dropdown, { top: 45 - valorScroll, right: 15 - valorDireita }]}>
                         <TouchableOpacity style={styles.dropdownButton} onPress={props.item1.press} >
                             {props.item1.icone &&
                                 <View style={{ marginRight: 10 }}>
@@ -75,8 +76,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 10,
-        width: 225,
-        marginLeft: 10,
+        minWidth: 175,
+        maxWidth: 235,
+        paddingLeft: 10,
+        paddingRight: 25,
     },
     dropdownBackdrop: {
         flex: 1,

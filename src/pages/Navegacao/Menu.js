@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, Modal, StyleSheet, View, TextInput } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Text, TouchableOpacity, Modal, PanResponder, StyleSheet, View, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Octicons, Feather, Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
@@ -12,14 +12,14 @@ import DecodificarToken from '../../utils/DecodificarToken';
 import Dropdown from '../../components/perfil/Dropdown';
 
 const Tab = createBottomTabNavigator();
-let id;
+let TB_PESSOA_IDD;
 
 const Menu = ({ navigation: { navigate } }) => {
 
     useEffect(() => {
         const PegarId = async () => {
             const decodedToken = await DecodificarToken();
-            id = decodedToken.TB_PESSOA_IDD;
+            TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
         }
         PegarId()
     }, []);
@@ -62,7 +62,7 @@ const Menu = ({ navigation: { navigate } }) => {
     const HeaderExplorar = () => {
         return (
             <View style={styles.headerEsquerda}>
-                <TouchableOpacity style={styles.Botao} onPress={() => navigate('Perfil', { id })}>
+                <TouchableOpacity style={styles.Botao} onPress={() => navigate('Perfil', { id: TB_PESSOA_IDD })}>
                     <Octicons name="person" size={35} color="white" />
                 </TouchableOpacity>
                 <View style={styles.barraPesquisa}>
@@ -80,10 +80,22 @@ const Menu = ({ navigation: { navigate } }) => {
             </View>
         )
     }
-
+    const [panResponder, setPanResponder] = useState(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: (evt, gestureState) => {
+                // Check for swipe or drag in the bottom area
+                if (gestureState.moveY > (100 - 5)) {
+                    // You can do something when the user swipes or drags in the bottom area
+                    // For example, navigate to another screen or show a modal
+                    console.log(gestureState)
+                }
+            },
+        })
+    );
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container }}>
+            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container }} >
                 <Tab.Screen
                     name="Home"
                     component={Home}

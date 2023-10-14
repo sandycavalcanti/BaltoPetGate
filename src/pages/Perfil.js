@@ -3,12 +3,12 @@ import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, ActivityInd
 import { TabView, TabBar } from 'react-native-tab-view';
 import PerfilLayout from './PerfilLayout';
 import axios from 'axios';
-import { corBordaBoxCad, corFundo, corFundoCad, urlAPI, urlLocal } from '../constants';
+import { corFundo, urlAPI } from '../constants';
 import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import AnimalPost from '../components/perfil/AnimalPost';
 import { useRoute } from '@react-navigation/native';
-import Carregando from '../components/geral/Carregando';
+import Carregando from '../components/perfil/Carregando';
 import DecodificarToken from '../utils/DecodificarToken';
 
 const AnimatedIndicator = Animated.createAnimatedComponent(ActivityIndicator);
@@ -74,7 +74,7 @@ const Perfil = ({ navigation: { navigate } }) => {
       const decodedToken = await DecodificarToken();
       TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
       if (TB_PESSOA_IDD === id) setPessoal(true);
-      await axios.get(urlLocal + 'selpessoa/' + id)
+      await axios.get(urlAPI + 'selpessoa/' + id)
         .then(async (response) => {
           setSelectPessoa(response.data[0]);
           await SelecionarPublicacoes();
@@ -87,7 +87,7 @@ const Perfil = ({ navigation: { navigate } }) => {
           }
         });
     };
-    
+
     Selecionar().then(() => {
       setCarregando(false)
     });
@@ -145,23 +145,11 @@ const Perfil = ({ navigation: { navigate } }) => {
     if (Platform.OS === 'ios') { if (scrollY._value < 0) { if (scrollY._value < -PullToRefreshDist && !refreshStatusRef.current) { startRefreshAction(); } else { listRefArr.current.forEach((listRef) => { listRef.value.scrollToOffset({ offset: 0, animated: true }); }); } } else { if (Math.abs(gestureState.vy) < 0.2) return; Animated.decay(headerScrollY, { velocity: -gestureState.vy, useNativeDriver: true }).start(() => syncScrollOffset()); } }
     else if (Platform.OS === 'android') { if (headerMoveScrollY._value < 0 && headerMoveScrollY._value / 1.5 < -PullToRefreshDist) { startRefreshAction(); } else { Animated.timing(headerMoveScrollY, { toValue: 0, duration: 300, useNativeDriver: true }).start(); } }
   };
-  const onMomentumScrollBegin = () => {
-    isListGliding.current = true;
-  };
-  const onMomentumScrollEnd = () => {
-    isListGliding.current = false;
-    syncScrollOffset();
-  };
-  const onScrollEndDrag = (e) => {
-    syncScrollOffset();
-    const offsetY = e.nativeEvent.contentOffset.y;
-    if (Platform.OS === 'ios') if (offsetY < -PullToRefreshDist && !refreshStatusRef.current) startRefreshAction();
-  };
   const renderHeader = () => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-          <PerfilLayout pessoal={pessoal} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -172,9 +160,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   };
   const renderScene = ({ route }) => {
     const focused = route.key === routes[tabIndex].key;
-    let numCols;
-    let data;
-    let renderItem;
+    let numCols, data, renderItem;
     switch (route.key) {
       case 'tab1':
         numCols = 1;
@@ -197,9 +183,9 @@ const Perfil = ({ navigation: { navigate } }) => {
         ref={ref => { if (ref) { const found = listRefArr.current.find((e) => e.key === route.key); if (!found) { listRefArr.current.push({ key: route.key, value: ref }); } } }}
         scrollEventThrottle={16}
         onScroll={focused ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } }, },], { useNativeDriver: true },) : null}
-        onMomentumScrollBegin={onMomentumScrollBegin}
-        onScrollEndDrag={onScrollEndDrag}
-        onMomentumScrollEnd={onMomentumScrollEnd}
+        onMomentumScrollBegin={() => isListGliding.current = true}
+        onScrollEndDrag={e => { syncScrollOffset(); const offsetY = e.nativeEvent.contentOffset.y; if (Platform.OS === 'ios') if (offsetY < -PullToRefreshDist && !refreshStatusRef.current) startRefreshAction(); }}
+        onMomentumScrollEnd={() => { isListGliding.current = false; syncScrollOffset(); }}
         contentContainerStyle={{ paddingTop: HeaderHeight + TabBarHeight, minHeight: windowHeight - SafeStatusBar + HeaderHeight, }}
         showsHorizontalScrollIndicator={false}
         data={data}
@@ -263,7 +249,7 @@ const Perfil = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: corFundo
+    backgroundColor: corFundo,
   },
   header: {
     height: HeaderHeight,

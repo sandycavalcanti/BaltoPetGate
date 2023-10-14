@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import axios from 'axios';
-import { corBordaBoxCad, urlAPI, urlLocal } from '../constants';
+import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
 import DecodificarToken from '../utils/DecodificarToken';
 import GrupoContatos from '../components/chat/GrupoContatos';
@@ -9,7 +9,7 @@ import GrupoContatos from '../components/chat/GrupoContatos';
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let TB_PESSOA_IDD;
 
-const HisChat = ({ navigation: { navigate } }) => {
+const HisChat = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [veterinarios, setVeterinarios] = useState([]);
   const [ongs, setOngs] = useState([]);
@@ -22,12 +22,12 @@ const HisChat = ({ navigation: { navigate } }) => {
   const Selecionar = async () => {
     const decodedToken = await DecodificarToken();
     TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-    await axios.get(urlLocal + 'selchat/' + TB_PESSOA_IDD)
+    await axios.get(urlAPI + 'selchat/' + TB_PESSOA_IDD)
       .then(response => {
         setPessoasJson(response.data);
-        setTimeout(() => {
-          setCarregando(false);
-        }, 600)
+        // setTimeout(() => {
+        setCarregando(false);
+        // }, 600)
       })
       .catch(error => {
         let erro = error.response.data.message;
@@ -59,7 +59,7 @@ const HisChat = ({ navigation: { navigate } }) => {
         <View style={styles.groupBox}>
           <Text style={styles.titulo}>Chat</Text>
           <View style={styles.searchBar}>
-            <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Search" />
+            <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" />
             {pesquisa !== '' &&
               <TouchableOpacity onPress={() => setPesquisa('')}>
                 <AntDesign name="close" size={24} color="black" />

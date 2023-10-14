@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Modal from "react-native-modal";
+import { Modal } from 'react-native-modals';
 import { Divider } from "react-native-elements";
 
 const SairDaConta = (props) => {
@@ -11,16 +11,20 @@ const SairDaConta = (props) => {
         navigation.navigate('Login');
     }
 
+    const Fechar = () => {
+        props.set(false)
+    }
+
     return (
-        <Modal isVisible={props.val} backdropOpacity={0.2} onBackdropPress={() => props.set(false)} swipeDirection="down" >
+        <Modal visible={props.val} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={Fechar} onTouchOutside={Fechar}>
             <View style={styles.dropdown}>
                 <Text style={styles.dropdownTitle}>Deseja sair da conta?</Text>
                 <View style={styles.dropdownButtons}>
                     <TouchableOpacity style={styles.dropdownButton} onPress={SairDaConta}>
-                        <Text style={styles.textDropdownButton}>Sim</Text>
+                        <Text style={styles.textDropdownButton}>Sair</Text>
                     </TouchableOpacity>
                     <Divider orientation="vertical" width={1} color="grey" />
-                    <TouchableOpacity style={styles.dropdownButton} onPress={() => props.set(false)}>
+                    <TouchableOpacity style={styles.dropdownButton} onPress={Fechar}>
                         <Text style={styles.textDropdownButton}>Não</Text>
                     </TouchableOpacity>
                 </View>
@@ -36,9 +40,15 @@ const styles = StyleSheet.create({
         zIndex: 12,
         borderWidth: 1,
         alignSelf: 'center',
-        width: '70%',
+        width: '100%',
         alignItems: 'center',
         position: 'relative',
+    },
+    dropdownTitle: {
+        fontSize: 20,
+        textAlign: 'center',
+        paddingVertical: 25,
+        paddingHorizontal: 20
     },
     dropdownButton: {
         flexDirection: 'row',
@@ -47,14 +57,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         flex: 1,
     },
-    textDropdownButton: {
-        fontSize: 15,
-    },
-    dropdownTitle: {
-        fontSize: 20,
-        textAlign: 'center',
-        paddingVertical: 20,
-    },
     dropdownButtons: {
         flexDirection: 'row',
         borderTopWidth: 1,
@@ -62,6 +64,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#F2DFE1',
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-    }
+    },
+    textDropdownButton: {
+        fontSize: 18,
+        fontWeight: '400',
+    },
 });
 export default SairDaConta

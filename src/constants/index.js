@@ -10,6 +10,5 @@ export const corTituloBoxCad = "#fff";
 export const valorBordaCampoCad = 15;
 export const corFundo = "#CEF7FF";
 export const corFundoNavegacao = "#A9DDE8";
-export const urlAPI = "http://26.7.171.108:3000/";
+export const urlAPI = "https://apibalto-git-feat-chat-renan-mochizuki.vercel.app/";
 export const urlLocal = "http://26.7.171.108:3000/";
-export const chaveToken = "ermelinda";
