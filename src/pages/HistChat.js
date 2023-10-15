@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, Dimensions, ToastAndroid } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
@@ -10,11 +11,12 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let TB_PESSOA_IDD;
 
 const HisChat = () => {
+  const [pessoasJson, setPessoasJson] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [veterinarios, setVeterinarios] = useState([]);
   const [ongs, setOngs] = useState([]);
   const [casasderacao, setCasasderacao] = useState([]);
-  const [pessoasJson, setPessoasJson] = useState([]);
+  const [desativados, setDesativados] = useState([]);
   const [pesquisa, setPesquisa] = useState("");
 
   const [carregando, setCarregando] = useState(true);
@@ -25,14 +27,12 @@ const HisChat = () => {
     await axios.get(urlAPI + 'selchat/' + TB_PESSOA_IDD)
       .then(response => {
         setPessoasJson(response.data);
-        // setTimeout(() => {
         setCarregando(false);
-        // }, 600)
       })
       .catch(error => {
-        let erro = error.response.data.message;
-        setPessoasJson(erro);
-        console.error('Erro ao selecionar:', error.response.data);
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error, error);
       })
   };
 
@@ -45,12 +45,15 @@ const HisChat = () => {
     const Filtrar = (type) => {
       return pessoasJson
         .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
-        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID));
+        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID))
+        .filter((pessoa) => pessoa.TB_CHAT_STATUS === 'ATIVADO');
     }
+    const chatsDesativados = pessoasJson.filter((pessoa) => pessoa.TB_CHAT_STATUS === 'DESATIVADO');
     setUsuarios(Filtrar([1, 7]));
     setVeterinarios(Filtrar([2]));
     setOngs(Filtrar([3, 4, 5]));
     setCasasderacao(Filtrar([6]));
+    setDesativados(chatsDesativados)
   }, [pesquisa, pessoasJson]);
 
   return (
@@ -74,6 +77,7 @@ const HisChat = () => {
             <GrupoContatos data={veterinarios} titulo="Veterinários" />
             <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
             <GrupoContatos data={casasderacao} titulo="Casas de ração" />
+            <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
           </View>
         </View>
       </SafeAreaView>
@@ -114,7 +118,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: corBordaBoxCad,
     borderRadius: 10,
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 30,
     position: 'relative',
   },

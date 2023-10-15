@@ -1,33 +1,20 @@
 import { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Image, TextInput, ScrollView, SafeAreaView } from 'react-native';
 import { urlAPI } from '../../constants';
+import ChecarImagem from '../../utils/ChecarImagem';
 
 const Contato = (props) => {
-
-  const [urlImg, setUrlImg] = useState(urlAPI + 'selpessoaimg/' + props.id);
+  const [imageExists, setImageExists] = useState(true);
+  const urlImg = urlAPI + 'selpessoaimg/' + props.id;
 
   useEffect(() => {
-    const checkImageExists = async () => {
-      try {
-        const response = await fetch(urlImg);
-        if (!response.ok) {
-          setUrlImg('https://via.placeholder.com/100');
-        }
-      } catch (error) {
-        setUrlImg('https://via.placeholder.com/100');
-      }
-    };
-
-    checkImageExists();
+    ChecarImagem(urlImg, setImageExists);
   }, [urlImg]);
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.contactImage}
-        source={{ uri: urlImg }}
-      />
-      <Text style={styles.contactName}>{props.nome}</Text>
+      {imageExists ? <Image style={[styles.contactImage, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: urlImg }} resizeMode='cover' /> : <Image style={styles.contactImage} source={{ uri: 'https://via.placeholder.com/100' }} resizeMode='cover' />}
+      <Text style={[styles.contactName, { opacity: props.desativado ? 0.5 : 1 }]}>{props.nome}</Text>
     </View>
   )
 }

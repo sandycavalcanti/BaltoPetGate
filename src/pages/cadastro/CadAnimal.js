@@ -329,7 +329,9 @@ const styles = StyleSheet.create({
     Imagem: {
         width: 250,
         height: 250,
-        marginTop: 20
+        marginTop: 20,
+        borderWidth: 2,
+        borderColor: '#fafafa',
     },
     dropdown: {
         height: 40,

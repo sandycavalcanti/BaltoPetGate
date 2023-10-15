@@ -5,18 +5,21 @@ import { useNavigation } from '@react-navigation/native';
 import Dropdown from '../perfil/Dropdown';
 import { Entypo } from '@expo/vector-icons';
 import ChecarImagem from '../../utils/ChecarImagem';
+import ModalConfirmacao from '../perfil/ModalConfirmacao';
 
 let item1 = item2 = item3 = item4 = {};
 
 export function Navbar(props) {
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
   const [imageExists, setImageExists] = useState(true);
   const [imageAnimalExists, setImageAnimalExists] = useState(true);
   const dados = props.dados;
+  const pessoaId = props.id
   const animalId = dados.TB_ANIMAL_ID;
   const animalNome = dados.TB_ANIMAL_NOME;
-  const urlImg = urlAPI + 'selpessoaimg/' + props.id;
+  const urlImg = urlAPI + 'selpessoaimg/' + pessoaId;
   const urlAnimalImg = urlAPI + 'selanimalimg/' + animalId;
 
   useEffect(() => {
@@ -26,18 +29,22 @@ export function Navbar(props) {
 
   item1 = {
     texto: 'Visualizar perfil',
-    press: () => navigation.navigate('Perfil', { id: props.id })
+    press: () => navigation.navigate('Perfil', { id: pessoaId })
   }
-  item2 = {
-    texto: 'Desativar conversa',
-    press: () => { }
+  if (!props.desativado) {
+    item2 = {
+      texto: 'Desativar conversa',
+      press: () => { setmodalConfirmacaoVisible(true); setDropdownVisible(false) }
+    }
+  } else {
+    item2 = null
   }
   item3 = {
     texto: 'Bloquear pessoa',
     press: () => { }
   }
   item4 = {
-    texto: 'Denunciar pessoa',
+    texto: 'Denunciar conversa',
     press: () => { }
   }
 
@@ -46,8 +53,8 @@ export function Navbar(props) {
   return (
     <View style={styles.container}>
       <View style={styles.containerHeaderLeft}>
-        <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: props.id })}>
-          {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} />}
+        <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: pessoaId })}>
+          {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} resizeMode='cover' /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} resizeMode='cover' />}
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
@@ -72,6 +79,7 @@ export function Navbar(props) {
         </TouchableOpacity>
       </View>
       <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} item4={item4} valorScroll={-16} valorDireita={10} />
+      <ModalConfirmacao texto="Deseja desativar essa conversa?" subtexto="As mensagens nesse chat não serão mais acessíveis" val={modalConfirmacaoVisible} set={setmodalConfirmacaoVisible} sim='Desativar' press={props.DesativarChat} />
     </View>
   )
 }

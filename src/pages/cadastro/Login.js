@@ -38,9 +38,7 @@ const Login = ({ navigation: { navigate } }) => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
-            setTimeout(() => {
-                navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            }, 2000);
+            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
             try {
                 let erro = error.response.data.message;

@@ -5,10 +5,10 @@ import { Entypo, AntDesign } from '@expo/vector-icons';
 import { urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
 import Dropdown from './../components/perfil/Dropdown';
-import SairDaConta from "../components/perfil/SairDaConta";
 import { Alert } from 'react-native';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ModalConfirmacao from "../components/perfil/ModalConfirmacao";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -142,6 +142,11 @@ const PerfilLayout = (props) => {
     });
   }
 
+  const SairDaConta = async () => {
+    await AsyncStorage.removeItem('token');
+    navigation.navigate('Login');
+  }
+
   return (
     <SafeAreaView style={styles.container} onLayout={MedirAltura}>
       <View>
@@ -155,7 +160,7 @@ const PerfilLayout = (props) => {
             <Entypo name="dots-three-vertical" size={26} color="black" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
-          <SairDaConta val={modalVisible} set={setModalVisible} />
+          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalVisible} set={setModalVisible} sim='Sair' />
         </View>
         <View style={styles.profileContainer}>
           {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} />}

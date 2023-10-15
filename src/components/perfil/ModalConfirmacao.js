@@ -1,14 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Modal } from 'react-native-modals';
 import { Divider } from "react-native-elements";
 
-const SairDaConta = (props) => {
-    const navigation = useNavigation();
-    const SairDaConta = async () => {
-        await AsyncStorage.removeItem('token');
-        navigation.navigate('Login');
+const ModalConfirmacao = (props) => {
+    const Press = () => {
+        props.press();
+        Fechar();
     }
 
     const Fechar = () => {
@@ -18,14 +15,19 @@ const SairDaConta = (props) => {
     return (
         <Modal visible={props.val} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={Fechar} onTouchOutside={Fechar}>
             <View style={styles.dropdown}>
-                <Text style={styles.dropdownTitle}>Deseja sair da conta?</Text>
+                <Text style={[styles.dropdownTitle, { paddingBottom: props.subtexto ? 15 : 25 }]}>{props.texto}</Text>
+                {props.subtexto &&
+                    <>
+                        <Divider width={1} color="grey" style={{ alignSelf: 'stretch' }} />
+                        <Text style={styles.dropdownSubTitle}>{props.subtexto}</Text>
+                    </>}
                 <View style={styles.dropdownButtons}>
-                    <TouchableOpacity style={styles.dropdownButton} onPress={SairDaConta}>
-                        <Text style={styles.textDropdownButton}>Sair</Text>
+                    <TouchableOpacity style={styles.dropdownButton} onPress={Press}>
+                        <Text style={styles.textDropdownButton}>{props.sim ? props.sim : 'Sim'}</Text>
                     </TouchableOpacity>
                     <Divider orientation="vertical" width={1} color="grey" />
                     <TouchableOpacity style={styles.dropdownButton} onPress={Fechar}>
-                        <Text style={styles.textDropdownButton}>Não</Text>
+                        <Text style={styles.textDropdownButton}>{props.nao ? props.nao : 'Não'}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -47,7 +49,13 @@ const styles = StyleSheet.create({
     dropdownTitle: {
         fontSize: 20,
         textAlign: 'center',
-        paddingVertical: 25,
+        paddingTop: 25,
+        paddingHorizontal: 20
+    },
+    dropdownSubTitle: {
+        fontSize: 16,
+        textAlign: 'center',
+        paddingVertical: 10,
         paddingHorizontal: 20
     },
     dropdownButton: {
@@ -70,4 +78,4 @@ const styles = StyleSheet.create({
         fontWeight: '400',
     },
 });
-export default SairDaConta
+export default ModalConfirmacao
