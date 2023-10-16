@@ -15,7 +15,6 @@ import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
 import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
 import * as ImagePicker from 'expo-image-picker';
-import { Avatar } from 'react-native-paper';
 import Mensagem from "./Mensagem";
 import { MultiSelect } from 'react-native-element-dropdown';
 

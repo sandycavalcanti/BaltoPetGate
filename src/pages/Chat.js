@@ -2,7 +2,7 @@ import { useCallback, useReducer, useEffect, useState } from 'react';
 import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, Image, ScrollView, ToastAndroid, ActivityIndicator } from 'react-native';
 import { Bubble, Composer, GiftedChat, InputToolbar, MessageImage, Send, SystemMessage, Time, MessageText } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Navbar } from '../components/chat/Navbar';
+import NavbarChat from '../components/chat/NavbarChat';
 import AccessoryBar from '../components/chat/AccessoryBar';
 import CustomActions from '../components/chat/CustomActions';
 import CustomView from '../components/chat/CustomView';
@@ -84,7 +84,7 @@ const Chat = () => {
                 else {
                     mensagemTexto = item.TB_MENSAGEM_TEXTO
                 }
-                let mensagemExcluida = item.TB_MENSAGEM_STATUS == 'DESATIVADO';
+                let mensagemExcluida = item.TB_MENSAGEM_STATUS == false;
                 return {
                     _id: item.TB_MENSAGEM_ID,
                     text: mensagemTexto,
@@ -114,7 +114,7 @@ const Chat = () => {
             const dados = response.data[0];
             setDadosChat(dados);
             TB_PESSOA_IDD = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
-            if (dados.TB_CHAT_STATUS == 'ATIVADO') {
+            if (dados.TB_CHAT_STATUS == true) {
                 msgEmptyChat = 'Nenhuma mensagem ainda';
                 desativado = false;
                 await SelecionarMensagens();
@@ -136,17 +136,14 @@ const Chat = () => {
     }, []);
 
     const DesativarChat = async () => {
-        await axios.put(urlAPI + 'delchat/' + TB_CHAT_ID)
-            .then(response => {
-                // console.log('Excluído com sucesso');
-                // dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
-                setCarregando(true)
-                SelecionarInfoChat();
-                dispatch({ type: ActionKind.SEND_MESSAGE, payload: [] });
-            }).catch((error) => {
-                ToastAndroid.show("Não foi possível desativar o chat", ToastAndroid.SHORT);
-                console.error(error.response.data.error, error);
-            });
+        await axios.put(urlAPI + 'delchat/' + TB_CHAT_ID).then(response => {
+            setCarregando(true)
+            SelecionarInfoChat();
+            dispatch({ type: ActionKind.SEND_MESSAGE, payload: [] });
+        }).catch((error) => {
+            ToastAndroid.show("Não foi possível desativar o chat", ToastAndroid.SHORT);
+            console.error(error.response.data.error, error);
+        });
     }
     const DenunciarMensagem = () => {
         console.log('Denuncia');
@@ -162,11 +159,10 @@ const Chat = () => {
             }
             return message;
         });
-        const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "mensagemExcluida": false, "text": "", "user": user }
+        const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "mensagemExcluida": false, "text": null, "user": user }
         const newMessages = GiftedChat.append(modifiedMessagesDelete, mensagemNula, true);
         await axios.put(urlAPI + 'delmensagem/' + mensagemSelecionada._id)
             .then(response => {
-                console.log('Excluído com sucesso');
                 dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
             }).catch((error) => {
                 ToastAndroid.show("Não foi possível excluir a mensagem", ToastAndroid.SHORT);
@@ -234,7 +230,7 @@ const Chat = () => {
             });
         }
     }, [dispatch, state.messages]);
-    const onSendFromUser = (messages = []) => {
+    const onSendCustomActions = (messages = []) => {
         const sentMessages = [{ ...messages[0] }];
         const newMessages = GiftedChat.append(state.messages, sentMessages, true);
 
@@ -243,9 +239,11 @@ const Chat = () => {
             user,
             createdAt: new Date(),
             _id: Math.round(Math.random() * 1000000),
+            text: 'imagem'
         }));
         onSend(messagesToUpload);
-        console.log('m', messagesToUpload)
+        console.log('custom', messagesToUpload)
+        // dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
     };
     const onQuickReply = (replies) => {
         const createdAt = new Date();
@@ -273,13 +271,13 @@ const Chat = () => {
     const setIsTyping = (isTyping) => {
         dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     };
-    const renderAccessory = () => <AccessoryBar onSend={onSendFromUser} isTyping={() => setIsTyping(true)} />
+    const renderAccessory = () => <AccessoryBar onSend={onSendCustomActions} isTyping={() => setIsTyping(true)} />
     const renderCustomActions = props => {
         return (<>
             {editando ?
                 <AntDesign name="close" size={35} color="#9e9e9e" style={{ marginLeft: 10, marginBottom: 7 }} onPress={() => { editando = false; setTextoDigitado('') }} />
                 :
-                <CustomActions {...props} onSend={onSendFromUser} />}
+                <CustomActions {...props} onSend={onSendCustomActions} />}
         </>)
     }
     const renderBubble = props => {
@@ -333,7 +331,7 @@ const Chat = () => {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <Navbar id={TB_PESSOA_ID} dados={dadosChat} DesativarChat={DesativarChat} desativado={desativado} />
+            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} DesativarChat={DesativarChat} desativado={desativado} />
             <View style={styles.content}>
                 {carregando ?
                     <View style={styles.carregando}>

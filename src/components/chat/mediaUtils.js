@@ -43,8 +43,8 @@ export async function pickImageAsync(onSend) {
     })
 
     if (!result.canceled) {
-      onSend([{ image: result.uri }])
-      return result.uri
+      onSend([{ image: result.assets[0].uri }])
+      return result.assets[0].uri
     }
   }
 }

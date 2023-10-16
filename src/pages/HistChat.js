@@ -46,9 +46,9 @@ const HisChat = () => {
       return pessoasJson
         .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
         .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID))
-        .filter((pessoa) => pessoa.TB_CHAT_STATUS === 'ATIVADO');
+        .filter((pessoa) => pessoa.TB_CHAT_STATUS === true);
     }
-    const chatsDesativados = pessoasJson.filter((pessoa) => pessoa.TB_CHAT_STATUS === 'DESATIVADO');
+    const chatsDesativados = pessoasJson.filter((pessoa) => pessoa.TB_CHAT_STATUS === false);
     setUsuarios(Filtrar([1, 7]));
     setVeterinarios(Filtrar([2]));
     setOngs(Filtrar([3, 4, 5]));

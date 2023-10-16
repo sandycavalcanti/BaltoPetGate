@@ -1,46 +1,80 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import React, {useRef, useCallback, useState} from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  Button,
+  Alert,
+} from 'react-native';
 
-const Teste = ({ navigation: { navigate } }) => {
-  const animalCadastrado = true;
+// import {Colors} from 'react-native/Libraries/NewAppScreen';
+import Recaptcha from 'react-native-recaptcha-that-works';
+import { corFundo, urlAPI } from '../constants';
 
-  const FazerAdocao = () => {
-    axios.post(urlAPI + 'cadadocao', {
-      TB_PESSOA_ID: 1,
-      TB_ANIMAL_ID: 4
-    }).then(response => {
-      set(response.data);
-    }).catch(error => {
-      let erro = error.response.data;
-      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      console.error('Erro ao selecionar:', erro.error);
-    });
-  };
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    backgroundColor: corFundo,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+});
 
+const App = () => {
+  const size = 'invisible';
+  const [token, setToken] = useState('<none>');
+
+  const $recaptcha = useRef(null);
+
+  const handleOpenPress = useCallback(() => {
+    $recaptcha.current?.open();
+  }, []);
+
+  const handleClosePress = useCallback(() => {
+    $recaptcha.current?.close();
+  }, []);
 
   return (
-    <View>
-      <TouchableOpacity onPress={() => navigate("Perfil", { id: 1 })}>
-        <Text>Ir para perfil</Text>
-      </TouchableOpacity>
-      <View>
-        {animalCadastrado
-          ?
-          <View>
-            <Text>Questionarioadocao</Text>
-          </View>
-          :
-          <>
-            <Text>Titulo</Text>
-            <View>
-              <TouchableOpacity onPress={Adotar}>
-                <Text>Adotar</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        }
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.container}>
+        <Button onPress={handleOpenPress} title="Open" />
+        <Text>Token: {token}</Text>
+        <Text>Size: {size}</Text>
       </View>
-    </View>
-  )
-}
 
-export default Teste
+      <Recaptcha
+        ref={$recaptcha}
+        lang="pt"
+        headerComponent={
+          <Button title="Close modal" onPress={handleClosePress} />
+        }
+        footerComponent={<Text>Footer here</Text>}
+        siteKey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+        baseUrl={urlAPI +'captcha'}
+        size={size}
+        theme="dark"
+        onLoad={() => Alert.alert('onLoad event')}
+        onClose={() => Alert.alert('onClose event')}
+        onError={(err) => {
+          Alert.alert('onError event');
+          console.warn(err);
+        }}
+        onExpire={() => Alert.alert('onExpire event')}
+        onVerify={(token) => {
+          Alert.alert('onVerify event');
+          setToken(token);
+        }}
+        enterprise={false}
+        hideBadge={false}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default App;

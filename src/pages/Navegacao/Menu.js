@@ -9,7 +9,7 @@ import Explorar from './Explorar';
 import Mapa from './Mapa';
 import Animal from './Animal';
 import DecodificarToken from '../../utils/DecodificarToken';
-import Dropdown from '../../components/perfil/Dropdown';
+import Dropdown from '../../components/geral/Dropdown';
 
 const Tab = createBottomTabNavigator();
 let TB_PESSOA_IDD;

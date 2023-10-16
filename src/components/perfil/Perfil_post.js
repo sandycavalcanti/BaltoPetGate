@@ -3,9 +3,11 @@ import { Feather } from '@expo/vector-icons';
 import { urlAPI } from '../../constants';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { Divider } from 'react-native-elements';
+import Imagem from '../geral/Imagem';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
+  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
 
   const NavegarParaPerfil = () => {
@@ -22,7 +24,7 @@ const Perfil_post = (props) => {
     <View style={styles.Container}>
       <TouchableOpacity onPress={NavegarParaPerfil}>
         <View style={styles.ImagemCirculo}>
-          <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlAPI + 'selpessoaimg/' + TB_PESSOA_ID }} />
+          <Imagem url={urlImg} style={styles.Imagem} />
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={NavegarParaPerfil}>

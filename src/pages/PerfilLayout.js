@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, Button, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
-import Dropdown from './../components/perfil/Dropdown';
-import { Alert } from 'react-native';
+import Dropdown from "../components/geral/Dropdown";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ModalConfirmacao from "../components/perfil/ModalConfirmacao";
+import ModalConfirmacao from "../components/geral/ModalConfirmacao";
+import Imagem from "../components/geral/Imagem";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -24,26 +24,7 @@ const PerfilLayout = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
 
-  const [imageExists, setImageExists] = useState(true);
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
-
-  useEffect(() => {
-    const checkImageExists = async () => {
-      try {
-        const response = await fetch(urlImg);
-        if (!response.ok) {
-          setImageExists(false);
-        } else {
-          setImageExists(true);
-        }
-      } catch (error) {
-        setImageExists(false);
-      }
-    };
-
-    checkImageExists();
-  }, [urlImg]);
-
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;
@@ -53,21 +34,8 @@ const PerfilLayout = (props) => {
   useEffect(() => {
     let timeoutId = null;
     let listener;
-    setTimeout(() => {
-      listener = scrollY.addListener((value) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const valorScrollInteiro = Math.trunc(value.value);
-          setValorScroll(valorScrollInteiro);
-          if (valorScrollInteiro > 200) {
-            setDropdownVisible(false);
-          }
-        }, 100);
-      });
-    }, 2500);
-    return () => {
-      scrollY.removeListener(listener);
-    };
+    setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 2500);
+    return () => scrollY.removeListener(listener);
   }, [scrollY]);
 
   if (props.pessoal) {
@@ -115,16 +83,17 @@ const PerfilLayout = (props) => {
       TB_PESSOA_IDD,
       TB_PESSOA_ID,
     }).then(response => {
-      const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
-      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
-    }).catch(error => {
-      if (error.response.status === 404) {
-        CadastrarChat();
+      const dados = response.data[0];
+      if (dados.TB_CHAT_STATUS == true) {
+        const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
+        navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
       } else {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.log('Erro ao selecionar:', erro.error);
+        CadastrarChat();
       }
+    }).catch(error => {
+      let erro = error.response.data;
+      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+      console.log('Erro ao selecionar:', erro.error);
     });
   }
 
@@ -163,7 +132,7 @@ const PerfilLayout = (props) => {
           <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalVisible} set={setModalVisible} sim='Sair' />
         </View>
         <View style={styles.profileContainer}>
-          {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} />}
+          <Imagem url={urlImg} style={styles.profileImage} />
           <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
         <View style={styles.buttons}>

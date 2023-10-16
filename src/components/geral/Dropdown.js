@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, Modal, StyleSheet, View } from 'react-native';
 import { Divider } from "react-native-elements";
 

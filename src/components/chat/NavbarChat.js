@@ -1,31 +1,24 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
-import Dropdown from '../perfil/Dropdown';
+import Dropdown from '../geral/Dropdown';
 import { Entypo } from '@expo/vector-icons';
-import ChecarImagem from '../../utils/ChecarImagem';
-import ModalConfirmacao from '../perfil/ModalConfirmacao';
+import ModalConfirmacao from '../geral/ModalConfirmacao';
+import Imagem from '../geral/Imagem';
 
 let item1 = item2 = item3 = item4 = {};
 
-export function Navbar(props) {
+const NavbarChat = (props) => {
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
-  const [imageExists, setImageExists] = useState(true);
-  const [imageAnimalExists, setImageAnimalExists] = useState(true);
   const dados = props.dados;
   const pessoaId = props.id
   const animalId = dados.TB_ANIMAL_ID;
   const animalNome = dados.TB_ANIMAL_NOME;
   const urlImg = urlAPI + 'selpessoaimg/' + pessoaId;
   const urlAnimalImg = urlAPI + 'selanimalimg/' + animalId;
-
-  useEffect(() => {
-    ChecarImagem(urlImg, setImageExists);
-    ChecarImagem(urlAnimalImg, setImageAnimalExists);
-  }, [urlImg, urlAnimalImg]);
 
   item1 = {
     texto: 'Visualizar perfil',
@@ -54,7 +47,7 @@ export function Navbar(props) {
     <View style={styles.container}>
       <View style={styles.containerHeaderLeft}>
         <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: pessoaId })}>
-          {imageExists ? <Image style={styles.profileImage} source={{ uri: urlImg }} resizeMode='cover' /> : <Image style={styles.profileImage} source={{ uri: 'https://via.placeholder.com/100' }} resizeMode='cover' />}
+          <Imagem url={urlImg} style={styles.profileImage} />
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
@@ -71,7 +64,7 @@ export function Navbar(props) {
         {animalId &&
           <>
             <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animalId })}>
-              {imageAnimalExists ? <Image style={styles.animalImage} source={{ uri: urlAnimalImg }} /> : <Image style={styles.animalImage} source={{ uri: 'https://via.placeholder.com/100' }} />}
+              <Imagem url={urlAnimalImg} style={styles.profileImage} />
             </TouchableOpacity>
           </>}
         <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={{ marginRight: 10 }}>
@@ -137,3 +130,5 @@ const styles = StyleSheet.create({
     marginLeft: 3
   }
 });
+
+export default NavbarChat

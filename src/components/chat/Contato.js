@@ -1,19 +1,13 @@
-import { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, TextInput, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { urlAPI } from '../../constants';
-import ChecarImagem from '../../utils/ChecarImagem';
+import Imagem from '../geral/Imagem';
 
 const Contato = (props) => {
-  const [imageExists, setImageExists] = useState(true);
   const urlImg = urlAPI + 'selpessoaimg/' + props.id;
-
-  useEffect(() => {
-    ChecarImagem(urlImg, setImageExists);
-  }, [urlImg]);
 
   return (
     <View style={styles.container}>
-      {imageExists ? <Image style={[styles.contactImage, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: urlImg }} resizeMode='cover' /> : <Image style={styles.contactImage} source={{ uri: 'https://via.placeholder.com/100' }} resizeMode='cover' />}
+      <Imagem url={urlImg} desativado={props.desativado} style={styles.contactImage}/>
       <Text style={[styles.contactName, { opacity: props.desativado ? 0.5 : 1 }]}>{props.nome}</Text>
     </View>
   )

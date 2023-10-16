@@ -8,7 +8,7 @@ import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import AnimalPost from '../components/perfil/AnimalPost';
 import { useRoute } from '@react-navigation/native';
-import Carregando from '../components/perfil/Carregando';
+import Carregando from '../components/geral/Carregando';
 import DecodificarToken from '../utils/DecodificarToken';
 
 const AnimatedIndicator = Animated.createAnimatedComponent(ActivityIndicator);
@@ -25,10 +25,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const { id } = route.params;
 
   const [tabIndex, setIndex] = useState(0);
-  const routes = [
-    { key: 'tab1', title: 'Animais' },
-    { key: 'tab2', title: 'Postagens' },
-  ];
+  const routes = [{ key: 'tab1', title: 'Animais' }, { key: 'tab2', title: 'Postagens' },];
   const [canScroll, setCanScroll] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerScrollY = useRef(new Animated.Value(0)).current;
