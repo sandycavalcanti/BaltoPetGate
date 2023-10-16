@@ -15,7 +15,6 @@ import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
 import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
 import * as ImagePicker from 'expo-image-picker';
-import { Avatar } from 'react-native-paper';
 import Mensagem from "./Mensagem";
 import { MultiSelect } from 'react-native-element-dropdown';
 
@@ -329,7 +328,9 @@ const styles = StyleSheet.create({
     Imagem: {
         width: 250,
         height: 250,
-        marginTop: 20
+        marginTop: 20,
+        borderWidth: 2,
+        borderColor: '#fafafa',
     },
     dropdown: {
         height: 40,

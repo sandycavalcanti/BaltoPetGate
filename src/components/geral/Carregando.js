@@ -1,19 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
-import LottieView from 'lottie-react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { corBordaBoxCad, corFundo } from '../../constants';
 
-const Splash = (props) => {
+const Carregando = (props) => {
 
     return (
         <>
             {props.carregando &&
                 <View style={styles.Container}>
-                    <Image
-                        source={require('../../../assets/img/splash.png')}
-                        style={styles.ImagemFundo}
-                    />
+                    <Image source={require('../../../assets/img/splash.png')} style={styles.ImagemFundo} />
                     <View style={styles.ContainerContent}>
                         <ActivityIndicator size="large" color={corBordaBoxCad} />
                     </View>
@@ -33,7 +28,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         top: 0,
-        zIndex: 10,
+        zIndex: 30,
     },
     ImagemFundo: {
         flex: 1,
@@ -50,4 +45,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Splash;
+export default Carregando;

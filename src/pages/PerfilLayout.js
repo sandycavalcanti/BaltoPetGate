@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, SafeAreaView, Button, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
-import Dropdown from './../components/perfil/Dropdown';
-import SairDaConta from "../components/perfil/SairDaConta";
-import { Alert } from 'react-native';
+import Dropdown from "../components/geral/Dropdown";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ModalConfirmacao from "../components/geral/ModalConfirmacao";
+import Imagem from "../components/geral/Imagem";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -20,24 +21,10 @@ const PerfilLayout = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
   scrollY = props.scrollY;
+  const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
+  const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
 
-  const [urlImg, setUrlImg] = useState(urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID);
-
-  useEffect(() => {
-    const checkImageExists = async () => {
-      try {
-        const response = await fetch(urlImg);
-        if (!response.ok) {
-          setUrlImg('https://via.placeholder.com/100');
-        } else {
-          setUrlImg(urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_ID);
-        }
-      } catch (error) {
-        setUrlImg('https://via.placeholder.com/100');
-      }
-    };
-    checkImageExists();
-  }, []);
+  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
 
   const MedirAltura = (event) => {
     const height = event.nativeEvent.layout.height;
@@ -47,21 +34,8 @@ const PerfilLayout = (props) => {
   useEffect(() => {
     let timeoutId = null;
     let listener;
-    setTimeout(() => {
-      listener = scrollY.addListener((value) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const valorScrollInteiro = Math.trunc(value.value);
-          setValorScroll(valorScrollInteiro);
-          if (valorScrollInteiro > 200) {
-            setDropdownVisible(false);
-          }
-        }, 100);
-      });
-    }, 2500);
-    return () => {
-      scrollY.removeListener(listener);
-    };
+    setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 2500);
+    return () => scrollY.removeListener(listener);
   }, [scrollY]);
 
   if (props.pessoal) {
@@ -82,7 +56,7 @@ const PerfilLayout = (props) => {
           text: "Sim",
           onPress: async () => {
             await AsyncStorage.removeItem('token');
-            await axios.put(urlAPI + 'delpessoa/' + props.data.TB_PESSOA_ID);
+            await axios.put(urlAPI + 'delpessoa/' + TB_PESSOA_ID);
             navigation.navigate('Login');
           }
         }]
@@ -95,13 +69,51 @@ const PerfilLayout = (props) => {
   } else {
     item1 = {
       texto: 'Denunciar perfil',
-      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
+      press: () => { }
     }
     item2 = {
       texto: 'Bloquear pessoa',
-      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
+      press: () => { }
     }
     item3 = null;
+  }
+
+  const IniciarChat = () => {
+    axios.post(urlAPI + 'selchat/filtrar', {
+      TB_PESSOA_IDD,
+      TB_PESSOA_ID,
+    }).then(response => {
+      const dados = response.data[0];
+      if (dados.TB_CHAT_STATUS == true) {
+        const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
+        navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+      } else {
+        CadastrarChat();
+      }
+    }).catch(error => {
+      let erro = error.response.data;
+      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+      console.log('Erro ao selecionar:', erro.error);
+    });
+  }
+
+  const CadastrarChat = async () => {
+    await axios.post(urlAPI + 'cadchat', {
+      TB_PESSOA_REMETENTE_ID: TB_PESSOA_IDD,
+      TB_PESSOA_DESTINATARIO_ID: TB_PESSOA_ID,
+    }).then(response => {
+      const TB_CHAT_ID = response.data.Cadastrar.TB_CHAT_ID;
+      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+    }).catch(error => {
+      let erro = error.response.data;
+      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+      console.log('Erro ao selecionar:', erro.error);
+    });
+  }
+
+  const SairDaConta = async () => {
+    await AsyncStorage.removeItem('token');
+    navigation.navigate('Login');
   }
 
   return (
@@ -117,10 +129,10 @@ const PerfilLayout = (props) => {
             <Entypo name="dots-three-vertical" size={26} color="black" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
-          <SairDaConta val={modalVisible} set={setModalVisible} />
+          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalVisible} set={setModalVisible} sim='Sair' />
         </View>
         <View style={styles.profileContainer}>
-          <Image style={styles.profileImage} source={{ uri: urlImg }} />
+          <Imagem url={urlImg} style={styles.profileImage} />
           <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
         </View>
         <View style={styles.buttons}>
@@ -135,7 +147,7 @@ const PerfilLayout = (props) => {
               <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
                 <Text style={styles.buttonText}>Seguir</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => console.log('Postadas button pressed')}>
+              <TouchableOpacity style={styles.button} onPress={IniciarChat}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}
@@ -153,7 +165,6 @@ const PerfilLayout = (props) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingTop: 10,
     backgroundColor: '#C1E6CD',
   },
   Oval: {
@@ -175,7 +186,8 @@ const styles = StyleSheet.create({
     shadowColor: '#519546',
   },
   header: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

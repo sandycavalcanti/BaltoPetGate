@@ -5,6 +5,7 @@ import { useState } from "react";
 import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, corBordaBoxCad } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Recaptcha from 'react-native-recaptcha-that-works';
 
 let numeroTentativas = 0;
 
@@ -22,7 +23,8 @@ const Login = ({ navigation: { navigate } }) => {
         } else {
             if (numeroTentativas > 5) {
                 numeroTentativas = 0;
-                return alert("Complete o captcha.");
+                alert("Complete o captcha.");
+                return;
             }
             numeroTentativas += 1;
             Autenticar();
@@ -38,9 +40,7 @@ const Login = ({ navigation: { navigate } }) => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
-            setTimeout(() => {
-                navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            }, 2000);
+            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
             try {
                 let erro = error.response.data.message;

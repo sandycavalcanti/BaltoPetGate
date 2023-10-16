@@ -4,12 +4,13 @@ import { format } from "date-fns";
 import { urlAPI } from "../../constants";
 import Temperamento from "./Temperamento";
 import axios from "axios";
+import Imagem from "../geral/Imagem";
 
 const AnimalPost = memo((props) => {
   const dataOriginal = props.data.createdAt;
+  const urlImg = urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID;
   let dataFormatada = "";
 
-  // Verifique se dataOriginal é definido e pode ser convertido em um objeto Date válido
   if (dataOriginal && !isNaN(new Date(dataOriginal))) {
     dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
   }
@@ -21,7 +22,11 @@ const AnimalPost = memo((props) => {
       .then(response => {
         setTemperamento(response.data);
       }).catch(error => {
-        console.error(error);
+        if (error.response.status !== 404) {
+          let erro = error.response.data;
+          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          console.log('Erro ao selecionar:', erro.error);
+        }
       })
   }
 
@@ -33,7 +38,7 @@ const AnimalPost = memo((props) => {
     <View style={styles.Container}>
       <TouchableWithoutFeedback onPress={() => props.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
         <View style={styles.ContainerImagem}>
-          <Image style={styles.Imagem} resizeMode="cover" source={{ uri: urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID }} />
+          <Imagem url={urlImg} style={styles.Imagem} />
         </View>
       </TouchableWithoutFeedback>
       <View style={styles.Content}>
@@ -43,7 +48,7 @@ const AnimalPost = memo((props) => {
         </View>
         {temperamento.length !== 0 &&
           <View style={styles.ContainerTexto}>
-            <Text style={styles.Texto}>Temperamento:</Text>
+            <Text style={styles.Texto}>{temperamento.length == 1 ? 'Temperamento:' : 'Temperamentos:'}</Text>
             {temperamento.map((item, index) => {
               return (
                 <Temperamento key={index} texto={item} />

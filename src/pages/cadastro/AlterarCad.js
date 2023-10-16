@@ -83,6 +83,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
       setComplemento(info.TB_PESSOA_COMPLEMENTO);
       setInstagram(info.TB_PESSOA_INSTAGRAM);
       setFacebook(info.TB_PESSOA_FACEBOOK);
+      setCarregando(false);
     }).catch(error => {
       let erro = error.response.data.message;
       console.error('Erro ao selecionar:', erro);
@@ -120,13 +121,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    PegarInfo()
-      .then(() => {
-        setCarregando(false);
-      })
-      .catch(error => {
-        ToastAndroid.show('Houve um erro ao carregar. Tente novamente.', ToastAndroid.SHORT);
-      });
+    PegarInfo();
   }, []);
 
   return (
@@ -137,10 +132,10 @@ const AlterarCad = ({ navigation: { navigate } }) => {
         <>
           <GroupBox titulo="Informações pessoais">
             {!modoAlterar && <Text style={styles.titulocampo}>Confirme ou complete suas informações</Text>}
-            <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} opcional={modoAlterar ? true : false} />
-            <CampoSimples set={setEmail} placeholder="Email" val={email} opcional={modoAlterar ? true : false} />
-            <CampoDtNasc set={setDtNasc} val={dtNasc} opcional={modoAlterar ? true : false} />
-            <CampoNumFormatado set={setCpf} tipo='cpf' val={cpf} opcional={modoAlterar ? true : false} />
+            <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} opcional={modoAlterar} />
+            <CampoSimples set={setEmail} placeholder="Email" val={email} opcional={modoAlterar} />
+            <CampoDtNasc set={setDtNasc} val={dtNasc} opcional={modoAlterar} />
+            <CampoNumFormatado set={setCpf} tipo='cpf' val={cpf} opcional={modoAlterar} />
           </GroupBox>
           <GroupBox titulo="Informações de endereço">
             <CampoEndereco val1={cep} val2={uf} val3={cidade} val4={bairro} val5={rua} val6={numero} val7={complemento} obrigatorio={modoAlterar ? false : true} opcional={modoAlterar ? true : false}
@@ -150,7 +145,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
             <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} val1={telefone1} val2={telefone2} val3={whatsapp} opcional={modoAlterar ? true : false} />
             <CampoRede set1={setInstagram} set2={setFacebook} opcional val1={instagram} val2={facebook} />
           </GroupBox>
-          <Mensagem texto={message}/>
+          <Mensagem texto={mensagem} />
           <BotaoCadastrar onPress={Alterar} texto={modoAlterar ? "Alterar" : "Continuar"} />
         </>}
     </ContainerCadastro>

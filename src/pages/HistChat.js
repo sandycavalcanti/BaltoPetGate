@@ -1,32 +1,42 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, Dimensions, ToastAndroid } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
-import Contato from '../components/HistChat/Contato'
 import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
+import DecodificarToken from '../utils/DecodificarToken';
+import GrupoContatos from '../components/chat/GrupoContatos';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+let TB_PESSOA_IDD;
 
-const HisChat = ({ navigation: { navigate } }) => {
+const HisChat = () => {
+  const [pessoasJson, setPessoasJson] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [veterinarios, setVeterinarios] = useState([]);
   const [ongs, setOngs] = useState([]);
   const [casasderacao, setCasasderacao] = useState([]);
-  const [pessoasJson, setPessoasJson] = useState([]);
+  const [desativados, setDesativados] = useState([]);
   const [pesquisa, setPesquisa] = useState("");
 
+  const [carregando, setCarregando] = useState(true);
+
+  const Selecionar = async () => {
+    const decodedToken = await DecodificarToken();
+    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
+    await axios.get(urlAPI + 'selchat/' + TB_PESSOA_IDD)
+      .then(response => {
+        setPessoasJson(response.data);
+        setCarregando(false);
+      })
+      .catch(error => {
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error, error);
+      })
+  };
+
   useEffect(() => {
-    const Selecionar = () => {
-      axios.get(urlAPI + 'selpessoas')
-        .then((response) => {
-          setPessoasJson(response.data);
-        })
-        .catch((error) => {
-          let erro = error.response.data.message;
-          setPessoasJson(erro)
-          console.error('Erro ao selecionar:', error.response.data);
-        })
-    };
     Selecionar();
   }, []);
 
@@ -35,12 +45,15 @@ const HisChat = ({ navigation: { navigate } }) => {
     const Filtrar = (type) => {
       return pessoasJson
         .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
-        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID));
+        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID))
+        .filter((pessoa) => pessoa.TB_CHAT_STATUS === true);
     }
+    const chatsDesativados = pessoasJson.filter((pessoa) => pessoa.TB_CHAT_STATUS === false);
     setUsuarios(Filtrar([1, 7]));
     setVeterinarios(Filtrar([2]));
     setOngs(Filtrar([3, 4, 5]));
     setCasasderacao(Filtrar([6]));
+    setDesativados(chatsDesativados)
   }, [pesquisa, pessoasJson]);
 
   return (
@@ -49,49 +62,26 @@ const HisChat = ({ navigation: { navigate } }) => {
         <View style={styles.groupBox}>
           <Text style={styles.titulo}>Chat</Text>
           <View style={styles.searchBar}>
-            <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Search" />
+            <TextInput onChangeText={(text) => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" />
             {pesquisa !== '' &&
               <TouchableOpacity onPress={() => setPesquisa('')}>
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>}
           </View>
+          {carregando &&
+            <View style={styles.carregando}>
+              <ActivityIndicator size="large" color={corBordaBoxCad} />
+            </View>}
           <View style={styles.contacts}>
-            {usuarios.length !== 0 ? <Text style={styles.categoria}>Usuários</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {usuarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {veterinarios.length !== 0 ? <Text style={styles.categoria}>Veterinários</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {veterinarios.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {ongs.length !== 0 ? <Text style={styles.categoria}>Instituições/Protetores/Abrigos</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {ongs.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
-            {casasderacao.length !== 0 ? <Text style={styles.categoria}>Casas de ração</Text> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.contact}>
-                {casasderacao.map((pessoa) => (
-                  <Contato key={pessoa.TB_PESSOA_ID} id={pessoa.TB_PESSOA_ID} nome={pessoa.TB_PESSOA_NOME_PERFIL} />
-                ))}
-              </View>
-            </ScrollView>
+            <GrupoContatos data={usuarios} titulo="Usuários" />
+            <GrupoContatos data={veterinarios} titulo="Veterinários" />
+            <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
+            <GrupoContatos data={casasderacao} titulo="Casas de ração" />
+            <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
           </View>
         </View>
       </SafeAreaView>
-    </ScrollView>
+    </ScrollView >
   );
 };
 
@@ -118,17 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contacts: {
-    flex: 1,
     marginTop: 10
-  },
-  contact: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  categoria: {
-    fontSize: 20,
-    color: "white",
-    marginLeft: 20
   },
   groupBox: {
     minHeight: windowHeight - 80,
@@ -138,7 +118,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: corBordaBoxCad,
     borderRadius: 10,
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 30,
     position: 'relative',
   },
@@ -153,6 +133,17 @@ const styles = StyleSheet.create({
     fontSize: 30,
     backgroundColor: '#A9DDE8',
   },
+  carregando: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#A9DDE8',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  }
 });
 
 export default HisChat;
