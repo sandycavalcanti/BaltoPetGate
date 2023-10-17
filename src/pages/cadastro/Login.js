@@ -5,6 +5,7 @@ import { useState } from "react";
 import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, corBordaBoxCad } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Recaptcha from 'react-native-recaptcha-that-works';
 
 let numeroTentativas = 0;
 
@@ -22,7 +23,8 @@ const Login = ({ navigation: { navigate } }) => {
         } else {
             if (numeroTentativas > 5) {
                 numeroTentativas = 0;
-                return alert("Complete o captcha.");
+                alert("Complete o captcha.");
+                return;
             }
             numeroTentativas += 1;
             Autenticar();
@@ -38,13 +40,16 @@ const Login = ({ navigation: { navigate } }) => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
-            setTimeout(() => {
-                navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            }, 2500);
+            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
-            let erro = error.response.data.message;
-            ToastAndroid.show(erro, ToastAndroid.SHORT);
-            setMensagem(erro);
+            try {
+                let erro = error.response.data.message;
+                ToastAndroid.show(erro, ToastAndroid.SHORT);
+                setMensagem(erro);
+            } catch (error) {
+                ToastAndroid.show('Conecte-se à Internet', ToastAndroid.SHORT);
+                setMensagem('Conecte-se à Internet');
+            }
         })
     };
 
@@ -112,10 +117,10 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={async () => {
                 const TokenUsuario = await AsyncStorage.getItem('token');
                 if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk1OTcxMDQzLCJleHAiOjE3MDExNTUwNDN9.JxRRf2QN8zoZNe3qlGodeS0nN0j5n_Gqm35nd59zJ1A');
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk2NTE5Mzg2LCJleHAiOjE3MDE3MDMzODZ9.y6qYsNgKcp0ZeSx8fCf63O6bBOZW2D3JpR3Mp57bc70');
                     setTimeout(() => {
                         navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-                    }, 1500);
+                    }, 2000);
                 }
                 navigate("Menu")
             }}>

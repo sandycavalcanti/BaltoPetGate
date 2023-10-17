@@ -37,19 +37,31 @@ function Ficha_animal({ navigation: { navigate } }) {
         ).then((response) => {
             setTemperamento(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
         axios.get(urlAPI + 'selsituacoes/' + id
         ).then((response) => {
             setSituacao(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
         axios.get(urlAPI + 'seltraumas/' + id
         ).then((response) => {
             setTrauma(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
     }
 
@@ -64,7 +76,7 @@ function Ficha_animal({ navigation: { navigate } }) {
         tipoIdade = 'Ano'
     } else if (select.TB_ANIMAL_IDADE_TIPO == 'MES') {
         tipoIdade = 'Meses'
-    } else {
+    } else if (select.TB_ANIMAL_IDADE_TIPO == 'ANO') {
         tipoIdade = 'Anos'
     }
 

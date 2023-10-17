@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { format } from "date-fns";
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import { useEffect, useState } from 'react';
+import Imagem from '../geral/Imagem';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -14,31 +15,13 @@ const Post = (props) => {
         dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
     }
 
-    const [imageExists, setImageExists] = useState(true);
+    const [imageExists, setImageExists] = useState(false);
     const urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
-
-    useEffect(() => {
-        const checkImageExists = async () => {
-            try {
-                const response = await fetch(urlImg);
-                if (!response.ok) {
-                    setImageExists(false);
-                }
-            } catch (error) {
-                setImageExists(false);
-            }
-        };
-
-        checkImageExists();
-    }, [urlImg]);
 
     return (
         <View style={styles.profileContainer}>
             <View style={styles.Container}>
-                {imageExists &&
-                    <View style={styles.ContainerImagem}>
-                        <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
-                    </View>}
+                <Imagem url={urlImg} style={styles.Imagem} setResult={setImageExists} remove />
                 <View style={styles.ContainerTexto}>
                     <Text style={[styles.Texto, { textAlign: imageExists ? 'left' : 'center' }]}>{props.data.TB_POSTAGEM_TEXTO}</Text>
                 </View>

@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, ActivityInd
 import { TabView, TabBar } from 'react-native-tab-view';
 import PerfilLayout from './PerfilLayout';
 import axios from 'axios';
-import { corBordaBoxCad, corFundo, corFundoCad, urlAPI } from '../constants';
+import { corFundo, urlAPI } from '../constants';
 import Post from '../components/perfil/Post';
 import Perfil_post from '../components/perfil/Perfil_post';
 import AnimalPost from '../components/perfil/AnimalPost';
@@ -18,16 +18,14 @@ const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 let HeaderHeight
 const PullToRefreshDist = 150;
+let TB_PESSOA_IDD;
 
 const Perfil = ({ navigation: { navigate } }) => {
   const route = useRoute();
   const { id } = route.params;
 
   const [tabIndex, setIndex] = useState(0);
-  const routes = [
-    { key: 'tab1', title: 'Animais' },
-    { key: 'tab2', title: 'Postagens' },
-  ];
+  const routes = [{ key: 'tab1', title: 'Animais' }, { key: 'tab2', title: 'Postagens' },];
   const [canScroll, setCanScroll] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const headerScrollY = useRef(new Animated.Value(0)).current;
@@ -39,7 +37,6 @@ const Perfil = ({ navigation: { navigate } }) => {
   const _tabIndex = useRef(0);
   const refreshStatusRef = useRef(false);
 
-  let TB_PESSOA_IDD;
   const [pessoal, setPessoal] = useState(false);
   const [perfilHeight, setPerfilHeight] = useState(450);
   HeaderHeight = perfilHeight;
@@ -54,18 +51,22 @@ const Perfil = ({ navigation: { navigate } }) => {
     }).then((response) => {
       setSelectAnimal(response.data);
     }).catch((error) => {
-      let erro = error.response.data.message;
-      ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
-      console.error('Erro ao selecionar:', erro);
+      if (error.response.status !== 404) {
+        let erro = error.response.data;
+        ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error);
+      }
     })
     await axios.post(urlAPI + 'selpostagem/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
       setSelectPostagem(response.data);
     }).catch((error) => {
-      let erro = error.response.data.message;
-      ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
-      console.error('Erro ao selecionar:', erro);
+      if (error.response.status !== 404) {
+        let erro = error.response.data;
+        ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error);
+      }
     })
   }
 
@@ -74,14 +75,18 @@ const Perfil = ({ navigation: { navigate } }) => {
       const decodedToken = await DecodificarToken();
       TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
       if (TB_PESSOA_IDD === id) setPessoal(true);
-      await axios.post(urlAPI + 'selpessoa/filtrar', {
-        TB_PESSOA_ID: id,
-      }).then((response) => {
-        setSelectPessoa(response.data[0]);
-      }).catch((error) => {
-        setSelectPessoa(error.response.data.message);
-      });
-      await SelecionarPublicacoes();
+      await axios.get(urlAPI + 'selpessoa/' + id)
+        .then(async (response) => {
+          setSelectPessoa(response.data[0]);
+          await SelecionarPublicacoes();
+        }).catch((error) => {
+          try {
+            setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
+          } catch (error) {
+            ToastAndroid.show('Conecte-se à Internet', ToastAndroid.SHORT);
+            setSelectPessoa('Conecte-se à Internet')
+          }
+        });
     };
 
     Selecionar().then(() => {
@@ -141,26 +146,6 @@ const Perfil = ({ navigation: { navigate } }) => {
     if (Platform.OS === 'ios') { if (scrollY._value < 0) { if (scrollY._value < -PullToRefreshDist && !refreshStatusRef.current) { startRefreshAction(); } else { listRefArr.current.forEach((listRef) => { listRef.value.scrollToOffset({ offset: 0, animated: true }); }); } } else { if (Math.abs(gestureState.vy) < 0.2) return; Animated.decay(headerScrollY, { velocity: -gestureState.vy, useNativeDriver: true }).start(() => syncScrollOffset()); } }
     else if (Platform.OS === 'android') { if (headerMoveScrollY._value < 0 && headerMoveScrollY._value / 1.5 < -PullToRefreshDist) { startRefreshAction(); } else { Animated.timing(headerMoveScrollY, { toValue: 0, duration: 300, useNativeDriver: true }).start(); } }
   };
-  const onMomentumScrollBegin = () => {
-    isListGliding.current = true;
-  };
-  const onMomentumScrollEnd = () => {
-    isListGliding.current = false;
-    syncScrollOffset();
-  };
-  const onScrollEndDrag = (e) => {
-    syncScrollOffset();
-    const offsetY = e.nativeEvent.contentOffset.y;
-    if (Platform.OS === 'ios') if (offsetY < -PullToRefreshDist && !refreshStatusRef.current) startRefreshAction();
-  };
-  const renderHeader = () => {
-    const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
-    return (
-      <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout pessoal={pessoal} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
-      </Animated.View>
-    );
-  };
   const renderLabel = ({ route, focused }) => {
     return (
       <Text style={[styles.label, { opacity: focused ? 1 : 0.5 }]}> {route.title}</Text>
@@ -168,9 +153,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   };
   const renderScene = ({ route }) => {
     const focused = route.key === routes[tabIndex].key;
-    let numCols;
-    let data;
-    let renderItem;
+    let numCols, data, renderItem;
     switch (route.key) {
       case 'tab1':
         numCols = 1;
@@ -193,9 +176,9 @@ const Perfil = ({ navigation: { navigate } }) => {
         ref={ref => { if (ref) { const found = listRefArr.current.find((e) => e.key === route.key); if (!found) { listRefArr.current.push({ key: route.key, value: ref }); } } }}
         scrollEventThrottle={16}
         onScroll={focused ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } }, },], { useNativeDriver: true },) : null}
-        onMomentumScrollBegin={onMomentumScrollBegin}
-        onScrollEndDrag={onScrollEndDrag}
-        onMomentumScrollEnd={onMomentumScrollEnd}
+        onMomentumScrollBegin={() => isListGliding.current = true}
+        onScrollEndDrag={e => { syncScrollOffset(); const offsetY = e.nativeEvent.contentOffset.y; if (Platform.OS === 'ios') if (offsetY < -PullToRefreshDist && !refreshStatusRef.current) startRefreshAction(); }}
+        onMomentumScrollEnd={() => { isListGliding.current = false; syncScrollOffset(); }}
         contentContainerStyle={{ paddingTop: HeaderHeight + TabBarHeight, minHeight: windowHeight - SafeStatusBar + HeaderHeight, }}
         showsHorizontalScrollIndicator={false}
         data={data}
@@ -220,17 +203,18 @@ const Perfil = ({ navigation: { navigate } }) => {
   };
   const renderCustomRefresh = () => {
     return Platform.select({
-      ios: (
-        <AnimatedIndicator style={{ top: -50, position: 'absolute', alignSelf: 'center', transform: [{ translateY: scrollY.interpolate({ inputRange: [-100, 0], outputRange: [120, 0], extrapolate: 'clamp' }), },], }} animating />
-      ),
-      android: (
-        <Animated.View style={{ transform: [{ translateY: headerMoveScrollY.interpolate({ inputRange: [-300, 0], outputRange: [150, 0], extrapolate: 'clamp', }), },], backgroundColor: '#eee', height: 38, width: 38, borderRadius: 19, borderWidth: 2, borderColor: '#ddd', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', top: -50, position: 'absolute' }}>
-          <ActivityIndicator animating />
-        </Animated.View>
-      ),
+      ios: (<AnimatedIndicator style={{ top: -50, position: 'absolute', alignSelf: 'center', transform: [{ translateY: scrollY.interpolate({ inputRange: [-100, 0], outputRange: [120, 0], extrapolate: 'clamp' }), },], }} animating />),
+      android: (<Animated.View style={{ transform: [{ translateY: headerMoveScrollY.interpolate({ inputRange: [-300, 0], outputRange: [150, 0], extrapolate: 'clamp', }), },], backgroundColor: '#eee', height: 38, width: 38, borderRadius: 19, borderWidth: 2, borderColor: '#ddd', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', top: -50, position: 'absolute' }}><ActivityIndicator animating /></Animated.View>),
     });
   };
-
+  const renderHeader = () => {
+    const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
+    return (
+      <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
+        <PerfilLayout pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+      </Animated.View>
+    );
+  };
 
 
   const renderTab1Item = ({ item, index }) => {
@@ -265,7 +249,7 @@ const Perfil = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: corFundo
+    backgroundColor: corFundo,
   },
   header: {
     height: HeaderHeight,
