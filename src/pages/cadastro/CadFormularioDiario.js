@@ -1,11 +1,12 @@
 import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useState } from "react";
 import axios from 'axios';
-import CampoSimples from "../../components/cadastro/CampoSimples";
+import CampoMenor from "../../components/FormDiario/CampoMenor";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import GroupBox from "../../components/cadastro/GroupBox";
 import Campo from "../../components/animal/Campo";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
+import BotaoImg from "../../components/FormDiario/BotaoImg";
 
 const CadFormularioDiario = ({navigation: {navigate }}) => {
 
@@ -33,13 +34,13 @@ const CadFormularioDiario = ({navigation: {navigate }}) => {
 return (
         <ContainerCadastro titulo='Formulário diario'>
             <GroupBox titulo='Horário do abastecimento'>
-                <CampoSimples placeholder="Data do abastecimento" set={text => setDt_abastecimento(text)} />
-
-                <View style={styles.containerCampos}>
-                    <Campo placeholder='img' keyboardtype='image' set={text => set(text)} />
-                    <Campo placeholder='dataenvio' set={text => setDt_envio(text)} />
+                <View  style={styles.Container}>
+                    <CampoMenor placeholder="00:00h" opcional/>
+                    <CampoMenor placeholder="00/00/0000" opcional/>
                 </View>
             </GroupBox>
+            <BotaoImg/>
+            <Text style={styles.Texto}>Ao acrescentar uma imagem, você estara acrescentando uma prova, caso seu ponto seja denunciado por um usuário. </Text>
             <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar'/>
         </ContainerCadastro>
 
@@ -47,43 +48,19 @@ return (
 }
 
 const styles = StyleSheet.create({
-    container: {
+    Container: {
+        width: '70%',
         backgroundColor: '#a5cbd3',
         alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-    },
-    campo: {
-        width: '46%',
-        fontSize: 18,
-        paddingHorizontal: 10,
-        color: '#8EBF81',
-        backgroundColor: "#fff",
-        borderRadius: 15,
         flexDirection: "row",
-        alignItems: "center",
-        marginVertical: 5,
-
-    },
-    containerCampos:{
-        width: '95%',
-        justifyContent:"space-around",
-        flexDirection:"row",
-        backgroundColor: '#fff',
-        borderRadius: 15,
-        alignItems: "center"
-    },
-    ContainerDublo:{
-        width: '95%',
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: 'space-evenly',
     },
     Texto:{
-        color: '#447837',
-        left: 20,
-        fontSize: 18
+        color: '#521A1A',
+        paddingHorizontal: 10,
+        textAlign: 'center',
+        fontSize: 14,
+        marginBottom: '20%',
     },
 });
 

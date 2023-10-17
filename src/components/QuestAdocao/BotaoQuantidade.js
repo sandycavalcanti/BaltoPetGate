@@ -15,7 +15,7 @@ const BotaoQuantidade = (props) => {
   const diminuirQuantidade = () => {
     if (quantidade > 0) {
       setQuantidade(quantidade - 1);
-      props.set(quantidade + 1);
+      props.set(quantidade - 1);
     }
   };
 

@@ -14,9 +14,12 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Entypo } from "@expo/vector-icons";
-
-//Baixar Pacote
+import BotaoImg from "../components/FormDiario/BotaoImg";
+import ContainerCadastro from "../components/cadastro/ContainerCadastro";
+import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
 import axios from "axios";
+import { corBordaBoxCad, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, valorBordaCampoCad } from "../constants";
+import Campo from "../components/animal/Campo";
 
 // Criando um componente funcional chamado Postagem
 const Postagem = () => {
@@ -217,44 +220,28 @@ const fecharModal = () => {
 // Definindo uma função para renderizar cada item da lista de postagens
 const renderItem = ({ item, index }) => {
   return (
-    <View style={styles.item}>
-      <View style={styles.botoes}>
-        <View style={{ width: 340, alignItems: "flex-end" }}>
-          <Entypo
-            style={{ justifyContent: "center" }}
-            name="dots-three-horizontal"
-            size={24}
-            color="black"
-            onPress={abrirModal}
-          />
-        </View>
-        {/* Renderiza o modal se o estado for verdadeiro */}
-        {modalVisible && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={fecharModal}
-          >
-            <View style={styles.modal}>
-              <TouchableOpacity onPress={() => editarPostagem(index)}>
-                <Text style={styles.botao}>Editar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => deletarPostagem(index)}>
-                <Text style={styles.botao}>Deletar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={fecharModal}>
-                <Text style={styles.botao}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        )}
+      <ContainerCadastro titulo='Faça sua postagem!'>
+      <BotaoImg/>
+      {imagem && <Image source={{ uri: imagem }} style={styles.imagem} />}
+      <TextInput
+        style={styles.input} placeholderTextColor={corTextoBotaoCad}
+        placeholder="Digite um comentário"
+        value={comentario}
+        onChangeText={editarComentario}
+      />
+      <View style={styles.Botao}>
+      {indiceEditando === null ? (
+      
+        <BotaoCadastrar title="Postar" onPress={postar} />
+      ) : (
+        <BotaoCadastrar title="Salvar" onPress={salvarPostagem} />
+      )}
       </View>
-      <Image source={{ uri: item.imagem }} style={styles.imagem} />
-      <View style={{ backgroundColor: "#94E4E6" }}>
-        <Text style={styles.comentario}>{item.comentario}</Text>
-      </View>
-    </View>
+      <FlatList
+        data={postagens}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      /></ContainerCadastro>
   );
 };
 
@@ -286,54 +273,45 @@ return (
 
 // Definindo os estilos do componente
 const styles = StyleSheet.create({
-container: {
-  flex: 1,
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "#94E4E6",
-},
-titulo: {
-  fontSize: 24,
-  fontWeight: "bold",
-  margin: 10,
-},
-imagem: {
-  width: 360,
-  height: 300,
-},
-input: {
-  width: 300,
-  height: 40,
-  borderWidth: 1,
-  borderColor: "#ccc",
-  borderRadius: 5,
-  margin: 10,
-  padding: 10,
-},
-item: {
-  borderColor: "white",
-  backgroundColor: "#9DE3B8",
-  borderBottomWidth: 1,
-  borderRadius: 5,
-  margin: 0,
-},
-comentario: {
-  fontSize: 16,
-  fontWeight: "bold",
-  margin: 10,
-},
-botoes: {
- flexDirection:"row",
- justifyContent:"space-between",
- margin :10
-},
-botao:{
- fontSize :16,
- color:"#fff",
- backgroundColor:"#00f",
- padding :10,
- borderRadius :5
-}
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: corFundoCad,
+  },
+  imagem: {
+    width: 360,
+    height: 300,
+  },
+  input: { 
+    marginTop: '10%',
+    width: '90%',
+    fontSize: 18,
+    paddingHorizontal: 10,
+    padding: 5,
+    borderColor: corTextoBotaoCad,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  item: {
+    borderColor: "white",
+    backgroundColor: "#9DE3B8",
+    borderBottomWidth: 1,
+    borderRadius: 5,
+    margin: 0,
+  },
+  comentario: {
+    fontSize: 16,
+    fontWeight: "bold",
+    margin: 10,
+  },
+  Botao: {
+    marginTop: '10%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    margin: 10,
+  },
 });
 
 // Exportando o componente
