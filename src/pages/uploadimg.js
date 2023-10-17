@@ -30,6 +30,7 @@ export default function App() {
 
   const Cadastrar = async () => {
     if (image) {
+      console.log(image)
       const formData = new FormData();
       let imagem = {
         uri: image,
@@ -45,8 +46,9 @@ export default function App() {
       }).then(response => {
         console.log(response.data.message)
       }).catch(error => {
-        console.error(error)
-        console.error(error.response.data)
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error(erro.error, error);
       })
     } else {
       ToastAndroid.show('Insira uma imagem', ToastAndroid.SHORT);
