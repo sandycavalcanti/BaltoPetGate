@@ -57,14 +57,9 @@ const Login = ({ navigation: { navigate } }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground
-                style={styles.imagem}
-                resizeMode="contain"
-                source={require("../../../assets/img/Logo.png")}
-            />
+            <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
             {mensagem && <Text style={styles.mensagem}>{mensagem}</Text>}
             <View style={styles.containercampo}>
-                {/* <FontAwesome5 name="user" size={25} /> */}
                 <TextInput
                     onChangeText={(text) => setEmail(text)}
                     placeholderTextColor={corPlaceholderCad}
@@ -74,7 +69,6 @@ const Login = ({ navigation: { navigate } }) => {
             </View>
             <View style={styles.containersenha}>
                 <View style={styles.containercamposenha}>
-                    {/* <FontAwesome5 name="lock" size={25} /> */}
                     <View style={styles.caixacampo}>
                         <TextInput
                             onChangeText={(text) => setSenha(text)}
@@ -83,9 +77,7 @@ const Login = ({ navigation: { navigate } }) => {
                             placeholder={"Senha"}
                             style={styles.campo}
                         />
-                        <TouchableWithoutFeedback
-                            onPress={() => setMostrarSenha(!mostrarSenha)}
-                        >
+                        <TouchableWithoutFeedback onPress={() => setMostrarSenha(!mostrarSenha)}>
                             {mostrarSenha ? (
                                 <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 15 }} />
                             ) : (

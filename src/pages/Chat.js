@@ -14,6 +14,7 @@ import { FontAwesome5, AntDesign } from '@expo/vector-icons';
 import axios from "axios";
 import socket from "../utils/Socket";
 import parsePatterns from '../components/chat/parsePatterns';
+import FormData from 'form-data';
 
 let msgPessoal = TB_PESSOA_IDD = editando = podeExcluir = desativado = podeEditar = null;
 let mensagemSelecionada = {};

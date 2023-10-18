@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import { urlAPI } from '../constants';
-import { TextInput } from 'react-native';
+import FormData from 'form-data';
 
 export default function App() {
   const [image, setImage] = useState(null);
@@ -30,7 +30,6 @@ export default function App() {
 
   const Cadastrar = async () => {
     if (image) {
-      console.log(image)
       const formData = new FormData();
       let imagem = {
         uri: image,

@@ -1,80 +1,31 @@
-import React, {useRef, useCallback, useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  Button,
-  Alert,
-} from 'react-native';
+import { StyleSheet, Text, View, ToastAndroid } from 'react-native'
+import { useEffect, useState } from 'react'
+import { urlAPI } from '../constants';
+import axios from 'axios';
 
-// import {Colors} from 'react-native/Libraries/NewAppScreen';
-import Recaptcha from 'react-native-recaptcha-that-works';
-import { corFundo, urlAPI } from '../constants';
+const Teste = () => {
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    backgroundColor: corFundo,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-});
+  const id = 1;
 
-const App = () => {
-  const size = 'invisible';
-  const [token, setToken] = useState('<none>');
+  const Desativar = async () => {
+    await axios.put(urlAPI + 'deldenuncia/' + id)
+      .then(response => {
+        console.log('Deletado')
+      }).catch(error => {
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error(erro.error, error);
+      });
+  }
 
-  const $recaptcha = useRef(null);
-
-  const handleOpenPress = useCallback(() => {
-    $recaptcha.current?.open();
-  }, []);
-
-  const handleClosePress = useCallback(() => {
-    $recaptcha.current?.close();
-  }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
-      <View style={styles.container}>
-        <Button onPress={handleOpenPress} title="Open" />
-        <Text>Token: {token}</Text>
-        <Text>Size: {size}</Text>
-      </View>
+    <View>
+      <Text>{dados.TB_ANIMAL_NOME}</Text>
+    </View>
+  )
+}
 
-      <Recaptcha
-        ref={$recaptcha}
-        lang="pt"
-        headerComponent={
-          <Button title="Close modal" onPress={handleClosePress} />
-        }
-        footerComponent={<Text>Footer here</Text>}
-        siteKey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-        baseUrl={urlAPI +'captcha'}
-        size={size}
-        theme="dark"
-        onLoad={() => Alert.alert('onLoad event')}
-        onClose={() => Alert.alert('onClose event')}
-        onError={(err) => {
-          Alert.alert('onError event');
-          console.warn(err);
-        }}
-        onExpire={() => Alert.alert('onExpire event')}
-        onVerify={(token) => {
-          Alert.alert('onVerify event');
-          setToken(token);
-        }}
-        enterprise={false}
-        hideBadge={false}
-      />
-    </SafeAreaView>
-  );
-};
+export default Teste
 
-export default App;
+const styles = StyleSheet.create({})

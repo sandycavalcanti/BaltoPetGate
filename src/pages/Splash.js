@@ -15,23 +15,12 @@ const Splash = ({ navigation }) => {
   return (
 
     <View style={styles.Container}>
-      <Image
-        source={require('../../assets/img/splash.png')}
-        style={styles.ImagemFundo}
-      />
+      <Image source={require('../../assets/img/splash.png')} style={styles.ImagemFundo} />
       <View style={styles.ContainerLogo}>
-        <Image
-          source={require('../../assets/img/Logo.png')}
-          style={styles.Logo}
-        />
+        <Image source={require('../../assets/img/Logo.png')} style={styles.Logo} />
       </View>
       <View style={styles.ContainerLottie}>
-        <LottieView
-          source={require('../../assets/animacaoCirculo.json')}
-          autoPlay
-          loop
-          style={styles.Lottie}
-        />
+        <LottieView source={require('../../assets/animacaoCirculo.json')} autoPlay loop style={styles.Lottie} />
       </View>
     </View>
   );
