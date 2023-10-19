@@ -20,6 +20,7 @@ const PerfilLayout = (props) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
+  const [rating, setRating] = useState(0);
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
@@ -157,6 +158,21 @@ const PerfilLayout = (props) => {
             {props.data.TB_PESSOA_BIO}
           </Text>
         </View>
+        <View style={styles.ratingContainer}>
+          <Text>Avalie este perfil:</Text>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setRating(index + 1)}
+            >
+              <AntDesign
+                name={index < rating ? 'star' : 'staro'}
+                size={32}
+                color={index < rating ? 'gold' : 'gray'}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </SafeAreaView >
   );
@@ -241,6 +257,12 @@ const styles = StyleSheet.create({
     color: '#093C4B',
     textAlign: 'justify',
   },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
 });
 
-export default PerfilLayout
+export default PerfilLayout;
