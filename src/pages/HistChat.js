@@ -31,8 +31,12 @@ const HisChat = () => {
       })
       .catch(error => {
         let erro = error.response.data;
+        if (error.response.status !== 404) {
+          console.error(erro.error, error);
+        } else {
+          console.log(erro.message);
+        }
         ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.error('Erro ao selecionar:', erro.error, error);
       })
   };
 

@@ -1,18 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid } from 'react-native'
-import { corTituloCad, urlAPI } from '../constants';
+import { useEffect, useState } from 'react'
+import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid, ActivityIndicator } from 'react-native'
+import { corTituloCad, urlAPI, corBordaBoxCad } from '../constants';
 import BotaoCadastrar from '../components/cadastro/BotaoCadastrar';
 import BotaoNegar from '../components/InfoChat/BotaoNegar';
 import BotaoAceitar from '../components/InfoChat/BotaoAceitar';
 import Questao from '../components/InfoChat/Questao';
 import axios from 'axios';
 import DecodificarToken from '../utils/DecodificarToken';
-
-let dadosSolicitacao = {};
+import Imagem from '../components/geral/Imagem';
+import DropdownAlert, { DropdownAlertData, DropdownAlertType, } from 'react-native-dropdownalert';
+import { useNavigation, useRoute } from '@react-navigation/native';
+let dadosSolicitacao = [];
+let dadosAdocao = dadosTratamento = dadosAbrigo = {};
 let TB_PESSOA_IDD = TB_TIPO_IDD = null;
+let alert = (_data) => new Promise(res => res);
 
 const InfoChat = () => {
+    const route = useRoute();
+    const { TB_PESSOA_ID, TB_ANIMAL_ID, dados } = route.params;
+
+    const animalCadastro = dados.TB_ANIMAL_CADASTRADO;
     const [info, setInfo] = useState({});
+    const [existeAdocao, setExisteAdocao] = useState(false);
+    const [existeAbrigo, setExisteAbrigo] = useState(false);
+    const [existeTratamento, setExisteTratamento] = useState(false);
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
@@ -20,56 +31,74 @@ const InfoChat = () => {
         TB_TIPO_IDD = decodedToken.TB_TIPO_IDD
     }
 
-
-    const Selecionar = () => {
-        axios.get(urlAPI + 'selpessoa/1').then(response => {
+    const Selecionar = async () => {
+        await axios.get(urlAPI + 'selpessoa/' + TB_PESSOA_ID).then(response => {
             setInfo(response.data[0]);
         }).catch(error => {
             let erro = error.response.data;
             ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar: ', erro.error);
+            console.error('Erro ao selecionar: ', erro.error, error);
         });
     }
 
     useEffect(() => {
         PegarId();
         Selecionar();
- 
+        SelSolicitacao();
     }, []);
 
-    const TB_PESSOA_ID = 1;
-    const TB_ANIMAL_ID = 4;
-    const animalCadastro = false;
-    const [solicitacao, setSolicitacao] = useState(null);
+    const urlPessoa = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
+    const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
+    const [carregando, setCarregando] = useState(true);
 
     const Solicitar = (tipoSolicitacao) => {
         const NovaData = new Date();
-        const dataFormatada = NovaData.toISOString().split('T')[0];
         axios.post(urlAPI + 'cadsolicitacao', {
             TB_PESSOA_ID,
             TB_ANIMAL_ID,
-            TB_SOLICITACAO_DT_SOLICITACAO: dataFormatada,
+            TB_SOLICITACAO_DT_SOLICITACAO: NovaData,
             TB_TIPO_SOLICITACAO_ID: tipoSolicitacao
-        }).then(response => {
-            setSolicitacao(true)
+        }).then(async response => {
+            if (tipoSolicitacao == 1) {
+                setExisteAdocao(true)
+            } if (tipoSolicitacao == 2) {
+                setExisteAbrigo(true)
+            } if (tipoSolicitacao == 3) {
+                setExisteTratamento(true)
+            }
+            const alertData = await alert({
+                type: DropdownAlertType.Info,
+                title: 'Solicitação em andamento',
+                message: 'Aguardando resposta da solicitação',
+            });
         }).catch(error => {
             let erro = error.response.data;
             ToastAndroid.show(erro.message, ToastAndroid.SHORT);
             console.error('Erro ao selecionar: ', erro.error);
         });
     };
-   
+
     const SelSolicitacao = async () => {
         await axios.post(urlAPI + 'selsolicitacao/filtrar', {
             TB_PESSOA_ID,
             TB_ANIMAL_ID
-        }).then(response => {
+        }).then(async response => {
             dadosSolicitacao = response.data;
-            setSolicitacao(true);
+            await dadosSolicitacao.map(item => {
+                if (item['TB_TIPO_SOLICITACAO_ID'] == 1) {
+                    setExisteAdocao(true)
+                    dadosAdocao = item;
+                } if (item['TB_TIPO_SOLICITACAO_ID'] == 2) {
+                    setExisteAbrigo(true)
+                    dadosAbrigo = item;
+                } if (item['TB_TIPO_SOLICITACAO_ID'] == 3) {
+                    setExisteTratamento(true)
+                    dadosTratamento = item;
+                }
+            })
+            setCarregando(false);
         }).catch(error => {
-            if (error.response.status == 404) {
-                setSolicitacao(false);
-            } else {
+            if (error.response.status !== 404) {
                 let erro = error.response.data;
                 ToastAndroid.show(erro.message, ToastAndroid.SHORT);
                 console.error('Erro ao selecionar: ', erro.error);
@@ -77,7 +106,8 @@ const InfoChat = () => {
         });
     };
 
-    const AlterarSolicitacao = async (situacao) => {
+    const AlterarSolicitacao = async (tipoSolicitacao, situacao) => {
+
         const url = urlAPI + 'altsolicitacao/' + dadosSolicitacao['TB_SOLICITACAO_ID'];
         await axios.put(url, {
             TB_SOLICITACAO_SITUACAO: situacao
@@ -91,52 +121,78 @@ const InfoChat = () => {
     };
 
 
-
     return (
         <View style={styles.Container}>
             <ScrollView>
                 <View style={styles.InfoHead}>
                     <View style={styles.ImagemCirculo}>
+                        <Imagem url={urlPessoa} />
                     </View>
                     <Text style={styles.Titulo}>Nome da pessoa</Text>
                 </View>
                 <View style={styles.InfoPet}>
                     <Text style={styles.TituloPet}>Doguinho</Text>
                     <View style={styles.ImagemPet}>
+                        <Imagem url={urlAnimal} />
                     </View>
                 </View>
-                {animalCadastro
-                    ?
-
-                    <View style={styles.InfoForm}>
-                        <Text style={styles.Titulo}>Formulario adoção</Text>
-                        <Questao texto='Toda a familia esta ciente e apoia a adoção do animal?' resposta={info.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
-                        <Questao texto='Moradia' resposta={info.TB_PESSOA_ANIMAL_CASA} />
-                        <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.TB_PESSOA_ANIMAL_PASSEAR} />
-                        <Questao texto='Qual a quantidade media de espaço que o animal terá acesso?' resposta={info.TB_PESSOA_ANIMAL_ESPACO} />
-                        <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.TB_PESSOA_ANIMAL_AUSENCIA} />
-                        <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
-                        <Questao texto='Quantos animais você possuí em sua casa?' resposta={info.TB_PESSOA_ANIMAL_QUANTIDADE} />
-
-                        {/* {ifadocao && dadosAdocao['TB_ADOCAO_SITUACAO'] == 'EM ANDAMENTO'
-                            ?
-                            <View style={styles.Botoes}>
-                                <BotaoAceitar onPress={() => AlterarAdocao('Aprovada')} texto='Aceitar solicitação de adoção'></BotaoAceitar>
-                                <BotaoNegar onPress={() => AlterarAdocao('Negada')} texto='Negar solicitação de adoção'></BotaoNegar>
-                            </View>
-                            : null
-                        } */}
-
-                    </View>
+                {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
                     :
-                    // !ifadocao
-                    //     ?
-                    //     <View style={styles.Botao}>
-                    //         <BotaoCadastrar onPress={FazerAdocao} texto="Quero adotar" />
-                    //     </View>
-                    //     :
-                    //     null
+                    animalCadastro
+                        ?
+
+                        <View style={styles.InfoForm}>
+                            <Text style={styles.Titulo}>Formulario adoção</Text>
+                            <Questao texto='Toda a familia esta ciente e apoia a adoção do animal?' resposta={info.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
+                            <Questao texto='Moradia' resposta={info.TB_PESSOA_ANIMAL_CASA} />
+                            <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.TB_PESSOA_ANIMAL_PASSEAR} />
+                            <Questao texto='Qual a quantidade media de espaço que o animal terá acesso?' resposta={info.TB_PESSOA_ANIMAL_ESPACO} />
+                            <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.TB_PESSOA_ANIMAL_AUSENCIA} />
+                            <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
+                            <Questao texto='Quantos animais você possuí em sua casa?' resposta={info.TB_PESSOA_ANIMAL_QUANTIDADE} />
+
+                            {existeAdocao && dadosAdocao['TB_SOLICITACAO_SITUACAO'] == 'EM ANDAMENTO'
+                                ?
+                                <View style={styles.Botoes}>
+                                    <BotaoAceitar onPress={() => AlterarSolicitacao(1, 'APROVADA')} texto='Aceitar solicitação de adoção'></BotaoAceitar>
+                                    <BotaoNegar onPress={() => AlterarSolicitacao(1, 'NEGADA')} texto='Negar solicitação de adoção'></BotaoNegar>
+                                </View>
+                                : null
+                            }
+
+                        </View>
+                        :
+                        <>
+                            {(TB_TIPO_IDD == 1 || TB_TIPO_IDD == 2 || TB_TIPO_IDD == 6)
+                                &&
+                                !existeAdocao
+                                &&
+                                <>
+                                    <View style={styles.Botao}>
+                                        <BotaoCadastrar onPress={() => Solicitar(1)} texto="Quero adotar" />
+                                    </View>
+                                </>}
+                            {(TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4 || TB_TIPO_IDD == 5)
+                                &&
+                                !existeAbrigo
+                                &&
+                                <>
+                                    <View style={styles.Botao}>
+                                        <BotaoCadastrar onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
+                                    </View>
+                                </>}
+                            {(TB_TIPO_IDD == 2 || TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4)
+                                &&
+                                !existeTratamento
+                                &&
+                                <>
+                                    <View style={styles.Botao}>
+                                        <BotaoCadastrar onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
+                                    </View>
+                                </>}
+                        </>
                 }
+                <DropdownAlert alert={func => (alert = func)} />
             </ScrollView>
         </View>
     )

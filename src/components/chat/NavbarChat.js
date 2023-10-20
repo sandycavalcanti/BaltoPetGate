@@ -6,6 +6,7 @@ import Dropdown from '../geral/Dropdown';
 import { Entypo } from '@expo/vector-icons';
 import ModalConfirmacao from '../geral/ModalConfirmacao';
 import Imagem from '../geral/Imagem';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 let item1 = item2 = item3 = item4 = {};
 
@@ -51,14 +52,16 @@ const NavbarChat = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
-          <Text style={[styles.nome, { marginTop: animalId ? 5 : 0 }]}>{nomeUsuario}</Text>
-        </View>
-        {animalId &&
-          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
-            <Text style={styles.nomeAnimal}>{animalNome}</Text>
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_ANIMAL_ID: animalId, dados })} >
+          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start' }]}>
+            <Text style={[styles.nome]}>{nomeUsuario}</Text>
           </View>
-        }
+          {animalId &&
+            <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
+              <Text style={styles.nomeAnimal}>{animalNome}</Text>
+            </View>
+          }
+        </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>
         {animalId &&
@@ -95,12 +98,13 @@ const styles = StyleSheet.create({
   },
   containerHeaderMiddle: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
   },
   subContainerHeaderMiddle: {
     flex: 1,
-    width: '100%'
+    width: '100%',
+    justifyContent: 'center'
   },
   nome: {
     color: '#fff',

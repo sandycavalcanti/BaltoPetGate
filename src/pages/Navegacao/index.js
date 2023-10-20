@@ -97,7 +97,11 @@ export default function Navigation() {
           <Stack.Screen name="Teste" component={Teste} />
           <Stack.Screen name="AlterarCad" component={AlterarCad} />
           <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
-        <Stack.Screen name="InfoChat" component={InfoChat} />
+          <Stack.Screen name="InfoChat" component={InfoChat} options={{
+            gestureEnabled: false,
+            gestureDirection: 'vertical-inverted',
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+          }} />
           <Stack.Screen name="uploadimg" component={uploadimg} />
         </Stack.Navigator>
       </NavigationContainer>

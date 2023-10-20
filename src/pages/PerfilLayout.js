@@ -20,6 +20,7 @@ const PerfilLayout = (props) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
+  const [rating, setRating] = useState(0);
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
@@ -78,22 +79,22 @@ const PerfilLayout = (props) => {
     item3 = null;
   }
 
-  const IniciarChat = () => {
-    axios.post(urlAPI + 'selchat/filtrar', {
+  const IniciarChat = async () => {
+    await axios.post(urlAPI + 'selchat/filtrar', {
       TB_PESSOA_IDD,
       TB_PESSOA_ID,
     }).then(response => {
       const dados = response.data[0];
-      if (dados.TB_CHAT_STATUS == true) {
-        const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
-        navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+      const TB_CHAT_ID = dados.TB_CHAT_ID;
+      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
+    }).catch(error => {
+      let erro = error.response.data;
+      if (error.response.status !== 404) {
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error(erro.error, error);
       } else {
         CadastrarChat();
       }
-    }).catch(error => {
-      let erro = error.response.data;
-      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      console.log('Erro ao selecionar:', erro.error);
     });
   }
 
@@ -157,6 +158,21 @@ const PerfilLayout = (props) => {
             {props.data.TB_PESSOA_BIO}
           </Text>
         </View>
+        <View style={styles.ratingContainer}>
+          <Text>Avalie este perfil:</Text>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setRating(index + 1)}
+            >
+              <AntDesign
+                name={index < rating ? 'star' : 'staro'}
+                size={32}
+                color={index < rating ? 'gold' : 'gray'}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </SafeAreaView >
   );
@@ -171,7 +187,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: windowWidth / 2,
     height: windowWidth / 2,
-    top: 170,
+    top: 140,
     left: windowWidth / 4,
     borderRadius: 120,
     backgroundColor: '#CEF7FF',
@@ -181,7 +197,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: 100,
-    top: 270,
+    top: 240,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',
   },
@@ -233,7 +249,8 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
     backgroundColor: '#CEF7FF',
   },
   contentText: {
@@ -241,6 +258,12 @@ const styles = StyleSheet.create({
     color: '#093C4B',
     textAlign: 'justify',
   },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
 });
 
-export default PerfilLayout
+export default PerfilLayout;
