@@ -106,13 +106,46 @@ const InfoChat = () => {
         });
     };
 
+
+
     const AlterarSolicitacao = async (tipoSolicitacao, situacao) => {
 
-        const url = urlAPI + 'altsolicitacao/' + dadosSolicitacao['TB_SOLICITACAO_ID'];
+        let id;
+        await dadosSolicitacao.map(item => {
+            if (item['TB_TIPO_SOLICITACAO_ID'] == tipoSolicitacao) {
+                id = item.TB_SOLICITACAO_ID;
+            }
+        });
+        const url = urlAPI + 'altsolicitacao/' + id;
         await axios.put(url, {
             TB_SOLICITACAO_SITUACAO: situacao
         }).then(response => {
-            setSolicitacao(false);
+            let textoSolicitacao;
+            if (tipoSolicitacao == 1) {
+                setExisteAdocao(false)
+                textoSolicitacao = 'a adoção';
+            } else if (tipoSolicitacao == 2) {
+                setExisteAbrigo(false)
+                textoSolicitacao = 'o abrigo';
+            } else {
+                setExisteTratamento(false)
+                textoSolicitacao = 'o tratamento';
+            }
+
+            if (situacao == 'APROVADA') {
+                alert({
+                    type: DropdownAlertType.Info,
+                    title: 'Solicitação aprovada',
+                    message: 'Dentro de 4 dias você receberá uma mensagem de confirmação d' + textoSolicitacao,
+                });
+            } else {
+                alert({
+                    type: DropdownAlertType.Info,
+                    title: 'Solicitação negada',
+                    message: textoSolicitacao + 'foi cancelada',
+                });
+
+            }
         }).catch(error => {
             let erro = error.response.data;
             ToastAndroid.show(erro.message, ToastAndroid.SHORT);
@@ -152,12 +185,25 @@ const InfoChat = () => {
                             <Questao texto='Quantos animais você possuí em sua casa?' resposta={info.TB_PESSOA_ANIMAL_QUANTIDADE} />
 
                             {existeAdocao && dadosAdocao['TB_SOLICITACAO_SITUACAO'] == 'EM ANDAMENTO'
-                                ?
+                                &&
                                 <View style={styles.Botoes}>
                                     <BotaoAceitar onPress={() => AlterarSolicitacao(1, 'APROVADA')} texto='Aceitar solicitação de adoção'></BotaoAceitar>
                                     <BotaoNegar onPress={() => AlterarSolicitacao(1, 'NEGADA')} texto='Negar solicitação de adoção'></BotaoNegar>
                                 </View>
-                                : null
+                            }
+                            {existeAbrigo && dadosAbrigo['TB_SOLICITACAO_SITUACAO'] == 'EM ANDAMENTO'
+                                &&
+                                <View style={styles.Botoes}>
+                                    <BotaoAceitar onPress={() => AlterarSolicitacao(2, 'APROVADA')} texto='Aceitar solicitação de abrigo'></BotaoAceitar>
+                                    <BotaoNegar onPress={() => AlterarSolicitacao(2, 'NEGADA')} texto='Negar solicitação de abrigo'></BotaoNegar>
+                                </View>
+                            }
+                            {existeTratamento && dadosTratamento['TB_SOLICITACAO_SITUACAO'] == 'EM ANDAMENTO'
+                                &&
+                                <View style={styles.Botoes}>
+                                    <BotaoAceitar onPress={() => AlterarSolicitacao(3, 'APROVADA')} texto='Aceitar solicitação de cuidados'></BotaoAceitar>
+                                    <BotaoNegar onPress={() => AlterarSolicitacao(3, 'NEGADA')} texto='Negar solicitação de cuidados'></BotaoNegar>
+                                </View>
                             }
 
                         </View>

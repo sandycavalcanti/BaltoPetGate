@@ -52,7 +52,7 @@ const NavbarChat = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_ANIMAL_ID: animalId, dados })} >
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (animalId) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_ANIMAL_ID: animalId, dados }) }} >
           <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start' }]}>
             <Text style={[styles.nome]}>{nomeUsuario}</Text>
           </View>

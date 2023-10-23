@@ -12,7 +12,6 @@ function Home({ navigation: { navigate } }) {
         <TouchableOpacity onPress={() => navigate('Cadastroformulariodiario')}><Text>form diario</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('Login')}><Text>Voltar ao Login</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('HisChat')}><Text>Ir para chats</Text></TouchableOpacity>
-        <TouchableOpacity onPress={() => navigate('InfoChat', { TB_PESSOA_ID: 1, TB_ANIMAL_ID: 3, TB_CHAT_INICIADO: true })}><Text>Info chat</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('QuestionarioAdocao')}><Text>Questionario Adoção</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => navigate('AlterarCad', { modoAlterar: false })}><Text>Completar Cadastro</Text></TouchableOpacity>
         <View style={{ alignItems: 'center', justifyContent: 'center', rowGap: 5, marginTop: 15 }}>
