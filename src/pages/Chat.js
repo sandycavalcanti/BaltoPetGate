@@ -16,7 +16,7 @@ import socket from "../utils/Socket";
 import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
 
-let msgPessoal = TB_PESSOA_IDD = editando = podeExcluir = desativado = podeEditar = null;
+let msgPessoal = TB_PESSOA_IDD = editando = respondendo = podeExcluir = desativado = podeEditar = null;
 let mensagemSelecionada = {};
 let msgEmptyChat = 'Nenhuma mensagem ainda';
 
@@ -59,11 +59,15 @@ function reducer(state, action) {
     }
 }
 
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+
 const Chat = () => {
     const route = useRoute();
     const { TB_CHAT_ID, TB_PESSOA_ID } = route.params;
 
     const [dadosChat, setDadosChat] = useState({});
+    const [animais, setAnimais] = useState([]);
     const [mensagens, setMensagens] = useState([]);
     const [textoDigitado, setTextoDigitado] = useState('');
 
@@ -114,7 +118,8 @@ const Chat = () => {
             TB_CHAT_ID,
             TB_PESSOA_ID,
         }).then(async response => {
-            const dados = response.data[0];
+            const dados = response.data.Selecionar[0];
+            setAnimais(response.data.Animais);
             setDadosChat(dados);
             TB_PESSOA_IDD = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
             if (dados.TB_CHAT_STATUS == true) {
@@ -134,7 +139,7 @@ const Chat = () => {
     };
 
     useEffect(() => {
-        editando = false;
+        editando = respondendo = false;
         SelecionarInfoChat();
     }, []);
 
@@ -154,6 +159,10 @@ const Chat = () => {
     const AlterarMensagem = () => {
         editando = true;
         setTextoDigitado(mensagemSelecionada.text);
+    }
+    const ResponderMensagem = () => {
+        respondendo = true;
+        console.log(mensagens, '\n', mensagemSelecionada)
     }
     const ExcluirMensagem = async () => {
         const modifiedMessagesDelete = state.messages.map(message => {
@@ -271,29 +280,6 @@ const Chat = () => {
         }));
         onSend(messagesToUpload);
     };
-    const onQuickReply = (replies) => {
-        const createdAt = new Date();
-        if (replies.length === 1) {
-            onSend([{
-                createdAt,
-                _id: Math.round(Math.random() * 1000000),
-                text: replies[0].title,
-                user,
-            }]);
-        } else if (replies.length > 1) {
-            onSend([{
-                createdAt,
-                _id: Math.round(Math.random() * 1000000),
-                text: replies.map((reply) => reply.title).join(', '),
-                user,
-            }]);
-        } else {
-            console.warn('replies param is not set correctly');
-        }
-    };
-    const renderQuickReplySend = () => {
-        return <Text>{' custom send =>'}</Text>;
-    };
     const setIsTyping = (isTyping) => {
         dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     };
@@ -361,7 +347,7 @@ const Chat = () => {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} DesativarChat={DesativarChat} desativado={desativado} />
+            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} animais={animais} DesativarChat={DesativarChat} desativado={desativado} />
             <View style={styles.content}>
                 {carregando ?
                     <View style={styles.carregando}>
@@ -374,10 +360,6 @@ const Chat = () => {
                             user={user}
                             onLongPress={onLongPress}
                             // renderAccessory={renderAccessory}
-                            onQuickReply={onQuickReply}
-                            quickReplyStyle={{ borderRadius: 2 }}
-                            quickReplyTextStyle={{ fontWeight: '200' }}
-                            renderQuickReplySend={renderQuickReplySend}
                             renderActions={renderCustomActions}
                             renderSystemMessage={props => <SystemMessage {...props} containerStyle={{ marginBottom: 15 }} textStyle={{ fontSize: 16, textAlign: 'center', color: '#222' }} />}
                             renderCustomView={props => <CustomView {...props} />}
@@ -407,6 +389,12 @@ const Chat = () => {
                                 <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
                             </View>
                         }
+                        {respondendo || true &&
+                            <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, }]}>
+                                <Text>Respondendo a:</Text>
+                                <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={() => { respondendo = false; }} />
+                                <Text style={styles.textoRespondendo}>{mensagemSelecionada.text}</Text>
+                            </View>}
                         <Modal visible={modalVisible} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={() => setModalVisible(false)} onTouchOutside={() => setModalVisible(false)} >
                             <View style={styles.dropdown}>
                                 {msgPessoal ?
@@ -426,7 +414,7 @@ const Chat = () => {
                                     </>
                                     :
                                     <>
-                                        <TouchableOpacity style={styles.dropdownButton} >
+                                        <TouchableOpacity style={styles.dropdownButton} onPress={() => { ResponderMensagem(); setModalVisible(false) }}>
                                             <Text style={styles.textDropdownButton}>Responder</Text>
                                         </TouchableOpacity>
                                         <Divider orientation="vertical" width={1} color="grey" />
@@ -519,6 +507,20 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#606060',
         marginRight: 25,
+    },
+    containerRespondendo: {
+        position: 'absolute',
+        borderRadius: 10,
+        bottom: 60,
+        backgroundColor: '#c1e6cd',
+        left: 60,
+        padding: 5,
+    },
+    textoRespondendo: {
+        color: '#606060',
+        margin: 'auto',
+        paddingVertical: 5,
+        fontSize: 16,
     },
     emptyChat: {
         flex: 1,

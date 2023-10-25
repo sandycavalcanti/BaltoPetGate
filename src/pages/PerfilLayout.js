@@ -23,7 +23,7 @@ const PerfilLayout = (props) => {
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
-
+  
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
 
   const MedirAltura = (event) => {

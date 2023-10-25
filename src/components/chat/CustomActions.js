@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Keyboard } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getLocationAsync, pickImageAsync, takePictureAsync } from './mediaUtils';
 import { AntDesign } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
   const { showActionSheetWithOptions } = useActionSheet();
 
   const onActionsPress = useCallback(() => {
+    Keyboard.dismiss();
     const options = [
       'Enviar Imagem',
       'Tirar Foto',

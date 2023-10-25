@@ -35,7 +35,7 @@ const Login = ({ navigation: { navigate } }) => {
         await axios.post(urlAPI + 'login', {
             TB_PESSOA_EMAIL: email,
             TB_PESSOA_SENHA: senha,
-        }).then(async (response) => {
+        }).then(async response => {
             setCarregando(true);
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
