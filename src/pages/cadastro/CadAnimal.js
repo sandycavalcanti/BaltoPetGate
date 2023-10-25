@@ -17,6 +17,7 @@ import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
 import * as ImagePicker from 'expo-image-picker';
 import Mensagem from "./Mensagem";
 import { MultiSelect } from 'react-native-element-dropdown';
+import FormData from 'form-data';
 
 let TB_PESSOA_IDD;
 

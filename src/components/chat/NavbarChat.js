@@ -15,11 +15,16 @@ const NavbarChat = (props) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
   const dados = props.dados;
+  const animais = [{ "TB_ANIMAL.TB_ANIMAL_NOME": "Sofia", "TB_ANIMAL.TB_PESSOA_ID": 4, "TB_ANIMAL_ID": 3, "TB_CHAT_ANIMAL_ID": 1, "TB_CHAT_ID": 2 }
+    , { "TB_ANIMAL.TB_ANIMAL_NOME": "Bob", "TB_ANIMAL.TB_PESSOA_ID": 4, "TB_ANIMAL_ID": 2, "TB_CHAT_ANIMAL_ID": 2, "TB_CHAT_ID": 2 }]
+
+
+  // props.animais;
+  const existeAnimal = animais.length !== 0;
+  const nomes = animais.map(animal => animal["TB_ANIMAL.TB_ANIMAL_NOME"]).join(', ');
   const pessoaId = props.id
-  const animalId = dados.TB_ANIMAL_ID;
-  const animalNome = dados.TB_ANIMAL_NOME;
-  const urlImg = urlAPI + 'selpessoaimg/' + pessoaId;
-  const urlAnimalImg = urlAPI + 'selanimalimg/' + animalId;
+  const urlPessoaImg = urlAPI + 'selpessoaimg/';
+  const urlAnimalImg = urlAPI + 'selanimalimg/';
 
   item1 = {
     texto: 'Visualizar perfil',
@@ -48,27 +53,34 @@ const NavbarChat = (props) => {
     <View style={styles.container}>
       <View style={styles.containerHeaderLeft}>
         <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: pessoaId })}>
-          <Imagem url={urlImg} style={styles.profileImage} />
+          <Imagem url={urlPessoaImg + pessoaId} style={styles.profileImage} />
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (animalId) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_ANIMAL_ID: animalId, dados }) }} >
-          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start' }]}>
-            <Text style={[styles.nome]}>{nomeUsuario}</Text>
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (animais.length > 0) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, animais, dados }) }} >
+          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
+            <Text style={[styles.nome, { marginBottom: existeAnimal ? 0 : 5 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
           </View>
-          {animalId &&
+          {existeAnimal &&
             <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
-              <Text style={styles.nomeAnimal}>{animalNome}</Text>
+              <Text style={styles.nomeAnimal} numberOfLines={1} ellipsizeMode="tail">{nomes}</Text>
             </View>
           }
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>
-        {animalId &&
+        {existeAnimal &&
           <>
-            <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animalId })}>
-              <Imagem url={urlAnimalImg} style={styles.profileImage} />
-            </TouchableOpacity>
+            {animais.length == 1 ?
+              <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animais[0].TB_ANIMAL_ID })}>
+                <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={styles.profileImage} />
+              </TouchableOpacity>
+              :
+              <TouchableOpacity onPress={() => console.log('botao')} style={{ height: 50, width: 70 }}>
+                <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', top: 0, left: 0 }]} />
+                <Imagem url={urlAnimalImg + animais[1].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', bottom: 0, right: 0 }]} />
+                {animais.length > 2 && <Text style={{ position: 'absolute', top: 0, right: 0, fontSize: 18, color: '#fff' }}>+{animais.length - 2}</Text>}
+              </TouchableOpacity>}
           </>}
         <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={{ marginRight: 10 }}>
           <Entypo name="dots-three-vertical" size={26} color={corBordaBoxCad} />
@@ -124,10 +136,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   animalImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 100,
-    marginVertical: 5,
     borderColor: '#fff',
     borderWidth: 1,
     marginRight: 8,
