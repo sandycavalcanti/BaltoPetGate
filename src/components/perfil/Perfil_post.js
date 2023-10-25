@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { urlAPI } from '../../constants';
@@ -8,7 +9,7 @@ import Imagem from '../geral/Imagem';
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
-  const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
+  const dropdownOptions = ['Visualizar perfil', 'Editar postagem', 'Desativar postagem', 'Denunciar publicação', 'Bloquear pessoa'];
 
   const NavegarParaPerfil = () => {
     props.navigate("Perfil", { id: TB_PESSOA_ID });
@@ -17,6 +18,12 @@ const Perfil_post = (props) => {
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
+    }
+    else if (index == 1) {
+      // Função para editar postagem
+    }
+    else if (index == 2) {
+      // Função para desativar postagem
     }
   }
 
@@ -42,6 +49,7 @@ const Perfil_post = (props) => {
     </View>
   )
 }
+
 
 const styles = StyleSheet.create({
   Container: {
