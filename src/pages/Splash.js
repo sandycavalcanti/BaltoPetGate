@@ -1,12 +1,24 @@
 import { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Splash = ({ navigation }) => {
 
+  const rota = useRef('');
+
+  const VerificarLogin = async () => {
+    const TokenUsuario = await AsyncStorage.getItem('token');
+    if (TokenUsuario == null) {
+      rota.current = 'Login'
+    } else {
+      rota.current = 'Menu'
+    }
+  }
   useEffect(() => {
+    VerificarLogin();
     setTimeout(() => {
-      navigation.replace('Login');
+      navigation.replace(rota.current);
     }, 4000);
   });
 

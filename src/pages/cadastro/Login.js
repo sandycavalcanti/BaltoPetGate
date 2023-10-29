@@ -38,6 +38,7 @@ const Login = ({ navigation: { navigate } }) => {
         }).then(async response => {
             setCarregando(true);
             const TokenUsuario = response.data.token;
+            console.log(TokenUsuario)
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
@@ -109,7 +110,7 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={async () => {
                 const TokenUsuario = await AsyncStorage.getItem('token');
                 if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk2NTE5Mzg2LCJleHAiOjE3MDE3MDMzODZ9.y6qYsNgKcp0ZeSx8fCf63O6bBOZW2D3JpR3Mp57bc70');
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk4NDUzNzMyLCJleHAiOjE3MDM2Mzc3MzJ9.UY6rYIHINNyXAEeuTw5tbeUIKhjA_5xjzr9txiCVtY0');
                     setTimeout(() => {
                         navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
                     }, 2000);
