@@ -1,11 +1,10 @@
 import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
 import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, Image, ScrollView, ToastAndroid, ActivityIndicator } from 'react-native';
-import { Bubble, Composer, GiftedChat, InputToolbar, MessageImage, Send, SystemMessage, Time, MessageText } from 'react-native-gifted-chat';
+import { Bubble, Composer, GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
 import AccessoryBar from '../components/chat/AccessoryBar';
 import CustomActions from '../components/chat/CustomActions';
-import CustomView from '../components/chat/CustomView';
 import { corBordaBoxCad, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { FontAwesome5, AntDesign } from '@expo/vector-icons';
@@ -14,6 +13,7 @@ import socket from "../utils/Socket";
 import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
 import ModalMensagem from '../components/chat/ModalMensagem';
+import { renderActions, renderBubble, renderChatEmpty, renderComposer, renderCustomView, renderInputToolbar, renderSend, renderSystemMessage, renderTime } from '../components/chat/ChatRenders';
 
 const ActionKind = {
     SEND_MESSAGE: 'SEND_MESSAGE',
@@ -30,9 +30,6 @@ function reducer(state, action) {
         }
     }
 }
-
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
 
 const Chat = () => {
     const route = useRoute();
@@ -178,9 +175,8 @@ const Chat = () => {
             return;
         }
         if (!editando.current) {
-            if (!respondendo) {
+            if (!respondendo.current) {
                 if (!imagem) { // Cadastrar mensagem de texto
-                    console.log('2a')
                     await axios.post(urlAPI + 'cadmensagem', {
                         TB_CHAT_ID,
                         TB_MENSAGEM_TEXTO: texto,
@@ -286,56 +282,6 @@ const Chat = () => {
         dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     };
     const renderAccessory = () => <AccessoryBar onSend={onSendCustomActions} isTyping={() => setIsTyping(true)} />
-    const renderCustomActions = props => {
-        return (<>
-            {editando.current ?
-                <AntDesign name="close" size={35} color="#9e9e9e" style={{ marginLeft: 10, marginBottom: 7 }} onPress={() => { editando.current = false; setTextoDigitado('') }} />
-                :
-                <CustomActions {...props} onSend={onSendCustomActions} />}
-        </>)
-    }
-    const renderBubble = props => {
-        const dados = { ...props };
-        const resposta = { ...props };
-        let foiExcluida = props.currentMessage.mensagemExcluida;
-        let textoResposta = null;
-        if (foiExcluida) {
-            dados.currentMessage = { ...props.currentMessage, text: "(Mensagem excluída)" };
-        }
-        resposta.renderTime = () => <></>;
-        mensagens.current.map(item => {
-            if (item._id == props.currentMessage.reply_id) {
-                textoResposta = item.text;
-            }
-        })
-        let larguraView;
-        const MedirLargura = (event) => {
-            larguraView = event.nativeEvent.layout.height;
-        }
-        return (<>
-            {(props.currentMessage.text || props.currentMessage.image) &&
-                <View style={{ flexDirection: 'column'}}>
-                    {textoResposta &&
-                        <View style={{ width: '100%', flexDirection: props.position == 'left' ? 'row-reverse' : 'row' }} onLayout={MedirLargura}>
-                            {larguraView > 100 && <View style={{ width: 60 }}></View>}
-                            <View style={{ backgroundColor: 'white', flex: 1, borderRadius: 10, padding: 5, alignSelf: props.position == 'left' ? 'flex-start' : 'flex-end' }}>
-                                <Text>Respondendo a:</Text>
-                                <Text>{textoResposta}</Text>
-                            </View>
-                        </View>}
-                    <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: foiExcluida && { fontStyle: 'italic', color: '#505050' }, right: foiExcluida && { fontStyle: 'italic', color: '#ededed' } }} />
-                </View>}
-        </>)
-    }
-    const renderSend = props => {
-        return (
-            <Send {...props} containerStyle={{ justifyContent: 'center' }}>
-                <View style={styles.enviarContainer}>
-                    <Text style={{ fontSize: 16 }}>{editando.current ? 'Editar' : respondendo ? 'Responder' : 'Enviar'}</Text>
-                </View>
-            </Send>
-        );
-    };
     const onLongPress = (context, message) => {
         podeEditar.current = podeExcluir.current = true;
         mensagemSelecionada.current = message;
@@ -350,44 +296,6 @@ const Chat = () => {
         if (podeExcluir.current) {
             setModalVisible(true);
         }
-    }
-    const renderTime = (props) => {
-        const dados = { ...props };
-        dados.currentMessage = { ...props.currentMessage, text: "(Editada)" };
-        let pessoal = dados.currentMessage.user._id == user._id;
-        let excluida = dados.currentMessage.mensagemExcluida;
-        let alterada = dados.currentMessage.mensagemAlterada;
-        return (
-            <View style={{ flexDirection: pessoal ? 'row' : 'row-reverse' }}>
-                {alterada && !excluida && <MessageText {...dados} containerStyle={{ left: { marginTop: -8, marginLeft: -10 }, right: { marginTop: -8, marginRight: -10 } }} textStyle={{ left: { color: '#3a3a3a', fontSize: 14 }, right: { color: '#fafafa', fontSize: 14 } }} />}
-                <Time {...props} timeTextStyle={{ left: { color: '#3a3a3a', fontSize: 12 }, right: { color: '#fafafa', fontSize: 12 } }} />
-            </View>
-        )
-    }
-    const renderChatEmpty = () => {
-        return (
-            <View style={styles.emptyChat}>
-                <Text style={styles.emptyChatText}>{msgEmptyChat.current}</Text>
-            </View>
-        )
-    }
-    const renderInputToolbar = (props) => {
-        return (<>
-            {!desativado.current && <>
-                {editando.current &&
-                    <View style={styles.containerEditando}>
-                        <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
-                    </View>}
-                {respondendo.current &&
-                    <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, }]}>
-                        <Text>Respondendo a:</Text>
-                        <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={() => { respondendo.current = false; setTextoDigitado(''); }} />
-                        <Text style={styles.textoRespondendo}>{mensagemSelecionada.current.text}</Text>
-                    </View>}
-                <InputToolbar {...props} containerStyle={styles.barraInput} />
-            </>}
-        </>
-        )
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -404,15 +312,16 @@ const Chat = () => {
                             user={user}
                             onLongPress={onLongPress}
                             // renderAccessory={renderAccessory}
-                            renderActions={renderCustomActions}
-                            renderSystemMessage={props => <SystemMessage {...props} containerStyle={{ marginBottom: 15 }} textStyle={{ fontSize: 16, textAlign: 'center', color: '#222' }} />}
-                            renderCustomView={props => <CustomView {...props} />}
-                            renderInputToolbar={renderInputToolbar}
-                            renderComposer={props => <Composer {...props} textInputStyle={styles.inputMensagem} placeholder={'Escreva uma mensagem'} />}
-                            renderSend={renderSend}
+                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
+                            renderSystemMessage={renderSystemMessage}
+                            renderCustomView={renderCustomView}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, setTextoDigitado, textoDigitado, mensagemSelecionada)}
+                            renderComposer={renderComposer}
+                            renderSend={props => renderSend(props, editando, respondendo)}
                             renderAvatar={null}
-                            renderBubble={renderBubble}
-                            keyboardShouldPersistTaps='never'
+                            renderBubble={props => renderBubble(props, mensagens)}
+                            renderChatEmpty={props => renderChatEmpty(msgEmptyChat)}
+                            keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
                             text={textoDigitado}
                             onInputTextChanged={text => setTextoDigitado(text)}
@@ -420,11 +329,10 @@ const Chat = () => {
                             scrollToBottom
                             scrollToBottomComponent={() => <FontAwesome5 name="arrow-down" size={25} color="#9e9e9e" />}
                             maxInputLength={256}
-                            renderChatEmpty={renderChatEmpty}
                             parsePatterns={parsePatterns}
                             dateFormat='DD/MM/YYYY'
                             timeFormat='HH:mm'
-                            renderTime={renderTime}
+                            renderTime={props => renderTime(props, user)}
                             inverted={true}
                             minInputToolbarHeight={50}
                         />
@@ -444,29 +352,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#bfdde4',
         flex: 1
     },
-    enviarContainer: {
-        width: 80,
-        backgroundColor: '#B9E5D0',
-        borderWidth: 1,
-        borderColor: '#fff',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-    },
-    barraInput: {
-        backgroundColor: 'transparent',
-        margin: 5,
-        borderRadius: 10,
-        borderColor: 'transparent',
-    },
-    inputMensagem: {
-        backgroundColor: '#fff',
-        marginRight: 5,
-        borderRadius: 10,
-        fontSize: 16,
-        paddingLeft: 10,
-    },
     carregando: {
         width: '100%',
         height: '100%',
@@ -477,40 +362,6 @@ const styles = StyleSheet.create({
         zIndex: 10,
         marginTop: 10,
     },
-    containerEditando: {
-        width: '100%',
-        bottom: 25,
-    },
-    textoEditando: {
-        textAlign: 'center',
-        color: '#606060',
-        marginRight: 25,
-    },
-    containerRespondendo: {
-        position: 'absolute',
-        borderRadius: 10,
-        bottom: 55,
-        backgroundColor: '#c1e6cd',
-        left: 60,
-        padding: 5,
-    },
-    textoRespondendo: {
-        color: '#606060',
-        margin: 'auto',
-        paddingVertical: 5,
-        fontSize: 16,
-    },
-    emptyChat: {
-        flex: 1,
-        transform: [{ scaleX: -1 }],
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    emptyChatText: {
-        transform: [{ scaleY: -1 }],
-        color: '#444444',
-        fontSize: 16,
-    }
 })
 
 export default Chat

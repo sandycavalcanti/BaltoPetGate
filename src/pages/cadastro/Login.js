@@ -38,7 +38,6 @@ const Login = ({ navigation: { navigate } }) => {
         }).then(async response => {
             setCarregando(true);
             const TokenUsuario = response.data.token;
-            console.log(TokenUsuario)
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });

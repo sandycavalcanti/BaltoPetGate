@@ -39,7 +39,6 @@ export async function pickImageAsync(onSend) {
   if (await ImagePicker.requestMediaLibraryPermissionsAsync()) {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
     })
 
     if (!result.canceled) {
