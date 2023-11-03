@@ -26,16 +26,13 @@ const QuestionarioAdocao = () => {
     const [ciente, setCiente] = useState();
     const [quantidade, setQuantidade] = useState();
 
-    const Cadastrar = () => {
-        InserirDados();
-    }
 
     const Alterar = async () => {
-        const camposObrigatorios = [email, dtNasc, nome, cpf, telefone1, whatsapp, uf, cidade, bairro, rua, numero];
+        const camposObrigatorios = [moradia,espaco,passear,ausencia,ciente,acessoRua,quantidade];
         const camposCadastro = {
-            email, nome, cep, uf, cidade, bairro, rua, numero, complemento,
-            dtNasc, cpf, facebook, instagram, whatsapp, telefone1, telefone2
+            moradia,espaco,passear,ausencia,ciente,acessoRua,quantidade
         }
+        console.log(camposCadastro);
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
         if (!mensagemErro) {
             InserirDados();
@@ -55,8 +52,12 @@ const QuestionarioAdocao = () => {
                 TB_PESSOA_ANIMAL_FAMILIA: ciente,
                 TB_PESSOA_ANIMAL_RUA: acessoRua,
                 TB_PESSOA_ANIMAL_QUANTIDADE: quantidade,
-            });
-            console.log('Cadastrado:', response.data);
+            }).then(response => {
+                navigate("Home");
+
+            }).catch(error => {
+            console.error(error);
+            })
         } catch (error) {
             console.error('Erro ao cadastrar:', error);
         }
@@ -79,7 +80,7 @@ const QuestionarioAdocao = () => {
             });
     }, []);
 
-    const SimNao = ['SIM', 'NAO'];
+    const SimNao = [true, false];
     const Moradia = ['CASA', 'APARTAMENTO'];
     const Tamanho = ['POUCO', 'MEDIO', 'MUITO'];
 
@@ -111,7 +112,7 @@ const QuestionarioAdocao = () => {
                         <BotaoQuantidade set={setQuantidade}/>
                     </GroupBox>
 
-                    <BotaoCadastrar />
+                    <BotaoCadastrar onPress={Alterar} texto='Finalizar'/>
                 </>
             )}
         </ContainerCadastro>

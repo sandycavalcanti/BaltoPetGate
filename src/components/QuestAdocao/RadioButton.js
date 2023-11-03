@@ -13,10 +13,10 @@ const RadioButton = (props) => {
 
   const Opcoes = (option) => {
     switch (option) {
-      case 'SIM':
+      case true:
         return 'Sim';
         break;
-      case 'NAO':
+      case false:
         return 'Não';
         break;
       case 'INDEFINIDO':
