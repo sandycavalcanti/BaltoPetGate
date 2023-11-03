@@ -43,8 +43,13 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
     );
   }, []);
 
+  const handleOnPress = () => {
+    // onActionsPress();
+    pickImageAsync(onSend);
+
+  }
   return (
-    <TouchableOpacity style={[styles.container, containerStyle]} onPress={onActionsPress}>
+    <TouchableOpacity style={[styles.container, containerStyle]} onPress={handleOnPress}>
       <>{renderIconComponent()}</>
     </TouchableOpacity>
   );

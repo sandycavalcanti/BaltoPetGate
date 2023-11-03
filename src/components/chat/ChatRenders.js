@@ -1,66 +1,91 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Bubble, Composer, InputToolbar, MessageText, Send, SystemMessage, Time } from "react-native-gifted-chat";
+import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
+import { Bubble, Composer, InputToolbar, MessageText, Send, SystemMessage, Time, MessageImage } from "react-native-gifted-chat";
 import CustomActions from "./CustomActions";
 import { AntDesign } from '@expo/vector-icons';
 import CustomView from "./CustomView";
+import SwipeableMessage from "./SwipeableMessage";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-export const renderBubble = (props, mensagens) => {
+function contarLetrasHorizontais(texto) {
+    if (texto) {
+        const linhas = texto.split('\n');
+        let maiorQuantidade = 0;
+        for (const linha of linhas) {
+            const quantidadeDeLetras = linha.length;
+            if (quantidadeDeLetras > maiorQuantidade) {
+                maiorQuantidade = quantidadeDeLetras;
+            }
+        }
+        return maiorQuantidade;
+    }
+}
+
+export const renderBubble = (props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender) => {
     const dados = { ...props };
-    const resposta = { ...props };
     let foiExcluida = props.currentMessage.mensagemExcluida;
     let foiAlterada = props.currentMessage.mensagemAlterada;
-    let textoResposta = null;
+    let textoResposta = resposta = imagemResposta = quantidadeLetras = null;
     if (foiExcluida) {
         dados.currentMessage = { ...props.currentMessage, text: "(Mensagem excluída)" };
     }
-    resposta.renderTime = () => <></>;
     mensagens.current.map(item => {
         if (item._id == props.currentMessage.reply_id) {
-            textoResposta = item.text;
+            if (item.text) {
+                textoResposta = item.text;
+            } else {
+                imagemResposta = item.image;
+            }
         }
     })
-    function contarLetrasHorizontais(texto) {
-        if (texto) {
-            const linhas = texto.split('\n');
-            let maiorQuantidade = 0;
-            for (const linha of linhas) {
-                const quantidadeDeLetras = linha.length;
-                if (quantidadeDeLetras > maiorQuantidade) {
-                    maiorQuantidade = quantidadeDeLetras;
-                }
-            }
-            return maiorQuantidade;
-        }
-    }
     const texto = props.currentMessage.text;
-    const quantidadeLetras = contarLetrasHorizontais(texto);
-    const ladoEsquerdo = props.position == 'left';
+    let possuiResposta = textoResposta || imagemResposta;
+    if (possuiResposta) {
+        resposta = { ...props };
+        resposta.renderTime = () => <></>;
+        resposta.image = imagemResposta;
+        quantidadeLetras = contarLetrasHorizontais(texto);
+    }
+
+    const estaNoLadoEsquerdo = props.position == 'left';
+
+    let pessoal = dados.currentMessage.user._id == user._id;
+    const AoDeslizarMensagem = () => {
+        mensagemSelecionada.current = props.currentMessage;
+        ResponderMensagem();
+        reRender();
+    }
+
+    let mensagemExiste = props.currentMessage.text || props.currentMessage.image;
     return (
         <>
-            {(props.currentMessage.text || props.currentMessage.image) &&
+            {mensagemExiste &&
                 <View style={{ flexDirection: 'column' }}>
-                    {textoResposta &&
-                        <View style={{ width: '100%', flexDirection: ladoEsquerdo ? 'row-reverse' : 'row' }}>
+                    {possuiResposta &&
+                        <View style={{ width: '100%', flexDirection: estaNoLadoEsquerdo ? 'row-reverse' : 'row', marginTop: 2 }}>
                             {(quantidadeLetras > 8 || (quantidadeLetras > 5 && foiAlterada)) && <View style={{ width: 60 }}></View>}
-                            <View style={[styles.bubbleRespondendo, { backgroundColor: ladoEsquerdo ? '#E6C3C3' : '#fafafa', alignSelf: ladoEsquerdo ? 'flex-start' : 'flex-end' }]}>
-                                <Text style={[{ color: ladoEsquerdo ? '#fdfdfd' : '#505050' }]}>Respondendo:</Text>
-                                <Text style={[{ color: ladoEsquerdo ? '#fafafa' : '#020202', fontSize: 16 }]}>{textoResposta}</Text>
+                            <View style={[styles.bubbleRespondendo, { padding: imagemResposta ? 0 : 5, flex: imagemResposta ? 0 : 1, backgroundColor: estaNoLadoEsquerdo ? '#B0B0B0' : '#E0E0E0', alignSelf: estaNoLadoEsquerdo ? 'flex-start' : 'flex-end' }]}>
+                                <Text style={[{ color: estaNoLadoEsquerdo ? '#fdfdfd' : '#505050', padding: imagemResposta ? 5 : 0 }]}>Respondendo:</Text>
+                                {textoResposta && <Text style={[{ color: estaNoLadoEsquerdo ? '#fafafa' : '#020202', fontSize: 16 }]}>{textoResposta}</Text>}
+                                {imagemResposta && <MessageImage currentMessage={resposta} />}
                             </View>
                         </View>}
-                    <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: foiExcluida && { fontStyle: 'italic', color: '#505050' }, right: foiExcluida && { fontStyle: 'italic', color: '#ededed' } }} />
-                </View >}
+                    <SwipeableMessage enabled={!pessoal} onActivated={AoDeslizarMensagem}>
+                        <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: foiExcluida && { fontStyle: 'italic', color: '#505050' }, right: foiExcluida && { fontStyle: 'italic', color: '#ededed' } }} />
+                    </SwipeableMessage>
+                </View>}
         </>
     )
 }
 
-export const renderInputToolbar = (props, editando, respondendo, desativado, setTextoDigitado, textoDigitado, mensagemSelecionada) => {
+export const renderInputToolbar = (props, editando, respondendo, desativado, reRender, textoDigitado, mensagemSelecionada) => {
     const Fechar = () => {
         respondendo.current = false;
-        setTextoDigitado('');
+        reRender()
     }
+    let respondendoImagem = mensagemSelecionada.current.image;
+    let respondendoTexto = mensagemSelecionada.current.text;
     return (
         <>
             {!desativado.current &&
@@ -73,7 +98,9 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, set
                         <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, }]}>
                             <Text>Respondendo a:</Text>
                             <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={Fechar} />
-                            <Text style={styles.textoRespondendo}>{mensagemSelecionada.current.text}</Text>
+                            {!respondendoImagem ?
+                                <Text style={styles.textoRespondendo}>{respondendoTexto}</Text> :
+                                <Image source={{ uri: respondendoImagem }} resizeMode="cover" style={{ aspectRatio: 1, height: 100 }} />}
                         </View>}
                     <InputToolbar {...props} containerStyle={styles.barraInput} />
                 </>
@@ -206,8 +233,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     bubbleRespondendo: {
-        flex: 1,
         borderRadius: 10,
-        padding: 5,
     }
 })

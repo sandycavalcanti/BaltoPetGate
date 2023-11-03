@@ -6,6 +6,7 @@ export const corFundoCampoCad = "#fff";
 export const corPlaceholderCad = "#8EBF81";
 export const corDicaCad = "#808080";
 export const corBordaBoxCad = "#CE7272";
+export const corRosaForte ="#CE7272";
 export const corTituloBoxCad = "#fff";
 export const valorBordaCampoCad = 15;
 export const corFundo = "#CEF7FF";

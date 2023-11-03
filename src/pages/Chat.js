@@ -58,37 +58,40 @@ const Chat = () => {
         step: 0,
         isTyping: false,
     });
+    const controller = new AbortController();
 
     const SelecionarMensagens = async () => {
         await axios.post(urlAPI + 'selmensagem/filtrar', {
             TB_CHAT_ID
-        }).then(response => {
-            const mensagensBanco = response.data;
-            const mensagensGiftedChat = mensagensBanco.map((item) => {
-                let mensagemTexto = item.TB_MENSAGEM_TEXTO;
-                let mensagemAlterada = false;
-                let mensagemImg = null;
-                let mensagemExcluida = !item.TB_MENSAGEM_STATUS;
-                if (item.TB_MENSAGEM_TEXTO_ALTERADO) {
-                    mensagemTexto = item.TB_MENSAGEM_TEXTO_ALTERADO;
-                    mensagemAlterada = true;
-                }
-                if (item.TB_MENSAGEM_POSSUI_IMG) {
-                    mensagemImg = urlAPI + 'selmensagemimg/' + item.TB_MENSAGEM_ID;
-                }
-                return {
-                    _id: item.TB_MENSAGEM_ID,
-                    text: mensagemTexto,
-                    createdAt: new Date(item.createdAt),
-                    user: { _id: item.TB_PESSOA_ID },
-                    mensagemAlterada: mensagemAlterada,
-                    mensagemExcluida: mensagemExcluida,
-                    image: mensagemImg,
-                    reply_id: item.TB_MENSAGEM_RESPOSTA_ID
-                }
-            });
-            mensagens.current = mensagensGiftedChat
-            dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
+        }, { signal: controller.signal }).then(response => {
+            if (response.data) {
+                const mensagensBanco = response.data;
+                const mensagensGiftedChat = mensagensBanco.map((item) => {
+                    let mensagemTexto = item.TB_MENSAGEM_TEXTO;
+                    let mensagemAlterada = false;
+                    let mensagemImg = null;
+                    let mensagemExcluida = !item.TB_MENSAGEM_STATUS;
+                    if (item.TB_MENSAGEM_TEXTO_ALTERADO) {
+                        mensagemTexto = item.TB_MENSAGEM_TEXTO_ALTERADO;
+                        mensagemAlterada = true;
+                    }
+                    if (item.TB_MENSAGEM_POSSUI_IMG) {
+                        mensagemImg = urlAPI + 'selmensagemimg/' + item.TB_MENSAGEM_ID;
+                    }
+                    return {
+                        _id: item.TB_MENSAGEM_ID,
+                        text: mensagemTexto,
+                        createdAt: new Date(item.createdAt),
+                        user: { _id: item.TB_PESSOA_ID },
+                        mensagemAlterada: mensagemAlterada,
+                        mensagemExcluida: mensagemExcluida,
+                        image: mensagemImg,
+                        reply_id: item.TB_MENSAGEM_RESPOSTA_ID
+                    }
+                });
+                mensagens.current = mensagensGiftedChat
+                dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
+            }
         }).catch(error => {
             if (error.response.status !== 404) {
                 let erro = error.response.data;
@@ -101,18 +104,20 @@ const Chat = () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }).then(async response => {
-            const dados = response.data.Selecionar[0];
-            animais.current = response.data.Animais
-            dadosChat.current = dados;
-            TB_PESSOA_IDD.current = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
-            if (dados.TB_CHAT_STATUS) {
-                msgEmptyChat.current = 'Nenhuma mensagem ainda';
-                desativado.current = false;
-                await SelecionarMensagens();
-            } else {
-                msgEmptyChat.current = "Esse chat foi desativado";
-                desativado.current = true;
+        }, { signal: controller.signal }).then(async response => {
+            if (response.data) {
+                const dados = response.data.Selecionar[0];
+                animais.current = response.data.Animais
+                dadosChat.current = dados;
+                TB_PESSOA_IDD.current = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
+                if (dados.TB_CHAT_STATUS) {
+                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
+                    desativado.current = false;
+                    await SelecionarMensagens();
+                } else {
+                    msgEmptyChat.current = "Esse chat foi desativado";
+                    desativado.current = true;
+                }
             }
         }).catch(error => {
             let erro = error.response.data;
@@ -124,6 +129,9 @@ const Chat = () => {
 
     useEffect(() => {
         SelecionarInfoChat();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
     const DesativarChat = async () => {
@@ -147,7 +155,6 @@ const Chat = () => {
     const ResponderMensagem = () => {
         editando.current = false
         respondendo.current = true;
-        setTextoDigitado(prev => { return prev });
     }
     const ExcluirMensagem = async () => {
         const modifiedMessagesDelete = state.messages.map(message => {
@@ -175,75 +182,66 @@ const Chat = () => {
             return;
         }
         if (!editando.current) {
-            if (!respondendo.current) {
-                if (!imagem) { // Cadastrar mensagem de texto
-                    await axios.post(urlAPI + 'cadmensagem', {
-                        TB_CHAT_ID,
-                        TB_MENSAGEM_TEXTO: texto,
-                        TB_PESSOA_ID: TB_PESSOA_IDD.current,
-                    }).then(response => {
+            if (!imagem) { // Enviar ou responder mensagem de texto
+                let objetoForm = {
+                    TB_CHAT_ID,
+                    TB_MENSAGEM_TEXTO: texto,
+                    TB_PESSOA_ID: TB_PESSOA_IDD.current,
+                }
+                if (respondendo.current) {
+                    objetoForm.TB_MENSAGEM_RESPOSTA_ID = mensagemSelecionada.current._id;
+                }
+                await axios.post(urlAPI + 'cadmensagem', objetoForm)
+                    .then(response => {
                         // socket.emit("newMessage", {
                         // 	message,
                         // 	room_id: id,
                         // 	user,
                         // 	timestamp: { hour, mins },
                         // });
-                        const messageSentId = response.data.Cadastrar.TB_MENSAGEM_ID;
-                        const sentMessagesFixId = sentMessages.map(message => {
-                            return { ...message, _id: messageSentId, image: null };
-                        });
-                        const newMessages = GiftedChat.append(state.messages, sentMessagesFixId, true);
+                        const sentMessagesFix = sentMessages[0];
+                        sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
+                        sentMessagesFix.image = null;
+                        if (respondendo.current) {
+                            sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                        }
+                        const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
+                        respondendo.current = false;
                         dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
                     }).catch(error => {
                         let erro = error.response.data;
                         ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
                         console.error(erro.error);
                     });
-                } else { // Cadastrar mensagem de imagem
-                    const formData = new FormData();
-                    let img = { uri: imagem, type: 'image/jpeg', name: 'image.jpg', };
-                    formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
-                    formData.append('TB_CHAT_ID', TB_CHAT_ID);
-                    formData.append('TB_MENSAGEM_POSSUI_IMG', true);
-                    formData.append('img', img);
-
-                    await axios.post(urlAPI + 'cadmensagem', formData, {
-                        headers: { 'Content-Type': 'multipart/form-data' },
-                    }).then(response => {
-                        const messageSentId = response.data.Cadastrar.TB_MENSAGEM_ID;
-                        const sentMessagesFixId = sentMessages.map(message => {
-                            return { ...message, _id: messageSentId };
-                        });
-                        const newMessages = GiftedChat.append(state.messages, sentMessagesFixId, true);
-                        dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
-                    }).catch(error => {
-                        let erro = error.response.data;
-                        ToastAndroid.show("Não foi possível enviar a imagem", ToastAndroid.SHORT);
-                        console.error(erro.error);
-                    })
+            } else { // Enviar ou responder mensagem de imagem
+                const formData = new FormData();
+                let img = { uri: imagem, type: 'image/jpeg', name: 'image.jpg', };
+                formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
+                formData.append('TB_CHAT_ID', TB_CHAT_ID);
+                formData.append('TB_MENSAGEM_POSSUI_IMG', true);
+                formData.append('img', img);
+                if (respondendo.current) {
+                    formData.append('TB_MENSAGEM_RESPOSTA_ID', mensagemSelecionada.current._id);
                 }
-            } else { // Respondendo uma mensagem
-                await axios.post(urlAPI + 'cadmensagem', {
-                    TB_CHAT_ID,
-                    TB_MENSAGEM_TEXTO: texto,
-                    TB_MENSAGEM_RESPOSTA_ID: mensagemSelecionada.current._id,
-                    TB_PESSOA_ID: TB_PESSOA_IDD.current,
+                await axios.post(urlAPI + 'cadmensagem', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
                 }).then(response => {
-                    const messageSentId = response.data.Cadastrar.TB_MENSAGEM_ID;
-                    const sentMessagesFixId = sentMessages.map(message => {
-                        return { ...message, _id: messageSentId, image: null, reply_id: mensagemSelecionada.current._id };
-                    });
-                    const newMessages = GiftedChat.append(state.messages, sentMessagesFixId, true);
+                    const sentMessagesFix = sentMessages[0];
+                    sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
+                    if (respondendo.current) {
+                        sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                    }
+                    const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
                     respondendo.current = false;
                     dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
                 }).catch(error => {
                     let erro = error.response.data;
-                    ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                });
+                    ToastAndroid.show("Não foi possível enviar a imagem", ToastAndroid.SHORT);
+                    console.error(erro.error);
+                })
             }
-        } else { // Editar mensagem de texto
-            if (texto != mensagemSelecionada.current.text) {
+        } else {// Editar mensagem de texto
+            if (texto != mensagemSelecionada.current.text) { // Se o texto tiver sido modificado
                 const modifiedMessages = state.messages.map(message => {
                     if (message._id === mensagemSelecionada.current._id) return { ...message, mensagemAlterada: true, text: texto };
                     return message;
@@ -260,7 +258,7 @@ const Chat = () => {
                     ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
                     console.error(erro.error, error);
                 });
-            } else {
+            } else { // Se o texto não tiver sido modificado
                 editando.current = false;
             }
         }
@@ -283,20 +281,22 @@ const Chat = () => {
     };
     const renderAccessory = () => <AccessoryBar onSend={onSendCustomActions} isTyping={() => setIsTyping(true)} />
     const onLongPress = (context, message) => {
-        podeEditar.current = podeExcluir.current = true;
+        podeExcluir.current = true;
+        podeEditar.current = !message.image;
         mensagemSelecionada.current = message;
         msgPessoal.current = message.user._id === user._id;
         if (msgPessoal.current) {
             podeEditar.current = !mensagemSelecionada.current.mensagemAlterada;
             podeExcluir.current = !mensagemSelecionada.current.mensagemExcluida;
         }
-        if (message.image) {
-            podeEditar.current = false;
-        }
         if (podeExcluir.current) {
             setModalVisible(true);
         }
     }
+    const [forceUpdate, setForceUpdate] = useState(0);
+    const reRender = () => {
+        setForceUpdate(prevValue => prevValue + 1);
+    };
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
@@ -315,11 +315,11 @@ const Chat = () => {
                             renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
                             renderSystemMessage={renderSystemMessage}
                             renderCustomView={renderCustomView}
-                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, setTextoDigitado, textoDigitado, mensagemSelecionada)}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, reRender, textoDigitado, mensagemSelecionada)}
                             renderComposer={renderComposer}
                             renderSend={props => renderSend(props, editando, respondendo)}
                             renderAvatar={null}
-                            renderBubble={props => renderBubble(props, mensagens)}
+                            renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
                             renderChatEmpty={props => renderChatEmpty(msgEmptyChat)}
                             keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
