@@ -50,7 +50,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
 
     const { nome, dtNasc, cpf, crmv, cnpj, uf, cidade, bairro, rua, numero, nomePerfil, telefone1, telefone2, whatsapp, facebook, instagram, email, senha, senhaConfirmacao } = dados;
 
-    if (camposObrigatorios.some(campo => !campo)) {
+    if (camposObrigatorios.some(campo => campo === undefined || campo === '')) {
         mensagemErro = "Complete todos os campos obrigatórios.";
     }
     else {
@@ -60,9 +60,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (dtNasc && dtNasc == 1) {
             mensagemErro += "Data de nascimento inválida.\n";
         }
-        // if (cpf && (cpf == 1 || !ValidarCpf(cpf))) {
-        //     mensagemErro += "CPF inválido.\n";
-        // }
+        if (cpf && (cpf == 1 || !ValidarCpf(cpf))) {
+            mensagemErro += "CPF inválido.\n";
+        }
         if (crmv && crmv == 1) {
             mensagemErro += "CRMV inválido.\n";
         }
@@ -72,9 +72,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nomePerfil && !criteriosNomePerfil.test(nomePerfil)) {
             mensagemErro += "Nome de perfil inválido.\n";
         }
-        // if (cnpj && (cnpj == 1 || !ValidarCnpj(cnpj))) {
-        //     mensagemErro += "CNPJ inválido.\n";
-        // }
+        if (cnpj && (cnpj == 1 || !ValidarCnpj(cnpj))) {
+            mensagemErro += "CNPJ inválido.\n";
+        }
         if (telefone1 && !criteriosTelefone.test(telefone1)) {
             mensagemErro += "Primeiro número de telefone inválido.\n";
         }
@@ -90,9 +90,9 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (email && !criteriosEmail.test(email)) {
             mensagemErro += "E-mail inválido.\n";
         }
-        // if (senha && !criteriosSenha.test(senha)) {
-        //     mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, um número e uma letra maiúscula. \n";
-        // }
+        if (senha && !criteriosSenha.test(senha)) {
+            mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, um número e uma letra maiúscula. \n";
+        }
         else if (senha !== senhaConfirmacao) {
             mensagemErro += "As senhas não correspondem.";
         }

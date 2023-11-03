@@ -5,11 +5,9 @@ import { useState } from "react";
 import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, corBordaBoxCad } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Recaptcha from 'react-native-recaptcha-that-works';
 
-
-import JWT from 'expo-jwt';
-import { chaveToken } from "../../constants";
-
+let numeroTentativas = 0;
 
 const Login = ({ navigation: { navigate } }) => {
     const navigation = useNavigation();
@@ -23,6 +21,12 @@ const Login = ({ navigation: { navigate } }) => {
         if (!email || !senha) {
             alert("Insira seu email e senha.");
         } else {
+            if (numeroTentativas > 5) {
+                numeroTentativas = 0;
+                alert("Complete o captcha.");
+                return;
+            }
+            numeroTentativas += 1;
             Autenticar();
         }
     };
@@ -36,13 +40,16 @@ const Login = ({ navigation: { navigate } }) => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
-            setTimeout(() => {
-                navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-            }, 1500);
+            navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
-            let erro = error.response.data.message;
-            ToastAndroid.show(erro, ToastAndroid.SHORT);
-            setMensagem(erro);
+            try {
+                let erro = error.response.data.message;
+                ToastAndroid.show(erro, ToastAndroid.SHORT);
+                setMensagem(erro);
+            } catch (error) {
+                ToastAndroid.show('Conecte-se à Internet', ToastAndroid.SHORT);
+                setMensagem('Conecte-se à Internet');
+            }
         })
     };
 
@@ -110,10 +117,10 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={async () => {
                 const TokenUsuario = await AsyncStorage.getItem('token');
                 if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxNSwiVEJfVElQT19JREQiOjEsImlhdCI6MTY5NDcxMjMwMywiZXhwIjoxNjk5ODk2MzAzfQ.9fxNd1tW70-m3LXUVDD7nnb4IgH0cyoMgX78rhVtfaE');
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk2NTE5Mzg2LCJleHAiOjE3MDE3MDMzODZ9.y6qYsNgKcp0ZeSx8fCf63O6bBOZW2D3JpR3Mp57bc70');
                     setTimeout(() => {
                         navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-                    }, 1500);
+                    }, 2000);
                 }
                 navigate("Menu")
             }}>

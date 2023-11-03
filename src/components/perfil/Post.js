@@ -1,39 +1,54 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { shadow } from 'react-native-paper';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { format } from "date-fns";
+import { corBordaBoxCad, urlAPI } from '../../constants';
+import { useEffect, useState } from 'react';
+import Imagem from '../geral/Imagem';
+
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 
 const Post = (props) => {
+    const dataOriginal = props.data.createdAt;
+    let dataFormatada = "";
+
+    if (dataOriginal && !isNaN(new Date(dataOriginal))) {
+        dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
+    }
+
+    const [imageExists, setImageExists] = useState(false);
+    const urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
+
     return (
-        <View>
+        <View style={styles.profileContainer}>
             <View style={styles.Container}>
-                <View style={styles.ContainerImagem}>
-                    <Image style={styles.Imagem} resizeMode='cover' source={require('../../../assets/img/teste.jpg')} />
-                </View>
+                <Imagem url={urlImg} style={styles.Imagem} setResult={setImageExists} remove />
                 <View style={styles.ContainerTexto}>
-                    <Text style={styles.Texto}>{props.textoPost}</Text>
+                    <Text style={[styles.Texto, { textAlign: imageExists ? 'left' : 'center' }]}>{props.data.TB_POSTAGEM_TEXTO}</Text>
                 </View>
-            </View>
-            <View style={styles.ContainerData}>
-                <Text style={styles.Data}>12/09</Text>
+                <View style={styles.ContainerData}>
+                    <Text style={styles.Data}>{dataFormatada}</Text>
+                </View>
             </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    Container: {
-        width: '100%',
-        height: 'auto',
-    },
-    ContainerImagem: {
-        width: '100%'
-    },
-    Imagem: {
-        width: '100%',
-        height: undefined,
-        aspectRatio: 1
+    profileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: '#CEF7FF',
+        borderColor: "#fff",
+        borderTopWidth: 1,
     },
     ContainerTexto: {
-        padding: 20
+        width: windowWidth,
+        padding: 20,
+        marginBottom: 5,
+    },
+    TextoPerfil: {
+        color: '#000000',
+        fontSize: 24,
     },
     Texto: {
         color: '#216357'
@@ -41,13 +56,17 @@ const styles = StyleSheet.create({
     ContainerData: {
         padding: 10,
         paddingRight: 15,
-        borderColor: '#FFBEBE',
+        borderColor: "#FFBEBE",
         borderTopWidth: 1,
-        alignItems: 'flex-end'
+        alignItems: "flex-end",
     },
     Data: {
-        color: '#216357'
-
+        color: "#216357",
+    },
+    Imagem: {
+        width: windowWidth,
+        height: 'auto',
+        aspectRatio: 1
     }
 });
 

@@ -8,7 +8,7 @@ import Campo from "../../components/animal/Campo";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import BotaoImg from "../../components/FormDiario/BotaoImg";
 
-const CadFormularioDiario = ({navigation: {navigate }}) => {
+const CadFormularioDiario = ({ navigation: { navigate } }) => {
 
     const [formdiario, setForm_diario] = useState('');
     const [dataabastecimento, setDt_abastecimento] = useState('');
@@ -24,14 +24,14 @@ const CadFormularioDiario = ({navigation: {navigate }}) => {
                 TB_FORMULARIO_DIARIO_DT_ABASTECIMENTO: dataabastecimento,
                 TB_FORMULARIO_DIARIO_DT_ENVIO: dataenvio,
                 TB_PONTO_ALIMENTACAO_ID: 1,
-    });
-    console.log('Cadastrado:', response.data);
-    } catch (error) {
-        console.error('Erro ao cadastrar:', error);
+            });
+            console.log('Cadastrado:', response.data);
+        } catch (error) {
+            console.error('Erro ao cadastrar:', error);
+        }
     }
-}
 
-return (
+    return (
         <ContainerCadastro titulo='Formulário diario'>
             <GroupBox titulo='Horário do abastecimento'>
                 <View  style={styles.Container}>
@@ -44,7 +44,7 @@ return (
             <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar'/>
         </ContainerCadastro>
 
-);
+    );
 }
 
 const styles = StyleSheet.create({

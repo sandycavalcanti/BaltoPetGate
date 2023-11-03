@@ -12,7 +12,7 @@ import axios from "axios";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-function Ficha_animal() {
+function Ficha_animal({ navigation: { navigate } }) {
     const route = useRoute();
     const { id } = route.params;
     let tipoIdade;
@@ -37,19 +37,31 @@ function Ficha_animal() {
         ).then((response) => {
             setTemperamento(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
         axios.get(urlAPI + 'selsituacoes/' + id
         ).then((response) => {
             setSituacao(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
         axios.get(urlAPI + 'seltraumas/' + id
         ).then((response) => {
             setTrauma(response.data)
         }).catch((error) => {
-            console.error(error);
+            if (error.response.status !== 404) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error, error);
+            }
         });
     }
 
@@ -64,7 +76,7 @@ function Ficha_animal() {
         tipoIdade = 'Ano'
     } else if (select.TB_ANIMAL_IDADE_TIPO == 'MES') {
         tipoIdade = 'Meses'
-    } else {
+    } else if (select.TB_ANIMAL_IDADE_TIPO == 'ANO') {
         tipoIdade = 'Anos'
     }
 
@@ -110,14 +122,14 @@ function Ficha_animal() {
                     </View>
                 }
                 {trauma.length !== 0 &&
-                <View style={styles.Conjunto3}>
-                    <TextoComum textoTitulo='Trauma:' />
-                    {trauma.map((item, index) => {
-                        return (
-                            <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
-                        )
-                    })}
-                </View>
+                    <View style={styles.Conjunto3}>
+                        <TextoComum textoTitulo='Trauma:' />
+                        {trauma.map((item, index) => {
+                            return (
+                                <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
+                            )
+                        })}
+                    </View>
                 }
                 {select.TB_ANIMAL_CUIDADO_ESPECIAL &&
                     <View style={styles.Conjunto3}>
@@ -135,7 +147,7 @@ function Ficha_animal() {
                 <View style={styles.GroupBox}>
                     <Text style={styles.Titulo}>Descrição</Text>
                     <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
-                    <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' />
+                    {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' /> */}
                     <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
                 </View>
                 <View style={styles.GroupBox}>
@@ -153,7 +165,7 @@ function Ficha_animal() {
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar texto="Adotar" />
+                    <BotaoCadastrar onPress={() => navigate('QuestionarioAdocao')} texto="Adotar" />
                 </View>
             </View>
         </ScrollView>

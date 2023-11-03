@@ -1,56 +1,44 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { shadow } from 'react-native-paper';
-import { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-
-const DropdownButton = ({ options }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const handleOptionPress = (option) => {
-    setSelectedOption(option);
-    setIsOpen(false);
-  };
-
-  return (
-    <View style={styles.dropdownContainer}>
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-
-        <Feather name="more-vertical" size={30} color="black" />
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.dropdownOptions}>
-          {options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.optionButton}
-              onPress={() => handleOptionPress(option)}
-            >
-              <Text>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
+import { urlAPI } from '../../constants';
+import ModalDropdown from 'react-native-modal-dropdown';
+import { Divider } from 'react-native-elements';
+import Imagem from '../geral/Imagem';
 
 const Perfil_post = (props) => {
+  const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
+  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
+  const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
 
-  const dropdownOptions = ['Opção 1', 'Opção 2', 'Opção 3'];
+  const NavegarParaPerfil = () => {
+    props.navigate("Perfil", { id: TB_PESSOA_ID });
+  }
+
+  const onSelect = (index, value) => {
+    if (index == 0) {
+      NavegarParaPerfil()
+    }
+  }
 
   return (
     <View style={styles.Container}>
-      <View style={styles.ImagemCirculo}></View>
-      <View style={styles.ContainerTexto}><Text style={styles.Texto}>Vanesa Juliana</Text></View>
+      <TouchableOpacity onPress={NavegarParaPerfil}>
+        <View style={styles.ImagemCirculo}>
+          <Imagem url={urlImg} style={styles.Imagem} />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={NavegarParaPerfil}>
+        <View style={styles.ContainerTexto}>
+          <Text style={styles.Texto}>{props.data.TB_PESSOA.TB_PESSOA_NOME_PERFIL}</Text>
+        </View>
+      </TouchableOpacity>
       <View style={styles.ContainerIcon}>
-        <DropdownButton options={dropdownOptions} />
+        <ModalDropdown options={dropdownOptions} defaultIndex={null} onSelect={onSelect} renderSeparator={() => <Divider width={1} color='gray' />} dropdownStyle={styles.dropdownOptions} dropdownTextStyle={{ fontSize: 16, paddingLeft: 10, paddingRight: 20, color: '#000' }}>
+          <View style={styles.dropdownHeader}>
+            <Feather name="more-vertical" size={30} color="#B66F6F" />
+          </View>
+        </ModalDropdown>
       </View>
-
-
     </View>
   )
 }
@@ -62,27 +50,30 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1,
+    alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 5,
   },
   ImagemCirculo: {
-    backgroundColor: '#000',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     borderRadius: 25,
     borderColor: '#fff',
     borderWidth: 1,
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   ContainerTexto: {
     height: 'auto',
     width: 'auto',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   Texto: {
-    color: '#000'
+    color: '#fff',
+    fontSize: 20
   },
   ContainerIcon: {
     alignItems: 'center',
@@ -94,26 +85,21 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
   },
-  selectedOptionText: {
-    textAlign: 'center',
-  },
   dropdownOptions: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    width: '100%',
+    height: 140,
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#444',
     borderRadius: 4,
-    marginTop: 5,
+    marginTop: -20,
+    paddingTop: 5,
+    zIndex: 10,
   },
-  optionButton: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  Imagem: {
+    width: 'auto',
+    height: 50,
+    aspectRatio: 1,
   },
-
 });
 
 export default Perfil_post;
