@@ -8,6 +8,8 @@ import SwipeableMessage from "./SwipeableMessage";
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
+let functionSend = () => {};
+
 function contarLetrasHorizontais(texto) {
     if (texto) {
         const linhas = texto.split('\n');
@@ -79,13 +81,18 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
     )
 }
 
-export const renderInputToolbar = (props, editando, respondendo, desativado, reRender, textoDigitado, mensagemSelecionada) => {
+export const renderInputToolbar = (props, editando, respondendo, desativado, reRenderMessageContainer, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo) => {
     const Fechar = () => {
         respondendo.current = false;
-        reRender()
+        setAlturaViewRespondendo(50);
+    }
+    const MedirAltura = (event) => {
+        let alturaViewRespondendo = Math.round(event.nativeEvent.layout.height);
+        setAlturaViewRespondendo(50 + alturaViewRespondendo);
     }
     let respondendoImagem = mensagemSelecionada.current.image;
     let respondendoTexto = mensagemSelecionada.current.text;
+
     return (
         <>
             {!desativado.current &&
@@ -95,7 +102,7 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, reR
                             <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
                         </View>}
                     {respondendo.current &&
-                        <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, }]}>
+                        <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70 }]} onLayout={MedirAltura}>
                             <Text>Respondendo a:</Text>
                             <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={Fechar} />
                             {!respondendoImagem ?

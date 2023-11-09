@@ -1,5 +1,6 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corTextoBotaoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const BotaoCadastrar = (props) => {
     return (
@@ -26,5 +27,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
 });
+
+BotaoCadastrar.propTypes = {
+    texto: PropTypes.string
+}
 
 export default BotaoCadastrar

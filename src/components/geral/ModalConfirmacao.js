@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Modal } from 'react-native-modals';
 import { Divider } from "react-native-elements";
+import PropTypes from 'prop-types';
 
 const ModalConfirmacao = (props) => {
     const Press = () => {
@@ -78,4 +79,15 @@ const styles = StyleSheet.create({
         fontWeight: '400',
     },
 });
+
+ModalConfirmacao.propTypes = {
+    press: PropTypes.func,
+    set: PropTypes.func,
+    val: PropTypes.bool,
+    texto: PropTypes.string,
+    subtexto: PropTypes.string,
+    sim: PropTypes.string,
+    nao: PropTypes.string
+};
+
 export default ModalConfirmacao

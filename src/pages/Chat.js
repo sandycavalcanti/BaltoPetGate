@@ -3,13 +3,11 @@ import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity, TextInput, Di
 import { Bubble, Composer, GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
-import AccessoryBar from '../components/chat/AccessoryBar';
 import CustomActions from '../components/chat/CustomActions';
 import { corBordaBoxCad, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { FontAwesome5, AntDesign } from '@expo/vector-icons';
 import axios from "axios";
-import socket from "../utils/Socket";
 import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
 import ModalMensagem from '../components/chat/ModalMensagem';
@@ -29,7 +27,7 @@ function reducer(state, action) {
             return { ...state, isTyping: action.payload };
         }
     }
-}
+};
 
 const Chat = () => {
     const route = useRoute();
@@ -49,6 +47,7 @@ const Chat = () => {
     const podeExcluir = useRef(false)
 
     const [textoDigitado, setTextoDigitado] = useState('');
+    const [alturaViewRespondendo, setAlturaViewRespondendo] = useState(50);
     const [carregando, setCarregando] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -93,7 +92,7 @@ const Chat = () => {
                 dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
             }
         }).catch(error => {
-            if (error.response.status !== 404) {
+            if (error.response.status !== 404 && error.response) {
                 let erro = error.response.data;
                 ToastAndroid.show(erro.message, ToastAndroid.SHORT);
                 console.error('Erro ao selecionar:', erro.error);
@@ -120,9 +119,11 @@ const Chat = () => {
                 }
             }
         }).catch(error => {
-            let erro = error.response.data;
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar:', erro.error);
+            if (error.response) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error);
+            }
         });
         setCarregando(false);
     };
@@ -193,12 +194,6 @@ const Chat = () => {
                 }
                 await axios.post(urlAPI + 'cadmensagem', objetoForm)
                     .then(response => {
-                        // socket.emit("newMessage", {
-                        // 	message,
-                        // 	room_id: id,
-                        // 	user,
-                        // 	timestamp: { hour, mins },
-                        // });
                         const sentMessagesFix = sentMessages[0];
                         sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
                         sentMessagesFix.image = null;
@@ -246,7 +241,7 @@ const Chat = () => {
                     if (message._id === mensagemSelecionada.current._id) return { ...message, mensagemAlterada: true, text: texto };
                     return message;
                 });
-                const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": "", "user": user }
+                const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": null, "user": user }
                 const newMessages = GiftedChat.append(modifiedMessages, mensagemNula, true);
                 await axios.put(urlAPI + 'altmensagem/' + mensagemSelecionada.current._id, {
                     TB_MENSAGEM_TEXTO_ALTERADO: texto,
@@ -273,13 +268,11 @@ const Chat = () => {
             createdAt: new Date(),
             _id: Math.round(Math.random() * 1000000),
         }));
-        console.log(sentMessages)
         onSend(messagesToUpload);
     };
-    const setIsTyping = (isTyping) => {
-        dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
-    };
-    const renderAccessory = () => <AccessoryBar onSend={onSendCustomActions} isTyping={() => setIsTyping(true)} />
+    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
+    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
+    // };
     const onLongPress = (context, message) => {
         podeExcluir.current = true;
         podeEditar.current = !message.image;
@@ -297,6 +290,15 @@ const Chat = () => {
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
+    const reRenderMessageContainer = () => {
+        console.log('first')
+        const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": null, "user": user }
+        const newMessages = GiftedChat.append(state.messages, mensagemNula, true);
+        setTimeout(() => {
+            dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
+
+        }, 1000);
+    }
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
@@ -308,19 +310,17 @@ const Chat = () => {
                     <>
                         <GiftedChat
                             messages={state.messages}
-                            onSend={onSend}
                             user={user}
+                            onSend={onSend}
                             onLongPress={onLongPress}
-                            // renderAccessory={renderAccessory}
-                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
                             renderSystemMessage={renderSystemMessage}
                             renderCustomView={renderCustomView}
-                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, reRender, textoDigitado, mensagemSelecionada)}
                             renderComposer={renderComposer}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, reRenderMessageContainer, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
                             renderSend={props => renderSend(props, editando, respondendo)}
-                            renderAvatar={null}
                             renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
-                            renderChatEmpty={props => renderChatEmpty(msgEmptyChat)}
+                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
+                            renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
                             keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
                             text={textoDigitado}
@@ -333,8 +333,8 @@ const Chat = () => {
                             dateFormat='DD/MM/YYYY'
                             timeFormat='HH:mm'
                             renderTime={props => renderTime(props, user)}
-                            inverted={true}
-                            minInputToolbarHeight={50}
+                            renderAvatar={null}
+                            minInputToolbarHeight={alturaViewRespondendo}
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
                     </>}
