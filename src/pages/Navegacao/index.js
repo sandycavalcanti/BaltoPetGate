@@ -5,6 +5,7 @@ import { Easing } from 'react-native';
 import Splash from '../Splash';
 import Menu from './Menu';
 import HisChat from '../HistChat';
+import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
@@ -98,6 +99,11 @@ export default function Navigation() {
           <Stack.Screen name="Teste" component={Teste} />
           <Stack.Screen name="AlterarCad" component={AlterarCad} />
           <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
+          <Stack.Screen name="InfoChat" component={InfoChat} options={{
+            gestureEnabled: false,
+            gestureDirection: 'vertical-inverted',
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+          }} />
           <Stack.Screen name="uploadimg" component={uploadimg} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -180,7 +180,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar onPress={TenhoInteresse} texto="Adotar" />
+                    <BotaoCadastrar onPress={TenhoInteresse} texto="Tenho interesse" />
                 </View>
             </View>
         </ScrollView>

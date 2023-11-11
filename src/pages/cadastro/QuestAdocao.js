@@ -14,7 +14,7 @@ import DecodificarToken from '../../utils/DecodificarToken';
 
 let TB_PESSOA_IDD;
 
-const QuestionarioAdocao = () => {
+const QuestionarioAdocao = ({navigation:{navigate}}) => {
     const navigation = useNavigation();
     const [mensagem, setMensagem] = useState('');
 
@@ -111,8 +111,7 @@ const QuestionarioAdocao = () => {
                     <GroupBox titulo='Quantos animais você possuí em sua casa?' >
                         <BotaoQuantidade set={setQuantidade}/>
                     </GroupBox>
-
-                    <BotaoCadastrar onPress={Alterar} texto='Finalizar'/>
+                    <BotaoCadastrar onPress={Alterar} texto='Enviar'/>
                 </>
             )}
         </ContainerCadastro>

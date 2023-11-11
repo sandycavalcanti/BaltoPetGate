@@ -26,7 +26,7 @@ const Imagem = (props) => {
 
     return (
         <>
-            {imageExists ?
+            {imageExists ? 
                 <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: props.url }} resizeMode='cover' />
                 :
                 !props.remove &&

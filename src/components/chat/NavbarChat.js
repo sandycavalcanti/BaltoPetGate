@@ -6,6 +6,7 @@ import Dropdown from '../geral/Dropdown';
 import { Entypo } from '@expo/vector-icons';
 import ModalConfirmacao from '../geral/ModalConfirmacao';
 import Imagem from '../geral/Imagem';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 let item1 = item2 = item3 = item4 = {};
 
@@ -18,7 +19,6 @@ const NavbarChat = (props) => {
   const existeAnimal = animais.length !== 0;
   const nomes = animais.map(animal => animal["TB_ANIMAL.TB_ANIMAL_NOME"]).join(', ');
   const pessoaId = props.id
-  const animalId = 3;
   const urlPessoaImg = urlAPI + 'selpessoaimg/';
   const urlAnimalImg = urlAPI + 'selanimalimg/';
 
@@ -53,24 +53,26 @@ const NavbarChat = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
-          <Text style={[styles.nome, { marginTop: existeAnimal ? 5 : 0 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
-        </View>
-        {existeAnimal &&
-          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
-            <Text style={styles.nomeAnimal} numberOfLines={1} ellipsizeMode="tail">{nomes}</Text>
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (animais.length > 0) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, animais, dados }) }} >
+          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
+            <Text style={[styles.nome, { marginBottom: existeAnimal ? 0 : 5 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
           </View>
-        }
+          {existeAnimal &&
+            <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
+              <Text style={styles.nomeAnimal} numberOfLines={1} ellipsizeMode="tail">{nomes}</Text>
+            </View>
+          }
+        </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>
         {existeAnimal &&
           <>
             {animais.length == 1 ?
-              <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animalId })}>
+              <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animais[0].TB_ANIMAL_ID })}>
                 <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={styles.profileImage} />
               </TouchableOpacity>
               :
-              <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animalId })} style={{ height: 50, width: 70 }}>
+              <TouchableOpacity onPress={() => console.log('botao')} style={{ height: 50, width: 70 }}>
                 <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', top: 0, left: 0 }]} />
                 <Imagem url={urlAnimalImg + animais[1].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', bottom: 0, right: 0 }]} />
                 {animais.length > 2 && <Text style={{ position: 'absolute', top: 0, right: 0, fontSize: 18, color: '#fff' }}>+{animais.length - 2}</Text>}
@@ -104,12 +106,13 @@ const styles = StyleSheet.create({
   },
   containerHeaderMiddle: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
   },
   subContainerHeaderMiddle: {
     flex: 1,
-    width: '100%'
+    width: '100%',
+    justifyContent: 'center'
   },
   nome: {
     color: '#fff',

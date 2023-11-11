@@ -61,7 +61,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 14,
         marginBottom: '20%',
-    },
+        alignItems: "center",
+        marginVertical: 5,
+    }
 });
 
 export default CadFormularioDiario;
