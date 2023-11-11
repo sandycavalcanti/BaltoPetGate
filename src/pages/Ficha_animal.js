@@ -6,16 +6,17 @@ import TextosOpcionais from "../components/ficha/TextosOpcionais";
 import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
 import { corBordaBoxCad, corFundo, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import DecodificarToken from "../utils/DecodificarToken";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 function Ficha_animal({ navigation: { navigate } }) {
     const route = useRoute();
     const { id } = route.params;
-    let tipoIdade;
+    const TB_TIPO_IDD = useRef(null)
+    const tipoIdade = useRef('')
 
     const [select, setSelect] = useState([]);
     const [temperamento, setTemperamento] = useState([]);
@@ -26,7 +27,17 @@ function Ficha_animal({ navigation: { navigate } }) {
         await axios.post(urlAPI + 'selanimal/filtrar', {
             TB_ANIMAL_ID: id
         }).then((response) => {
-            setSelect(response.data[0]);
+            const dados = response.data[0];
+            setSelect(dados);
+            if (dados.TB_ANIMAL_IDADE_TIPO == 'MES' && dados.TB_ANIMAL_IDADE == 1) {
+                tipoIdade.current = 'Mês'
+            } else if (dados.TB_ANIMAL_IDADE_TIPO == 'ANO' && dados.TB_ANIMAL_IDADE == 1) {
+                tipoIdade.current = 'Ano'
+            } else if (dados.TB_ANIMAL_IDADE_TIPO == 'MES') {
+                tipoIdade.current = 'Meses'
+            } else if (dados.TB_ANIMAL_IDADE_TIPO == 'ANO') {
+                tipoIdade.current = 'Anos'
+            }
         }).catch((error) => {
             ToastAndroid.show('Erro ao exibir itens ' + error.response.data.message, ToastAndroid.SHORT);
         })
@@ -65,22 +76,26 @@ function Ficha_animal({ navigation: { navigate } }) {
         });
     }
 
+    const PegarTipoId = async () => {
+        const decodedToken = await DecodificarToken();
+        TB_TIPO_IDD.current = decodedToken.TB_TIPO_IDD;
+    }
+
     useEffect(() => {
         Selecionar();
         Multiplo();
+        PegarTipoId();
     }, [])
 
-    if (select.TB_ANIMAL_IDADE_TIPO == 'MES' && select.TB_ANIMAL_IDADE == 1) {
-        tipoIdade = 'Mês'
-    } else if (select.TB_ANIMAL_IDADE_TIPO == 'ANO' && select.TB_ANIMAL_IDADE == 1) {
-        tipoIdade = 'Ano'
-    } else if (select.TB_ANIMAL_IDADE_TIPO == 'MES') {
-        tipoIdade = 'Meses'
-    } else if (select.TB_ANIMAL_IDADE_TIPO == 'ANO') {
-        tipoIdade = 'Anos'
-    }
-
     const urlImg = urlAPI + 'selanimalimg/' + id;
+
+    const TenhoInteresse = () => {
+        if (TB_TIPO_IDD.current != 2 || TB_TIPO_IDD.current != 3 || TB_TIPO_IDD.current != 4) {
+            navigate('QuestionarioAdocao');
+        } else {
+            // Iniciar chat
+        }
+    }
 
     return (
         <ScrollView>
@@ -98,7 +113,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                         <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'FEMEA' ? 'Fêmea' : 'Macho'} />
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade} />
+                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade.current} />
                     </View>
                 </View>
                 {temperamento.length !== 0 &&
@@ -165,7 +180,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                     </View>
                 </View>
                 <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar onPress={() => navigate('QuestionarioAdocao')} texto="Adotar" />
+                    <BotaoCadastrar onPress={TenhoInteresse} texto="Adotar" />
                 </View>
             </View>
         </ScrollView>
