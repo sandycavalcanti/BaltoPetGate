@@ -1,5 +1,6 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoSimples = (props) => {
   return (
@@ -32,5 +33,11 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 });
+
+CampoSimples.propTypes = {
+  set: PropTypes.func,
+  val: PropTypes.string,
+  opcional: PropTypes.bool
+}
 
 export default CampoSimples

@@ -63,27 +63,7 @@ const styles = StyleSheet.create({
         marginBottom: '20%',
         alignItems: "center",
         marginVertical: 5,
-
-    },
-    containerCampos: {
-        width: '95%',
-        justifyContent: "space-around",
-        flexDirection: "row",
-        backgroundColor: '#fff',
-        borderRadius: 15,
-        alignItems: "center"
-    },
-    ContainerDublo: {
-        width: '95%',
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
-    },
-    Texto: {
-        color: '#447837',
-        left: 20,
-        fontSize: 18
-    },
+    }
 });
 
 export default CadFormularioDiario;
