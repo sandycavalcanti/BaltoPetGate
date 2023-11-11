@@ -1,5 +1,6 @@
 import { Text, TouchableOpacity, Modal, StyleSheet, View } from 'react-native';
 import { Divider } from "react-native-elements";
+import PropTypes from 'prop-types';
 
 const Dropdown = (props) => {
     let valorScroll = valorDireita = 0;
@@ -22,7 +23,7 @@ const Dropdown = (props) => {
                             <>
                                 <Divider width={1} color="black" />
                                 <TouchableOpacity style={styles.dropdownButton} onPress={props.item2.press}>
-                                    {props.item1.icone &&
+                                    {props.item2.icone &&
                                         <View style={{ marginRight: 10 }}>
                                             {props.item2.icone}
                                         </View>}
@@ -33,7 +34,7 @@ const Dropdown = (props) => {
                             <>
                                 <Divider width={1} color="black" />
                                 <TouchableOpacity style={styles.dropdownButton} onPress={props.item3.press}>
-                                    {props.item1.icone &&
+                                    {props.item3.icone &&
                                         <View style={{ marginRight: 10 }}>
                                             {props.item3.icone}
                                         </View>}
@@ -94,5 +95,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
+
+Dropdown.propTypes = {
+    set: PropTypes.func,
+    val: PropTypes.bool,
+    item1: PropTypes.object,
+    item2: PropTypes.object,
+    item3: PropTypes.object,
+    item4: PropTypes.object,
+    valorScroll: PropTypes.number,
+    valorDireita: PropTypes.number,
+}
 
 export default Dropdown

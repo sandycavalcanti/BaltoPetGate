@@ -92,7 +92,9 @@ export default function Navigation() {
             },
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
           }} />
-          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="Chat" component={Chat} options={{
+            gestureEnabled: false,
+          }} />
           <Stack.Screen name="Teste" component={Teste} />
           <Stack.Screen name="AlterarCad" component={AlterarCad} />
           <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />

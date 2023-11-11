@@ -84,7 +84,7 @@ const PerfilLayout = (props) => {
       TB_PESSOA_ID,
     }).then(response => {
       const dados = response.data[0];
-      if (dados.TB_CHAT_STATUS == true) {
+      if (dados.TB_CHAT_STATUS) {
         const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
         navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
       } else {

@@ -17,7 +17,7 @@ const Perfil_post = (props) => {
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
-    }
+    } 
   }
 
   return (

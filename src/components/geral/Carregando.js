@@ -1,6 +1,7 @@
 import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { corBordaBoxCad, corFundo } from '../../constants';
+import PropTypes from 'prop-types';
 
 const Carregando = (props) => {
 
@@ -44,5 +45,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
+Carregando.propTypes = {
+    carregando: PropTypes.bool
+}
 
 export default Carregando;
