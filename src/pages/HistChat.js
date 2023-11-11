@@ -12,11 +12,17 @@ let TB_PESSOA_IDD;
 
 const HisChat = () => {
   const pessoasJson = useRef([])
-  const [usuarios, setUsuarios] = useState([]);
-  const [veterinarios, setVeterinarios] = useState([]);
-  const [ongs, setOngs] = useState([]);
-  const [casasderacao, setCasasderacao] = useState([]);
-  const [desativados, setDesativados] = useState([]);
+  // const [usuarios, setUsuarios] = useState([]);
+  // const [veterinarios, setVeterinarios] = useState([]);
+  // const [ongs, setOngs] = useState([]);
+  // const [casasderacao, setCasasderacao] = useState([]);
+  // const [desativados, setDesativados] = useState([]);
+  const usuarios = useRef([])
+  const veterinarios = useRef([])
+  const ongs = useRef([])
+  const casasderacao = useRef([])
+  const desativados = useRef([])
+  const [refresh, setRefresh] = useState(0);
   const [pesquisa, setPesquisa] = useState("");
 
   const [carregando, setCarregando] = useState(true);
@@ -50,13 +56,17 @@ const HisChat = () => {
         .filter((pessoa) => pessoa.TB_CHAT_STATUS);
     }
     const chatsDesativados = pessoasJson.current.filter((pessoa) => !pessoa.TB_CHAT_STATUS);
-    setUsuarios(Filtrar([1, 7]));
-    setVeterinarios(Filtrar([2]));
-    setOngs(Filtrar([3, 4, 5]));
-    setCasasderacao(Filtrar([6]));
-    setDesativados(chatsDesativados)
+    usuarios.current = Filtrar([1, 7]);
+    veterinarios.current = Filtrar([2]);
+    ongs.current = Filtrar([3, 4, 5]);
+    casasderacao.current = Filtrar([6]);
+    desativados.current = chatsDesativados;
+    refreshPage();
   }, [pesquisa, pessoasJson.current]);
 
+  const refreshPage = () => {
+    setRefresh(prev => prev + 1);
+  }
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
@@ -74,11 +84,11 @@ const HisChat = () => {
               <ActivityIndicator size="large" color={corBordaBoxCad} />
             </View> :
             <View style={styles.contacts}>
-              <GrupoContatos data={usuarios} titulo="Usuários" />
-              <GrupoContatos data={veterinarios} titulo="Veterinários" />
-              <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
-              <GrupoContatos data={casasderacao} titulo="Casas de ração" />
-              <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
+              <GrupoContatos data={usuarios.current} titulo="Usuários" />
+              <GrupoContatos data={veterinarios.current} titulo="Veterinários" />
+              <GrupoContatos data={ongs.current} titulo="Instituições/Protetores/Abrigos" />
+              <GrupoContatos data={casasderacao.current} titulo="Casas de ração" />
+              <GrupoContatos data={desativados.current} titulo="Chats desativados" desativado />
             </View>}
         </View>
       </SafeAreaView>

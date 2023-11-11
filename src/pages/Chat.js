@@ -1,12 +1,11 @@
 import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
-import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, Image, ScrollView, ToastAndroid, ActivityIndicator } from 'react-native';
-import { Bubble, Composer, GiftedChat } from 'react-native-gifted-chat';
+import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
-import CustomActions from '../components/chat/CustomActions';
 import { corBordaBoxCad, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
-import { FontAwesome5, AntDesign } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import axios from "axios";
 import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
@@ -199,6 +198,7 @@ const Chat = () => {
                         sentMessagesFix.image = null;
                         if (respondendo.current) {
                             sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                            setAlturaViewRespondendo(50);
                         }
                         const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
                         respondendo.current = false;
@@ -225,6 +225,7 @@ const Chat = () => {
                     sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
                     if (respondendo.current) {
                         sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                        setAlturaViewRespondendo(50);
                     }
                     const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
                     respondendo.current = false;
@@ -290,15 +291,6 @@ const Chat = () => {
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
-    const reRenderMessageContainer = () => {
-        console.log('first')
-        const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": null, "user": user }
-        const newMessages = GiftedChat.append(state.messages, mensagemNula, true);
-        setTimeout(() => {
-            dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
-
-        }, 1000);
-    }
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
@@ -316,7 +308,7 @@ const Chat = () => {
                             renderSystemMessage={renderSystemMessage}
                             renderCustomView={renderCustomView}
                             renderComposer={renderComposer}
-                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, reRenderMessageContainer, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
                             renderSend={props => renderSend(props, editando, respondendo)}
                             renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
                             renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
@@ -335,8 +327,10 @@ const Chat = () => {
                             renderTime={props => renderTime(props, user)}
                             renderAvatar={null}
                             minInputToolbarHeight={alturaViewRespondendo}
+                            imageStyle={{ width: 200, height: 125 }}
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
+                        <StatusBar />
                     </>}
             </View>
         </SafeAreaView>

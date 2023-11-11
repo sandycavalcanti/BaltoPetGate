@@ -8,8 +8,6 @@ import SwipeableMessage from "./SwipeableMessage";
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
-let functionSend = () => {};
-
 function contarLetrasHorizontais(texto) {
     if (texto) {
         const linhas = texto.split('\n');
@@ -81,7 +79,7 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
     )
 }
 
-export const renderInputToolbar = (props, editando, respondendo, desativado, reRenderMessageContainer, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo) => {
+export const renderInputToolbar = (props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo) => {
     const Fechar = () => {
         respondendo.current = false;
         setAlturaViewRespondendo(50);
@@ -241,5 +239,16 @@ const styles = StyleSheet.create({
     },
     bubbleRespondendo: {
         borderRadius: 10,
-    }
+    },
+    image: {
+        width: 200,
+        height: 125,
+        borderRadius: 13,
+        margin: 3,
+        resizeMode: 'cover',
+    },
+    imageActive: {
+        flex: 1,
+        resizeMode: 'contain',
+    },
 })
