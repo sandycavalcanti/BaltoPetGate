@@ -15,11 +15,7 @@ const NavbarChat = (props) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
   const dados = props.dados;
-  const animais = [{ "TB_ANIMAL.TB_ANIMAL_NOME": "Sofia", "TB_ANIMAL.TB_PESSOA_ID": 4, "TB_ANIMAL_ID": 3, "TB_CHAT_ANIMAL_ID": 1, "TB_CHAT_ID": 2 }
-    , { "TB_ANIMAL.TB_ANIMAL_NOME": "Bob", "TB_ANIMAL.TB_PESSOA_ID": 4, "TB_ANIMAL_ID": 2, "TB_CHAT_ANIMAL_ID": 2, "TB_CHAT_ID": 2 }]
-
-
-  // props.animais;
+  const animais = props.animais;
   const existeAnimal = animais.length !== 0;
   const nomes = animais.map(animal => animal["TB_ANIMAL.TB_ANIMAL_NOME"]).join(', ');
   const pessoaId = props.id
