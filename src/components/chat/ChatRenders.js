@@ -5,8 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import CustomView from "./CustomView";
 import SwipeableMessage from "./SwipeableMessage";
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 function contarLetrasHorizontais(texto) {
     if (texto) {
@@ -239,16 +238,5 @@ const styles = StyleSheet.create({
     },
     bubbleRespondendo: {
         borderRadius: 10,
-    },
-    image: {
-        width: 200,
-        height: 125,
-        borderRadius: 13,
-        margin: 3,
-        resizeMode: 'cover',
-    },
-    imageActive: {
-        flex: 1,
-        resizeMode: 'contain',
     },
 })

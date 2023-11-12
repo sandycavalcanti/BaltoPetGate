@@ -3,7 +3,8 @@ import { StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
 
 const Imagem = (props) => {
-    const [imageExists, setImageExists] = useState(true);
+    const imageExistsDefaultValue = !props.remove;
+    const [imageExists, setImageExists] = useState(imageExistsDefaultValue);
     const controller = new AbortController();
 
     const ChecarImagem = async () => {

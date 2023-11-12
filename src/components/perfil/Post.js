@@ -1,11 +1,10 @@
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { format } from "date-fns";
 import { corBordaBoxCad, urlAPI } from '../../constants';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Imagem from '../geral/Imagem';
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
     const dataOriginal = props.data.createdAt;

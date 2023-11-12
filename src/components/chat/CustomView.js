@@ -17,7 +17,7 @@ const CustomView = ({ currentMessage, containerStyle, mapViewStyle }) => {
       if (supported) {
         return Linking.openURL(url);
       }
-      alert('Opening the map is not supported.');
+      alert('Falha ao abrir o mapa.');
     } catch ({ message }) {
       alert(message);
     }

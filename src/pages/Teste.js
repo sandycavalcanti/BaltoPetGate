@@ -1,46 +1,22 @@
-import { View, Text, ToastAndroid } from 'react-native'
-import React from 'react'
-import DecodificarToken from '../utils/DecodificarToken';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import axios from 'axios';
-import { urlAPI } from '../constants';
-
-let TB_PESSOA_IDD;
+import { View, Text } from 'react-native'
+import { useRef, useState } from 'react'
+import { Button } from 'react-native';
 
 const Teste = () => {
-
-  const PegarId = async () => {
-    const decodedToken = await DecodificarToken();
-    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
+  const count = useRef(null);
+  const [refresh, setRefresh] = useState(0);
+  const IncreaseCount = () => {
+    count.current += 1;
   }
-
-  useEffect(() => {
-
-    PegarId()
-    const Selecionar = async () => {
-      axios.get(urlAPI + 'selpessoa/' + TB_PESSOA_IDD)
-        .then(response => {
-          setDados(response.data[0]);
-          console.log(response.data)
-        })
-        .catch(error => {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.error('Erro ao selecionar:', erro.error);
-        });
-    };
-    Selecionar();
-  }, []);
-  
-
-  const [dados, setDados] = useState([]);
-
+  const RefreshPage = () => {
+    // setRefresh(prev => prev + 1)
+    console.log(count.current)
+  }
   return (
-    <View>
-      <Text>{dados.TB_PESSOA_NOME_PERFIL}</Text>
-      <Text>{dados.TB_PESSOA_NOME}</Text>
-      <Text>{dados.TB_TIPO_ID}</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button onPress={IncreaseCount} title='Aumentar o ref'></Button>
+      <Text>{count.current}</Text>
+      <Button onPress={RefreshPage} title='Atualizar'></Button>
     </View>
   )
 }

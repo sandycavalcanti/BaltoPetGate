@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { Modal, SlideAnimation } from 'react-native-modals';
+import { Modal } from 'react-native-modals';
 import { Divider } from 'react-native-elements';
 
 const ModalMensagem = (props) => {

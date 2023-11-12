@@ -72,6 +72,7 @@ const HisChat = () => {
   const refreshPage = () => {
     setRefresh(prev => prev + 1);
   }
+  
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>

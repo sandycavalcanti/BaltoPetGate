@@ -32,7 +32,6 @@ export default function Explorar({ navigation: { navigate } }) {
             <Post data={item} />
           </>
         )}
-        keyExtractor={(item) => item.TB_POSTAGEM_ID}
       />
     </View>
   );

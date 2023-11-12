@@ -9,14 +9,14 @@ export default async function getPermissionAsync(permission) {
   if (status !== 'granted') {
     const permissionName = permission.toLowerCase().replace('_', ' ')
     Alert.alert(
-      'Cannot be done 😞',
-      `If you would like to use this feature, you'll need to enable the ${permissionName} permission in your phone settings.`,
+      'Sem sucesso.',
+      `Por favor, permita ${permissionName}.`,
       [
         {
-          text: "Let's go!",
+          text: "Ok",
           onPress: () => Linking.openURL('app-settings:'),
         },
-        { text: 'Nevermind', onPress: () => { }, style: 'cancel' },
+        { text: 'Cancelar', onPress: () => { }, style: 'cancel' },
       ],
       { cancelable: true },
     )
@@ -52,7 +52,6 @@ export async function takePictureAsync(onSend) {
   if (await ImagePicker.requestCameraPermissionsAsync()) {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3],
     })
 
     if (!result.canceled) {

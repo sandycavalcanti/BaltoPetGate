@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, StyleSheet, Dimensions, Image, ScrollView } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, Dimensions, Image, ScrollView, ActivityIndicator } from "react-native";
 import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
@@ -22,6 +22,7 @@ function Ficha_animal({ navigation: { navigate } }) {
     const [temperamento, setTemperamento] = useState([]);
     const [trauma, setTrauma] = useState([]);
     const [situacao, setSituacao] = useState([]);
+    const [carregando, setCarregando] = useState(true);
 
     const Selecionar = async () => {
         await axios.post(urlAPI + 'selanimal/filtrar', {
@@ -40,7 +41,8 @@ function Ficha_animal({ navigation: { navigate } }) {
             }
         }).catch((error) => {
             ToastAndroid.show('Erro ao exibir itens ' + error.response.data.message, ToastAndroid.SHORT);
-        })
+        });
+        setCarregando(false);
     };
 
     const Multiplo = () => {
@@ -82,8 +84,8 @@ function Ficha_animal({ navigation: { navigate } }) {
     }
 
     useEffect(() => {
-        Selecionar();
         Multiplo();
+        Selecionar();
         PegarTipoId();
     }, [])
 
@@ -101,87 +103,93 @@ function Ficha_animal({ navigation: { navigate } }) {
         <ScrollView>
             <View style={styles.Container}>
                 <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
-                <View style={styles.Conjunto1}>
-                    <TextoComum textoTitulo='Nome:' textoDescricao={select.TB_ANIMAL_NOME} />
-                    <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE == 'PEQUENO' ? 'Pequeno' : select.TB_ANIMAL_PORTE == 'MEDIO' ? 'Médio' : 'Grande'} />
-                </View>
-                <View style={styles.Conjunto2}>
-                    <View style={{ flex: 1, alignItems: 'center' }}>
-                        <TextoComum textoTitulo={select.TB_ANIMAL_PESO} textoDescricao='Kg' />
-                    </View>
-                    <View style={styles.Barras}>
-                        <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'FEMEA' ? 'Fêmea' : 'Macho'} />
-                    </View>
-                    <View style={{ flex: 1, alignItems: 'center' }}>
-                        <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade.current} />
-                    </View>
-                </View>
-                {temperamento.length !== 0 &&
-                    <View style={styles.Conjunto3}>
-                        <TextoComum textoTitulo='Temperamento:' />
-                        {temperamento.map((item, index) => {
-                            return (
-                                <TextoMultiplo key={index} textoMultiplo={item.TB_TEMPERAMENTO.TB_TEMPERAMENTO_TIPO} />
-                            )
-                        })}
-                    </View>
+                {carregando ?
+                    <ActivityIndicator size="large" color={corBordaBoxCad} style={{ marginTop: 20 }} />
+                    :
+                    <>
+                        <View style={styles.Conjunto1}>
+                            <TextoComum textoTitulo='Nome:' textoDescricao={select.TB_ANIMAL_NOME} />
+                            <TextoComum textoTitulo='Porte:' textoDescricao={select.TB_ANIMAL_PORTE == 'PEQUENO' ? 'Pequeno' : select.TB_ANIMAL_PORTE == 'MEDIO' ? 'Médio' : 'Grande'} />
+                        </View>
+                        <View style={styles.Conjunto2}>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <TextoComum textoTitulo={select.TB_ANIMAL_PESO} textoDescricao='Kg' />
+                            </View>
+                            <View style={styles.Barras}>
+                                <TextoComum textoDescricao={select.TB_ANIMAL_SEXO == 'FEMEA' ? 'Fêmea' : 'Macho'} />
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center' }}>
+                                <TextoComum textoTitulo={select.TB_ANIMAL_IDADE} textoDescricao={tipoIdade.current} />
+                            </View>
+                        </View>
+                        {temperamento.length !== 0 &&
+                            <View style={styles.Conjunto3}>
+                                <TextoComum textoTitulo='Temperamento:' />
+                                {temperamento.map((item, index) => {
+                                    return (
+                                        <TextoMultiplo key={index} textoMultiplo={item.TB_TEMPERAMENTO.TB_TEMPERAMENTO_TIPO} />
+                                    )
+                                })}
+                            </View>
+                        }
+                        {situacao.length !== 0 &&
+                            <View style={styles.Conjunto3}>
+                                <TextoComum textoTitulo='Situação:' />
+                                {situacao.map((item, index) => {
+                                    return (
+                                        <TextoMultiplo key={index} textoMultiplo={item.TB_SITUACAO.TB_SITUACAO_DESCRICAO} />
+                                    )
+                                })}
+                            </View>
+                        }
+                        {trauma.length !== 0 &&
+                            <View style={styles.Conjunto3}>
+                                <TextoComum textoTitulo='Trauma:' />
+                                {trauma.map((item, index) => {
+                                    return (
+                                        <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
+                                    )
+                                })}
+                            </View>
+                        }
+                        {select.TB_ANIMAL_CUIDADO_ESPECIAL &&
+                            <View style={styles.Conjunto3}>
+                                <TextoComum textoTitulo='Cuidado:' />
+                                <TextoMultiplo textoMultiplo={select.TB_ANIMAL_CUIDADO_ESPECIAL} />
+                            </View>}
+                        <View style={styles.Conjunto4}>
+                            {select.TB_ANIMAL_CASTRADO == 'SIM' &&
+                                <TextosOpcionais textosOpcionais='Castrado(a)' />}
+                            {select.TB_ANIMAL_VERMIFUGADO == 'SIM' &&
+                                <TextosOpcionais textosOpcionais='Vermifugado(a)' />}
+                            {select.TB_ANIMAL_MICROCHIP == 'SIM' &&
+                                <TextosOpcionais textosOpcionais='Microchipado(a)' />}
+                        </View>
+                        <View style={styles.GroupBox}>
+                            <Text style={styles.Titulo}>Descrição</Text>
+                            <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
+                            {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' /> */}
+                            <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
+                        </View>
+                        <View style={styles.GroupBox}>
+                            <Text style={styles.Titulo}>Localização</Text>
+                            <View style={styles.GroupBox2}>
+                                <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_CIDADE}</Text>
+                                <Text style={styles.TextoEscuro}>{select.TB_ANIMAL_LOCALIZACAO_UF}</Text>
+                            </View>
+                            <View style={styles.GroupBox2}>
+                                <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_BAIRRO},</Text>
+                            </View>
+                            <View style={styles.GroupBox2}>
+                                {select.TB_ANIMAL_LOCALIZACAO_RUA &&
+                                    <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_RUA}</Text>}
+                            </View>
+                        </View>
+                        <View style={styles.ConjuntoBotao}>
+                            <BotaoCadastrar onPress={TenhoInteresse} texto="Tenho interesse" />
+                        </View>
+                    </>
                 }
-                {situacao.length !== 0 &&
-                    <View style={styles.Conjunto3}>
-                        <TextoComum textoTitulo='Situação:' />
-                        {situacao.map((item, index) => {
-                            return (
-                                <TextoMultiplo key={index} textoMultiplo={item.TB_SITUACAO.TB_SITUACAO_DESCRICAO} />
-                            )
-                        })}
-                    </View>
-                }
-                {trauma.length !== 0 &&
-                    <View style={styles.Conjunto3}>
-                        <TextoComum textoTitulo='Trauma:' />
-                        {trauma.map((item, index) => {
-                            return (
-                                <TextoMultiplo key={index} textoMultiplo={item.TB_TRAUMA.TB_TRAUMA_DESCRICAO} />
-                            )
-                        })}
-                    </View>
-                }
-                {select.TB_ANIMAL_CUIDADO_ESPECIAL &&
-                    <View style={styles.Conjunto3}>
-                        <TextoComum textoTitulo='Cuidado:' />
-                        <TextoMultiplo textoMultiplo={select.TB_ANIMAL_CUIDADO_ESPECIAL} />
-                    </View>}
-                <View style={styles.Conjunto4}>
-                    {select.TB_ANIMAL_CASTRADO == 'SIM' &&
-                        <TextosOpcionais textosOpcionais='Castrado(a)' />}
-                    {select.TB_ANIMAL_VERMIFUGADO == 'SIM' &&
-                        <TextosOpcionais textosOpcionais='Vermifugado(a)' />}
-                    {select.TB_ANIMAL_MICROCHIP == 'SIM' &&
-                        <TextosOpcionais textosOpcionais='Microchipado(a)' />}
-                </View>
-                <View style={styles.GroupBox}>
-                    <Text style={styles.Titulo}>Descrição</Text>
-                    <TextoMenor textoDescricao={select.TB_ANIMAL_DESCRICAO} />
-                    {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='dhgfdyfgdfgdifgdfgdfgdufgd' /> */}
-                    <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.TB_ANIMAL_LOCAL_RESGATE} />
-                </View>
-                <View style={styles.GroupBox}>
-                    <Text style={styles.Titulo}>Localização</Text>
-                    <View style={styles.GroupBox2}>
-                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_CIDADE}</Text>
-                        <Text style={styles.TextoEscuro}>{select.TB_ANIMAL_LOCALIZACAO_UF}</Text>
-                    </View>
-                    <View style={styles.GroupBox2}>
-                        <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_BAIRRO},</Text>
-                    </View>
-                    <View style={styles.GroupBox2}>
-                        {select.TB_ANIMAL_LOCALIZACAO_RUA &&
-                            <Text style={styles.TextoClaro}>{select.TB_ANIMAL_LOCALIZACAO_RUA}</Text>}
-                    </View>
-                </View>
-                <View style={styles.ConjuntoBotao}>
-                    <BotaoCadastrar onPress={TenhoInteresse} texto="Tenho interesse" />
-                </View>
             </View>
         </ScrollView>
     );
@@ -190,7 +198,8 @@ function Ficha_animal({ navigation: { navigate } }) {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor: corFundo
+        backgroundColor: corFundo,
+        minHeight: windowHeight
     },
     Conjunto1: {
         justifyContent: "space-between",
