@@ -58,10 +58,6 @@ const Menu = ({ navigation: { navigate } }) => {
         setRefresh(prev => prev + 1);
     }
 
-    if (!pesquisa) {
-        setResultsVisible(false);
-    }
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Tab.Navigator screenOptions={{ tabBarStyle: styles.container, header: () => <HeaderExplorar pesquisa={pesquisa} setPesquisa={setPesquisa} setResultsVisible={setResultsVisible} />, tabBarShowLabel: false, title: '' }} >
