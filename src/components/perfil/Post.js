@@ -1,29 +1,37 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import { format } from "date-fns";
-import { corBordaBoxCad, urlAPI } from '../../constants';
+import { urlAPI } from '../../constants';
 import { useState } from 'react';
 import Imagem from '../geral/Imagem';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
-    const dataOriginal = props.data.createdAt;
-    let dataFormatada = "";
+    const dataOriginal = props.date ? props.date : props.data.createdAt;
+    const texto = props.text ? props.text : props.data ? props.data.TB_POSTAGEM_TEXTO : '';
+    let dataFormatada = urlImg = "";
 
     if (dataOriginal && !isNaN(new Date(dataOriginal))) {
         dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
     }
 
     const [imageExists, setImageExists] = useState(false);
-    const urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
+    if (props.data) {
+        urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
+    }
 
     return (
         <View style={styles.profileContainer}>
             <View style={styles.Container}>
-                <Imagem url={urlImg} style={styles.Imagem} setResult={setImageExists} remove />
-                <View style={styles.ContainerTexto}>
-                    <Text style={[styles.Texto, { textAlign: imageExists ? 'left' : 'center' }]}>{props.data.TB_POSTAGEM_TEXTO}</Text>
-                </View>
+                {props.img ?
+                    <Image source={{ uri: props.img }} style={styles.Imagem} />
+                    :
+                    <Imagem url={urlImg} style={styles.Imagem} setResult={setImageExists} remove />
+                }
+                {texto &&
+                    <View style={styles.ContainerTexto}>
+                        <Text style={[styles.Texto, { textAlign: (imageExists || props.img) ? 'left' : 'center' }]}>{texto}</Text>
+                    </View>}
                 <View style={styles.ContainerData}>
                     <Text style={styles.Data}>{dataFormatada}</Text>
                 </View>
@@ -38,7 +46,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: '#CEF7FF',
         borderColor: "#fff",
-        borderTopWidth: 1,
+        borderBottomWidth: 1
     },
     ContainerTexto: {
         width: windowWidth,
@@ -50,7 +58,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     Texto: {
-        color: '#216357'
+        color: '#216357',
+        fontSize: 16,
     },
     ContainerData: {
         padding: 10,

@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#EEECEC',
         borderRadius: 10,
         marginTop: '10%',
-        marginBottom: 15,
         elevation: 5,
     },
     textocadastro: {

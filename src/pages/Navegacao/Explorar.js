@@ -28,7 +28,7 @@ export default function Explorar({ navigation: { navigate } }) {
         data={select}
         renderItem={({ item }) => (
           <>
-            <Perfil_post navigate={navigate} data={item} />
+            <Perfil_post data={item} />
             <Post data={item} />
           </>
         )}

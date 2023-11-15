@@ -10,7 +10,7 @@ import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
 import { urlAPI } from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Mensagem from './Mensagem';
+import Mensagem from '../../components/cadastro/Mensagem';
 
 const CadUsuario = () => {
   const navigation = useNavigation();

@@ -2,12 +2,12 @@ import { Text } from 'react-native'
 
 const Mensagem = (props) => {
     const texto = props.texto
-    
+
     const Verificar = (texto) => {
-        if(texto == 'Cadastrado'){
+        if (texto == 'Cadastrado') {
             return '#fdfdfd'
         }
-        if(texto == ''){
+        if (texto == '') {
             return '#fdfdfd'
         }
         return '#ff0000'

@@ -4,20 +4,22 @@ import { urlAPI } from '../../constants';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { Divider } from 'react-native-elements';
 import Imagem from '../geral/Imagem';
+import { useNavigation } from '@react-navigation/native';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
+  const navigation = useNavigation();
 
   const NavegarParaPerfil = () => {
-    props.navigate("Perfil", { id: TB_PESSOA_ID });
+    navigation.navigate("Perfil", { id: TB_PESSOA_ID });
   }
 
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
-    } 
+    }
   }
 
   return (

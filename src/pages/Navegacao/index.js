@@ -21,7 +21,7 @@ import RecSenha from "../cadastro/RecSenha";
 import VerCodigo from "../cadastro/VerCodigo";
 import CriarSenha from "../cadastro/CriarSenha";
 import Perfil from '../Perfil';
-import Postagem from '../Postagem';
+import CadPostagem from '../cadastro/CadPostagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
@@ -84,7 +84,7 @@ export default function Navigation() {
           <Stack.Screen name="VerCodigo" component={VerCodigo} />
           <Stack.Screen name="Perfil" component={Perfil} />
           <Stack.Screen name="CriarSenha" component={CriarSenha} />
-          <Stack.Screen name="Postagem" component={Postagem} />
+          <Stack.Screen name="CadPostagem" component={CadPostagem} />
           <Stack.Screen name="HisChat" component={HisChat} options={{
             gestureDirection: 'vertical',
             transitionSpec: {

@@ -5,8 +5,10 @@ import { urlAPI } from "../../constants";
 import Temperamento from "./Temperamento";
 import axios from "axios";
 import Imagem from "../geral/Imagem";
+import { useNavigation } from "@react-navigation/native";
 
 const AnimalPost = memo((props) => {
+  const navigation = useNavigation();
   const dataOriginal = props.data.createdAt;
   const urlImg = urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID;
   let dataFormatada = "";
@@ -36,7 +38,7 @@ const AnimalPost = memo((props) => {
 
   return (
     <View style={styles.Container}>
-      <TouchableWithoutFeedback onPress={() => props.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
         <View style={styles.ContainerImagem}>
           <Imagem url={urlImg} style={styles.Imagem} />
         </View>

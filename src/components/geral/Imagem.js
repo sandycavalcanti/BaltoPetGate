@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
-import { StylePropType } from 'react-native-gifted-chat';
 
 const Imagem = (props) => {
     const imageExistsDefaultValue = !props.remove;
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
 
 Imagem.propTypes = {
     url: PropTypes.string,
-    style: StylePropType,
+    style: PropTypes.object,
     setResult: PropTypes.func,
     desativado: PropTypes.bool,
     remove: PropTypes.bool

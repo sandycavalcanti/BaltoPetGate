@@ -31,8 +31,8 @@ const Animal = ({ navigation: { navigate } }) => {
                     data={select}
                     renderItem={({ item }) => (
                         <>
-                            <Perfil_post navigate={navigate} data={item} />
-                            <AnimalPost navigate={navigate} data={item} />
+                            <Perfil_post data={item} />
+                            <AnimalPost data={item} />
                         </>
                     )}
                 />

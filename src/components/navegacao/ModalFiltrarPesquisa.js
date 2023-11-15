@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
     },
     containerOpcoes: {
         width: modalWidth,
-        paddingTop: 5,
         alignItems: 'center',
         height: 300,
     },

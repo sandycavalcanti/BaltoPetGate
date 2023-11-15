@@ -34,14 +34,14 @@ const CadFormularioDiario = ({ navigation: { navigate } }) => {
     return (
         <ContainerCadastro titulo='Formulário diario'>
             <GroupBox titulo='Horário do abastecimento'>
-                <View  style={styles.Container}>
-                    <CampoMenor placeholder="00:00h" opcional/>
-                    <CampoMenor placeholder="00/00/0000" opcional/>
+                <View style={styles.Container}>
+                    <CampoMenor placeholder="00:00h" opcional />
+                    <CampoMenor placeholder="00/00/0000" opcional />
                 </View>
             </GroupBox>
-            <BotaoImg/>
+            <BotaoImg />
             <Text style={styles.Texto}>Ao acrescentar uma imagem, você estara acrescentando uma prova, caso seu ponto seja denunciado por um usuário. </Text>
-            <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar'/>
+            <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
         </ContainerCadastro>
 
     );
@@ -55,11 +55,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-evenly',
     },
-    Texto:{
+    Texto: {
         color: '#521A1A',
         paddingHorizontal: 10,
         textAlign: 'center',
         fontSize: 14,
+        marginTop: 15,
         marginBottom: '20%',
         alignItems: "center",
         marginVertical: 5,

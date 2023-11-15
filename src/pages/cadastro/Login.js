@@ -104,19 +104,6 @@ const Login = ({ navigation: { navigate } }) => {
                         <ActivityIndicator size="large" color={corBordaBoxCad} />
                     </View>
                 </View>}
-
-            <TouchableOpacity onPress={async () => {
-                const TokenUsuario = await AsyncStorage.getItem('token');
-                if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk4NDUzNzMyLCJleHAiOjE3MDM2Mzc3MzJ9.UY6rYIHINNyXAEeuTw5tbeUIKhjA_5xjzr9txiCVtY0');
-                    setTimeout(() => {
-                        navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-                    }, 2000);
-                }
-                navigate("Menu")
-            }}>
-                <Text>PULAR</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     );
 };

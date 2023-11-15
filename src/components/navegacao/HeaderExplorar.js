@@ -39,7 +39,7 @@ function ChecarAplicacoesFiltro(array) {
         return ['SIM'];
     } else if (!array[0] && array[1]) {
         return ['NAO'];
-    } else if(!array[0] && !array[1]) {
+    } else if (!array[0] && !array[1]) {
         return ['INDEFINIDO'];
     } else {
         return ['SIM', 'NAO', 'INDEFINIDO'];
@@ -132,7 +132,6 @@ const HeaderExplorar = (props) => {
         const tiposCastrados = ChecarAplicacoesFiltro(filtroCastrado.current);
         const tiposVermifugados = ChecarAplicacoesFiltro(filtroVermifugado.current);
         const tiposMicrochipados = ChecarAplicacoesFiltro(filtroMicrochipado.current);
-        console.log(tiposCastrados, tiposVermifugados, tiposMicrochipados)
         if (!filtroSelecionar.current)
             return FiltrarAnimais(tiposEspecies, tiposCastrados, tiposVermifugados, tiposMicrochipados);
     }, [dadosAnimais.current, pesquisa, filtroSelecionar.current, filtroEspecie.current, filtroCastrado.current, filtroVermifugado.current, filtroMicrochipado.current]);
@@ -145,7 +144,7 @@ const HeaderExplorar = (props) => {
     const item2 = {
         icone: <AntDesign name="picture" size={28} color="black" />,
         texto: 'Cadastrar uma postagem',
-        press: () => navigation.navigate('Postagem')
+        press: () => navigation.navigate('CadPostagem')
     }
     const item3 = {
         icone: <Feather name="map-pin" size={28} color="black" />,

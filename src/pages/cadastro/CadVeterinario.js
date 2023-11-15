@@ -15,7 +15,7 @@ import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { urlAPI } from '../../constants';
 import axios from 'axios';
-import Mensagem from './Mensagem';
+import Mensagem from '../../components/cadastro/Mensagem';
 
 const CadVeterinario = () => {
   const navigation = useNavigation();
