@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const RadioButton3 = (props) => {
   const options = ['SIM', 'NAO', 'INDEFINIDO'];
@@ -19,7 +20,7 @@ const RadioButton3 = (props) => {
           onPress={() => handleOptionPress(option)}>
           <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
             {
-            option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'
+              option === 'SIM' ? 'Sim' : option === 'NAO' ? 'Não' : 'Não sei informar'
             }
           </Text>
         </TouchableOpacity>
@@ -52,5 +53,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
 });
+
+RadioButton3.propTypes = {
+  set: PropTypes.func
+}
 
 export default RadioButton3;

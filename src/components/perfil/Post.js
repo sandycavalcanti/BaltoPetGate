@@ -7,7 +7,7 @@ import Imagem from '../geral/Imagem';
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
-    const dataOriginal = props.date ? props.date : props.data.createdAt;
+    const dataOriginal = props.data ? props.data.createdAt : new Date();
     const texto = props.text ? props.text : props.data ? props.data.TB_POSTAGEM_TEXTO : '';
     let dataFormatada = urlImg = "";
 

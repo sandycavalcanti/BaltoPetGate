@@ -1,4 +1,5 @@
 import {View, Text, StyleSheet} from 'react-native';
+import PropTypes from 'prop-types';
 
 const TextoComum = (props) => {
     return(
@@ -28,5 +29,10 @@ const styles = StyleSheet.create({
         fontSize: 20
     }
 });
+
+TextoComum.propTypes = {
+    textoTitulo: PropTypes.string,
+    textoDescricao: PropTypes.string
+}
 
 export default TextoComum;

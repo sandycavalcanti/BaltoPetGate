@@ -6,6 +6,7 @@ import Temperamento from "./Temperamento";
 import axios from "axios";
 import Imagem from "../geral/Imagem";
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from 'prop-types';
 
 const AnimalPost = memo((props) => {
   const navigation = useNavigation();
@@ -51,11 +52,7 @@ const AnimalPost = memo((props) => {
         {temperamento.length !== 0 &&
           <View style={styles.ContainerTexto}>
             <Text style={styles.Texto}>{temperamento.length == 1 ? 'Temperamento:' : 'Temperamentos:'}</Text>
-            {temperamento.map((item, index) => {
-              return (
-                <Temperamento key={index} texto={item} />
-              )
-            })}
+            {temperamento.map((item, index) => <Temperamento key={index} texto={item} />)}
           </View>
         }
       </View>
@@ -129,5 +126,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 });
+
+AnimalPost.propTypes = {
+  data: PropTypes.object
+}
 
 export default AnimalPost;

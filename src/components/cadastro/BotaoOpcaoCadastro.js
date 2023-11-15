@@ -1,10 +1,11 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corTextoBotaoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const BotaoOpcaoCadastro = (props) => {
     return (
-        <TouchableOpacity {...props} style={styles.botao}>
-            <Text style={styles.texto}> {props.texto} </Text>
+        <TouchableOpacity {...props} style={[styles.botao, props.styleBotao]}>
+            <Text style={[styles.texto, props.styleTexto]}> {props.texto} </Text>
         </TouchableOpacity>
     )
 }
@@ -25,5 +26,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
 });
+
+BotaoOpcaoCadastro.propTypes = {
+    texto: PropTypes.string,
+    onPress: PropTypes.func,
+    styleBotao: PropTypes.object,
+    styleTexto: PropTypes.object
+}
 
 export default BotaoOpcaoCadastro

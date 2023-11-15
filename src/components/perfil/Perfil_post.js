@@ -5,6 +5,7 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import { Divider } from 'react-native-elements';
 import Imagem from '../geral/Imagem';
 import { useNavigation } from '@react-navigation/native';
+import PropTypes from 'prop-types';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
@@ -103,5 +104,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
 });
+
+Perfil_post.propTypes = {
+  data: PropTypes.object
+}
 
 export default Perfil_post;

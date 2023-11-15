@@ -4,6 +4,7 @@ import { corBordaBoxCad, corFundo } from '../../constants';
 import PropTypes from 'prop-types';
 
 const Carregando = (props) => {
+    const cor = props.cor ? props.cor : corBordaBoxCad;
 
     return (
         <>
@@ -11,7 +12,7 @@ const Carregando = (props) => {
                 <View style={styles.Container}>
                     <Image source={require('../../../assets/img/splash.png')} style={styles.ImagemFundo} />
                     <View style={styles.ContainerContent}>
-                        <ActivityIndicator size="large" color={corBordaBoxCad} />
+                        <ActivityIndicator size="large" color={cor} />
                     </View>
                 </View>}
         </>
@@ -47,7 +48,8 @@ const styles = StyleSheet.create({
 });
 
 Carregando.propTypes = {
-    carregando: PropTypes.bool
+    carregando: PropTypes.bool,
+    cor: PropTypes.string
 }
 
 export default Carregando;

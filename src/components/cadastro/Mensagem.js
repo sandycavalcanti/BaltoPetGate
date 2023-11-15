@@ -1,4 +1,5 @@
 import { Text } from 'react-native'
+import PropTypes from 'prop-types';
 
 const Mensagem = (props) => {
     const texto = props.texto
@@ -20,6 +21,10 @@ const Mensagem = (props) => {
             {texto && <Text style={{ color: cor }}>{texto}</Text>}
         </>
     )
+}
+
+Mensagem.propTypes = {
+    texto: PropTypes.string,
 }
 
 export default Mensagem

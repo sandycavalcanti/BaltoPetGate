@@ -71,28 +71,3 @@ const CadUsuario = () => {
 }
 
 export default CadUsuario
-
-
-
-
-
-
-
-
-
-
-
-const InserirDados = async () => {
-  try {
-    const response = await axios.post(urlAPI + 'cadanimal', {
-      TB_PESSOA_ID: id,
-      TB_ANIMAL_NOME: nome,
-      TB_ANIMAL_IDADE: idade,
-      TB_ANIMAL_IDADE_TIPO: idadeTipo,
-      TB_ANIMAL_PORTE: porte,
-    })
-    console.log(response.data)
-  } catch (error) {
-    console.error(error)
-  }
-}

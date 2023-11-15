@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoDica = (props) => {
     const [textoDica, setTextoDica] = useState(false);
     return (
         <View style={styles.containercampo}>
             <TextInput onChangeText={text => props.set(text)} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo} {...props} />
-            {props.opcional ? <Text style={styles.asterisco}></Text> : <Text style={styles.asterisco}>*</Text>}
+            {!props.opcional && <Text style={styles.asterisco}>*</Text>}
             {textoDica && <Text style={styles.dica}>{props.textodica}</Text>}
         </View>
     )
@@ -40,5 +41,13 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 });
+
+CampoDica.propTypes = {
+    set: PropTypes.func,
+    placeholder: PropTypes.string,
+    textodica: PropTypes.string,
+    keyboardType: PropTypes.string,
+    opcional: PropTypes.bool
+}
 
 export default CampoDica

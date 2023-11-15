@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+import PropTypes from 'prop-types';
 
 const CheckBoxComponent = (props) => {
   const [checked, setChecked] = useState(false);
@@ -27,8 +28,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
 });
+
+CheckBoxComponent.propTypes = {
+  set: PropTypes.func,
+  texto: PropTypes.string
+}
 
 export default CheckBoxComponent;

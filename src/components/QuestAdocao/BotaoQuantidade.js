@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { corBordaBoxCad, corPlaceholderCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const BotaoQuantidade = (props) => {
-  
   const [quantidade, setQuantidade] = useState(0);
 
   const aumentarQuantidade = () => {
@@ -31,6 +31,7 @@ const BotaoQuantidade = (props) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   Container: {
     justifyContent:'space-evenly',
@@ -59,4 +60,9 @@ const styles = StyleSheet.create({
     fontSize: 22
   }
 });
+
+BotaoQuantidade.propTypes = {
+  set: PropTypes.func
+}
+
 export default BotaoQuantidade;

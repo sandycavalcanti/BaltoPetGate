@@ -1,8 +1,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useState } from 'react'
 import { corDesabilitado } from '../../constants'
-import PropTypes from 'prop-types';
 import { MaterialIcons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
 
 const BotaoCheckBox = (props) => {
     const isCheckedDefaultValue = props.valor ? props.valor : props.jaativado

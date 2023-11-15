@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { View, Text, TextInput, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoSenha = (props) => {
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [textoDica, setTextoDica] = useState(false);
+
     return (
         <View style={styles.containercampo}>
             <View style={styles.containersenha}>
@@ -109,5 +111,10 @@ const styles = StyleSheet.create({
         color: 'red',
     }
 });
+
+CampoSenha.propTypes = {
+    set1: PropTypes.func,
+    set2: PropTypes.func
+}
 
 export default CampoSenha

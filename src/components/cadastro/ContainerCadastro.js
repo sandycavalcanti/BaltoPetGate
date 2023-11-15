@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const ContainerCadastro = (props) => {
   return (
     <ScrollView style={styles.scroll}>
-      <SafeAreaView  style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
         <Text style={styles.titulo}>{props.titulo}</Text>
         {props.children}
@@ -14,9 +14,9 @@ const ContainerCadastro = (props) => {
   );
 };
 const styles = StyleSheet.create({
-  scroll:{
-    width: '100%', 
-    height: '100%', 
+  scroll: {
+    width: '100%',
+    height: '100%',
     backgroundColor: corFundoCad,
   },
   container: {

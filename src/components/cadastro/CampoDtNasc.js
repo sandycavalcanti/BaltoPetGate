@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoDtNasc = (props) => {
     const [data, setData] = useState('');
@@ -87,5 +88,11 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 });
+
+CampoDtNasc.propTypes = {
+    set: PropTypes.func,
+    val: PropTypes.number || PropTypes.string,
+    opcional: PropTypes.bool
+}
 
 export default CampoDtNasc

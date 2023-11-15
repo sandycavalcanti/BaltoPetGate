@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const BotaoCadastrar = (props) => {
     return (
         <TouchableOpacity {...props} style={[styles.botaocadastro, props.styleBotao]}>
-            <Text style={styles.textocadastro}>{props.texto ? props.texto : 'Cadastrar'}</Text>
+            <Text style={[styles.textocadastro, props.styleTexto]}>{props.texto ? props.texto : 'Cadastrar'}</Text>
         </TouchableOpacity>
     )
 }
@@ -30,7 +30,9 @@ const styles = StyleSheet.create({
 
 BotaoCadastrar.propTypes = {
     texto: PropTypes.string,
-    styleBotao: PropTypes.object
+    onPress: PropTypes.func,
+    styleBotao: PropTypes.object,
+    styleTexto: PropTypes.object
 }
 
 export default BotaoCadastrar

@@ -92,7 +92,7 @@ const CadPostagem = () => {
         <>
           <Text style={styles.subtitle}>Pré-visualização:</Text>
           <Perfil_post data={dataPerfilPost} />
-          <Post text={comentario} date={new Date()} img={imagem} />
+          <Post text={comentario} img={imagem} />
         </>}
       {mensagem && <Text style={[styles.subtitle, { color: mensagem.color }]}>{mensagem.text}</Text>}
       <View style={styles.Botao}>

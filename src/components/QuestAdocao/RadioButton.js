@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const RadioButton = (props) => {
   const options = props.opcoes;
@@ -15,31 +16,22 @@ const RadioButton = (props) => {
     switch (option) {
       case true:
         return 'Sim';
-        break;
       case false:
         return 'Não';
-        break;
       case 'INDEFINIDO':
         return 'Não sei informar';
-        break;
       case 'CASA':
         return 'Casa';
-        break;
       case 'APARTAMENTO':
         return 'Apartamento';
-        break;
       case 'POUCO':
         return 'Pouco';
-        break;
       case 'MEDIO':
         return 'Médio';
-        break;
       case 'MUITO':
         return 'Muito';
-        break;
       default:
         return option;
-        break;
     }
   }
 
@@ -83,5 +75,10 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
 });
+
+RadioButton.propTypes = {
+  set: PropTypes.func,
+  opcoes: PropTypes.array
+}
 
 export default RadioButton;

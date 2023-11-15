@@ -37,7 +37,9 @@ const styles = StyleSheet.create({
 CampoSimples.propTypes = {
   set: PropTypes.func,
   val: PropTypes.string,
-  opcional: PropTypes.bool
+  opcional: PropTypes.bool,
+  placeholder: PropTypes.string,
+  keyboardType: PropTypes.string,
 }
 
 export default CampoSimples
