@@ -1,5 +1,5 @@
 import AnimalPost from '../../components/perfil/AnimalPost';
-import { TouchableOpacity, Text, View, StyleSheet, FlatList, ScrollView, Dimensions } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { corFundoCad, urlAPI } from '../../constants';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -9,33 +9,39 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
+    const controller = new AbortController();
 
     const Selecionar = () => {
-        axios.get(urlAPI + 'selanimais')
-            .then((response) => {
+        axios.get(urlAPI + 'selanimais', { signal: controller.signal })
+            .then(response => {
                 setSelect(response.data)
-            }).catch((error) => {
-                console.error('Error:', error)
+            }).catch(error => {
+                if (error.response) {
+                    let erro = error.response.data;
+                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                    console.error(erro.error, error);
+                } else {
+                    console.error('Error:', error);
+                }
             })
     }
 
     useEffect(() => {
-        Selecionar()
+        Selecionar();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
     return (
         <View style={styles.container}>
             <>
-                <FlatList
-                    style={styles.Lista}
-                    data={select}
-                    renderItem={({ item }) => (
-                        <>
-                            <Perfil_post data={item} />
-                            <AnimalPost data={item} />
-                        </>
-                    )}
-                />
+                <FlatList style={styles.Lista} data={select} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => (
+                    <>
+                        <Perfil_post data={item} />
+                        <AnimalPost data={item} />
+                    </>
+                )} />
             </>
         </View>
     );

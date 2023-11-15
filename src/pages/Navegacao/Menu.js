@@ -15,30 +15,30 @@ const Menu = ({ navigation: { navigate } }) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container, header: () => <HeaderExplorar />, tabBarShowLabel: false, title: '' }} >
+            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container, tabBarHideOnKeyboard: true, header: () => <HeaderExplorar />, tabBarShowLabel: false, title: '' }} >
                 <Tab.Screen
                     name="Home"
                     component={Home}
                     options={{
-                        tabBarIcon: () => <Octicons name="home" size={30} color="white" />,
+                        tabBarIcon: props => <Octicons name="home" size={30} color={props.focused ? '#fff' : '#eee'} />,
                     }} />
                 <Tab.Screen
                     name="Explorar"
                     component={Explorar}
                     options={{
-                        tabBarIcon: () => <Ionicons name="search-sharp" size={35} color="white" />,
+                        tabBarIcon: props => <Ionicons name="search-sharp" size={35} color={props.focused ? '#fff' : '#eee'} />,
                     }} />
                 <Tab.Screen
                     name="Mapa"
                     component={Mapa}
                     options={{
-                        tabBarIcon: () => <Feather name="map-pin" size={30} color="white" />,
+                        tabBarIcon: props => <Feather name="map-pin" size={30} color={props.focused ? '#fff' : '#eee'} />,
                     }} />
                 <Tab.Screen
                     name="Animal"
                     component={Animal}
                     options={{
-                        tabBarIcon: () => <Ionicons name="paw-outline" size={33} color="white" />,
+                        tabBarIcon: props => <Ionicons name="paw-outline" size={33} color={props.focused ? '#fff' : '#eee'} />,
                     }} />
             </Tab.Navigator>
             <StatusBar />

@@ -1,37 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
 import axios from 'axios';
-import { corFundoCad, urlAPI, urlLocal } from "../../constants";
+import { corFundoCad, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 
-export default function Explorar({ navigation: { navigate } }) {
-
+const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
+  const controller = new AbortController();
 
   const Selecionar = () => {
-    axios.get(urlAPI + 'selpostagem')
-      .then((response) => {
+    axios.get(urlAPI + 'selpostagem', { signal: controller.signal })
+      .then(response => {
         setSelect(response.data)
-      }).catch((error) => {
-        console.error('Error:', error)
+      }).catch(error => {
+        if (error.response) {
+          let erro = error.response.data;
+          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          console.error(erro.error, error);
+        } else {
+          console.error('Error:', error);
+        }
       })
   }
 
   useEffect(() => {
-    Selecionar()
+    Selecionar();
+    return (() => {
+      controller.abort();
+    })
   }, []);
 
   return (
     <View style={styles.container}>
-      <FlatList style={styles.Lista}
-        data={select}
-        renderItem={({ item }) => (
-          <>
-            <Perfil_post data={item} />
-            <Post data={item} />
-          </>
-        )}
+      <FlatList style={styles.Lista} data={select} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => (
+        <>
+          <Perfil_post data={item} />
+          <Post data={item} />
+        </>
+      )}
       />
     </View>
   );
@@ -50,3 +57,5 @@ const styles = StyleSheet.create({
     width: '100%'
   }
 });
+
+export default Explorar;
