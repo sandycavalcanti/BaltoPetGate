@@ -5,7 +5,6 @@ import { useState } from "react";
 import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, corBordaBoxCad } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Recaptcha from 'react-native-recaptcha-that-works';
 
 let numeroTentativas = 0;
 

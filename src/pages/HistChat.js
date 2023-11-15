@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, Dimensions, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -6,19 +6,15 @@ import { corBordaBoxCad, urlAPI } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
 import DecodificarToken from '../utils/DecodificarToken';
 import GrupoContatos from '../components/chat/GrupoContatos';
+import RemoverAcentos from '../utils/RemoverAcentos';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const HisChat = () => {
   const TB_PESSOA_IDD = useRef(null)
   const pessoasJson = useRef([])
-  const usuarios = useRef([])
-  const veterinarios = useRef([])
-  const ongs = useRef([])
-  const casasderacao = useRef([])
-  const desativados = useRef([])
   const [pesquisa, setPesquisa] = useState("");
-  const [refresh, setRefresh] = useState(0);
+  const textInputRef = useRef(null);
 
   const controller = new AbortController();
   const [carregando, setCarregando] = useState(true);
@@ -52,36 +48,39 @@ const HisChat = () => {
   }, []);
 
   // Função para atualizar a lista de contatos com base no texto da pesquisa
-  useEffect(() => {
-    const Filtrar = (type) => {
-      let pessoasFiltradas = pessoasJson.current
-      return pessoasFiltradas
-        .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
-        .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID))
-        .filter((pessoa) => pessoa.TB_CHAT_STATUS);
-    }
-    const chatsDesativados = pessoasJson.current.filter((pessoa) => !pessoa.TB_CHAT_STATUS);
-    usuarios.current = Filtrar([1, 7]);
-    veterinarios.current = Filtrar([2]);
-    ongs.current = Filtrar([3, 4, 5]);
-    casasderacao.current = Filtrar([6]);
-    desativados.current = chatsDesativados;
-    refreshPage();
-  }, [pesquisa, pessoasJson.current]);
-
-  const refreshPage = () => {
-    setRefresh(prev => prev + 1);
+  const FiltrarPorTipo = (type) => {
+    return pessoasJson.current
+      .filter(pessoa => RemoverAcentos(pessoa.TB_PESSOA_NOME_PERFIL).includes(RemoverAcentos(pesquisa)))
+      .filter(pessoa => type.includes(pessoa.TB_TIPO_ID))
+      .filter(pessoa => pessoa.TB_CHAT_STATUS);
   }
-  
+
+  const FiltrarDesativados = () => {
+    return pessoasJson.current
+      .filter(pessoa => RemoverAcentos(pessoa.TB_PESSOA_NOME_PERFIL).includes(RemoverAcentos(pesquisa)))
+      .filter(pessoa => !pessoa.TB_CHAT_STATUS)
+  }
+
+  const usuarios = useMemo(() => FiltrarPorTipo([1, 7]), [pessoasJson.current, pesquisa]);
+  const veterinarios = useMemo(() => FiltrarPorTipo([2]), [pessoasJson.current, pesquisa]);
+  const ongs = useMemo(() => FiltrarPorTipo([3, 4, 5]), [pessoasJson.current, pesquisa]);
+  const casasderacao = useMemo(() => FiltrarPorTipo([6]), [pessoasJson.current, pesquisa]);
+  const desativados = useMemo(() => FiltrarDesativados(), [pessoasJson.current, pesquisa]);
+
+  const Fechar = () => {
+    setPesquisa('');
+    textInputRef.current.blur();
+  }
+
   return (
-    <ScrollView>
+    <ScrollView keyboardShouldPersistTaps='always'>
       <SafeAreaView style={styles.container}>
         <View style={styles.groupBox}>
           <Text style={styles.titulo}>Chat</Text>
           <View style={styles.searchBar}>
-            <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" />
+            <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" ref={textInputRef} />
             {pesquisa !== '' &&
-              <TouchableOpacity onPress={() => setPesquisa('')}>
+              <TouchableOpacity onPress={Fechar}>
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>}
           </View>
@@ -90,11 +89,11 @@ const HisChat = () => {
               <ActivityIndicator size="large" color={corBordaBoxCad} />
             </View> :
             <View style={styles.contacts}>
-              <GrupoContatos data={usuarios.current} titulo="Usuários" />
-              <GrupoContatos data={veterinarios.current} titulo="Veterinários" />
-              <GrupoContatos data={ongs.current} titulo="Instituições/Protetores/Abrigos" />
-              <GrupoContatos data={casasderacao.current} titulo="Casas de ração" />
-              <GrupoContatos data={desativados.current} titulo="Chats desativados" desativado />
+              <GrupoContatos data={usuarios} titulo="Usuários" />
+              <GrupoContatos data={veterinarios} titulo="Veterinários" />
+              <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
+              <GrupoContatos data={casasderacao} titulo="Casas de ração" />
+              <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
             </View>}
         </View>
       </SafeAreaView>
@@ -111,15 +110,16 @@ const styles = StyleSheet.create({
     flex: 1
   },
   searchBar: {
-    padding: 10,
+    marginHorizontal: 10,
     height: 40,
     flexDirection: 'row',
     alignItems: 'center',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   searchInput: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
     borderRadius: 5,
     padding: 10,
     flex: 1,

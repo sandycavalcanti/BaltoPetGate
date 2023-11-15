@@ -19,7 +19,7 @@ function Home({ navigation: { navigate } }) {
           <TouchableOpacity onPress={() => navigate('uploadimg')}><Text>Upload Img</Text></TouchableOpacity>
         </View>
       </SafeAreaView>
-    </ScrollView >
+    </ScrollView>
   );
 }
 

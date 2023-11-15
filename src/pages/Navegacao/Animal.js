@@ -11,7 +11,7 @@ const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
 
     const Selecionar = () => {
-        axios.get(urlAPI + 'selanimal')
+        axios.get(urlAPI + 'selanimais')
             .then((response) => {
                 setSelect(response.data)
             }).catch((error) => {
