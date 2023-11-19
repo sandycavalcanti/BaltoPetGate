@@ -1,5 +1,4 @@
 import { NavigationContainer } from '@react-navigation/native'
-import { ModalPortal } from 'react-native-modals';
 import { createStackNavigator, TransitionSpecs, HeaderStyleInterpolators, CardStyleInterpolators } from "@react-navigation/stack";
 import { Easing } from 'react-native';
 import Splash from '../Splash';
@@ -9,6 +8,7 @@ import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
+import CadConta from '../cadastro/CadConta';
 import Login from '../login/Login';
 import CadUsuario from "../cadastro/CadUsuario";
 import CadAbrigo from "../cadastro/CadAbrigo";
@@ -43,6 +43,7 @@ const openConfig = {
     restSpeedThreshold: 0.01,
   }
 }
+
 const closeConfig = {
   animation: 'timing',
   config: {
@@ -70,6 +71,7 @@ export default function Navigation() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
           }} />
           <Stack.Screen name="Ficha" component={Ficha_animal} />
+          <Stack.Screen name="CadConta" component={CadConta} />
           <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
           <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
           <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
@@ -107,7 +109,6 @@ export default function Navigation() {
           <Stack.Screen name="uploadimg" component={uploadimg} />
         </Stack.Navigator>
       </NavigationContainer>
-      <ModalPortal />
     </>
   );
 }

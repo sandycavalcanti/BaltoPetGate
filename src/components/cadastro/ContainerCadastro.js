@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const ContainerCadastro = (props) => {
   return (
-    <ScrollView style={styles.scroll}>
+    <ScrollView style={styles.scroll} keyboardShouldPersistTaps="always">
       <SafeAreaView style={styles.container}>
         <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
         <Text style={styles.titulo}>{props.titulo}</Text>

@@ -3,7 +3,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
     const criteriosEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const criteriosNome = /^(?=.*\s)(.{8,})$/;
     const criteriosNomePerfil = /^.{3,}$/;
-    const criteriosSenha = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const criteriosSenha = /^(?=.*\d).{8,}$/;
     const criteriosTelefone = /^\d{10,13}$/;
     const criteriosUrl = /^.{15,}$/;
 
@@ -91,7 +91,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
             mensagemErro += "E-mail inválido.\n";
         }
         if (senha && !criteriosSenha.test(senha)) {
-            mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, um número e uma letra maiúscula. \n";
+            mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, incluindo um número. \n";
         }
         else if (senha !== senhaConfirmacao) {
             mensagemErro += "As senhas não correspondem.";

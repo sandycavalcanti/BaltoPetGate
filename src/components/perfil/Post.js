@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { urlAPI } from '../../constants';
 import { useState } from 'react';
 import Imagem from '../geral/Imagem';
+import PropTypes from 'prop-types';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -77,5 +78,11 @@ const styles = StyleSheet.create({
         aspectRatio: 1
     }
 });
+
+Post.propTypes = {
+    data: PropTypes.object,
+    text: PropTypes.string,
+    img: PropTypes.object
+}
 
 export default Post;
