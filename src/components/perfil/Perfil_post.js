@@ -8,8 +8,13 @@ import Imagem from '../geral/Imagem';
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
-  const dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
+  let dropdownOptions = [];
 
+  if(props.pessoal){
+    dropdownOptions= ['Visualizar perfil', 'Editar'];
+  } else {
+    dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
+  }
   const NavegarParaPerfil = () => {
     props.navigate("Perfil", { id: TB_PESSOA_ID });
   }
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
   dropdownHeader: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'transparent',
     borderRadius: 4,
   },
   dropdownOptions: {

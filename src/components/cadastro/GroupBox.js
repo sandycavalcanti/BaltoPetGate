@@ -19,20 +19,18 @@ const GroupBox = (props) => {
     }, [textRef.current]);
     
     return (
-        <View style={[styles.groupBox, { paddingTop: lineCount == 2 ? 40 : 10 }]}>
-            <Text style={[styles.titulo, { top: lineCount == 2 ? -25 : -20 }]} ref={textRef}>{text}</Text>
+        <View style={[styles.groupBox, {alignItems: props.esquerda ? 'flex-start':'center', borderColor: props.corBorda ? props.corBorda : corBordaBoxCad, paddingTop: lineCount == 2 ? 40 : 10 }]}>
+            <Text style={[styles.titulo, {textAlign: props.esquerda ? 'left':'center', left:props.esquerda ? 10:0, color: props.corTexto ? props.corTexto : corTituloBoxCad, backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad, top: lineCount == 2 ? -25 : -20 }]} ref={textRef}>{text}</Text>
             {props.children}
         </View>
     );
 };
 const styles = StyleSheet.create({
     groupBox: {
-        alignItems: 'center',
         justifyContent: 'center',
         width: '90%',
         paddingBottom: 10,
         borderWidth: 2,
-        borderColor: corBordaBoxCad,
         borderRadius: 10,
         marginVertical: 20,
         position: 'relative',
@@ -43,8 +41,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         marginBottom: 10,
         paddingHorizontal: 10,
-        backgroundColor: corFundoCad,
-        textAlign: 'center'
     },
 });
 

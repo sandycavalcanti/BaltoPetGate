@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import { urlAPI } from '../constants';
-import { TextInput } from 'react-native';
+import FormData from 'form-data';
 
 export default function App() {
   const [image, setImage] = useState(null);
@@ -37,7 +37,6 @@ export default function App() {
         name: 'image.jpg',
       };
 
-      formData.append('TB_PESSOA_NOME_PERFIL', 'Testando');
       formData.append('img', imagem);
 
       await axios.put(urlAPI + 'altpessoa/' + texto, formData, {
@@ -45,8 +44,9 @@ export default function App() {
       }).then(response => {
         console.log(response.data.message)
       }).catch(error => {
-        console.error(error)
-        console.error(error.response.data)
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.error(erro.error, error);
       })
     } else {
       ToastAndroid.show('Insira uma imagem', ToastAndroid.SHORT);
