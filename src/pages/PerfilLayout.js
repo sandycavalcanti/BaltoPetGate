@@ -1,24 +1,30 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo, AntDesign } from '@expo/vector-icons';
-import { urlAPI } from "../constants";
+import { corBordaBoxCad, urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
 import Dropdown from "../components/geral/Dropdown";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
 import Imagem from "../components/geral/Imagem";
-
+import { color } from "react-native-elements/dist/helpers";
+import { Modal, ModalContent } from "react-native-modals";
+import Avaliacoes from "../components/Avaliacao/Avaliacoes";
+import Avaliar from "../components/Avaliacao/Avaliar";
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 let scrollY = 0;
 let item1 = item2 = item3 = {};
 
 const PerfilLayout = (props) => {
+
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
+  const [avaliar, setAvaliar] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
   const [rating, setRating] = useState(0);
   scrollY = props.scrollY;
@@ -84,16 +90,20 @@ const PerfilLayout = (props) => {
       TB_PESSOA_IDD,
       TB_PESSOA_ID,
     }).then(response => {
-      const dados = response.data[0];
-      const TB_CHAT_ID = dados.TB_CHAT_ID;
-      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
-    }).catch(error => {
-      let erro = error.response.data;
-      if (error.response.status !== 404) {
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.error(erro.error, error);
+      const dados = response.data.Selecionar[0];
+      if (dados.TB_CHAT_STATUS == true) {
+        const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
+        navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
       } else {
         CadastrarChat();
+      }
+    }).catch(error => {
+      if (error.response.status == 404) {
+        CadastrarChat();
+      } else {
+        let erro = error.response.data;
+        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        console.log('Erro ao selecionar:', erro.error);
       }
     });
   }
@@ -116,38 +126,82 @@ const PerfilLayout = (props) => {
     await AsyncStorage.removeItem('token');
     navigation.navigate('Login');
   }
+  const Nota = Math.round(props.avaliacoes.media)
 
   return (
-    <SafeAreaView style={styles.container} onLayout={MedirAltura}>
+    <View style={styles.container} onLayout={MedirAltura}>
       <View>
+        <ImageBackground style={styles.imagemFundo} resizeMode="cover" source={require("../../assets/img/FundoPerfil.png")} />
         <View style={styles.Oval}></View>
         <View style={styles.Fundo}></View>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AntDesign name="left" size={28} color="black" />
+            <AntDesign name="left" size={33} color="white" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
-            <Entypo name="dots-three-vertical" size={26} color="black" />
+            <Entypo name="dots-three-vertical" size={30} color="white" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
           <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalVisible} set={setModalVisible} sim='Sair' />
         </View>
         <View style={styles.profileContainer}>
-          <Imagem url={urlImg} style={styles.profileImage} />
-          <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
+          <View>
+            <Imagem url={urlImg} style={styles.profileImage} />
+            <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', top: 20 }}>
+            <View style={{ paddingHorizontal: 25, top: 5 }}>
+              <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>234</Text>
+              <Text style={{ color: '#5F7856', textAlign: 'center' }}>Seguidores</Text>
+              <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
+                <View style={styles.ratingContainer}>
+                  {Array.from({length: 5}).map((_, index) => (
+                    <AntDesign
+                      name={index < Nota ? 'star' : 'staro'}
+                      size={18}
+                      color={index < Nota ? 'gold' : 'gray'}
+                    />
+                  ))}
+                </View>
+              </TouchableOpacity>
+              <Modal visible={avaliacaoVisible} onTouchOutside={() => setAvaliacaoVisible(false)}>
+                <View style={styles.ContainerAvaliacao} >
+                  <ScrollView style={{ flex: 1 }}>
+                    <View>
+                      {props.avaliacoes.Selecionar && props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
+                    </View>
+                  </ScrollView>
+                </View>
+              </Modal>
+            </View>
+            <View>
+              <TouchableOpacity style={[styles.button, { width: '100%', paddingVertical: 4, paddingHorizontal: 5 }]} >
+                <Text style={[styles.buttonText, { fontSize: 17 }]}>Seguir</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
         <View style={styles.buttons}>
           {props.pessoal ?
             <>
-              <TouchableOpacity style={[styles.button, { width: '90%' }]} onPress={() => console.log('Iniciar sesión button pressed')}>
+              <TouchableOpacity style={[styles.button, { width: '90%' }]} onPress={() => navigation.navigate('AlterarPerfil')}>
                 <Text style={styles.buttonText}>Alterar perfil</Text>
               </TouchableOpacity>
             </>
             :
             <>
-              <TouchableOpacity style={styles.button} onPress={() => console.log('Iniciar sesión button pressed')}>
-                <Text style={styles.buttonText}>Seguir</Text>
+              <TouchableOpacity style={styles.button} onPress={() => setAvaliar(true)}>
+                <Text style={styles.buttonText}>Avaliar</Text>
               </TouchableOpacity>
+              <Modal visible={avaliar} onTouchOutside={() => setAvaliar(false)}>
+                <View style={styles.ContainerAvaliar} >
+                  <ScrollView style={{ flex: 1 }}>
+                    <View>
+                      <Avaliar TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD}/>
+                    </View>
+                  </ScrollView>
+                </View>
+              </Modal>
               <TouchableOpacity style={styles.button} onPress={IniciarChat}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
@@ -174,7 +228,7 @@ const PerfilLayout = (props) => {
           ))}
         </View>
       </View>
-    </SafeAreaView >
+    </View >
   );
 }
 
@@ -183,21 +237,28 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#C1E6CD',
   },
+  imagemFundo: {
+    position: 'absolute',
+    height: "100%",
+    width: '100%',
+  },
   Oval: {
     position: 'absolute',
     width: windowWidth / 2,
     height: windowWidth / 2,
-    top: 140,
+    top: 200,
     left: windowWidth / 4,
     borderRadius: 120,
     backgroundColor: '#CEF7FF',
-    transform: [{ scaleX: 2 }],
+    transform: [{ scaleX: 2.3 }],
+    shadowColor: '#171717',
+    shadowOffset: { width: 2, height: 4 },
   },
   Fundo: {
     position: 'absolute',
     width: '100%',
-    height: 100,
-    top: 240,
+    height: 150,
+    top: 300,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',
   },
@@ -206,20 +267,27 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 60,
   },
   profileContainer: {
-    width: 250,
+    width: '100%',
     alignItems: 'center',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
     shadowColor: '#171717',
     shadowOffset: { width: 2, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3,
+    paddingHorizontal: 30,
+    paddingTop: 50
   },
   profileImage: {
-    width: 200,
-    height: 200,
+    width: 170,
+    height: 170,
     borderRadius: 100,
     marginBottom: 10,
+    borderColor: '#fff',
+    borderWidth: 2,
   },
   profileName: {
     fontSize: 20,
@@ -235,12 +303,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   button: {
-    backgroundColor: '#A7DEC0',
+    backgroundColor: '#B2EDC5',
     width: '47%',
     borderRadius: 5,
     justifyContent: "center",
     alignItems: 'center',
-    borderColor: "#448659",
+    borderColor: "#84B794",
     borderWidth: 1,
     padding: 5
   },
@@ -262,7 +330,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 10,
+    marginVertical: 5,
+  },
+  ContainerAvaliacao: {
+    width: 320,
+    height: 500,
+    backgroundColor: '#EFEFEF',
+    borderColor: '#CF8989',
+    borderWidth: 2,
+    borderRadius: 6
+  },
+  ContainerAvaliar: {
+    width: 320,
+    minHeight: 200,
+    backgroundColor: '#EFEFEF',
+    borderColor: '#CF8989',
+    borderWidth: 2,
+    borderRadius: 6
   },
 });
 

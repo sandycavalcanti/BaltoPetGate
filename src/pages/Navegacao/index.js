@@ -24,6 +24,7 @@ import Perfil from '../Perfil';
 import Postagem from '../Postagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
+import AlterarPerfil from '../cadastro/AlterarPerfil';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
 import Chat from '../Chat';
 
@@ -82,7 +83,9 @@ export default function Navigation() {
           <Stack.Screen name="CadEstabelecimento" component={CadEstabelecimento} />
           <Stack.Screen name="RecSenha" component={RecSenha} />
           <Stack.Screen name="VerCodigo" component={VerCodigo} />
-          <Stack.Screen name="Perfil" component={Perfil} />
+          <Stack.Screen name="Perfil" component={Perfil} options={{
+            
+          }}/>
           <Stack.Screen name="CriarSenha" component={CriarSenha} />
           <Stack.Screen name="Postagem" component={Postagem} />
           <Stack.Screen name="HisChat" component={HisChat} options={{
@@ -98,6 +101,7 @@ export default function Navigation() {
           }} />
           <Stack.Screen name="Teste" component={Teste} />
           <Stack.Screen name="AlterarCad" component={AlterarCad} />
+          <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
           <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
           <Stack.Screen name="InfoChat" component={InfoChat} options={{
             gestureEnabled: false,

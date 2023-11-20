@@ -9,7 +9,7 @@ import RadioButton3 from "../../components/animal/Radiobutton3";
 import RadioButton2 from "../../components/animal/radioButton2";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import CampoEndereco from "../../components/cadastro/CampoEndereco";
-import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
+// import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
@@ -279,7 +279,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 <GroupBox titulo='Localização'>
                     <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
-                <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} />
+                {/* <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} /> */}
                 <Mensagem texto={message} />
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
             </ContainerCadastro>

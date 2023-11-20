@@ -37,7 +37,6 @@ export default function App() {
         name: 'image.jpg',
       };
 
-      formData.append('TB_PESSOA_NOME_PERFIL', 'Testando');
       formData.append('img', imagem);
 
       await axios.put(urlAPI + 'altpessoa/' + texto, formData, {

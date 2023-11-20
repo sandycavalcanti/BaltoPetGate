@@ -44,6 +44,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectPessoa, setSelectPessoa] = useState({});
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
+  const [selectAvaliacao, setSelectAvaliacao] = useState({});
 
   const SelecionarPublicacoes = async () => {
     await axios.post(urlAPI + 'selanimal/filtrar', {
@@ -67,7 +68,21 @@ const Perfil = ({ navigation: { navigate } }) => {
         ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
         console.error('Erro ao selecionar:', erro.error);
       }
-    })
+    });
+  }
+
+  const SelecionarAvaliacoes = async() => {
+    await axios.post(urlAPI + 'selavaliacao/filtrar', {
+      TB_PESSOA_AVALIADA_ID: id
+    }).then((response) => {
+      setSelectAvaliacao(response.data);
+    }).catch((error) => {
+      if (error.response.status !== 404) {
+        let erro = error.response.data;
+        ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error);
+      };
+    });
   }
 
   useEffect(() => {
@@ -79,6 +94,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         .then(async (response) => {
           setSelectPessoa(response.data[0]);
           await SelecionarPublicacoes();
+          await SelecionarAvaliacoes();
         }).catch((error) => {
           try {
             setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
@@ -211,7 +227,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout avaliacoes={selectAvaliacao} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -228,7 +244,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab2Item = ({ item, index }) => {
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        {/* <Perfil_post /> */}
+        <Perfil_post navigate={navigate} data={item} pessoal={pessoal}/>
         <Post data={item} />
       </View>
     );
@@ -261,7 +277,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#222'
+    color: '#216327'
   },
   tab: {
     elevation: 0,
@@ -270,7 +286,11 @@ const styles = StyleSheet.create({
     height: TabBarHeight,
   },
   indicator: {
-    backgroundColor: '#202'
+    backgroundColor: '#A7DEC0',
+    borderRadius:2,
+    borderWidth: 1.5,
+    borderColor: '#fff'
+
   },
 });
 
