@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { corBordaBoxCad, corFundoCad, corTituloBoxCad } from '../../constants';
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 const GroupBox = (props) => {
     const text = props.titulo;
@@ -25,6 +26,7 @@ const GroupBox = (props) => {
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     groupBox: {
         justifyContent: 'center',
@@ -43,5 +45,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 });
+
+GroupBox.propTypes = {
+    titulo: PropTypes.string
+}
 
 export default GroupBox

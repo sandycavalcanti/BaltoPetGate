@@ -1,5 +1,6 @@
-import { SafeAreaView, Text, ImageBackground, StyleSheet, ScrollView, View } from 'react-native';
+import { SafeAreaView, Text, ImageBackground, StyleSheet, ScrollView } from 'react-native';
 import { corFundoCad, corTituloCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const ContainerCadastro = (props) => {
   return (
@@ -35,5 +36,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+ContainerCadastro.propTypes = {
+  titulo: PropTypes.string
+}
 
 export default ContainerCadastro

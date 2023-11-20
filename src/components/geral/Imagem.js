@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { StyleSheet, Image } from 'react-native';
+import PropTypes from 'prop-types';
 
 const Imagem = (props) => {
-    const [imageExists, setImageExists] = useState(true);
+    const imageExistsDefaultValue = !props.remove;
+    const [imageExists, setImageExists] = useState(imageExistsDefaultValue);
+    const controller = new AbortController();
 
     const ChecarImagem = async () => {
         try {
-            const response = await fetch(props.url);
+            const response = await fetch(props.url, { signal: controller.signal });
             setImageExists(response.ok);
             if (props.setResult) props.setResult(response.ok)
         } catch (error) {
@@ -17,11 +20,14 @@ const Imagem = (props) => {
 
     useEffect(() => {
         ChecarImagem();
+        return (() => {
+            controller.abort();
+        })
     }, [props.url]);
 
     return (
         <>
-            {imageExists ?
+            {imageExists ? 
                 <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: props.url }} resizeMode='cover' />
                 :
                 !props.remove &&
@@ -37,5 +43,13 @@ const styles = StyleSheet.create({
         height: 50,
     },
 });
+
+Imagem.propTypes = {
+    url: PropTypes.string,
+    style: PropTypes.object,
+    setResult: PropTypes.func,
+    desativado: PropTypes.bool,
+    remove: PropTypes.bool
+};
 
 export default Imagem

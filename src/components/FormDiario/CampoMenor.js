@@ -1,8 +1,7 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
-import PropTypes from 'prop-types';
 
-const CampoSimples = (props) => {
+const CampoMenor = (props) => {
   return (
     <View style={styles.containercampo}>
       <TextInput onChangeText={text => props.set(text)} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
@@ -13,7 +12,10 @@ const CampoSimples = (props) => {
 
 const styles = StyleSheet.create({
   containercampo: {
-    width: '95%',
+    width: '50%',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginHorizontal: 30,
   },
   campo: {
     width: '100%',
@@ -34,10 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-CampoSimples.propTypes = {
-  set: PropTypes.func,
-  val: PropTypes.string,
-  opcional: PropTypes.bool
-}
-
-export default CampoSimples
+export default CampoMenor

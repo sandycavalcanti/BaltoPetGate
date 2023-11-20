@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Perfil_post from '../../components/perfil/Perfil_post';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
@@ -36,7 +35,6 @@ const Animal = ({ navigation: { navigate } }) => {
                             <AnimalPost navigate={navigate} data={item} />
                         </>
                     )}
-                    keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
                 />
             </>
         </View>

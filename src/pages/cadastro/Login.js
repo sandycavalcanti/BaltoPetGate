@@ -35,7 +35,7 @@ const Login = ({ navigation: { navigate } }) => {
         await axios.post(urlAPI + 'login', {
             TB_PESSOA_EMAIL: email,
             TB_PESSOA_SENHA: senha,
-        }).then(async (response) => {
+        }).then(async response => {
             setCarregando(true);
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
@@ -57,14 +57,9 @@ const Login = ({ navigation: { navigate } }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground
-                style={styles.imagem}
-                resizeMode="contain"
-                source={require("../../../assets/img/Logo.png")}
-            />
+            <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
             {mensagem && <Text style={styles.mensagem}>{mensagem}</Text>}
             <View style={styles.containercampo}>
-                {/* <FontAwesome5 name="user" size={25} /> */}
                 <TextInput
                     onChangeText={(text) => setEmail(text)}
                     placeholderTextColor={corPlaceholderCad}
@@ -74,7 +69,6 @@ const Login = ({ navigation: { navigate } }) => {
             </View>
             <View style={styles.containersenha}>
                 <View style={styles.containercamposenha}>
-                    {/* <FontAwesome5 name="lock" size={25} /> */}
                     <View style={styles.caixacampo}>
                         <TextInput
                             onChangeText={(text) => setSenha(text)}
@@ -83,9 +77,7 @@ const Login = ({ navigation: { navigate } }) => {
                             placeholder={"Senha"}
                             style={styles.campo}
                         />
-                        <TouchableWithoutFeedback
-                            onPress={() => setMostrarSenha(!mostrarSenha)}
-                        >
+                        <TouchableWithoutFeedback onPress={() => setMostrarSenha(!mostrarSenha)}>
                             {mostrarSenha ? (
                                 <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 15 }} />
                             ) : (
@@ -117,7 +109,7 @@ const Login = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={async () => {
                 const TokenUsuario = await AsyncStorage.getItem('token');
                 if (TokenUsuario == null) {
-                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk2NTE5Mzg2LCJleHAiOjE3MDE3MDMzODZ9.y6qYsNgKcp0ZeSx8fCf63O6bBOZW2D3JpR3Mp57bc70');
+                    await AsyncStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUQl9QRVNTT0FfSUREIjoxLCJUQl9USVBPX0lERCI6MSwiaWF0IjoxNjk4NDUzNzMyLCJleHAiOjE3MDM2Mzc3MzJ9.UY6rYIHINNyXAEeuTw5tbeUIKhjA_5xjzr9txiCVtY0');
                     setTimeout(() => {
                         navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
                     }, 2000);

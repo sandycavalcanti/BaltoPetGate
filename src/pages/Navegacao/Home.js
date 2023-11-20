@@ -1,8 +1,7 @@
 import { TouchableOpacity, Text, View, StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import { corFundoCad } from "../../constants";
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 function Home({ navigation: { navigate } }) {
 

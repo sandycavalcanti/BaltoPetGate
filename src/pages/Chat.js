@@ -1,105 +1,97 @@
-import { useCallback, useReducer, useEffect, useState } from 'react';
-import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, Image, ScrollView, ToastAndroid, ActivityIndicator } from 'react-native';
-import { Bubble, Composer, GiftedChat, InputToolbar, MessageImage, Send, SystemMessage, Time, MessageText } from 'react-native-gifted-chat';
+import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
+import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
-import AccessoryBar from '../components/chat/AccessoryBar';
-import CustomActions from '../components/chat/CustomActions';
-import CustomView from '../components/chat/CustomView';
 import { corBordaBoxCad, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
-import { Modal, SlideAnimation } from 'react-native-modals';
-import { Divider } from "react-native-elements";
-import { FontAwesome5, AntDesign } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import axios from "axios";
-import socket from "../utils/Socket";
 import parsePatterns from '../components/chat/parsePatterns';
-
-let msgPessoal = TB_PESSOA_IDD = editando = podeExcluir = desativado = podeEditar = null;
-let mensagemSelecionada = {};
-let msgEmptyChat = 'Nenhuma mensagem ainda';
+import FormData from 'form-data';
+import ModalMensagem from '../components/chat/ModalMensagem';
+import { renderActions, renderBubble, renderChatEmpty, renderComposer, renderCustomView, renderInputToolbar, renderSend, renderSystemMessage, renderTime } from '../components/chat/ChatRenders';
 
 const ActionKind = {
     SEND_MESSAGE: 'SEND_MESSAGE',
-    LOAD_EARLIER_MESSAGES: 'LOAD_EARLIER_MESSAGES',
-    LOAD_EARLIER_START: 'LOAD_EARLIER_START',
     SET_IS_TYPING: 'SET_IS_TYPING',
 };
 
 function reducer(state, action) {
     switch (action.type) {
         case ActionKind.SEND_MESSAGE: {
-            return {
-                ...state,
-                step: state.step + 1,
-                messages: action.payload,
-            };
-        }
-        case ActionKind.LOAD_EARLIER_MESSAGES: {
-            return {
-                ...state,
-                loadEarlier: true,
-                isLoadingEarlier: false,
-                messages: action.payload,
-            };
-        }
-        case ActionKind.LOAD_EARLIER_START: {
-            return {
-                ...state,
-                isLoadingEarlier: true,
-            };
+            return { ...state, step: state.step + 1, messages: action.payload };
         }
         case ActionKind.SET_IS_TYPING: {
-            return {
-                ...state,
-                isTyping: action.payload,
-            };
+            return { ...state, isTyping: action.payload };
         }
     }
-}
+};
 
 const Chat = () => {
     const route = useRoute();
     const { TB_CHAT_ID, TB_PESSOA_ID } = route.params;
 
-    const [dadosChat, setDadosChat] = useState({});
-    const [mensagens, setMensagens] = useState([]);
-    const [textoDigitado, setTextoDigitado] = useState('');
+    const TB_PESSOA_IDD = useRef(null)
+    const mensagens = useRef([]);
+    const dadosChat = useRef({});
+    const animais = useRef([]);
+    const mensagemSelecionada = useRef({});
+    const msgPessoal = useRef(false);
+    const msgEmptyChat = useRef('Nenhuma mensagem ainda');
+    const editando = useRef(false);
+    const respondendo = useRef(false);
+    const desativado = useRef(false);
+    const podeEditar = useRef(false);
+    const podeExcluir = useRef(false)
 
+    const [textoDigitado, setTextoDigitado] = useState('');
+    const [alturaViewRespondendo, setAlturaViewRespondendo] = useState(50);
     const [carregando, setCarregando] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+
+    let user = { _id: TB_PESSOA_IDD.current }
+    const [state, dispatch] = useReducer(reducer, {
+        messages: mensagens.current,
+        step: 0,
+        isTyping: false,
+    });
+    const controller = new AbortController();
 
     const SelecionarMensagens = async () => {
         await axios.post(urlAPI + 'selmensagem/filtrar', {
             TB_CHAT_ID
-        }).then(response => {
-            const mensagensBanco = response.data;
-            const mensagensGiftedChat = mensagensBanco.map((item) => {
-                let mensagemTexto = '';
-                let mensagemAlterada = false;
-                if (item.TB_MENSAGEM_TEXTO_ALTERADO) {
-                    mensagemTexto = item.TB_MENSAGEM_TEXTO_ALTERADO;
-                    mensagemAlterada = true;
-                }
-                else {
-                    mensagemTexto = item.TB_MENSAGEM_TEXTO
-                }
-                let mensagemExcluida = item.TB_MENSAGEM_STATUS == false;
-                return {
-                    _id: item.TB_MENSAGEM_ID,
-                    text: mensagemTexto,
-                    createdAt: new Date(item.createdAt),
-                    user: {
-                        _id: item.TB_PESSOA_ID
-                    },
-                    mensagemAlterada: mensagemAlterada,
-                    mensagemExcluida: mensagemExcluida
-                }
-            });
-            setMensagens(mensagensGiftedChat);
-            dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
+        }, { signal: controller.signal }).then(response => {
+            if (response.data) {
+                const mensagensBanco = response.data;
+                const mensagensGiftedChat = mensagensBanco.map((item) => {
+                    let mensagemTexto = item.TB_MENSAGEM_TEXTO;
+                    let mensagemAlterada = false;
+                    let mensagemImg = null;
+                    let mensagemExcluida = !item.TB_MENSAGEM_STATUS;
+                    if (item.TB_MENSAGEM_TEXTO_ALTERADO) {
+                        mensagemTexto = item.TB_MENSAGEM_TEXTO_ALTERADO;
+                        mensagemAlterada = true;
+                    }
+                    if (item.TB_MENSAGEM_POSSUI_IMG) {
+                        mensagemImg = urlAPI + 'selmensagemimg/' + item.TB_MENSAGEM_ID;
+                    }
+                    return {
+                        _id: item.TB_MENSAGEM_ID,
+                        text: mensagemTexto,
+                        createdAt: new Date(item.createdAt),
+                        user: { _id: item.TB_PESSOA_ID },
+                        mensagemAlterada: mensagemAlterada,
+                        mensagemExcluida: mensagemExcluida,
+                        image: mensagemImg,
+                        reply_id: item.TB_MENSAGEM_RESPOSTA_ID
+                    }
+                });
+                mensagens.current = mensagensGiftedChat
+                dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
+            }
         }).catch(error => {
-            if (error.response.status !== 404) {
+            if (error.response.status !== 404 && error.response) {
                 let erro = error.response.data;
                 ToastAndroid.show(erro.message, ToastAndroid.SHORT);
                 console.error('Erro ao selecionar:', erro.error);
@@ -110,29 +102,36 @@ const Chat = () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }).then(async response => {
-            const dados = response.data[0];
-            setDadosChat(dados);
-            TB_PESSOA_IDD = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
-            if (dados.TB_CHAT_STATUS == true) {
-                msgEmptyChat = 'Nenhuma mensagem ainda';
-                desativado = false;
-                await SelecionarMensagens();
-            } else {
-                msgEmptyChat = "Esse chat foi desativado";
-                desativado = true;
+        }, { signal: controller.signal }).then(async response => {
+            if (response.data) {
+                const dados = response.data.Selecionar[0];
+                animais.current = response.data.Animais
+                dadosChat.current = dados;
+                TB_PESSOA_IDD.current = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
+                if (dados.TB_CHAT_STATUS) {
+                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
+                    desativado.current = false;
+                    await SelecionarMensagens();
+                } else {
+                    msgEmptyChat.current = "Esse chat foi desativado";
+                    desativado.current = true;
+                }
             }
         }).catch(error => {
-            let erro = error.response.data;
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar:', erro.error);
+            if (error.response) {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error);
+            }
         });
         setCarregando(false);
     };
 
     useEffect(() => {
-        editando = false;
         SelecionarInfoChat();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
     const DesativarChat = async () => {
@@ -149,19 +148,24 @@ const Chat = () => {
         console.log('Denuncia');
     }
     const AlterarMensagem = () => {
-        editando = true;
-        setTextoDigitado(mensagemSelecionada.text);
+        editando.current = true;
+        respondendo.current = false;
+        setTextoDigitado(mensagemSelecionada.current.text);
+    }
+    const ResponderMensagem = () => {
+        editando.current = false
+        respondendo.current = true;
     }
     const ExcluirMensagem = async () => {
         const modifiedMessagesDelete = state.messages.map(message => {
-            if (message._id === mensagemSelecionada._id) {
+            if (message._id === mensagemSelecionada.current._id) {
                 return { ...message, mensagemExcluida: true, text: '(Mensagem excluída)' };
             }
             return message;
         });
         const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "mensagemExcluida": false, "text": null, "user": user }
         const newMessages = GiftedChat.append(modifiedMessagesDelete, mensagemNula, true);
-        await axios.put(urlAPI + 'delmensagem/' + mensagemSelecionada._id)
+        await axios.put(urlAPI + 'delmensagem/' + mensagemSelecionada.current._id)
             .then(response => {
                 dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
             }).catch((error) => {
@@ -170,64 +174,89 @@ const Chat = () => {
             });
     }
 
-    let user = { _id: TB_PESSOA_IDD }
-    const [state, dispatch] = useReducer(reducer, {
-        messages: mensagens,
-        step: 0,
-        loadEarlier: true,
-        isLoadingEarlier: false,
-        isTyping: false,
-    });
     const onSend = useCallback(async (messages) => {
         const sentMessages = [{ ...messages[0] }];
         const texto = sentMessages[0].text
-        if (!texto) {
+        const imagem = sentMessages[0].image
+        if (!texto && !imagem) {
             return;
         }
-        if (editando) {
-            if (texto != mensagemSelecionada.text) {
+        if (!editando.current) {
+            if (!imagem) { // Enviar ou responder mensagem de texto
+                let objetoForm = {
+                    TB_CHAT_ID,
+                    TB_MENSAGEM_TEXTO: texto,
+                    TB_PESSOA_ID: TB_PESSOA_IDD.current,
+                }
+                if (respondendo.current) {
+                    objetoForm.TB_MENSAGEM_RESPOSTA_ID = mensagemSelecionada.current._id;
+                }
+                await axios.post(urlAPI + 'cadmensagem', objetoForm)
+                    .then(response => {
+                        const sentMessagesFix = sentMessages[0];
+                        sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
+                        sentMessagesFix.image = null;
+                        if (respondendo.current) {
+                            sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                            setAlturaViewRespondendo(50);
+                        }
+                        const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
+                        respondendo.current = false;
+                        dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
+                    }).catch(error => {
+                        let erro = error.response.data;
+                        ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
+                        console.error(erro.error);
+                    });
+            } else { // Enviar ou responder mensagem de imagem
+                const formData = new FormData();
+                let img = { uri: imagem, type: 'image/jpeg', name: 'image.jpg', };
+                formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
+                formData.append('TB_CHAT_ID', TB_CHAT_ID);
+                formData.append('TB_MENSAGEM_POSSUI_IMG', true);
+                formData.append('img', img);
+                if (respondendo.current) {
+                    formData.append('TB_MENSAGEM_RESPOSTA_ID', mensagemSelecionada.current._id);
+                }
+                await axios.post(urlAPI + 'cadmensagem', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }).then(response => {
+                    const sentMessagesFix = sentMessages[0];
+                    sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
+                    if (respondendo.current) {
+                        sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                        setAlturaViewRespondendo(50);
+                    }
+                    const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
+                    respondendo.current = false;
+                    dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
+                }).catch(error => {
+                    let erro = error.response.data;
+                    ToastAndroid.show("Não foi possível enviar a imagem", ToastAndroid.SHORT);
+                    console.error(erro.error);
+                })
+            }
+        } else {// Editar mensagem de texto
+            if (texto != mensagemSelecionada.current.text) { // Se o texto tiver sido modificado
                 const modifiedMessages = state.messages.map(message => {
-                    if (message._id === mensagemSelecionada._id) return { ...message, mensagemAlterada: true, text: texto };
+                    if (message._id === mensagemSelecionada.current._id) return { ...message, mensagemAlterada: true, text: texto };
                     return message;
                 });
-                const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": "", "user": user }
+                const mensagemNula = { "_id": Math.round(Math.random() * 1000000), "createdAt": new Date(), "mensagemAlterada": false, "text": null, "user": user }
                 const newMessages = GiftedChat.append(modifiedMessages, mensagemNula, true);
-                await axios.put(urlAPI + 'altmensagem/' + mensagemSelecionada._id, {
+                await axios.put(urlAPI + 'altmensagem/' + mensagemSelecionada.current._id, {
                     TB_MENSAGEM_TEXTO_ALTERADO: texto,
                 }).then(response => {
-                    editando = false;
+                    editando.current = false;
                     dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
-                }).catch((error) => {
+                }).catch(error => {
                     let erro = error.response.data;
                     ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
                     console.error(erro.error, error);
                 });
-            } else {
-                editando = false;
+            } else { // Se o texto não tiver sido modificado
+                editando.current = false;
             }
-        } else {
-            await axios.post(urlAPI + 'cadmensagem', {
-                TB_CHAT_ID,
-                TB_MENSAGEM_TEXTO: texto,
-                TB_PESSOA_ID: TB_PESSOA_IDD,
-            }).then(response => {
-                // socket.emit("newMessage", {
-                // 	message,
-                // 	room_id: id,
-                // 	user,
-                // 	timestamp: { hour, mins },
-                // });
-                const messageSentId = response.data.Cadastrar.TB_MENSAGEM_ID;
-                const sentMessagesFixId = sentMessages.map(message => {
-                    return { ...message, _id: messageSentId };
-                });
-                const newMessages = GiftedChat.append(state.messages, sentMessagesFixId, true);
-                dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
-            }).catch((error) => {
-                let erro = error.response.data;
-                ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
-                console.error(erro.error);
-            });
         }
     }, [dispatch, state.messages]);
     const onSendCustomActions = (messages = []) => {
@@ -239,99 +268,32 @@ const Chat = () => {
             user,
             createdAt: new Date(),
             _id: Math.round(Math.random() * 1000000),
-            text: 'imagem'
         }));
         onSend(messagesToUpload);
-        console.log('custom', messagesToUpload)
-        // dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
     };
-    const onQuickReply = (replies) => {
-        const createdAt = new Date();
-        if (replies.length === 1) {
-            onSend([{
-                createdAt,
-                _id: Math.round(Math.random() * 1000000),
-                text: replies[0].title,
-                user,
-            }]);
-        } else if (replies.length > 1) {
-            onSend([{
-                createdAt,
-                _id: Math.round(Math.random() * 1000000),
-                text: replies.map((reply) => reply.title).join(', '),
-                user,
-            }]);
-        } else {
-            console.warn('replies param is not set correctly');
-        }
-    };
-    const renderQuickReplySend = () => {
-        return <Text>{' custom send =>'}</Text>;
-    };
-    const setIsTyping = (isTyping) => {
-        dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
-    };
-    const renderAccessory = () => <AccessoryBar onSend={onSendCustomActions} isTyping={() => setIsTyping(true)} />
-    const renderCustomActions = props => {
-        return (<>
-            {editando ?
-                <AntDesign name="close" size={35} color="#9e9e9e" style={{ marginLeft: 10, marginBottom: 7 }} onPress={() => { editando = false; setTextoDigitado('') }} />
-                :
-                <CustomActions {...props} onSend={onSendCustomActions} />}
-        </>)
-    }
-    const renderBubble = props => {
-        const dados = { ...props };
-        let excluida = dados.currentMessage.mensagemExcluida == true;
-        if (excluida) {
-            dados.currentMessage = { ...props.currentMessage, text: "(Mensagem excluída)" };
-        }
-        return (<>
-            {props.currentMessage.text &&
-                <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: excluida && { fontStyle: 'italic', color: '#505050' }, right: excluida && { fontStyle: 'italic', color: '#ededed' } }} />}
-        </>)
-    }
-    const renderSend = props => {
-        return (
-            <Send {...props} containerStyle={{ justifyContent: 'center' }}>
-                <View style={styles.enviarContainer}>
-                    <Text style={styles.enviarTexto}>{editando ? 'Editar' : 'Enviar'}</Text>
-                </View>
-            </Send>
-        );
-    };
+    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
+    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
+    // };
     const onLongPress = (context, message) => {
-        podeEditar = podeExcluir = true;
-        mensagemSelecionada = message;
-        msgPessoal = message.user._id === user._id;
-        if (msgPessoal) {
-            podeEditar = !mensagemSelecionada.mensagemAlterada;
-            podeExcluir = !mensagemSelecionada.mensagemExcluida;
+        podeExcluir.current = true;
+        podeEditar.current = !message.image;
+        mensagemSelecionada.current = message;
+        msgPessoal.current = message.user._id === user._id;
+        if (msgPessoal.current) {
+            podeEditar.current = !mensagemSelecionada.current.mensagemAlterada;
+            podeExcluir.current = !mensagemSelecionada.current.mensagemExcluida;
         }
-        setModalVisible(true);
+        if (podeExcluir.current) {
+            setModalVisible(true);
+        }
     }
-    const renderTime = (props) => {
-        const dados = { ...props };
-        dados.currentMessage = { ...props.currentMessage, text: "(Editada)" };
-        let pessoal = dados.currentMessage.user._id == user._id;
-        let excluida = dados.currentMessage.mensagemExcluida == true;
-        return (
-            <View style={{ flexDirection: pessoal ? 'row' : 'row-reverse' }}>
-                {props.currentMessage.mensagemAlterada && !excluida && <MessageText {...dados} containerStyle={{ left: { marginTop: -8, marginLeft: -10 }, right: { marginTop: -8, marginRight: -10 } }} textStyle={{ left: { color: '#3a3a3a', fontSize: 14 }, right: { color: '#fafafa', fontSize: 14 } }} />}
-                <Time {...props} timeTextStyle={{ left: { color: '#3a3a3a', fontSize: 12 }, right: { color: '#fafafa', fontSize: 12 } }} />
-            </View>
-        )
-    }
-    const renderChatEmpty = () => {
-        return (
-            <View style={styles.emptyChat}>
-                <Text style={styles.emptyChatText}>{msgEmptyChat}</Text>
-            </View>
-        )
-    }
+    const [forceUpdate, setForceUpdate] = useState(0);
+    const reRender = () => {
+        setForceUpdate(prevValue => prevValue + 1);
+    };
     return (
         <SafeAreaView style={styles.container}>
-            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} DesativarChat={DesativarChat} desativado={desativado} />
+            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
             <View style={styles.content}>
                 {carregando ?
                     <View style={styles.carregando}>
@@ -340,23 +302,18 @@ const Chat = () => {
                     <>
                         <GiftedChat
                             messages={state.messages}
-                            onSend={onSend}
                             user={user}
+                            onSend={onSend}
                             onLongPress={onLongPress}
-                            // renderAccessory={renderAccessory}
-                            onQuickReply={onQuickReply}
-                            quickReplyStyle={{ borderRadius: 2 }}
-                            quickReplyTextStyle={{ fontWeight: '200' }}
-                            renderQuickReplySend={renderQuickReplySend}
-                            renderActions={renderCustomActions}
-                            renderSystemMessage={props => <SystemMessage {...props} containerStyle={{ marginBottom: 15 }} textStyle={{ fontSize: 16, textAlign: 'center', color: '#222' }} />}
-                            renderCustomView={props => <CustomView {...props} />}
-                            renderInputToolbar={props => (!desativado && <InputToolbar {...props} containerStyle={styles.barraInput} />)}
-                            renderComposer={props => <Composer {...props} textInputStyle={styles.inputMensagem} placeholder={'Escreva uma mensagem'} />}
-                            renderSend={renderSend}
-                            renderAvatar={null}
-                            renderBubble={renderBubble}
-                            keyboardShouldPersistTaps='never'
+                            renderSystemMessage={renderSystemMessage}
+                            renderCustomView={renderCustomView}
+                            renderComposer={renderComposer}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
+                            renderSend={props => renderSend(props, editando, respondendo)}
+                            renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
+                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
+                            renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
+                            keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
                             text={textoDigitado}
                             onInputTextChanged={text => setTextoDigitado(text)}
@@ -364,53 +321,16 @@ const Chat = () => {
                             scrollToBottom
                             scrollToBottomComponent={() => <FontAwesome5 name="arrow-down" size={25} color="#9e9e9e" />}
                             maxInputLength={256}
-                            renderChatEmpty={renderChatEmpty}
                             parsePatterns={parsePatterns}
                             dateFormat='DD/MM/YYYY'
                             timeFormat='HH:mm'
-                            renderTime={renderTime}
-                            inverted={true}
-                            minInputToolbarHeight={50}
+                            renderTime={props => renderTime(props, user)}
+                            renderAvatar={null}
+                            minInputToolbarHeight={alturaViewRespondendo}
+                            imageStyle={{ width: 200, height: 125 }}
                         />
-                        {editando &&
-                            <View style={styles.containerEditando}>
-                                <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
-                            </View>
-                        }
-                        <Modal visible={modalVisible} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={() => setModalVisible(false)} onTouchOutside={() => setModalVisible(false)} >
-                            <View style={styles.dropdown}>
-                                {msgPessoal ?
-                                    <>
-                                        {podeExcluir &&
-                                            <>
-                                                {podeEditar &&
-                                                    <TouchableOpacity style={styles.dropdownButton} onPress={() => { AlterarMensagem(); setModalVisible(false) }}>
-                                                        <Text style={styles.textDropdownButton}>Editar mensagem</Text>
-                                                    </TouchableOpacity>}
-                                                <Divider orientation="vertical" width={1} color="grey" />
-                                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { ExcluirMensagem(); setModalVisible(false) }}>
-                                                    <Text style={styles.textDropdownButton}>Excluir mensagem</Text>
-                                                </TouchableOpacity>
-                                            </>
-                                        }
-                                    </>
-                                    :
-                                    <>
-                                        <TouchableOpacity style={styles.dropdownButton} >
-                                            <Text style={styles.textDropdownButton}>Responder</Text>
-                                        </TouchableOpacity>
-                                        <Divider orientation="vertical" width={1} color="grey" />
-                                        <TouchableOpacity style={styles.dropdownButton} onPress={() => { DenunciarMensagem(); setModalVisible(false) }}>
-                                            <Text style={styles.textDropdownButton}>Denunciar conversa</Text>
-                                        </TouchableOpacity>
-                                    </>
-                                }
-                                <Divider orientation="vertical" width={1} color="grey" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={() => setModalVisible(false)}>
-                                    <Text style={styles.textDropdownButton}>Cancelar</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </Modal>
+                        <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
+                        <StatusBar />
                     </>}
             </View>
         </SafeAreaView>
@@ -426,32 +346,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#bfdde4',
         flex: 1
     },
-    enviarContainer: {
-        backgroundColor: '#B9E5D0',
-        borderWidth: 1,
-        borderColor: '#fff',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        borderRadius: 10,
-    },
-    enviarTexto: {
-        fontSize: 18
-    },
-    barraInput: {
-        backgroundColor: 'transparent',
-        margin: 5,
-        borderRadius: 10,
-        borderColor: 'transparent',
-    },
-    inputMensagem: {
-        backgroundColor: '#fff',
-        marginRight: 5,
-        borderRadius: 10,
-        fontSize: 16,
-        paddingLeft: 10,
-    },
     carregando: {
         width: '100%',
         height: '100%',
@@ -462,45 +356,6 @@ const styles = StyleSheet.create({
         zIndex: 10,
         marginTop: 10,
     },
-    dropdown: {
-        backgroundColor: 'white',
-        borderColor: '#B18888',
-        borderRadius: 10,
-        zIndex: 12,
-        borderWidth: 1,
-    },
-    dropdownButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 220,
-        height: 45,
-    },
-    textDropdownButton: {
-        fontSize: 18,
-        fontWeight: '400',
-    },
-    containerEditando: {
-        position: 'absolute',
-        width: '100%',
-        bottom: 50,
-    },
-    textoEditando: {
-        textAlign: 'center',
-        color: '#606060',
-        marginRight: 25,
-    },
-    emptyChat: {
-        flex: 1,
-        transform: [{ scaleX: -1 }],
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    emptyChatText: {
-        transform: [{ scaleY: -1 }],
-        color: '#444444',
-        fontSize: 16,
-    }
 })
 
 export default Chat

@@ -1,35 +1,30 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corTextoBotaoCad } from '../../constants';
-import PropTypes from 'prop-types';
 
-const BotaoCadastrar = (props) => {
+const BotaoImg = (props) => {
     return (
         <TouchableOpacity {...props} style={styles.botaocadastro}>
-            <Text style={styles.textocadastro}>{props.texto ? props.texto : 'Cadastrar'}</Text>
+            <Text style={styles.textocadastro}>{props.texto ? props.texto : 'Acrescentar uma imagem'}</Text>
         </TouchableOpacity>
     )
 }
 
 const styles = StyleSheet.create({
     botaocadastro: {
-        width: '80%',
-        height: 50,
+        width: '90%',
+        height: 45,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: corBotaoCad,
+        backgroundColor: '#EEECEC',
         borderRadius: 10,
-        marginTop: 10,
-        marginBottom: 35,
+        marginTop: '10%',
+        marginBottom: 15,
         elevation: 5,
     },
     textocadastro: {
-        color: corTextoBotaoCad,
-        fontSize: 20,
+        color: '#8EBF81',
+        fontSize: 18,
     },
 });
 
-BotaoCadastrar.propTypes = {
-    texto: PropTypes.string
-}
-
-export default BotaoCadastrar
+export default BotaoImg

@@ -1,130 +1,106 @@
 import { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity, Modal, PanResponder, StyleSheet, View, TextInput } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View, TextInput, Dimensions, StatusBar, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Octicons, Feather, Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-import { corFundoNavegacao } from '../../constants';
+import { Octicons, Feather, Ionicons } from '@expo/vector-icons';
+import { corFundoNavegacao, urlAPI } from '../../constants';
 import Home from './Home';
 import Explorar from './Explorar';
 import Mapa from './Mapa';
 import Animal from './Animal';
-import DecodificarToken from '../../utils/DecodificarToken';
-import Dropdown from '../../components/geral/Dropdown';
+import axios from 'axios';
+import Imagem from '../../components/geral/Imagem';
+import HeaderExplorar from '../../components/geral/HeaderExplorar';
 
 const Tab = createBottomTabNavigator();
-let TB_PESSOA_IDD;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Menu = ({ navigation: { navigate } }) => {
+    const [dadosPessoas, setDadosPessoas] = useState([]);
+    const usuarios = useRef([]);
+    const [resultsVisible, setResultsVisible] = useState(false);
+    const [pesquisa, setPesquisa] = useState('');
+    const [refresh, setRefresh] = useState(0);
+
+    const controller = new AbortController();
+
+    const Selecionar = async () => {
+        await axios.get(urlAPI + 'selpessoas', { signal: controller.signal })
+            .then(response => {
+                setDadosPessoas(response.data);
+            }).catch(error => {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error(erro.error, error);
+            });
+    }
 
     useEffect(() => {
-        const PegarId = async () => {
-            const decodedToken = await DecodificarToken();
-            TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-        }
-        PegarId()
+        Selecionar();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
-    const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+    // Função para atualizar a lista de pessoas com base no texto da pesquisa
+    useEffect(() => {
+        const Filtrar = (type) => {
+            let pessoasFiltradas = dadosPessoas
+            return pessoasFiltradas
+                .filter((pessoa) => pessoa.TB_PESSOA_NOME_PERFIL.toLowerCase().includes(pesquisa.toLowerCase()))
+                .filter((pessoa) => type.includes(pessoa.TB_TIPO_ID))
+        }
+        usuarios.current = Filtrar([1, 2, 3, 4, 5, 6, 7]);
+        refreshPage();
+    }, [pesquisa, dadosPessoas]);
 
-    const handleSearchChange = (text) => {
-        // setSearchText(text);
-        console.log(text)
-        // Aqui você pode implementar a lógica para pesquisar os perfis
-        // com base no texto e definir os resultados da pesquisa.
-        // Por exemplo:
-        // setSearchResults(perfis.filter(perfil => perfil.nome.includes(text)));
-    };
-
-    const handleProfileSelect = (perfil) => {
-        // Aqui você pode implementar a lógica para navegar para a tela do perfil
-        // Por exemplo:
-        // navigation.navigate('Perfil', { perfilId: perfil.id });
-    };
-
-    const item1 = {
-        icone: <Ionicons name="paw-outline" size={28} color="black" />,
-        texto: 'Cadastrar um animal',
-        press: () => navigate('CadastroAnimal')
-    }
-    const item2 = {
-        icone: <AntDesign name="picture" size={28} color="black" />,
-        texto: 'Cadastrar uma postagem',
-        press: () => navigate('Postagem')
-    }
-    const item3 = {
-        icone: <Feather name="map-pin" size={28} color="black" />,
-        texto: 'Cadastrar um ponto de alimentação',
-        press: () => navigate('Mapa')
+    const refreshPage = () => {
+        setRefresh(prev => prev + 1);
     }
 
-    const HeaderExplorar = () => {
-        return (
-            <View style={styles.headerEsquerda}>
-                <TouchableOpacity style={styles.Botao} onPress={() => navigate('Perfil', { id: TB_PESSOA_IDD })}>
-                    <Octicons name="person" size={35} color="white" />
-                </TouchableOpacity>
-                <View style={styles.barraPesquisa}>
-                    <MaterialIcons style={styles.IconePesquisa} name="search" size={25} color="#097396" />
-                    <TextInput
-                        placeholder='Pesquisar'
-                        style={styles.campo}
-                        onChangeText={handleSearchChange}
-                    />
-                </View>
-                <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)} style={styles.Botao}>
-                    <Octicons name="diff-added" size={30} color="white" />
-                </TouchableOpacity>
-                <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} />
-            </View>
-        )
-    }
-    const [panResponder, setPanResponder] = useState(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: (evt, gestureState) => {
-                // Check for swipe or drag in the bottom area
-                if (gestureState.moveY > (100 - 5)) {
-                    // You can do something when the user swipes or drags in the bottom area
-                    // For example, navigate to another screen or show a modal
-                    console.log(gestureState)
-                }
-            },
-        })
-    );
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container }} >
+            <Tab.Navigator screenOptions={{ tabBarStyle: styles.container, header: () => <HeaderExplorar pesquisa={pesquisa} setPesquisa={setPesquisa} setResultsVisible={setResultsVisible} />, tabBarShowLabel: false, title: '' }} >
                 <Tab.Screen
                     name="Home"
                     component={Home}
                     options={{
-                        tabBarShowLabel: false, title: '', header: () => <HeaderExplorar />,
                         tabBarIcon: () => <Octicons name="home" size={30} color="white" />,
                     }} />
                 <Tab.Screen
                     name="Explorar"
                     component={Explorar}
                     options={{
-                        tabBarShowLabel: false, title: '', header: () => <HeaderExplorar />,
                         tabBarIcon: () => <Ionicons name="search-sharp" size={35} color="white" />,
                     }} />
                 <Tab.Screen
                     name="Mapa"
                     component={Mapa}
                     options={{
-                        tabBarShowLabel: false, title: '', header: () => <HeaderExplorar />,
                         tabBarIcon: () => <Feather name="map-pin" size={30} color="white" />,
                     }} />
                 <Tab.Screen
                     name="Animal"
                     component={Animal}
                     options={{
-                        tabBarShowLabel: false, title: '', header: () => <HeaderExplorar />,
                         tabBarIcon: () => <Ionicons name="paw-outline" size={33} color="white" />,
                     }} />
-            </Tab.Navigator >
+            </Tab.Navigator>
+            {resultsVisible &&
+                <View style={[styles.containerResults, {}]}>
+                    <ScrollView>
+                        {usuarios.current.map((item) => {
+                            const urlImg = urlAPI + 'selpessoaimg/' + item.TB_PESSOA_ID
+                            return (
+                                <View style={styles.contatoPessoa} key={item.TB_PESSOA_ID}>
+                                    <Imagem url={urlImg} />
+                                    <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                </View>}
+            <StatusBar />
         </SafeAreaView>
     );
 }
@@ -153,7 +129,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
         borderRadius: 15,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingRight: 5
     },
     Botao: {
         marginLeft: 10,
@@ -170,6 +147,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 20,
+    },
+    campo: {
+        flex: 1
+    },
+    containerResults: {
+        position: 'absolute',
+        backgroundColor: '#fafafa',
+        width: windowWidth - 40,
+        maxHeight: windowHeight - 140,
+        justifyContent: 'center',
+        top: 55,
+        left: 0,
+        right: 0,
+    },
+    contatoPessoa: {
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        marginVertical: 5,
+        alignItems: 'center',
+        columnGap: 10
     },
 });
 

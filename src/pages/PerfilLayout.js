@@ -26,6 +26,7 @@ const PerfilLayout = (props) => {
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
+  const [rating, setRating] = useState(0);
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
@@ -84,8 +85,8 @@ const PerfilLayout = (props) => {
     item3 = null;
   }
 
-  const IniciarChat = () => {
-    axios.post(urlAPI + 'selchat/filtrar', {
+  const IniciarChat = async () => {
+    await axios.post(urlAPI + 'selchat/filtrar', {
       TB_PESSOA_IDD,
       TB_PESSOA_ID,
     }).then(response => {
@@ -211,6 +212,21 @@ const PerfilLayout = (props) => {
             {props.data.TB_PESSOA_BIO}
           </Text>
         </View>
+        <View style={styles.ratingContainer}>
+          <Text>Avalie este perfil:</Text>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setRating(index + 1)}
+            >
+              <AntDesign
+                name={index < rating ? 'star' : 'staro'}
+                size={32}
+                color={index < rating ? 'gold' : 'gray'}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View >
   );
@@ -301,7 +317,8 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
     backgroundColor: '#CEF7FF',
   },
   contentText: {
@@ -333,4 +350,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PerfilLayout
+export default PerfilLayout;
