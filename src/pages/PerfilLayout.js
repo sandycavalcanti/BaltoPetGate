@@ -20,8 +20,6 @@ let item1 = item2 = item3 = {};
 
 const PerfilLayout = (props) => {
 
-
-  const [rating, setRating] = useState(0);
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -127,6 +125,7 @@ const PerfilLayout = (props) => {
     await AsyncStorage.removeItem('token');
     navigation.navigate('Login');
   }
+  const Nota = Math.round(props.avaliacoes.media)
 
   return (
     <View style={styles.container} onLayout={MedirAltura}>
@@ -155,11 +154,11 @@ const PerfilLayout = (props) => {
               <Text style={{ color: '#5F7856', textAlign: 'center' }}>Seguidores</Text>
               <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
                 <View style={styles.ratingContainer}>
-                  {Array.from(Math.round(props.avaliacoes.media)).map((_, index) => (
+                  {Array.from({length: 5}).map((_, index) => (
                     <AntDesign
-                      name={index < rating ? 'star' : 'staro'}
+                      name={index < Nota ? 'star' : 'staro'}
                       size={18}
-                      color={index < rating ? 'gold' : 'gray'}
+                      color={index < Nota ? 'gold' : 'gray'}
                     />
                   ))}
                 </View>
@@ -168,7 +167,7 @@ const PerfilLayout = (props) => {
                 <View style={styles.ContainerAvaliacao} >
                   <ScrollView style={{ flex: 1 }}>
                     <View>
-                      {props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
+                      {props.avaliacoes.Selecionar && props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
                     </View>
                   </ScrollView>
                 </View>

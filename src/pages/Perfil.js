@@ -44,7 +44,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectPessoa, setSelectPessoa] = useState({});
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
-  const [selectAvaliacao, setSelectAvaliacao] = useState([]);
+  const [selectAvaliacao, setSelectAvaliacao] = useState({});
 
   const SelecionarPublicacoes = async () => {
     await axios.post(urlAPI + 'selanimal/filtrar', {
