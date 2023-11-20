@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoRede = (props) => {
-
     const [textoDica, setTextoDica] = useState('');
 
     let msg;
@@ -22,8 +22,10 @@ const CampoRede = (props) => {
 
     return (
         <View style={styles.containercampo}>
-            {!props.opcional && <Text style={styles.titulocampo}>Insira pelo menos uma rede social:</Text>}
-            {!props.opcional && <Text style={styles.asterisco}>*</Text>}
+            {!props.opcional && <>
+                <Text style={styles.titulocampo}>Insira pelo menos uma rede social:</Text>
+                <Text style={styles.asterisco}>*</Text>
+            </>}
             <TextInput onChangeText={text => formatarTextoInstagram(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Instagram" + msg} onFocus={() => setTextoDica('Você pode inserir o seu nome de usuário ou o link do Instagram')} onBlur={() => setTextoDica('')}
                 keyboardType='url' value={props.val1} style={styles.campo} />
             <TextInput onChangeText={text => formatarTextoFacebook(text)} placeholderTextColor={corPlaceholderCad} placeholder={"Link do Facebook" + msg} onFocus={() => setTextoDica('Você deve inserir o link do Facebook')} onBlur={() => setTextoDica('')}
@@ -64,5 +66,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
+CampoRede.propTypes = {
+    set1: PropTypes.func,
+    set2:PropTypes.func,
+    val1: PropTypes.string,
+    val2: PropTypes.string,
+    opcional: PropTypes.bool
+}
 
 export default CampoRede

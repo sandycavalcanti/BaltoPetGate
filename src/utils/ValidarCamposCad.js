@@ -3,7 +3,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
     const criteriosEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const criteriosNome = /^(?=.*\s)(.{8,})$/;
     const criteriosNomePerfil = /^.{3,}$/;
-    const criteriosSenha = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const criteriosSenha = /^(?=.*\d).{8,}$/;
     const criteriosTelefone = /^\d{10,13}$/;
     const criteriosUrl = /^.{15,}$/;
 
@@ -48,6 +48,23 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         return true
     }
 
+    const ValidarDtNasc = (data) => {
+        const anoAtual = new Date().getFullYear();
+        const [dia, mes, ano] = data.split('/').map(Number);
+
+        if (!isNaN(dia) && !isNaN(mes) && !isNaN(ano) && mes >= 1 && mes <= 12 && dia > 0 && dia <= 31 && ano > anoAtual - 120 && ano < anoAtual - 12) {
+            const dataObjeto = new Date(ano, mes - 1, dia);
+
+            const isValidDate = (date) => date instanceof Date && !isNaN(date);
+
+            if (isValidDate(dataObjeto)) {
+                const dataObjetoDate = dataObjeto.toISOString().split('T')[0];
+                return dataObjetoDate;
+            }
+        }
+        return '';
+    };
+
     const { nome, dtNasc, cpf, crmv, cnpj, uf, cidade, bairro, rua, numero, nomePerfil, telefone1, telefone2, whatsapp, facebook, instagram, email, senha, senhaConfirmacao } = dados;
 
     if (camposObrigatorios.some(campo => campo === undefined || campo === '')) {
@@ -57,10 +74,10 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nome && !criteriosNome.test(nome)) {
             mensagemErro += "Nome completo inválido.\n";
         }
-        if (dtNasc && dtNasc == 1) {
+        if (dtNasc && (dtNasc == 1)) {
             mensagemErro += "Data de nascimento inválida.\n";
         }
-        if (cpf && (cpf == 1 || !ValidarCpf(cpf))) {
+        if (cpf && (!ValidarCpf(cpf))) {
             mensagemErro += "CPF inválido.\n";
         }
         if (crmv && crmv == 1) {
@@ -72,7 +89,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
         if (nomePerfil && !criteriosNomePerfil.test(nomePerfil)) {
             mensagemErro += "Nome de perfil inválido.\n";
         }
-        if (cnpj && (cnpj == 1 || !ValidarCnpj(cnpj))) {
+        if (cnpj && (!ValidarCnpj(cnpj))) {
             mensagemErro += "CNPJ inválido.\n";
         }
         if (telefone1 && !criteriosTelefone.test(telefone1)) {
@@ -91,7 +108,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
             mensagemErro += "E-mail inválido.\n";
         }
         if (senha && !criteriosSenha.test(senha)) {
-            mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, um número e uma letra maiúscula. \n";
+            mensagemErro += "Senha inválida. A senha deve possuir no mínimo 8 caracteres, incluindo um número. \n";
         }
         else if (senha !== senhaConfirmacao) {
             mensagemErro += "As senhas não correspondem.";

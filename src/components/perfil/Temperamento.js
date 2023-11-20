@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
 const Temperamento = (props) => {
     return (
@@ -23,5 +24,9 @@ const styles = StyleSheet.create({
         fontSize: 16
     }
 });
+
+Temperamento.propTypes = {
+    texto: PropTypes.object
+}
 
 export default Temperamento;

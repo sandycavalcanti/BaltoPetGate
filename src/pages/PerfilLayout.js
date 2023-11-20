@@ -13,13 +13,13 @@ import { color } from "react-native-elements/dist/helpers";
 import { Modal, ModalContent } from "react-native-modals";
 import Avaliacoes from "../components/Avaliacao/Avaliacoes";
 import Avaliar from "../components/Avaliacao/Avaliar";
+
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 let scrollY = 0;
 let item1 = item2 = item3 = {};
 
 const PerfilLayout = (props) => {
-
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -92,18 +92,22 @@ const PerfilLayout = (props) => {
     }).then(response => {
       const dados = response.data.Selecionar[0];
       if (dados.TB_CHAT_STATUS == true) {
-        const TB_CHAT_ID = response.data[0].TB_CHAT_ID;
+        const TB_CHAT_ID = dados.TB_CHAT_ID;
         navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
       } else {
         CadastrarChat();
       }
     }).catch(error => {
-      if (error.response.status == 404) {
-        CadastrarChat();
+      if (error.response) {
+        if (error.response.status == 404) {
+          CadastrarChat();
+        } else {
+          let erro = error.response.data;
+          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          console.log('Erro ao selecionar:', erro.error);
+        }
       } else {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.log('Erro ao selecionar:', erro.error);
+        console.error(error)
       }
     });
   }
@@ -155,8 +159,9 @@ const PerfilLayout = (props) => {
               <Text style={{ color: '#5F7856', textAlign: 'center' }}>Seguidores</Text>
               <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
                 <View style={styles.ratingContainer}>
-                  {Array.from({length: 5}).map((_, index) => (
+                  {Array.from({ length: 5 }).map((_, index) => (
                     <AntDesign
+                      key={index}
                       name={index < Nota ? 'star' : 'staro'}
                       size={18}
                       color={index < Nota ? 'gold' : 'gray'}
@@ -197,7 +202,7 @@ const PerfilLayout = (props) => {
                 <View style={styles.ContainerAvaliar} >
                   <ScrollView style={{ flex: 1 }}>
                     <View>
-                      <Avaliar TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD}/>
+                      <Avaliar TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
                     </View>
                   </ScrollView>
                 </View>
@@ -211,21 +216,6 @@ const PerfilLayout = (props) => {
           <Text style={styles.contentText}>
             {props.data.TB_PESSOA_BIO}
           </Text>
-        </View>
-        <View style={styles.ratingContainer}>
-          <Text>Avalie este perfil:</Text>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setRating(index + 1)}
-            >
-              <AntDesign
-                name={index < rating ? 'star' : 'staro'}
-                size={32}
-                color={index < rating ? 'gold' : 'gray'}
-              />
-            </TouchableOpacity>
-          ))}
         </View>
       </View>
     </View >

@@ -1,10 +1,11 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corPlaceholderCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const BotaoArquivo = (props) => {
     return (
-        <TouchableOpacity {...props} style={styles.botaocadastro}>
-            <Text style={styles.textocadastro}>{props.texto ? props.texto : 'Escolha um arquivo'}</Text>
+        <TouchableOpacity {...props} style={[styles.botaocadastro, props.styleBotao]}>
+            <Text style={[styles.textocadastro, props.styleTexto]}>{props.texto ? props.texto : 'Escolha um arquivo'}</Text>
         </TouchableOpacity>
     )
 }
@@ -26,5 +27,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
 });
+
+BotaoArquivo.propTypes = {
+    texto: PropTypes.string,
+    onPress: PropTypes.func,
+    styleBotao: PropTypes.object,
+    styleTexto: PropTypes.object
+}
 
 export default BotaoArquivo

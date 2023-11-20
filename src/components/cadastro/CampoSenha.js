@@ -2,15 +2,33 @@ import { useState } from 'react';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { View, Text, TextInput, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoSenha = (props) => {
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [textoDica, setTextoDica] = useState(false);
+
+    const onChangeText = (text, type) => {
+        if (type == 1) {
+            if (props.set1) {
+                props.set1(text)
+            } else if (props.setRef1) {
+                props.setRef1.current = text;
+            }
+        } else {
+            if (props.set2) {
+                props.set3(text)
+            } else if (props.setRef2) {
+                props.setRef2.current = text;
+            }
+        }
+    }
+
     return (
         <View style={styles.containercampo}>
             <View style={styles.containersenha}>
                 <View style={styles.caixacampo}>
-                    <TextInput onChangeText={(text) => props.set1(text)} placeholderTextColor={corPlaceholderCad} secureTextEntry={!mostrarSenha} placeholder={"Senha"} style={styles.campo} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} />
+                    <TextInput onChangeText={text => onChangeText(text, 1)} placeholderTextColor={corPlaceholderCad} secureTextEntry={!mostrarSenha} placeholder={"Senha"} style={styles.campo} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} />
                     <TouchableWithoutFeedback onPress={() => setMostrarSenha(!mostrarSenha)}>
                         {mostrarSenha ? (
                             <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 30 }} />
@@ -23,7 +41,7 @@ const CampoSenha = (props) => {
             </View>
             <View style={styles.containersenha}>
                 <View style={styles.caixacampo}>
-                    <TextInput onChangeText={(text) => props.set2(text)} placeholderTextColor={corPlaceholderCad} secureTextEntry={!mostrarSenha} placeholder={"Confirmação de senha"} style={styles.campo} />
+                    <TextInput onChangeText={text => onChangeText(text, 2)} placeholderTextColor={corPlaceholderCad} secureTextEntry={!mostrarSenha} placeholder={"Confirmação de senha"} style={styles.campo} />
                     <TouchableWithoutFeedback onPress={() => setMostrarSenha(!mostrarSenha)}>
                         {mostrarSenha ? (
                             <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 30 }} />
@@ -34,7 +52,7 @@ const CampoSenha = (props) => {
                     <Text style={styles.asterisco}>*</Text>
                 </View>
             </View>
-            {textoDica && <Text style={styles.dica}>A senha deve possuir no mínimo 8 caracteres, um número e uma letra maíscula</Text>}
+            {textoDica && <Text style={styles.dica}>A senha deve possuir no mínimo 8 caracteres, incluindo um número</Text>}
         </View>
     )
 }
@@ -109,5 +127,12 @@ const styles = StyleSheet.create({
         color: 'red',
     }
 });
+
+CampoSenha.propTypes = {
+    set1: PropTypes.func,
+    set2: PropTypes.func,
+    setRef1: PropTypes.object,
+    setRef2: PropTypes.object,
+}
 
 export default CampoSenha

@@ -39,7 +39,7 @@ export default function App() {
 
       formData.append('img', imagem);
 
-      await axios.put(urlAPI + 'altpessoa/' + texto, formData, {
+      await axios.put(urlAPI + 'altpostagem/' + texto, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       }).then(response => {
         console.log(response.data.message)

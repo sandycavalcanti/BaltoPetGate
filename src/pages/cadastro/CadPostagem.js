@@ -1,280 +1,138 @@
-
 // Importando os pacotes necessários
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  Image,
-  TextInput,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  Modal
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-// import { Entypo } from '@expo/vector-icons';
+import { useState, useEffect, useRef } from "react";
+import { View, Text, Button, Image, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import BotaoImg from "../../components/FormDiario/BotaoImg";
+import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
+import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
+import axios from "axios";
+import { corFundoCad, corTextoBotaoCad, urlAPI } from "../../constants";
+import Perfil_post from "../../components/perfil/Perfil_post";
+import Post from "../../components/perfil/Post";
+import DecodificarToken from "../../utils/DecodificarToken";
+import FormData from 'form-data';
 
-// Criando um componente funcional chamado Postagem
 const CadPostagem = () => {
-  // Definindo os estados para armazenar a imagem e o comentário
+  const TB_PESSOA_IDD = useRef(null);
+  const TB_PESSOA_NOME_PERFIL = useRef('')
   const [imagem, setImagem] = useState(null);
-  const [comentario, setComentario] = useState('');
+  const [comentario, setComentario] = useState("");
+  const [mensagem, setMensagem] = useState('');
 
-  // Definindo um estado para armazenar a lista de postagens
-  const [postagens, setPostagens] = useState([]);
+  const PegarId = async () => {
+    const decodedToken = await DecodificarToken();
+    TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+    TB_PESSOA_NOME_PERFIL.current = decodedToken.TB_PESSOA_NOME_PERFIL;
+  }
 
-  // Definindo um estado para armazenar o índice da postagem que está sendo editada
-  const [indiceEditando, setIndiceEditando] = useState(null);
+  useEffect(() => {
+    PegarId();
+  }, [])
 
-  // Definindo uma função para pedir permissão para acessar a galeria ou a câmera
-  const pedirPermissao = async () => {
-    // Verificando se o dispositivo tem permissão para acessar a galeria ou a câmera
-    const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    // Se não tiver, mostrando um alerta de erro
-    if (status !== 'granted') {
-      alert('Desculpe, mas precisamos da sua permissão para acessar a galeria ou a câmera');
-    }
-  };
-
-  // Definindo uma função para escolher uma imagem da galeria ou da câmera
   const escolherImagem = async () => {
-    // Chamando a função para pedir permissão
-    await pedirPermissao();
-    // Criando as opções para o ImagePicker
-    const opcoes = {
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
-    };
+    });
 
-    // Chamando o método launchImageLibraryAsync do ImagePicker
-    let resposta = await ImagePicker.launchImageLibraryAsync(opcoes);
-
-    // Verificando se houve algum erro ou cancelamento
-    if (!resposta.cancelled) {
-      // Caso contrário, atualizando o estado da imagem com o caminho da imagem escolhida
-      setImagem(resposta.uri);
+    if (!result.canceled) {
+      setImagem(result.assets[0].uri);
     }
   };
 
-  // Definindo uma função para editar o comentário
-  const editarComentario = (texto) => {
-    // Atualizando o estado do comentário com o texto digitado
-    setComentario(texto);
-  };
+  const Cadastrar = async () => {
+    if (imagem || comentario) {
+      const formData = new FormData();
 
-  // Definindo uma função para postar a imagem e o comentário
-  const postar = () => {
-    // Verificando se a imagem e o comentário não estão vazios
-    if (imagem && comentario) {
-      // Fazendo alguma lógica para enviar a imagem e o comentário para algum servidor ou banco de dados
-      // Por exemplo, usando o método fetch ou axios
-      // Neste caso, vamos apenas adicionar a imagem e o comentário na lista de postagens
-      setPostagens((postagensAnteriores) => [
-        ...postagensAnteriores,
-        {imagem: imagem, comentario: comentario},
-      ]);
-      // Limpando os estados da imagem e do comentário
-      setImagem(null);
-      setComentario('');
+      formData.append('TB_POSTAGEM_TEXTO', comentario);
+      formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
+      if (imagem) {
+        let image = {
+          uri: imagem,
+          type: 'image/jpeg',
+          name: 'image.jpg',
+        };
+        formData.append('img', image);
+      }
+
+      await axios.post(urlAPI + 'cadpostagem', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }).then(response => {
+        setMensagem({ color: '#fff', text: 'Postagem realizada!' });
+      }).catch(error => {
+        if (error.response) {
+          let erro = error.response.data;
+          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          console.error(erro.error, error);
+        } else {
+          console.error(error);
+          setMensagem({ color: 'red', text: 'Houve um erro ao postar' });
+        }
+      })
     } else {
-      // Caso contrário, mostrando um alerta de erro
-      alert('Você precisa escolher uma imagem e digitar um comentário');
+      ToastAndroid.show('Insira uma imagem ou um comentario', ToastAndroid.SHORT);
     }
-  };
+  }
 
-  // Definindo uma função para editar uma postagem existente na lista de postagens
-  const editarPostagem = (indice) => {
-    setModalVisible(false);
-    // Obtendo a postagem pelo índice na lista de postagens
-    let postagem = postagens[indice];
-    // Atualizando os estados da imagem e do comentário com os dados da postagem
-    setImagem(postagem.imagem);
-    setComentario(postagem.comentario);
-    // Atualizando o estado do índice da postagem que está sendo editada
-    setIndiceEditando(indice);
-  };
-
-  // Definindo uma função para salvar as alterações feitas na postagem
-  const salvarPostagem = () => {
-    // Verificando se o índice da postagem que está sendo editada não é nulo
-    if (indiceEditando !== null) {
-      // Criando uma cópia da lista de postagens
-      let postagensAtualizadas = [...postagens];
-      // Alterando a postagem pelo índice com os novos dados da imagem e do comentário
-      postagensAtualizadas[indiceEditando] = {
-        imagem: imagem,
-        comentario: comentario,
-      };
-      // Atualizando o estado da lista de postagens com a cópia alterada
-      setPostagens(postagensAtualizadas);
-      // Limpando os estados da imagem, do comentário e do índice da postagem que está sendo editada
-      setImagem(null);
-      setComentario('');
-      setIndiceEditando(null);
-    } else {
-      // Caso contrário, mostrando um alerta de erro
-      alert('Você precisa escolher uma postagem para editar');
+  const dataPerfilPost = {
+    TB_PESSOA_ID: TB_PESSOA_IDD.current,
+    TB_PESSOA: {
+      TB_PESSOA_NOME_PERFIL: TB_PESSOA_NOME_PERFIL.current,
     }
-  };
+  }
 
-  // Definindo uma função para deletar uma postagem existente na lista de postagens
-  const deletarPostagem = (indice) => {
-    setModalVisible(false);
-    // Criando uma função para confirmar a exclusão da postagem
-    const confirmarDeletar = () => {
-      // Criando uma cópia da lista de postagens
-      let postagensAtualizadas = [...postagens];
-      // Removendo a postagem pelo índice da cópia
-      postagensAtualizadas.splice(indice, 1);
-      // Atualizando o estado da lista de postagens com a cópia alterada
-      setPostagens(postagensAtualizadas);
-    };
-    // Mostrando um alerta para confirmar a exclusão da postagem
-    Alert.alert(
-      'Deletar postagem',
-      'Você tem certeza que quer deletar essa postagem?',
-      [
-        {text: 'Não', style: 'cancel'},
-        {text: 'Sim', onPress: confirmarDeletar},
-      ],
-    );
-  };
-  const [modalVisible, setModalVisible] = useState(false);
-
-  // Função para abrir o modal
-  const abrirModal = () => {
-    setModalVisible(true);
-  };
-
-  // Função para fechar o modal
-  const fecharModal = () => {
-    setModalVisible(false);
-  };
-  // Definindo uma função para renderizar cada item da lista de postagens
-  const renderItem = ({item, index}) => {
-    return (
-      <View style={styles.item}>
-      <View style={styles.botoes}>
-       <View style={{width:340, alignItems:"flex-end"}}>
-        <Entypo style={{justifyContent:"center"}} name="dots-three-horizontal" size={24} color="black" onPress={abrirModal} />
-        </View>
-        {/* Renderiza o modal se o estado for verdadeiro */}
-        {modalVisible && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={fecharModal}
-          >
-            <View style={styles.modal}>
-              <TouchableOpacity onPress={() => editarPostagem(index)}>
-                <Text style={styles.botao}>Editar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => deletarPostagem(index)}>
-                <Text style={styles.botao}>Deletar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={fecharModal}>
-                <Text style={styles.botao}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        )}
-      </View>
-      <Image source={{ uri: item.imagem }} style={styles.imagem} />
-      <View style={{backgroundColor: '#94E4E6',}}>
-      <Text style={styles.comentario}>{item.comentario}</Text>
-      </View>
-    </View>
-    );
-  };
-
-  // Retornando a interface do componente
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Criar uma postagem de imagem</Text>
-      <Button title="Escolher imagem" onPress={escolherImagem} />
-      {imagem && <Image source={{uri: imagem}} style={styles.imagem} />}
-      <TextInput
-        style={styles.input}
-        placeholder="Digite um comentário"
-        value={comentario}
-        onChangeText={editarComentario}
-      />
-      {indiceEditando === null ? (
-        <Button title="Postar" onPress={postar} />
-      ) : (
-        <Button title="Salvar" onPress={salvarPostagem} />
-      )}
-      <FlatList
-        data={postagens}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </View>
+    <ContainerCadastro titulo='Faça sua postagem!'>
+      <BotaoImg onPress={escolherImagem} texto={imagem ? 'Alterar Imagem' : ''} />
+      {imagem && <BotaoImg onPress={() => setImagem(null)} texto='Remover Imagem' />}
+      <TextInput placeholder="Digite um comentário" value={comentario} onChangeText={text => setComentario(text)} multiline style={styles.input} placeholderTextColor={corTextoBotaoCad} />
+      {(imagem || comentario) &&
+        <>
+          <Text style={styles.subtitle}>Pré-visualização:</Text>
+          <Perfil_post data={dataPerfilPost} />
+          <Post text={comentario} img={imagem} />
+        </>}
+      {mensagem && <Text style={[styles.subtitle, { color: mensagem.color }]}>{mensagem.text}</Text>}
+      <View style={styles.Botao}>
+        <BotaoCadastrar texto="Postar" onPress={Cadastrar} />
+      </View>
+    </ContainerCadastro>
   );
 };
 
-// Definindo os estilos do componente
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#94E4E6',
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    margin: 10,
-  },
-  imagem: {
-    width: 360,
-    height: 300,
-   
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: corFundoCad,
   },
   input: {
-    width: 300,
-    height: 40,
+    marginTop: '10%',
+    width: '90%',
+    fontSize: 18,
+    paddingHorizontal: 10,
+    padding: 5,
+    borderColor: corTextoBotaoCad,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    margin: 10,
-    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    color: '#fff'
   },
-  item: {
-    
-    borderColor: 'white',
-    backgroundColor: '#9DE3B8',
-    borderBottomWidth: 1,
-    borderRadius: 5,
-    margin: 0,
-    
-  },
-  comentario: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    margin: 10,
-  },
-  botoes: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-    
-    
-  },
-  botao: {
-    fontSize: 16,
+  subtitle: {
+    fontSize: 18,
     color: '#fff',
-    backgroundColor: '#00f',
-    padding: 10,
-    borderRadius: 5,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  Botao: {
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    margin: 10,
   },
 });
 
-// Exportando o componente
 export default CadPostagem;
-

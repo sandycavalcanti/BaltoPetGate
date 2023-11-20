@@ -14,7 +14,7 @@ import { corBordaBoxCad, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import { useRoute } from '@react-navigation/native';
-import Mensagem from './Mensagem';
+import Mensagem from '../../components/cadastro/Mensagem';
 
 let TB_PESSOA_IDD;
 

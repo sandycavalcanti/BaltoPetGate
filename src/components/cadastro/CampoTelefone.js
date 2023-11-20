@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
-const formatarTextoCampo = (text, props, setTexto) => {
-    const dataFormatadaCampo = text.replace(/[\D.\-()a-zA-Z]/g, '');
-    props(1);
+const formatarTextoCampo = (val, set, setTexto) => {
+    const dataFormatadaCampo = val.replace(/[\D.\-()a-zA-Z]/g, '');
+    set(1);
 
     if (dataFormatadaCampo.length <= 2) {
         setTexto(dataFormatadaCampo);
@@ -12,10 +13,10 @@ const formatarTextoCampo = (text, props, setTexto) => {
         setTexto(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 3)}`);
     } else if (dataFormatadaCampo.length === 11) {
         setTexto(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 7)}-${dataFormatadaCampo.slice(7, 11)}`);
-        props(dataFormatadaCampo);
+        set(dataFormatadaCampo);
     } else {
         setTexto(`(${dataFormatadaCampo.slice(0, 2)}) ${dataFormatadaCampo.slice(2, 13)}`);
-        props(dataFormatadaCampo);
+        set(dataFormatadaCampo);
     }
 };
 
@@ -73,5 +74,15 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
+CampoTelefone.propTypes ={
+    set1: PropTypes.func,
+    set2: PropTypes.func,
+    set3: PropTypes.func,
+    opcional: PropTypes.bool,
+    val1: PropTypes.number || PropTypes.string,
+    val2: PropTypes.number || PropTypes.string,
+    val3: PropTypes.number || PropTypes.string,
+}
 
 export default CampoTelefone;

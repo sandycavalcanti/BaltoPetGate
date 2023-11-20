@@ -3,11 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid } fro
 import axios from 'axios';
 import { corBotaoCad, corFundoCampoCad, corTextoBotaoCad, corPlaceholderCad, corDicaCad, valorBordaCampoCad } from '../../constants';
 import { Dropdown } from 'react-native-element-dropdown';
-
-let opcional;
+import PropTypes from 'prop-types';
 
 const CampoEndereco = (props) => {
-    opcional = props.opcional;
+    let opcional = props.opcional;
     const [cep, setCep] = useState('');
     const [uf, setUf] = useState('');
     const [cidade, setCidade] = useState('');
@@ -185,7 +184,6 @@ const CampoEndereco = (props) => {
                 </View>
                 <TextInput onChangeText={text => props.set7(text)} value={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
             </>}
-
         </View>
     )
 }
@@ -258,5 +256,23 @@ const styles = StyleSheet.create({
         bottom: 1,
     },
 });
+
+CampoEndereco.propTypes = {
+    set1: PropTypes.func,
+    set2: PropTypes.func,
+    set3: PropTypes.func,
+    set4: PropTypes.func,
+    set5: PropTypes.func,
+    set6: PropTypes.func,
+    set7: PropTypes.func,
+    val1: PropTypes.number || PropTypes.string,
+    val2: PropTypes.string,
+    val3: PropTypes.string,
+    val4: PropTypes.string,
+    val5: PropTypes.string,
+    val6: PropTypes.number || PropTypes.string,
+    val7: PropTypes.string,
+    opcional: PropTypes.bool
+}
 
 export default CampoEndereco

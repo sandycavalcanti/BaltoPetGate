@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const CampoNumFormatado = (props) => {
     const [textoDica, setTextoDica] = useState(false);
@@ -76,13 +77,13 @@ const CampoNumFormatado = (props) => {
         <View style={styles.containercampo}>
             {tipo === 'cpf' ?
                 <TextInput onChangeText={text => formatarTextoCpf(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
-                    placeholder={"CPF"} keyboardType='numeric' maxLength={14} />
+                    placeholder="CPF" keyboardType='numeric' maxLength={14} />
                 : tipo === 'crmv' ?
                     <TextInput onChangeText={text => formatarTextoCrmv(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
-                        placeholder={"CRMV"} keyboardType='numeric' maxLength={7} />
+                        placeholder="CRMV" keyboardType='numeric' maxLength={7} />
                     : tipo === 'cnpj' ?
                         <TextInput onChangeText={text => formatarTextoCnpj(text)} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
-                            placeholder={"CNPJ"} keyboardType='numeric' maxLength={18} />
+                            placeholder="CNPJ" keyboardType='numeric' maxLength={18} />
                         : <TextInput onChangeText={text => formatarTextoNum(text)} value={texto} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} placeholderTextColor={corPlaceholderCad} style={styles.campo}
                             keyboardType='numeric' {...props} />}
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
@@ -118,5 +119,13 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 });
+
+CampoNumFormatado.propTypes = {
+    set: PropTypes.func,
+    val: PropTypes.number || PropTypes.string,
+    opcional: PropTypes.bool,
+    textodica: PropTypes.string,
+    tipo: PropTypes.string
+}
 
 export default CampoNumFormatado

@@ -3,9 +3,17 @@ import { corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../c
 import PropTypes from 'prop-types';
 
 const CampoSimples = (props) => {
+  const onChangeText = (text) => {
+    if(props.set){
+      props.set(text)
+    } else if(props.setRef){
+      props.setRef.current = text;
+    }
+  }
+  
   return (
     <View style={styles.containercampo}>
-      <TextInput onChangeText={text => props.set(text)} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
+      <TextInput onChangeText={onChangeText} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
       {!props.opcional && <Text style={styles.asterisco}>*</Text>}
     </View>
   )
@@ -36,8 +44,11 @@ const styles = StyleSheet.create({
 
 CampoSimples.propTypes = {
   set: PropTypes.func,
+  setRef: PropTypes.object,
   val: PropTypes.string,
-  opcional: PropTypes.bool
+  opcional: PropTypes.bool,
+  placeholder: PropTypes.string,
+  keyboardType: PropTypes.string,
 }
 
 export default CampoSimples

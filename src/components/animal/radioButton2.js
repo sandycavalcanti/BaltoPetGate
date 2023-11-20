@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
+import PropTypes from 'prop-types';
 
 const RadioButton2 = (props) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -12,15 +13,10 @@ const RadioButton2 = (props) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === true && styles.selectedOption]}
-        onPress={() => handleOptionPress(true)}>
+      <TouchableOpacity style={[styles.optionButton, selectedOption === true && styles.selectedOption]} onPress={() => handleOptionPress(true)}>
         <Text style={[styles.optionText, selectedOption === true && styles.selectedText]}>Saudável</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.optionButton, selectedOption === false && styles.selectedOption]}
-        onPress={() => handleOptionPress(false)}
-      >
+      <TouchableOpacity style={[styles.optionButton, selectedOption === false && styles.selectedOption]} onPress={() => handleOptionPress(false)}>
         <Text style={[styles.optionText, selectedOption === false && styles.selectedText]}>Não Saudável</Text>
       </TouchableOpacity>
     </View>
@@ -51,5 +47,9 @@ const styles = StyleSheet.create({
     color: '#FFF'
   }
 });
+
+RadioButton2.propTypes = {
+  set: PropTypes.func,
+}
 
 export default RadioButton2;

@@ -1,22 +1,21 @@
-import { View, Text } from 'react-native'
-import { useRef, useState } from 'react'
-import { Button } from 'react-native';
+import { View, Text,TextInput } from 'react-native'
+import React, { useState } from 'react'
 
 const Teste = () => {
-  const count = useRef(null);
-  const [refresh, setRefresh] = useState(0);
-  const IncreaseCount = () => {
-    count.current += 1;
+  const Formatar = (texto) => {
+    return texto.replace(/\D/g, '') // substitui qualquer caracter que nao seja numero por nada
+      .replace(/(\d{3})(\d)/, '$1.$2') // captura 2 grupos de numero o primeiro de 3 e o segundo de 1, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de numero
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1') // captura 2 numeros seguidos de um traço e não deixa ser digitado mais nada
   }
-  const RefreshPage = () => {
-    // setRefresh(prev => prev + 1)
-    console.log(count.current)
-  }
+
+const [valor, setValor] = useState('');
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button onPress={IncreaseCount} title='Aumentar o ref'></Button>
-      <Text>{count.current}</Text>
-      <Button onPress={RefreshPage} title='Atualizar'></Button>
+    <View>
+      <TextInput onChangeText={text => setValor(Formatar(text))} value={valor}/>
+      <Text>{valor}</Text>
     </View>
   )
 }

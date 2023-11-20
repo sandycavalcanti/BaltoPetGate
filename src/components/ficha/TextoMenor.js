@@ -1,4 +1,5 @@
 import {View, Text, StyleSheet} from 'react-native';
+import PropTypes from 'prop-types';
 
 const TextoMenor = (props) => {
     return(
@@ -6,7 +7,7 @@ const TextoMenor = (props) => {
             <Text style={styles.Titulo}>
                 {props.textoTitulo}
             </Text>
-            <Text s>
+            <Text>
                 {props.textoDescricao}
             </Text>
         </View>
@@ -28,5 +29,10 @@ const styles = StyleSheet.create({
         fontSize: 16
     }
 });
+
+TextoMenor.propTypes = {
+    textoTitulo: PropTypes.string,
+    textoDescricao: PropTypes.string
+}
 
 export default TextoMenor;

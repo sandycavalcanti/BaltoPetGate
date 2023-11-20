@@ -46,8 +46,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectPostagem, setSelectPostagem] = useState([]);
   const [selectAvaliacao, setSelectAvaliacao] = useState({});
 
-  const SelecionarPublicacoes = async () => {
-    await axios.post(urlAPI + 'selanimal/filtrar', {
+  const SelecionarPublicacoesAvaliacoes = () => {
+    axios.post(urlAPI + 'selanimal/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
       setSelectAnimal(response.data);
@@ -58,7 +58,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         console.error('Erro ao selecionar:', erro.error);
       }
     })
-    await axios.post(urlAPI + 'selpostagem/filtrar', {
+    axios.post(urlAPI + 'selpostagem/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
       setSelectPostagem(response.data);
@@ -69,10 +69,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         console.error('Erro ao selecionar:', erro.error);
       }
     });
-  }
-
-  const SelecionarAvaliacoes = async() => {
-    await axios.post(urlAPI + 'selavaliacao/filtrar', {
+    axios.post(urlAPI + 'selavaliacao/filtrar', {
       TB_PESSOA_AVALIADA_ID: id
     }).then((response) => {
       setSelectAvaliacao(response.data);
@@ -90,11 +87,10 @@ const Perfil = ({ navigation: { navigate } }) => {
       const decodedToken = await DecodificarToken();
       TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
       if (TB_PESSOA_IDD === id) setPessoal(true);
+      SelecionarPublicacoesAvaliacoes();
       await axios.get(urlAPI + 'selpessoa/' + id)
         .then(async (response) => {
           setSelectPessoa(response.data[0]);
-          await SelecionarPublicacoes();
-          await SelecionarAvaliacoes();
         }).catch((error) => {
           try {
             setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
@@ -115,7 +111,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const refresh = async () => {
     refreshStatusRef.current = true;
     await new Promise((resolve, reject) => {
-      SelecionarPublicacoes().then(() => {
+      SelecionarPublicacoesAvaliacoes().then(() => {
         resolve('done');
       })
     }).then(value => {
@@ -244,7 +240,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab2Item = ({ item, index }) => {
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        <Perfil_post navigate={navigate} data={item} pessoal={pessoal}/>
+        <Perfil_post navigate={navigate} data={item} pessoal={pessoal} />
         <Post data={item} />
       </View>
     );
@@ -287,7 +283,7 @@ const styles = StyleSheet.create({
   },
   indicator: {
     backgroundColor: '#A7DEC0',
-    borderRadius:2,
+    borderRadius: 2,
     borderWidth: 1.5,
     borderColor: '#fff'
 

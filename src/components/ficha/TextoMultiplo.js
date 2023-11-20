@@ -1,7 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
 const TextoMultiplo = (props) => {
-    return(
+    return (
         <View style={styles.Container}>
             <Text style={styles.Descricao}>
                 {props.textoMultiplo}
@@ -11,20 +12,24 @@ const TextoMultiplo = (props) => {
 }
 
 const styles = StyleSheet.create({
-    Container:{
-        backgroundColor:'#fff',
+    Container: {
+        backgroundColor: '#fff',
         marginLeft: 5,
         borderColor: '#82D7E9',
         borderWidth: 2,
         borderRadius: 12,
         padding: 6
     },
-    Descricao:{
+    Descricao: {
         color: '#299FB8',
         fontSize: 15,
         marginRight: 7,
         marginLeft: 7
     }
 });
+
+TextoMultiplo.propTypes = {
+    textoMultiplo: PropTypes.string
+}
 
 export default TextoMultiplo;

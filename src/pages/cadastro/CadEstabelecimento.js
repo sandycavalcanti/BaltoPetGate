@@ -39,7 +39,7 @@ const CadEstabelecimento = () => {
   const [instagram, setInstagram] = useState('');
   const [facebook, setFacebook] = useState('');
 
-const Cadastrar = async () => {
+  const Cadastrar = async () => {
     const camposObrigatorios = [email, dtNasc, nome, nomePerfil, cpf, cnpj, telefone1, senha, senhaConfirmacao];
     const camposCadastro = {
       email, nome, nomePerfil, cep, uf, cidade, bairro, rua, numero, complemento,
@@ -92,11 +92,11 @@ const Cadastrar = async () => {
       <GroupBox titulo="Informações pessoais">
         <CampoSimples set={setNome} placeholder={"Nome Completo"} />
         <CampoDtNasc set={setDtNasc} />
-        <CampoNumFormatado set={setCpf} tipo='cpf'/>
+        <CampoNumFormatado set={setCpf} tipo='cpf' />
       </GroupBox>
       <GroupBox titulo="Informações do estabelecimento">
         <CampoSimples set={setNomePerfil} placeholder={"Nome do estabelecimento"} />
-        <CampoNumFormatado set={setCnpj} tipo='cnpj'/>
+        <CampoNumFormatado set={setCnpj} tipo='cnpj' />
         <CampoEndereco texto="Localização (Opcional):"
           set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
       </GroupBox>

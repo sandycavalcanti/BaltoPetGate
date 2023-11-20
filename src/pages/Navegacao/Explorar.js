@@ -1,37 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useEffect, useRef, useState } from 'react';
+import { FlatList, View, StyleSheet, ToastAndroid, ActivityIndicator } from "react-native";
 import axios from 'axios';
-import { corFundoCad, urlAPI, urlLocal } from "../../constants";
+import { corFundoCad, corRosaForte, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 
-export default function Explorar({ navigation: { navigate } }) {
-
+const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
+  const carregando = useRef(true)
+  const [isFetching, setIsFetching] = useState(false);
+  const controller = new AbortController();
 
   const Selecionar = () => {
-    axios.get(urlAPI + 'selpostagem')
-      .then((response) => {
-        setSelect(response.data)
-      }).catch((error) => {
-        console.error('Error:', error)
+    axios.get(urlAPI + 'selpostagem', { signal: controller.signal })
+      .then(response => {
+        if (carregando.current) carregando.current = false;
+        setSelect(response.data);
+        setIsFetching(false);
+      }).catch(error => {
+        if (error.response) {
+          let erro = error.response.data;
+          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          console.error(erro.error, error);
+        } else {
+          console.error('Error:', error);
+          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
+        }
       })
   }
 
   useEffect(() => {
-    Selecionar()
+    Selecionar();
+    return (() => {
+      controller.abort();
+    })
   }, []);
+
+  const onRefresh = () => {
+    setIsFetching(true);
+    Selecionar();
+  }
 
   return (
     <View style={styles.container}>
-      <FlatList style={styles.Lista}
-        data={select}
-        renderItem={({ item }) => (
-          <>
-            <Perfil_post navigate={navigate} data={item} />
-            <Post data={item} />
-          </>
-        )}
+      {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+      <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => (
+        <>
+          <Perfil_post data={item} />
+          <Post data={item} />
+        </>
+      )}
       />
     </View>
   );
@@ -40,8 +58,8 @@ export default function Explorar({ navigation: { navigate } }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: corFundoCad,
-    alignItems: 'flex-start',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     height: '100%',
     padding: 0,
@@ -50,3 +68,5 @@ const styles = StyleSheet.create({
     width: '100%'
   }
 });
+
+export default Explorar;

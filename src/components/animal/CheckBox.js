@@ -11,11 +11,7 @@ const CheckBox = () => {
 
   return (
     <View style={styles.container}>
-      <CheckBox
-        title="Marque esta caixa"
-        checked={checked}
-        onPress={handleCheckboxToggle}
-      />
+      <CheckBox title="Marque esta caixa" checked={checked} onPress={handleCheckboxToggle} />
     </View>
   );
 };

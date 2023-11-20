@@ -1,15 +1,15 @@
 import { NavigationContainer } from '@react-navigation/native'
-import { ModalPortal } from 'react-native-modals';
 import { createStackNavigator, TransitionSpecs, HeaderStyleInterpolators, CardStyleInterpolators } from "@react-navigation/stack";
 import { Easing } from 'react-native';
 import Splash from '../Splash';
 import Menu from './Menu';
-import HisChat from '../HistChat';
+import HistChat from '../HistChat';
 import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
-import Login from '../cadastro/Login';
+import CadConta from '../cadastro/CadConta';
+import Login from '../login/Login';
 import CadUsuario from "../cadastro/CadUsuario";
 import CadAbrigo from "../cadastro/CadAbrigo";
 import CadEstabelecimento from "../cadastro/CadEstabelecimento";
@@ -17,11 +17,11 @@ import CadInstituicao from "../cadastro/CadInstituicao";
 import CadProtetor from "../cadastro/CadProtetor";
 import CadOpcao from "../cadastro/CadOpcao";
 import CadVeterinario from "../cadastro/CadVeterinario";
-import RecSenha from "../cadastro/RecSenha";
-import VerCodigo from "../cadastro/VerCodigo";
-import CriarSenha from "../cadastro/CriarSenha";
+import RecSenha from '../login/RecSenha';
+import VerCodigo from '../login/VerCodigo';
+import CriarSenha from '../login/CriarSenha';
 import Perfil from '../Perfil';
-import Postagem from '../Postagem';
+import CadPostagem from '../cadastro/CadPostagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
 import AlterarPerfil from '../cadastro/AlterarPerfil';
@@ -44,6 +44,7 @@ const openConfig = {
     restSpeedThreshold: 0.01,
   }
 }
+
 const closeConfig = {
   animation: 'timing',
   config: {
@@ -71,6 +72,7 @@ export default function Navigation() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
           }} />
           <Stack.Screen name="Ficha" component={Ficha_animal} />
+          <Stack.Screen name="CadConta" component={CadConta} />
           <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
           <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
           <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
@@ -87,8 +89,8 @@ export default function Navigation() {
             
           }}/>
           <Stack.Screen name="CriarSenha" component={CriarSenha} />
-          <Stack.Screen name="Postagem" component={Postagem} />
-          <Stack.Screen name="HisChat" component={HisChat} options={{
+          <Stack.Screen name="CadPostagem" component={CadPostagem} />
+          <Stack.Screen name="HistChat" component={HistChat} options={{
             gestureDirection: 'vertical',
             transitionSpec: {
               open: openConfig,
@@ -111,7 +113,6 @@ export default function Navigation() {
           <Stack.Screen name="uploadimg" component={uploadimg} />
         </Stack.Navigator>
       </NavigationContainer>
-      <ModalPortal />
     </>
   );
 }
