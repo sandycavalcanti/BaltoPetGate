@@ -1,8 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 const TextoComum = (props) => {
-    return(
+    return (
         <View style={styles.Container}>
             <Text style={styles.Titulo}>
                 {props.textoTitulo}
@@ -15,24 +15,24 @@ const TextoComum = (props) => {
 }
 
 const styles = StyleSheet.create({
-    Container:{
+    Container: {
         flexDirection: 'row',
         padding: 10
     },
-    Titulo:{
+    Titulo: {
         color: '#096D82',
         fontSize: 20,
-        paddingRight: 7  
+        paddingRight: 7
     },
-    Descricao:{
+    Descricao: {
         color: '#299FB8',
         fontSize: 20
     }
 });
 
 TextoComum.propTypes = {
-    textoTitulo: PropTypes.string,
-    textoDescricao: PropTypes.string
+    textoTitulo: PropTypes.string || PropTypes.number,
+    textoDescricao: PropTypes.string || PropTypes.number,
 }
 
 export default TextoComum;

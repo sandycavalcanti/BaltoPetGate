@@ -87,7 +87,7 @@ const HistChat = () => {
           {carregando ?
             <View style={styles.carregando}>
               <ActivityIndicator size="large" color={corBordaBoxCad} />
-            </View> : !empty ?
+            </View> : !empty.current ?
               <>
                 <View style={styles.searchBar}>
                   <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" ref={textInputRef} />
