@@ -3,7 +3,7 @@ import { createStackNavigator, TransitionSpecs, HeaderStyleInterpolators, CardSt
 import { Easing } from 'react-native';
 import Splash from '../Splash';
 import Menu from './Menu';
-import HisChat from '../HistChat';
+import HistChat from '../HistChat';
 import InfoChat from '../InfoChat';
 import Ficha_animal from '../Ficha_animal';
 import CadAnimal from '../cadastro/CadAnimal';
@@ -87,7 +87,7 @@ export default function Navigation() {
           <Stack.Screen name="Perfil" component={Perfil} />
           <Stack.Screen name="CriarSenha" component={CriarSenha} />
           <Stack.Screen name="CadPostagem" component={CadPostagem} />
-          <Stack.Screen name="HisChat" component={HisChat} options={{
+          <Stack.Screen name="HistChat" component={HistChat} options={{
             gestureDirection: 'vertical',
             transitionSpec: {
               open: openConfig,

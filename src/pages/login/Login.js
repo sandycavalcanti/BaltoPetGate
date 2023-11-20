@@ -80,7 +80,7 @@ const Login = () => {
                     label={"Email"}
                     iconClass={OcticonsIcon}
                     iconName={"pencil"}
-                    iconColor={"grey"}
+                    iconColor={"#ccc"}
                     iconSize={25}
                     onFocus={() => setColorEmail(corPlaceholderAtivo)}
                     onEndEditing={() => { if (!email.current) setColorEmail(corPlaceholderCad) }}
@@ -97,7 +97,7 @@ const Login = () => {
                             label={"Senha"}
                             iconClass={OcticonsIcon}
                             iconName={"pencil"}
-                            iconColor={"grey"}
+                            iconColor={"#ccc"}
                             iconSize={25}
                             onFocus={() => setColorSenha(corPlaceholderAtivo)}
                             onEndEditing={() => { if (!senha.current) setColorSenha(corPlaceholderCad) }}

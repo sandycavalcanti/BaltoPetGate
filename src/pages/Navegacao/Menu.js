@@ -7,11 +7,20 @@ import Home from './Home';
 import Explorar from './Explorar';
 import Mapa from './Mapa';
 import Animal from './Animal';
+import HistChat from '../HistChat';
 import HeaderExplorar from '../../components/navegacao/HeaderExplorar';
 
 const Tab = createBottomTabNavigator();
 
 const Menu = ({ navigation: { navigate } }) => {
+
+    const CustomChatButton = () => {
+        return (
+            <TouchableOpacity onPress={() => navigate('HistChat')} style={styles.chatButton}>
+                <Ionicons name="chatbubble-ellipses-outline" size={35} color={'#eee'} />
+            </TouchableOpacity>
+        )
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -27,6 +36,12 @@ const Menu = ({ navigation: { navigate } }) => {
                     component={Explorar}
                     options={{
                         tabBarIcon: props => <Ionicons name="search-sharp" size={35} color={props.focused ? '#fff' : '#eee'} />,
+                    }} />
+                <Tab.Screen
+                    name="HistChat"
+                    component={HistChat}
+                    options={{
+                        tabBarButton: CustomChatButton,
                     }} />
                 <Tab.Screen
                     name="Mapa"
@@ -53,6 +68,11 @@ const styles = StyleSheet.create({
         borderTopWidth: 2,
         alignItems: 'center'
     },
+    chatButton: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });
 
 export default Menu;

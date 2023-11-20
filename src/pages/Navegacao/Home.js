@@ -63,9 +63,6 @@ const Home = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={() => setTemporario(true)}>
               <Text>Ativar a Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate("HisChat")}>
-              <Text>Ir para chats</Text>
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigate("QuestionarioAdocao")}>
               <Text>Questionario Adoção</Text>
             </TouchableOpacity>

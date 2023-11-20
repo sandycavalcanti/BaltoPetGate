@@ -18,6 +18,7 @@ import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnima
 import AlertPro from 'react-native-alert-pro';
 import CampoSimplesAnimado from '../../components/cadastro/CampoSimplesAnimado';
 import CampoSenhaAnimado from '../../components/cadastro/CampoSenhaAnimado';
+import CampoDtNascAnimado from '../../components/cadastro/CampoDtNascAnimado';
 
 const CadConta = () => {
     const route = useRoute();
@@ -29,21 +30,22 @@ const CadConta = () => {
     const email = useRef('')
     const senha = useRef('');
     const senhaConfirmacao = useRef('');
-    const [dtNasc, setDtNasc] = useState();
-    const [cpf, setCpf] = useState();
-    const [crmv, setCrmv] = useState();
-    const [telefone1, setTelefone1] = useState();
-    const [telefone2, setTelefone2] = useState();
-    const [whatsapp, setWhatsapp] = useState();
-    const [cep, setCep] = useState('');
-    const [uf, setUf] = useState('');
-    const [cidade, setCidade] = useState('');
-    const [bairro, setBairro] = useState('');
-    const [rua, setRua] = useState('');
-    const [numero, setNumero] = useState();
-    const [complemento, setComplemento] = useState('');
-    const [instagram, setInstagram] = useState('');
-    const [facebook, setFacebook] = useState('');
+    const dtNasc = useRef();
+    const cpf = useRef();
+    const crmv = useRef();
+    const cnpj = useRef();
+    const telefone1 = useRef();
+    const telefone2 = useRef();
+    const whatsapp = useRef();
+    const cep = useRef('');
+    const uf = useRef('');
+    const cidade = useRef('');
+    const bairro = useRef('');
+    const rua = useRef('');
+    const numero = useRef();
+    const complemento = useRef('');
+    const instagram = useRef('');
+    const facebook = useRef('');
 
     const alertRef = useRef(null);
     const tentativas = useRef(0);
@@ -51,13 +53,41 @@ const CadConta = () => {
     const [mensagem, setMensagem] = useState({});
 
     const Cadastrar = async () => {
-        let campoEmail = email.current;
-        let campoNome = nome.current;
-        let campoNomePerfil = nomePerfil.current;
-        let campoSenha = senha.current;
-        let campoSenhaConfirmacao = senhaConfirmacao.current;
-        const camposObrigatorios = [campoEmail, campoNome, campoNomePerfil, campoSenha, campoSenhaConfirmacao];
-        const camposCadastro = { email: campoEmail, nome: campoNome, nomePerfil: campoNomePerfil, senha: campoSenha, senhaConfirmacao: campoSenhaConfirmacao }
+        const camposObrigatorios = [email.current, nome.current, nomePerfil.current, senha.current, senhaConfirmacao.current]
+        let camposCadastro = { email: email.current, nome: nome.current, nomePerfil: nomePerfil.current, senha: senha.current, senhaConfirmacao: senhaConfirmacao.current }
+
+        const camposEndereco = { cep: cep.current, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current, numero: numero.current, complemento: complemento.current }
+        const camposRedesTelefones = { facebook: facebook.current, instagram: instagram.current, whatsapp: whatsapp.current, telefone1: telefone1.current, telefone2: telefone2.current }
+        const camposPessoais = { dtNasc: dtNasc.current, cpf: cpf.current };
+        const redeExiste = !(!instagram.current && !facebook.current);
+
+        if (tipo != 1) {
+            camposObrigatorios.push(dtNasc.current, cpf.current, telefone1.current);
+            camposCadastro = { ...camposCadastro, ...camposEndereco, ...camposRedesTelefones, ...camposPessoais};
+        }
+
+        switch (tipo) {
+            case 2:
+                camposObrigatorios.push(crmv.current);
+                camposCadastro = { crmv: crmv.current };
+                break;
+            case 3:
+                camposObrigatorios.push(whatsapp.current, redeExiste);
+                camposCadastro = { cnpj: cnpj.current };
+                break;
+            case 4:
+                camposObrigatorios.push(whatsapp.current, redeExiste);
+                break;
+            case 5:
+                camposObrigatorios.push(whatsapp.current);
+                break;
+            case 6:
+                camposObrigatorios.push(cnpj.current);
+                camposCadastro = { cnpj: cnpj.current };
+                break;
+            default:
+                break;
+        }
 
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
         if (!mensagemErro) {
@@ -90,7 +120,8 @@ const CadConta = () => {
             setMensagem({ color: 'red', text: erro });
         });
     }
-
+const [a, setA] = useState('');
+const [b, setB] = useState('');
     return (
         <ContainerCadastro titulo="Crie sua conta!">
             {(() => {
@@ -108,19 +139,18 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimples set={setNome} placeholder={"Nome Completo"} />
-                                    <CampoDtNasc set={setDtNasc} />
-                                    <CampoNumFormatado set={setCpf} tipo='cpf' />
-                                    <CampoNumFormatado set={setCrmv} tipo='crmv' />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    {/* <CampoDtNascAnimado set={setDtNasc} /> */}
+                                    <CampoNumFormatado set={setA} tipo='cpf' />
+                                    <CampoNumFormatado set={setB} tipo='crmv' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações da cliníca veterinária">
-                                    <CampoSimples set={setNomePerfil} placeholder={"Nome da clínica"} />
-                                    <CampoEndereco opcional
-                                        set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} />
+                                    {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
-                                    <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />
-                                    <CampoRede set1={setInstagram} set2={setFacebook} opcional />
+                                    {/* <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />
+                                    <CampoRede set1={setInstagram} set2={setFacebook} opcional /> */}
                                 </GroupBox>
                             </>
                         )

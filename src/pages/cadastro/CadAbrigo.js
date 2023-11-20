@@ -39,7 +39,7 @@ const CadAbrigo = () => {
   const [instagram, setInstagram] = useState('');
   const [facebook, setFacebook] = useState('');
 
-const Cadastrar = async () => {
+  const Cadastrar = async () => {
     const camposObrigatorios = [email, dtNasc, nome, nomePerfil, cpf, telefone1, whatsapp, senha, senhaConfirmacao];
     const camposCadastro = {
       email, nome, nomePerfil, cep, uf, cidade, bairro, rua, numero, complemento,

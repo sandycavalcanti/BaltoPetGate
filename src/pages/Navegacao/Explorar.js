@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
+import { FlatList, TouchableOpacity, View, StyleSheet, ToastAndroid } from "react-native";
 import axios from 'axios';
 import { corFundoCad, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
@@ -7,12 +7,14 @@ import Post from '../../components/perfil/Post';
 
 const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
   const controller = new AbortController();
 
   const Selecionar = () => {
     axios.get(urlAPI + 'selpostagem', { signal: controller.signal })
       .then(response => {
-        setSelect(response.data)
+        setSelect(response.data);
+        setIsFetching(false);
       }).catch(error => {
         if (error.response) {
           let erro = error.response.data;
@@ -20,6 +22,7 @@ const Explorar = ({ navigation: { navigate } }) => {
           console.error(erro.error, error);
         } else {
           console.error('Error:', error);
+          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
         }
       })
   }
@@ -31,9 +34,14 @@ const Explorar = ({ navigation: { navigate } }) => {
     })
   }, []);
 
+  const onRefresh = () => {
+    setIsFetching(true);
+    Selecionar();
+  }
+
   return (
     <View style={styles.container}>
-      <FlatList style={styles.Lista} data={select} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => (
+      <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => (
         <>
           <Perfil_post data={item} />
           <Post data={item} />

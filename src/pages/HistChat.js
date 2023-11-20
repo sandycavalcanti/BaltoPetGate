@@ -10,7 +10,7 @@ import RemoverAcentos from '../utils/RemoverAcentos';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
-const HisChat = () => {
+const HistChat = () => {
   const TB_PESSOA_IDD = useRef(null)
   const pessoasJson = useRef([])
   const [pesquisa, setPesquisa] = useState("");
@@ -18,6 +18,7 @@ const HisChat = () => {
 
   const controller = new AbortController();
   const [carregando, setCarregando] = useState(true);
+  const empty = useRef(false)
 
   const Selecionar = async () => {
     const decodedToken = await DecodificarToken();
@@ -30,13 +31,19 @@ const HisChat = () => {
         }
       })
       .catch(error => {
-        let erro = error.response.data;
-        if (error.response.status !== 404) {
-          console.error(erro.error, error);
+        if (error.response) {
+          if (error.response.status !== 404) {
+            let erro = error.response.data;
+            console.error(erro.error, error);
+            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+          } else {
+            empty.current = true;
+            setCarregando(false);
+          }
         } else {
-          console.log(erro.message);
+          console.error(error);
+          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
         }
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
       })
   };
 
@@ -77,24 +84,30 @@ const HisChat = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.groupBox}>
           <Text style={styles.titulo}>Chat</Text>
-          <View style={styles.searchBar}>
-            <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" ref={textInputRef} />
-            {pesquisa !== '' &&
-              <TouchableOpacity onPress={Fechar}>
-                <AntDesign name="close" size={24} color="black" />
-              </TouchableOpacity>}
-          </View>
           {carregando ?
             <View style={styles.carregando}>
               <ActivityIndicator size="large" color={corBordaBoxCad} />
-            </View> :
-            <View style={styles.contacts}>
-              <GrupoContatos data={usuarios} titulo="Usuários" />
-              <GrupoContatos data={veterinarios} titulo="Veterinários" />
-              <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
-              <GrupoContatos data={casasderacao} titulo="Casas de ração" />
-              <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
-            </View>}
+            </View> : !empty ?
+              <>
+                <View style={styles.searchBar}>
+                  <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" ref={textInputRef} />
+                  {pesquisa !== '' &&
+                    <TouchableOpacity onPress={Fechar}>
+                      <AntDesign name="close" size={24} color="black" />
+                    </TouchableOpacity>}
+                </View>
+                <View style={styles.contacts}>
+                  <GrupoContatos data={usuarios} titulo="Usuários" />
+                  <GrupoContatos data={veterinarios} titulo="Veterinários" />
+                  <GrupoContatos data={ongs} titulo="Instituições/Protetores/Abrigos" />
+                  <GrupoContatos data={casasderacao} titulo="Casas de ração" />
+                  <GrupoContatos data={desativados} titulo="Chats desativados" desativado />
+                </View>
+              </>
+              :
+              <View style={styles.viewEmpty}>
+                <Text style={styles.textEmpty}>Nenhum Chat iniciado</Text>
+              </View>}
         </View>
       </SafeAreaView>
     </ScrollView >
@@ -160,7 +173,16 @@ const styles = StyleSheet.create({
     zIndex: 10,
     marginTop: 10,
     marginBottom: 10,
+  },
+  viewEmpty: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  textEmpty: {
+    color: '#fafafa',
+    fontSize: 20,
   }
 });
 
-export default HisChat;
+export default HistChat;
