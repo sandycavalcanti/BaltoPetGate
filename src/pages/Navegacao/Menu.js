@@ -17,7 +17,7 @@ const Menu = ({ navigation: { navigate } }) => {
     const CustomChatButton = () => {
         return (
             <TouchableOpacity onPress={() => navigate('HistChat')} style={styles.chatButton}>
-                <Ionicons name="chatbubble-ellipses-outline" size={35} color={'#eee'} />
+                <Ionicons name="chatbubble-ellipses-outline" size={32} color={'#dedede'} />
             </TouchableOpacity>
         )
     }
@@ -29,13 +29,13 @@ const Menu = ({ navigation: { navigate } }) => {
                     name="Home"
                     component={Home}
                     options={{
-                        tabBarIcon: props => <Octicons name="home" size={30} color={props.focused ? '#fff' : '#eee'} />,
+                        tabBarIcon: props => <Octicons name="home" size={30} color={props.focused ? '#fff' : '#dedede'} />,
                     }} />
                 <Tab.Screen
                     name="Explorar"
                     component={Explorar}
                     options={{
-                        tabBarIcon: props => <Ionicons name="search-sharp" size={35} color={props.focused ? '#fff' : '#eee'} />,
+                        tabBarIcon: props => <Ionicons name="search-sharp" size={35} color={props.focused ? '#fff' : '#dedede'} />,
                     }} />
                 <Tab.Screen
                     name="HistChat"
@@ -47,13 +47,13 @@ const Menu = ({ navigation: { navigate } }) => {
                     name="Mapa"
                     component={Mapa}
                     options={{
-                        tabBarIcon: props => <Feather name="map-pin" size={30} color={props.focused ? '#fff' : '#eee'} />,
+                        tabBarIcon: props => <Feather name="map-pin" size={30} color={props.focused ? '#fff' : '#dedede'} />,
                     }} />
                 <Tab.Screen
                     name="Animal"
                     component={Animal}
                     options={{
-                        tabBarIcon: props => <Ionicons name="paw-outline" size={33} color={props.focused ? '#fff' : '#eee'} />,
+                        tabBarIcon: props => <Ionicons name="paw-outline" size={33} color={props.focused ? '#fff' : '#dedede'} />,
                     }} />
             </Tab.Navigator>
             <StatusBar />

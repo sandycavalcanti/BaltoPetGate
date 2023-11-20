@@ -1,12 +1,29 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 import PropTypes from 'prop-types';
 import FormatarTexto from '../../utils/FormatarTexto';
+import { Hoshi } from 'react-native-textinput-effects';
 
 const CampoNumFormatadoAnimado = (props) => {
     const [texto, setTexto] = useState('');
     const tipo = props.tipo;
+    const [focus, setFocus] = useState(false);
+    const [marginTopAnimation] = useState(new Animated.Value(5));
+
+    useEffect(() => {
+        Animated.timing(marginTopAnimation, {
+            toValue: focus ? 20 : 5,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: false,
+        }).start();
+    }, [focus, marginTopAnimation]);
+
+    const onChangeText = (text) => {
+        setTexto(FormatarTexto(text, tipo));
+        props.setRef.current = text.replace(/\D/g, '');
+    }
 
     useEffect(() => {
         if (props.val) {
@@ -14,53 +31,38 @@ const CampoNumFormatadoAnimado = (props) => {
         }
     }, [])
 
-    const formatarTextoCrmv = (text) => {
-        const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
-        props.set(1);
-        setTexto(dataFormatadaCampo);
-
-        if (dataFormatadaCampo.length >= 4 && dataFormatadaCampo.length <= 7)
-            props.set(dataFormatadaCampo);
-    };
-
-    const formatarTextoCnpj = (text) => {
-        const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
-        props.set(1);
-
-        if (dataFormatadaCampo.length <= 2) {
-            setTexto(dataFormatadaCampo);
-        } else if (dataFormatadaCampo.length <= 5) {
-            setTexto(`${dataFormatadaCampo.slice(0, 2)}.${dataFormatadaCampo.slice(2, 5)}`);
-        } else if (dataFormatadaCampo.length <= 8) {
-            setTexto(`${dataFormatadaCampo.slice(0, 2)}.${dataFormatadaCampo.slice(2, 5)}.${dataFormatadaCampo.slice(5, 8)}`);
-        } else if (dataFormatadaCampo.length <= 12) {
-            setTexto(`${dataFormatadaCampo.slice(0, 2)}.${dataFormatadaCampo.slice(2, 5)}.${dataFormatadaCampo.slice(5, 8)}/${dataFormatadaCampo.slice(8, 12)}`);
-        } else {
-            const dataFormatada = `${dataFormatadaCampo.slice(0, 2)}.${dataFormatadaCampo.slice(2, 5)}.${dataFormatadaCampo.slice(5, 8)}/${dataFormatadaCampo.slice(8, 12)}-${dataFormatadaCampo.slice(12, 14)}`;
-            setTexto(dataFormatada);
-            if (dataFormatadaCampo.length == 14)
-                props.set(dataFormatadaCampo);
-        }
-    };
-
-    const formatarTextoNum = (text) => {
-        const dataFormatadaCampo = text.replace(/[\D.\-a-zA-Z]/g, '');
-        props.set(dataFormatadaCampo);
-        setTexto(dataFormatadaCampo);
-    };
-
     return (
-        <View style={styles.containercampo}>
-            <TextInput onChangeText={text => setTexto(FormatarTexto(text, tipo))} value={texto} placeholderTextColor={corPlaceholderCad} style={styles.campo}
-                placeholder={props.placeholder ? props.placeholder : props.tipo.toUpperCase()} maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : null} keyboardType='numeric' />
+        <Animated.View style={[styles.containercampo, { marginTop: marginTopAnimation }]}>
+            <Hoshi
+                label={props.placeholder ? props.placeholder : props.tipo.toUpperCase()}
+                borderColor={corPlaceholderCad}
+                borderHeight={1}
+                inputStyle={{ fontWeight: '600' }}
+                labelStyle={[styles.labelStyle, { display: (props.setRef.current && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
+                style={{ bottom: 4, width: !props.opcional ? '90%' : '94%', borderBottomColor: 'transparent', marginLeft: -5 }}
+                onChangeText={onChangeText}
+                onFocus={() => setFocus(true)}
+                onBlur={() => setFocus(false)}
+                maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : null}
+                keyboardType='numeric'
+                value={texto}
+                defaultValue={props.val}
+            />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
-        </View>
+        </Animated.View>
     )
 }
 
 const styles = StyleSheet.create({
     containercampo: {
         width: '95%',
+        borderRadius: valorBordaCampoCad,
+        backgroundColor: corFundoCampoCad,
+        height: 35,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: "center",
+        marginBottom: 5
     },
     campo: {
         width: '100%',
@@ -81,13 +83,17 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'red',
         right: 10,
-        top: 10,
-        bottom: 0,
+    },
+    labelStyle: {
+        color: corPlaceholderCad,
+        fontSize: 18,
+        borderRadius: 15,
+        backgroundColor: corFundoCampoCad,
     },
 });
 
 CampoNumFormatadoAnimado.propTypes = {
-    set: PropTypes.func,
+    setRef: PropTypes.object,
     val: PropTypes.number || PropTypes.string,
     opcional: PropTypes.bool,
     tipo: PropTypes.string,

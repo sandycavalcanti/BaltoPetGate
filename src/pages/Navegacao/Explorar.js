@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, TouchableOpacity, View, StyleSheet, ToastAndroid } from "react-native";
+import { useEffect, useRef, useState } from 'react';
+import { FlatList, View, StyleSheet, ToastAndroid, ActivityIndicator } from "react-native";
 import axios from 'axios';
-import { corFundoCad, urlAPI } from "../../constants";
+import { corFundoCad, corRosaForte, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 
 const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
+  const carregando = useRef(true)
   const [isFetching, setIsFetching] = useState(false);
   const controller = new AbortController();
 
   const Selecionar = () => {
     axios.get(urlAPI + 'selpostagem', { signal: controller.signal })
       .then(response => {
+        if (carregando.current) carregando.current = false;
         setSelect(response.data);
         setIsFetching(false);
       }).catch(error => {
@@ -41,6 +43,7 @@ const Explorar = ({ navigation: { navigate } }) => {
 
   return (
     <View style={styles.container}>
+      {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
       <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => (
         <>
           <Perfil_post data={item} />
@@ -55,8 +58,8 @@ const Explorar = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: corFundoCad,
-    alignItems: 'flex-start',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     height: '100%',
     padding: 0,

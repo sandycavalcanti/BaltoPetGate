@@ -1,7 +1,7 @@
 import AnimalPost from '../../components/perfil/AnimalPost';
-import { TouchableOpacity, Text, View, StyleSheet, FlatList, Dimensions, ToastAndroid } from 'react-native';
-import { corFundoCad, urlAPI } from '../../constants';
-import { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList, Dimensions, ToastAndroid, ActivityIndicator } from 'react-native';
+import { corFundoCad, corRosaForte, urlAPI } from '../../constants';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Perfil_post from '../../components/perfil/Perfil_post';
 
@@ -9,12 +9,14 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
+    const carregando = useRef(true)
     const [isFetching, setIsFetching] = useState(false);
     const controller = new AbortController();
 
     const Selecionar = () => {
         axios.get(urlAPI + 'selanimais', { signal: controller.signal })
             .then(response => {
+                if (carregando.current) carregando.current = false;
                 setSelect(response.data);
                 setIsFetching(false);
             }).catch(error => {
@@ -43,14 +45,13 @@ const Animal = ({ navigation: { navigate } }) => {
 
     return (
         <View style={styles.container}>
-            <>
-                <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => (
-                    <>
-                        <Perfil_post data={item} />
-                        <AnimalPost data={item} />
-                    </>
-                )} />
-            </>
+            {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+            <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => (
+                <>
+                    <Perfil_post data={item} />
+                    <AnimalPost data={item} />
+                </>
+            )} />
         </View>
     );
 }
@@ -58,8 +59,8 @@ const Animal = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: corFundoCad,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: windowWidth,
         height: '100%',
         padding: 0,

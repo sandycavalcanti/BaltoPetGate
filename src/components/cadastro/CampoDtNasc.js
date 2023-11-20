@@ -15,7 +15,7 @@ const CampoDtNasc = (props) => {
             formatarDataCampo(novaData)
         }
     }, [])
-    
+
     const formatarDataCampo = (text) => {
         const dataFormatadaCampo = text.replace(/\D/g, '');
         props.set(1);

@@ -19,6 +19,7 @@ import AlertPro from 'react-native-alert-pro';
 import CampoSimplesAnimado from '../../components/cadastro/CampoSimplesAnimado';
 import CampoSenhaAnimado from '../../components/cadastro/CampoSenhaAnimado';
 import CampoDtNascAnimado from '../../components/cadastro/CampoDtNascAnimado';
+import CampoNumFormatadoAnimado from '../../components/cadastro/CampoNumFormatadoAnimado';
 
 const CadConta = () => {
     const route = useRoute();
@@ -63,7 +64,7 @@ const CadConta = () => {
 
         if (tipo != 1) {
             camposObrigatorios.push(dtNasc.current, cpf.current, telefone1.current);
-            camposCadastro = { ...camposCadastro, ...camposEndereco, ...camposRedesTelefones, ...camposPessoais};
+            camposCadastro = { ...camposCadastro, ...camposEndereco, ...camposRedesTelefones, ...camposPessoais };
         }
 
         switch (tipo) {
@@ -120,8 +121,8 @@ const CadConta = () => {
             setMensagem({ color: 'red', text: erro });
         });
     }
-const [a, setA] = useState('');
-const [b, setB] = useState('');
+    const [a, setA] = useState('');
+    const [b, setB] = useState('');
     return (
         <ContainerCadastro titulo="Crie sua conta!">
             {(() => {
@@ -140,13 +141,14 @@ const [b, setB] = useState('');
                             <>
                                 <GroupBox titulo="Informações pessoais">
                                     <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
-                                    {/* <CampoDtNascAnimado set={setDtNasc} /> */}
-                                    <CampoNumFormatado set={setA} tipo='cpf' />
-                                    <CampoNumFormatado set={setB} tipo='crmv' />
+                                    <CampoDtNascAnimado setRef={dtNasc} />
+                                    <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
+                                    <CampoNumFormatadoAnimado setRef={crmv} tipo='crmv' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações da cliníca veterinária">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} />
                                     {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
+                                {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     {/* <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />

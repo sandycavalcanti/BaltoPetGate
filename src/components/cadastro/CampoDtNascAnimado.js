@@ -1,10 +1,29 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 import PropTypes from 'prop-types';
+import FormatarTexto from '../../utils/FormatarTexto';
+import { Hoshi } from 'react-native-textinput-effects';
 
 const CampoDtNascAnimado = (props) => {
-    const [data, setData] = useState('');
+    const [texto, setTexto] = useState('');
+    const [focus, setFocus] = useState(false);
+    const [marginTopAnimation] = useState(new Animated.Value(5));
+
+    useEffect(() => {
+        Animated.timing(marginTopAnimation, {
+            toValue: focus ? 20 : 5,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: false,
+        }).start();
+    }, [focus, marginTopAnimation]);
+
+    const onChangeText = (text) => {
+        const texto =FormatarTexto(text, 'data')
+        setTexto(texto);
+        props.setRef.current = ValidarDtNasc(texto);
+    }
 
     useEffect(() => {
         if (props.val) {
@@ -12,26 +31,11 @@ const CampoDtNascAnimado = (props) => {
             const partesData = dataOriginal.split("-");
 
             const novaData = partesData[2] + partesData[1] + partesData[0];
-            formatarDataCampo(novaData)
+            setTexto(FormatarTexto(novaData, 'data'));
         }
     }, [])
-    
-    const formatarDataCampo = (text) => {
-        const dataFormatadaCampo = text.replace(/\D/g, '');
-        props.set(1);
 
-        if (dataFormatadaCampo.length <= 2) {
-            setData(dataFormatadaCampo);
-        } else if (dataFormatadaCampo.length <= 4) {
-            setData(`${dataFormatadaCampo.slice(0, 2)}/${dataFormatadaCampo.slice(2)}`);
-        } else {
-            const dataFormatada = `${dataFormatadaCampo.slice(0, 2)}/${dataFormatadaCampo.slice(2, 4)}/${dataFormatadaCampo.slice(4, 8)}`;
-            setData(dataFormatada);
-            props.set(formatarDataBanco(dataFormatada));
-        }
-    };
-
-    const formatarDataBanco = (data) => {
+    const ValidarDtNasc = (data) => {
         const anoAtual = new Date().getFullYear();
         const [dia, mes, ano] = data.split('/').map(Number);
 
@@ -45,25 +49,41 @@ const CampoDtNascAnimado = (props) => {
                 return dataObjetoDate;
             }
         }
-        return 1;
+        return '';
     };
 
-    const [textoDica, setTextoDica] = useState(false);
-
     return (
-        <View style={styles.containercampo}>
-            <TextInput onChangeText={(text) => formatarDataCampo(text)} value={data} keyboardType="numeric"
-                placeholder="Data de nascimento" maxLength={10} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)}
-                placeholderTextColor={corPlaceholderCad} style={styles.campo} {...props} />
+        <Animated.View style={[styles.containercampo, { marginTop: marginTopAnimation }]}>
+            <Hoshi
+                label={"Data de nascimento"}
+                borderColor={corPlaceholderCad}
+                borderHeight={1}
+                inputStyle={{ fontWeight: '600' }}
+                labelStyle={[styles.labelStyle, { display: (props.setRef.current && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
+                style={{ bottom: 4, width: !props.opcional ? '90%' : '94%', borderBottomColor: 'transparent', marginLeft: -5 }}
+                onChangeText={onChangeText}
+                onFocus={() => setFocus(true)}
+                onBlur={() => setFocus(false)}
+                maxLength={10}
+                keyboardType='numeric'
+                value={texto}
+                defaultValue={props.val}
+            />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
-            {textoDica && <Text style={styles.dica}>Insira a data no formato DD/MM/YYYY</Text>}
-        </View>
+        </Animated.View>
     )
 }
 
 const styles = StyleSheet.create({
     containercampo: {
         width: '95%',
+        borderRadius: valorBordaCampoCad,
+        backgroundColor: corFundoCampoCad,
+        height: 35,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: "center",
+        marginBottom: 5
     },
     campo: {
         width: '100%',
@@ -84,15 +104,20 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: 'red',
         right: 10,
-        top: 10,
-        bottom: 0,
+    },
+    labelStyle: {
+        color: corPlaceholderCad,
+        fontSize: 18,
+        borderRadius: 15,
+        backgroundColor: corFundoCampoCad,
     },
 });
 
 CampoDtNascAnimado.propTypes = {
-    set: PropTypes.func,
+    setRef: PropTypes.object,
     val: PropTypes.number || PropTypes.string,
-    opcional: PropTypes.bool
+    opcional: PropTypes.bool,
+    placeholder: PropTypes.string
 }
 
 export default CampoDtNascAnimado

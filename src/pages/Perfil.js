@@ -45,8 +45,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
 
-  const SelecionarPublicacoes = async () => {
-    await axios.post(urlAPI + 'selanimal/filtrar', {
+  const SelecionarPublicacoes = () => {
+    axios.post(urlAPI + 'selanimal/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
       setSelectAnimal(response.data);
@@ -57,7 +57,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         console.error('Erro ao selecionar:', erro.error);
       }
     })
-    await axios.post(urlAPI + 'selpostagem/filtrar', {
+    axios.post(urlAPI + 'selpostagem/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
       setSelectPostagem(response.data);
