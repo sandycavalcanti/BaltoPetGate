@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 TextoMultiplo.propTypes = {
-    textoMultiplo: PropTypes.string
+    textoMultiplo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default TextoMultiplo;

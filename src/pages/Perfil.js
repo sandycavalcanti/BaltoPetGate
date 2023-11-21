@@ -18,7 +18,6 @@ const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 let HeaderHeight
 const PullToRefreshDist = 150;
-let TB_PESSOA_IDD;
 
 const Perfil = ({ navigation: { navigate } }) => {
   const route = useRoute();
@@ -37,6 +36,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const _tabIndex = useRef(0);
   const refreshStatusRef = useRef(false);
 
+  const TB_PESSOA_IDD = useRef(null);
   const [pessoal, setPessoal] = useState(false);
   const [perfilHeight, setPerfilHeight] = useState(450);
   HeaderHeight = perfilHeight;
@@ -45,8 +45,9 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
   const [selectAvaliacao, setSelectAvaliacao] = useState({});
+  const [selectSeguindo, setSelectSeguindo] = useState([]);
 
-  const SelecionarPublicacoesAvaliacoes = () => {
+  const SelecionarPublicacoesAvaliacoes = async () => {
     axios.post(urlAPI + 'selanimal/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
@@ -80,18 +81,31 @@ const Perfil = ({ navigation: { navigate } }) => {
         console.error('Erro ao selecionar:', erro.error);
       };
     });
+    axios.post(urlAPI + 'selinteracao/filtrar', {
+      TB_TIPO_INTERACAO_ID: 1,
+      TB_PESSOA_DESTINATARIO_ID: id
+    }).then((response) => {
+      setSelectSeguindo(response.data);
+    }).catch((error) => {
+      if (error.response.status !== 404) {
+        let erro = error.response.data;
+        ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error);
+      };
+    });
   }
 
   useEffect(() => {
     const Selecionar = async () => {
       const decodedToken = await DecodificarToken();
-      TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-      if (TB_PESSOA_IDD === id) setPessoal(true);
+      TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+      if (TB_PESSOA_IDD.current === id) setPessoal(true);
       SelecionarPublicacoesAvaliacoes();
       await axios.get(urlAPI + 'selpessoa/' + id)
-        .then(async (response) => {
+        .then(response => {
           setSelectPessoa(response.data[0]);
-        }).catch((error) => {
+          setCarregando(false)
+        }).catch(error => {
           try {
             setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
           } catch (error) {
@@ -101,9 +115,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         });
     };
 
-    Selecionar().then(() => {
-      setCarregando(false)
-    });
+    Selecionar();
   }, []);
 
 
@@ -223,7 +235,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout avaliacoes={selectAvaliacao} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout avaliacoes={selectAvaliacao} seguindo={selectSeguindo} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -232,7 +244,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab1Item = ({ item, index }) => {
     return (
       <>
-        <AnimalPost navigate={navigate} data={item} />
+        <Perfil_post data={item} pessoal={pessoal} tipo="animal" />
+        <AnimalPost data={item} />
       </>
     );
   };
@@ -240,7 +253,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab2Item = ({ item, index }) => {
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        <Perfil_post navigate={navigate} data={item} pessoal={pessoal} />
+        <Perfil_post data={item} pessoal={pessoal}  tipo="post"/>
         <Post data={item} />
       </View>
     );

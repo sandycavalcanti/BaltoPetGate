@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 });
 
 TextosOpcionais.propTypes = {
-    textosOpcionais: PropTypes.string
+    textosOpcionais: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default TextosOpcionais;

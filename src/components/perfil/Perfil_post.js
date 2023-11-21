@@ -13,8 +13,8 @@ const Perfil_post = (props) => {
   const navigation = useNavigation();
   let dropdownOptions = [];
 
-  if(props.pessoal){
-    dropdownOptions= ['Visualizar perfil', 'Editar'];
+  if (props.pessoal) {
+    dropdownOptions = ['Visualizar perfil', 'Editar', 'Desativar'];
   } else {
     dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
   }
@@ -25,6 +25,18 @@ const Perfil_post = (props) => {
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
+    } else if (index == 1) {
+      if (tipo == 'animal') {
+
+      } else {
+
+      }
+    } else if (index == 2) {
+      if (tipo == 'animal') {
+
+      } else {
+
+      }
     }
   }
 
@@ -111,7 +123,9 @@ const styles = StyleSheet.create({
 });
 
 Perfil_post.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  pessoal: PropTypes.bool,
+  tipo: PropTypes.string
 }
 
 export default Perfil_post;

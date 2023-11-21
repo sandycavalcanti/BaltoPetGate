@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 import PropTypes from 'prop-types';
-import FormatarTexto from '../../utils/FormatarTexto';
 import { Hoshi } from 'react-native-textinput-effects';
+import FormatarTextoCampo from '../../utils/FormatarTextoCampo';
 
 const CampoNumFormatadoAnimado = (props) => {
     const [texto, setTexto] = useState('');
@@ -21,13 +21,13 @@ const CampoNumFormatadoAnimado = (props) => {
     }, [focus, marginTopAnimation]);
 
     const onChangeText = (text) => {
-        setTexto(FormatarTexto(text, tipo));
+        setTexto(FormatarTextoCampo(text, tipo));
         props.setRef.current = text.replace(/\D/g, '');
     }
 
     useEffect(() => {
         if (props.val) {
-            setTexto(FormatarTexto(props.val, tipo));
+            setTexto(FormatarTextoCampo(props.val, tipo));
         }
     }, [])
 
@@ -43,7 +43,7 @@ const CampoNumFormatadoAnimado = (props) => {
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
-                maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : null}
+                maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : tipo == 'tel' ? 16 : null}
                 keyboardType='numeric'
                 value={texto}
                 defaultValue={props.val}
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
 
 CampoNumFormatadoAnimado.propTypes = {
     setRef: PropTypes.object,
-    val: PropTypes.number || PropTypes.string,
+    val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     opcional: PropTypes.bool,
     tipo: PropTypes.string,
     placeholder: PropTypes.string

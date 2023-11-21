@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { urlAPI } from '../../constants';
 
 const Imagem = (props) => {
     const imageExistsDefaultValue = !props.remove;
@@ -8,16 +10,18 @@ const Imagem = (props) => {
     const controller = new AbortController();
 
     const ChecarImagem = async () => {
-        try {
-            const response = await fetch(props.url, { signal: controller.signal });
-            setImageExists(response.ok);
-            if (props.setResult) props.setResult(response.ok)
-        } catch (error) {
-            setImageExists(false);
-            if (props.setResult) props.setResult(false)
+        if (props.url.startsWith(urlAPI)) {
+            await axios.get(props.url, { signal: controller.signal })
+                .then(response => {
+                    setImageExists(true);
+                    if (props.setResult) props.setResult(true)
+                }).catch(error => {
+                    setImageExists(false);
+                    if (props.setResult) props.setResult(false)
+                })
         }
     };
-
+    
     useEffect(() => {
         ChecarImagem();
         return (() => {

@@ -18,10 +18,10 @@ const GroupBox = (props) => {
             });
         }
     }, [textRef.current]);
-    
+
     return (
-        <View style={[styles.groupBox, {alignItems: props.esquerda ? 'flex-start':'center', borderColor: props.corBorda ? props.corBorda : corBordaBoxCad, paddingTop: lineCount == 2 ? 40 : 10 }]}>
-            <Text style={[styles.titulo, {textAlign: props.esquerda ? 'left':'center', left:props.esquerda ? 10:0, color: props.corTexto ? props.corTexto : corTituloBoxCad, backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad, top: lineCount == 2 ? -25 : -20 }]} ref={textRef}>{text}</Text>
+        <View style={[styles.groupBox, { alignItems: props.esquerda ? 'flex-start' : 'center', borderColor: props.corBorda ? props.corBorda : corBordaBoxCad, paddingTop: lineCount == 2 ? 40 : 10 }]}>
+            <Text style={[styles.titulo, { textAlign: props.esquerda ? 'left' : 'center', left: props.esquerda ? 10 : null, color: props.corTexto ? props.corTexto : corTituloBoxCad, backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad, top: lineCount == 2 ? -25 : -20 }]} ref={textRef}>{text}</Text>
             {props.children}
         </View>
     );
@@ -47,7 +47,11 @@ const styles = StyleSheet.create({
 });
 
 GroupBox.propTypes = {
-    titulo: PropTypes.string
+    titulo: PropTypes.string,
+    esquerda: PropTypes.bool,
+    corBorda: PropTypes.string,
+    corTexto: PropTypes.string,
+    corFundoTexto: PropTypes.string
 }
 
 export default GroupBox

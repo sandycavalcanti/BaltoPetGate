@@ -10,13 +10,7 @@ import CadAnimal from '../cadastro/CadAnimal';
 import CadPontoAlimento from '../cadastro/CadPontoAlimentacao';
 import CadConta from '../cadastro/CadConta';
 import Login from '../login/Login';
-import CadUsuario from "../cadastro/CadUsuario";
-import CadAbrigo from "../cadastro/CadAbrigo";
-import CadEstabelecimento from "../cadastro/CadEstabelecimento";
-import CadInstituicao from "../cadastro/CadInstituicao";
-import CadProtetor from "../cadastro/CadProtetor";
 import CadOpcao from "../cadastro/CadOpcao";
-import CadVeterinario from "../cadastro/CadVeterinario";
 import RecSenha from '../login/RecSenha';
 import VerCodigo from '../login/VerCodigo';
 import CriarSenha from '../login/CriarSenha';
@@ -77,12 +71,6 @@ export default function Navigation() {
           <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
           <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
           <Stack.Screen name="CadOpcao" component={CadOpcao} />
-          <Stack.Screen name="CadUsuario" component={CadUsuario} />
-          <Stack.Screen name="CadInstituicao" component={CadInstituicao} />
-          <Stack.Screen name="CadAbrigo" component={CadAbrigo} />
-          <Stack.Screen name="CadProtetor" component={CadProtetor} />
-          <Stack.Screen name="CadVeterinario" component={CadVeterinario} />
-          <Stack.Screen name="CadEstabelecimento" component={CadEstabelecimento} />
           <Stack.Screen name="RecSenha" component={RecSenha} />
           <Stack.Screen name="VerCodigo" component={VerCodigo} />
           <Stack.Screen name="Perfil" component={Perfil} options={{
