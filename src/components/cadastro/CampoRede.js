@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 
 CampoRede.propTypes = {
     set1: PropTypes.func,
-    set2:PropTypes.func,
+    set2: PropTypes.func,
     val1: PropTypes.string,
     val2: PropTypes.string,
     opcional: PropTypes.bool

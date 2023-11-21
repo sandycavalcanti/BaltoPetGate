@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 
 Questao.propTypes = {
     texto: PropTypes.string,
-    resposta: PropTypes.string
+    resposta: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default Questao

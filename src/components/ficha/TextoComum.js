@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
 });
 
 TextoComum.propTypes = {
-    textoTitulo: PropTypes.string || PropTypes.number,
-    textoDescricao: PropTypes.string || PropTypes.number,
+    textoTitulo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    textoDescricao: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default TextoComum;

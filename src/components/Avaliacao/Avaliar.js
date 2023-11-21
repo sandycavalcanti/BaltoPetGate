@@ -1,17 +1,14 @@
-import { View, Text, TextInput, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { format } from "date-fns";
 import Imagem from '../geral/Imagem';
-import { Entypo, AntDesign } from '@expo/vector-icons';
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
-import { useState, useEffect, useRef } from "react";
+import { AntDesign } from '@expo/vector-icons';
+import { useState, useRef } from "react";
 import axios from 'axios';
 import { urlAPI } from '../../constants';
 
 const Avaliar = (props) => {
-
   const [rating, setRating] = useState(0);
-  const dataformatada = format(new Date(),'dd/MM/yy')
+  const dataformatada = format(new Date(), 'dd/MM/yy')
   const texto = useRef('')
 
   const Cadastrar = () => {
@@ -34,16 +31,13 @@ const Avaliar = (props) => {
     <View style={styles.Container}>
       <View style={styles.ContainerHead}>
         <View style={styles.ImagemCirculo}>
-          <Imagem style={styles.Imagem} url={urlAPI+'selpessoaimg/'+props.TB_PESSOA_IDD}/>
+          <Imagem style={styles.Imagem} url={urlAPI + 'selpessoaimg/' + props.TB_PESSOA_IDD} />
         </View>
         <View style={styles.ContainerTexto}>
           <Text style={styles.Texto}>ty6rfiutf</Text>
           <View style={styles.ratingContainer}>
             {Array.from({ length: 5 }).map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => setRating(index + 1)}
-              >
+              <TouchableOpacity key={index} onPress={() => setRating(index + 1)}>
                 <AntDesign
                   name={index < rating ? 'star' : 'staro'}
                   size={22}
@@ -106,30 +100,9 @@ const styles = StyleSheet.create({
     margin: 3,
     textAlignVertical: 'top',
   },
-  ContainerIcon: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  dropdownHeader: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-  },
-  dropdownOptions: {
-    height: 140,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#444',
-    borderRadius: 4,
-    marginTop: -20,
-    paddingTop: 5,
-    zIndex: 10,
-  },
   Imagem: {
-    width: 'auto',
-    height: 50,
-    aspectRatio: 1,
+    width: 60,
+    height: 60,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -157,6 +130,5 @@ const styles = StyleSheet.create({
     fontSize: 23,
   },
 });
-
 
 export default Avaliar;

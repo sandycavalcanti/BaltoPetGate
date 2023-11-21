@@ -1,13 +1,13 @@
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 const TextoMenor = (props) => {
-    return(
+    return (
         <View style={styles.Container}>
-            <Text style={styles.Titulo}>
+            {props.textoTitulo && <Text style={styles.Titulo}>
                 {props.textoTitulo}
-            </Text>
-            <Text>
+            </Text>}
+            <Text style={styles.Descricao}>
                 {props.textoDescricao}
             </Text>
         </View>
@@ -15,24 +15,24 @@ const TextoMenor = (props) => {
 }
 
 const styles = StyleSheet.create({
-    Container:{
+    Container: {
         flexDirection: 'row',
         padding: 3
     },
-    Titulo:{
+    Titulo: {
         color: '#096D82',
         fontSize: 16,
         paddingRight: 5
     },
-    Descricao:{
+    Descricao: {
         color: '#299FB8',
         fontSize: 16
     }
 });
 
 TextoMenor.propTypes = {
-    textoTitulo: PropTypes.string,
-    textoDescricao: PropTypes.string
+    textoTitulo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    textoDescricao: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default TextoMenor;

@@ -6,15 +6,17 @@ import { Divider } from 'react-native-elements';
 import Imagem from '../geral/Imagem';
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
+import DesativarCampo from '../../utils/DesativarCampo';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const navigation = useNavigation();
   let dropdownOptions = [];
+  const itemid = props.itemId
 
-  if(props.pessoal){
-    dropdownOptions= ['Visualizar perfil', 'Editar', ''];
+  if (props.pessoal) {
+    dropdownOptions = ['Visualizar perfil', 'Editar', 'Desativar'];
   } else {
     dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
   }
@@ -25,6 +27,18 @@ const Perfil_post = (props) => {
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
+    } else if (index == 1) {
+      if (props.tipo == 'animal') {
+        navigation.navigate('AlterarAnimal', { id: props.itemId })
+      } else {
+
+      }
+    } else if (index == 2) {
+      if (props.tipo == 'animal') {
+        DesativarCampo(props.tipo, itemid);
+      } else {
+
+      }
     }
   }
 
@@ -111,7 +125,9 @@ const styles = StyleSheet.create({
 });
 
 Perfil_post.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  pessoal: PropTypes.bool,
+  tipo: PropTypes.string
 }
 
 export default Perfil_post;

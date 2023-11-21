@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native'
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import Dropdown from '../geral/Dropdown';
@@ -44,6 +44,36 @@ const NavbarChat = (props) => {
   }
 
   const nomeUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"] : dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
+  const [showText, setShowText] = useState(true);
+
+  const translateYText = useRef(new Animated.Value(5)).current;
+  const translateYContent = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    const animateText = () => {
+      Animated.timing(translateYText, {
+        toValue: -50,
+        duration: 800,
+        useNativeDriver: true,
+      }).start(async () => {
+        await setShowText(false)
+        animateContent();
+      });
+    };
+    const animateContent = () => {
+      Animated.timing(translateYContent, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    if (existeAnimal) {
+      setTimeout(() => {
+        animateText();
+      }, 2000);
+    }
+  }, [existeAnimal]);
 
   return (
     <View style={styles.container}>
@@ -53,15 +83,20 @@ const NavbarChat = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (animais.length > 0) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, animais, dados }) }} >
-          <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
-            <Text style={[styles.nome, { marginBottom: existeAnimal ? 0 : 5 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
-          </View>
-          {existeAnimal &&
-            <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
-              <Text style={styles.nomeAnimal} numberOfLines={1} ellipsizeMode="tail">{nomes}</Text>
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (existeAnimal) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_PESSOA_NOME_PERFIL: nomeUsuario, animais, dados }) }} >
+          {existeAnimal && showText && <Animated.View style={{ transform: [{ translateY: translateYText }] }}>
+            <Text style={{ color: '#fafafa', fontSize: 16 }}>Clique aqui para ver as informações do chat</Text>
+          </Animated.View>}
+          <Animated.View style={{ flex: 1, transform: [{ translateY: existeAnimal ? translateYContent : 0 }] }}>
+            <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
+              <Text style={[styles.nome, { marginBottom: existeAnimal ? 0 : 5 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
             </View>
-          }
+            {existeAnimal &&
+              <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-end' }]}>
+                <Text style={styles.nomeAnimal} numberOfLines={1} ellipsizeMode="tail">{nomes}</Text>
+              </View>
+            }
+          </Animated.View>
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>

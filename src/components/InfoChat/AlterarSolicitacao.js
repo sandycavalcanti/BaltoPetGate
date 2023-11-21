@@ -82,7 +82,7 @@ const AlterarSolicitacao = (props) => {
       if (situacao == 'APROVADA') {
         props.alert({
           type: DropdownAlertType.Info,
-          title: 'Solicitação aprovada', 
+          title: 'Solicitação aprovada',
           interval: 6000,
           message: 'Dentro de 4 dias você receberá uma mensagem de confirmação d' + textoSolicitacao,
         });
@@ -115,26 +115,38 @@ const AlterarSolicitacao = (props) => {
         <ActivityIndicator size="large" color={corBordaBoxCad} />
       ) :
         <>
-          {existeAdocao &&
-            dadosAdocaoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" &&
-            <View style={styles.Botoes}>
-              <BotaoAceitar onPress={() => AlterarSolicitacao(1, "APROVADA")} texto="Aceitar solicitação de adoção"></BotaoAceitar>
-              <BotaoNegar onPress={() => AlterarSolicitacao(1, "NEGADA")} texto="Negar solicitação de adoção"></BotaoNegar>
-            </View>
-          }
-          {existeAbrigo &&
-            dadosAbrigoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" &&
-            <View style={styles.Botoes}>
-              <BotaoAceitar onPress={() => AlterarSolicitacao(2, "APROVADA")} texto="Aceitar solicitação de abrigo"></BotaoAceitar>
-              <BotaoNegar onPress={() => AlterarSolicitacao(2, "NEGADA")} texto="Negar solicitação de abrigo"></BotaoNegar>
-            </View>
-          }
-          {existeTratamento &&
-            dadosTratamentoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" &&
-            <View style={styles.Botoes}>
-              <BotaoAceitar onPress={() => AlterarSolicitacao(3, "APROVADA")} texto="Aceitar solicitação de cuidados"></BotaoAceitar>
-              <BotaoNegar onPress={() => AlterarSolicitacao(3, "NEGADA")} texto="Negar solicitação de cuidados"></BotaoNegar>
-            </View>
+          {dadosSolicitacaoRef.current.length > 0 ?
+            <>
+              {existeAdocao &&
+                dadosAdocaoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
+                <View style={styles.Botoes}>
+                  <BotaoAceitar onPress={() => AlterarSolicitacao(1, "APROVADA")} texto="Aceitar solicitação de adoção" />
+                  <BotaoNegar onPress={() => AlterarSolicitacao(1, "NEGADA")} texto="Negar solicitação de adoção" />
+                </View>
+                :
+                <Text style={styles.Titulo}>Solicitação finalizada</Text>
+              }
+              {existeAbrigo &&
+                dadosAbrigoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
+                <View style={styles.Botoes}>
+                  <BotaoAceitar onPress={() => AlterarSolicitacao(2, "APROVADA")} texto="Aceitar solicitação de abrigo" />
+                  <BotaoNegar onPress={() => AlterarSolicitacao(2, "NEGADA")} texto="Negar solicitação de abrigo" />
+                </View>
+                :
+                <Text style={styles.Titulo}>Solicitação finalizada</Text>
+              }
+              {existeTratamento &&
+                dadosTratamentoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
+                <View style={styles.Botoes}>
+                  <BotaoAceitar onPress={() => AlterarSolicitacao(3, "APROVADA")} texto="Aceitar solicitação de cuidados" />
+                  <BotaoNegar onPress={() => AlterarSolicitacao(3, "NEGADA")} texto="Negar solicitação de cuidados" />
+                </View>
+                :
+                <Text style={styles.Titulo}>Solicitação finalizada</Text>
+              }
+            </>
+            :
+            <Text style={styles.Titulo}>Nenhuma solicitação feita por enquanto</Text>
           }
         </>
       }
@@ -142,33 +154,12 @@ const AlterarSolicitacao = (props) => {
   );
 };
 const styles = StyleSheet.create({
-  Container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#D1BBB2',
-  },
-  InfoHead: {
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'column',
-    display: 'flex',
-    backgroundColor: '#A9DDAE',
-  },
-  ImagemCirculo: {
-    width: 230,
-    height: 230,
-    borderRadius: 150,
-    borderColor: '#fff',
-    borderWidth: 2,
-    alignItems: 'center',
-    overflow: 'hidden',
-    marginTop: 40
-  },
   Titulo: {
     fontSize: 25,
     color: '#fff',
     marginBottom: 15,
     marginTop: 15,
+    textAlign: 'center'
   },
   InfoPet: {
     width: '100%',
@@ -213,4 +204,5 @@ const styles = StyleSheet.create({
     paddingVertical: 20
   }
 });
+
 export default AlterarSolicitacao;

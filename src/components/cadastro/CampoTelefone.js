@@ -80,9 +80,9 @@ CampoTelefone.propTypes ={
     set2: PropTypes.func,
     set3: PropTypes.func,
     opcional: PropTypes.bool,
-    val1: PropTypes.number || PropTypes.string,
-    val2: PropTypes.number || PropTypes.string,
-    val3: PropTypes.number || PropTypes.string,
+    val1: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    val2: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    val3: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default CampoTelefone;

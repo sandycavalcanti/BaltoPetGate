@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView, Image } from "react-native";
+import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView, Image, ToastAndroid, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import CampoSimples from "../../components/cadastro/CampoSimples";
@@ -10,18 +10,22 @@ import RadioButton2 from "../../components/animal/radioButton2";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import CampoEndereco from "../../components/cadastro/CampoEndereco";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
-import { urlAPI } from "../../constants";
+import { corRosaForte, urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
 import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
 import * as ImagePicker from 'expo-image-picker';
 import Mensagem from "../../components/cadastro/Mensagem";
 import { MultiSelect } from 'react-native-element-dropdown';
+import { useRoute } from "@react-navigation/native";
 import FormData from 'form-data';
 import BotaoCheckBox from "../../components/geral/BotaoCheckBox";
+import Imagem from "../../components/geral/Imagem";
 
 let TB_PESSOA_IDD;
 
-const CadAnimal = ({ navigation: { navigate } }) => {
+const AlterarAnimal = ({ navigation: { navigate } }) => {
+    const route = useRoute();
+    const { id } = route.params;
     const [nome, setNome] = useState('');
     const [idade, setIdade] = useState();
     const [idadeTipo, setIdadeTipo] = useState('');
@@ -52,6 +56,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const [temperamentos, setTemperamentos] = useState([]);
 
     const [message, setMessage] = useState('');
+    const [carregando, setCarregando] = useState(true);
 
     const Cadastrar = () => {
         InserirDados();
@@ -96,6 +101,42 @@ const CadAnimal = ({ navigation: { navigate } }) => {
             }).catch(error => {
                 console.error(error)
             });
+        axios.get(urlAPI + 'selsituacoes/filtrar', { TB_ANIMAL_ID: id })
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(
+                    item.TB_SITUACAO.TB_SITUACAO_DESCRICAO
+                );
+                setSituacoes(options)
+            }).catch(error => {
+                if (error.response && error.response.status != 404) {
+                    console.error(error)
+                }
+            });
+        axios.get(urlAPI + 'seltraumas/filtrar', { TB_ANIMAL_ID: id })
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(
+                    item.TB_TRAUMA.TB_TRAUMA_DESCRICAO
+                );
+                setTraumas(options)
+            }).catch(error => {
+                if (error.response && error.response.status != 404) {
+                    console.error(error)
+                }
+            });
+        axios.post(urlAPI + 'seltemperamentos/filtrar', { TB_ANIMAL_ID: id })
+            .then(response => {
+                const dados = response.data;
+                const options = dados.map(item =>
+                    item.TB_TEMPERAMENTO.TB_TEMPERAMENTO_TIPO
+                );
+                setTemperamentos(options)
+            }).catch(error => {
+                if (error.response && error.response.status != 404) {
+                    console.error(error)
+                }
+            });
     }
 
     useEffect(() => {
@@ -120,6 +161,23 @@ const CadAnimal = ({ navigation: { navigate } }) => {
         { label: 'Fêmea', value: 'FEMEA' },
         { label: 'Macho', value: 'MACHO' }
     ];
+    const [dadosanimal, setDadosanimal] = useState({});
+
+    useEffect(() => {
+        const Selecionar = async () => {
+            axios.post(urlAPI + 'selanimal/filtrar', {
+                TB_ANIMAL_ID: id,
+            }).then(response => {
+                setDadosanimal(response.data[0]);
+                setCarregando(false)
+            }).catch(error => {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar:', erro.error);
+            });
+        };
+        Selecionar();
+    }, []);
 
     const InserirDados = async () => {
         const formData = new FormData();
@@ -176,54 +234,55 @@ const CadAnimal = ({ navigation: { navigate } }) => {
             setImage(result.assets[0].uri);
         }
     };
-    
 
     return (
         <ScrollView>
             <ContainerCadastro titulo='Cadastro animal'>
+                {carregando ? <ActivityIndicator size="large" color={corRosaForte} /> :
+                <>
                 <GroupBox titulo='Insira uma imagem do animal'>
-                    {image && <Image style={styles.Imagem} source={{ uri: image }} />}
-                    <BotaoArquivo onPress={escolherImg} />
+                    {image ? <Image style={styles.Imagem} source={{ uri: image }} /> : <Imagem style={styles.Imagem} url={urlAPI+"selanimalimg/"+ id} /> }
+                    <BotaoArquivo onPress={escolherImg}/>
                 </GroupBox>
                 <GroupBox titulo='Informações'>
-                    <CampoSimples placeholder="Nome do animal" set={setNome} />
+                    <CampoSimples placeholder="Nome do animal" set={setNome} defaultValue={dadosanimal.TB_ANIMAL_NOME} />
 
                     <View style={styles.containerCampos}>
-                        <Campo placeholder="Idade" keyboardType="numeric" set={setIdade} />
-                        <DropdownSimples data={TipoIdade} set={setIdadeTipo} texto='Ano(s) ou Mes(es)' />
+                        <Campo placeholder="Idade" keyboardType="numeric" set={setIdade} defaultValue={dadosanimal.TB_ANIMAL_IDADE.toString()} />
+                        <DropdownSimples data={TipoIdade} set={setIdadeTipo} texto='Ano(s) ou Mes(es)' val={dadosanimal.TB_ANIMAL_IDADE_TIPO} />
                     </View>
                     <View style={styles.ContainerDublo}>
                         <View style={styles.campo}>
-                            <DropdownSimples data={Porte} texto='Porte' set={setPorte} />
+                            <DropdownSimples data={Porte} texto='Porte' set={setPorte} val={dadosanimal.TB_ANIMAL_PORTE} />
                         </View>
                         <View style={styles.campo}>
-                            <Campo placeholder="Peso" keyboardType="numeric" set={setPeso} />
+                            <Campo placeholder="Peso" keyboardType="numeric" set={setPeso} defaultValue={dadosanimal.TB_ANIMAL_PESO.toString()} />
                             <Text style={styles.Texto}>Kg</Text>
                         </View>
                     </View>
                     <View style={styles.containerCampos}>
-                        <DropdownSimples data={Especie} texto='Especie' set={setEspecie} />
-                        <DropdownSimples data={Sexo} texto='Sexo' set={setSexo} />
+                        <DropdownSimples data={Especie} texto='Especie' set={setEspecie} val={dadosanimal.TB_ANIMAL_ESPECIE} />
+                        <DropdownSimples data={Sexo} texto='Sexo' set={setSexo} val={dadosanimal.TB_ANIMAL_SEXO} />
                     </View>
                 </GroupBox>
 
                 <GroupBox titulo='Descrição'>
                     {/* <CampoSimples placeholder="Cor(es)" set={setCor} /> */}
-                    <CampoSimples placeholder="Minha historia" set={setDescricao} />
-                    <CampoSimples placeholder="Local do resgate" set={setLocalResgate} />
-                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={setCuidadoEspecial} opcional />
+                    <CampoSimples placeholder="Minha historia" set={setDescricao} defaultValue={dadosanimal.TB_ANIMAL_DESCRICAO} />
+                    <CampoSimples placeholder="Local do resgate" set={setLocalResgate} defaultValue={dadosanimal.TB_ANIMAL_LOCAL_RESGATE} />
+                    <CampoSimples placeholder="Cuidados necessarios com o pet" set={setCuidadoEspecial} opcional defaultValue={dadosanimal.TB_ANIMAL_CUIDADO_ESPECIAL} />
                 </GroupBox>
                 <GroupBox titulo='Saúde'>
-                    <RadioButton2 set={setSaude} />
+                    <RadioButton2 set={setSaude} val={dadosanimal.TB_ANIMAL_SAUDE} />
                 </GroupBox>
                 <GroupBox titulo='Castrado'>
-                    <RadioButton3 set={setCastrado} />
+                    <RadioButton3 set={setCastrado} val={dadosanimal.TB_ANIMAL_CASTRADO} />
                 </GroupBox>
                 <GroupBox titulo='Vermifugado'>
-                    <RadioButton3 set={setVermifugado} />
+                    <RadioButton3 set={setVermifugado} val={dadosanimal.TB_ANIMAL_VERMIFUGADO} />
                 </GroupBox>
                 <GroupBox titulo='Microchipado'>
-                    <RadioButton3 set={setMicrochip} />
+                    <RadioButton3 set={setMicrochip} val={dadosanimal.TB_ANIMAL_MICROCHIP} />
                 </GroupBox>
                 <GroupBox titulo='Temperamentos'>
                     <MultiSelect
@@ -277,11 +336,13 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     />
                 </GroupBox>
                 <GroupBox titulo='Localização'>
-                    <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
+                    <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} val2={dadosanimal.TB_ANIMAL_LOCALIZACAO_UF} val3={dadosanimal.TB_ANIMAL_LOCALIZACAO_CIDADE} val4={dadosanimal.TB_ANIMAL_LOCALIZACAO_BAIRRO} val5={dadosanimal.TB_ANIMAL_LOCALIZACAO_RUA} />
                 </GroupBox>
-                <BotaoCheckBox texto='Animal em estado de alerta' valor={alerta} onPress={() => setAlerta(prev => !prev)} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
+                <BotaoCheckBox texto='Animal em estado de alerta' valor={alerta} onPress={() => setAlerta(prev => !prev)} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} jaativado={dadosanimal.TB_ANIMAL_ALERTA}/>
                 <Mensagem texto={message} />
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
+                </>
+                }
             </ContainerCadastro>
         </ScrollView>
     );
@@ -358,4 +419,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CadAnimal;
+export default AlterarAnimal;

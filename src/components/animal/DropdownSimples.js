@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import PropTypes from 'prop-types';
 
 const DropdownSimples = (props) => {
   const [value, setValue] = useState(null);
+
+  useEffect(() => {
+    if (props.val) {
+      setValue(props.val)
+    }
+  }, [props.val]);
 
   return (
     <Dropdown
@@ -49,6 +55,7 @@ DropdownSimples.propTypes = {
   data: PropTypes.array,
   texto: PropTypes.string,
   set: PropTypes.func,
+  val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default DropdownSimples;

@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
 
 CampoDtNasc.propTypes = {
     set: PropTypes.func,
-    val: PropTypes.number || PropTypes.string,
+    val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     opcional: PropTypes.bool
 }
 
