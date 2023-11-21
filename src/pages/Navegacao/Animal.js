@@ -4,14 +4,21 @@ import { corFundoCad, corRosaForte, urlAPI } from '../../constants';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Perfil_post from '../../components/perfil/Perfil_post';
+import DecodificarToken from '../../utils/DecodificarToken';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Animal = ({ navigation: { navigate } }) => {
     const [select, setSelect] = useState([]);
+    const TB_PESSOA_IDD = useRef(null)
     const carregando = useRef(true)
     const [isFetching, setIsFetching] = useState(false);
     const controller = new AbortController();
+
+    const PegarId = async () => {
+        const decodedToken = await DecodificarToken();
+        TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+    }
 
     const Selecionar = () => {
         axios.get(urlAPI + 'selanimais', { signal: controller.signal })
@@ -33,6 +40,7 @@ const Animal = ({ navigation: { navigate } }) => {
 
     useEffect(() => {
         Selecionar();
+        PegarId();
         return (() => {
             controller.abort();
         })
@@ -46,12 +54,15 @@ const Animal = ({ navigation: { navigate } }) => {
     return (
         <View style={styles.container}>
             {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
-            <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => (
-                <>
-                    <Perfil_post data={item} />
-                    <AnimalPost data={item} />
-                </>
-            )} />
+            <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => {
+                const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
+                return (
+                    <>
+                        <Perfil_post data={item} pessoal={pessoal}tipo='animal' />
+                        <AnimalPost data={item} />
+                    </>
+                )
+            }} />
         </View>
     );
 }

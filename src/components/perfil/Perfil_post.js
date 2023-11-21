@@ -25,6 +25,18 @@ const Perfil_post = (props) => {
   const onSelect = (index, value) => {
     if (index == 0) {
       NavegarParaPerfil()
+    } else if (index == 1) {
+      if (tipo == 'animal') {
+
+      } else {
+
+      }
+    } else if (index == 2) {
+      if (tipo == 'animal') {
+
+      } else {
+
+      }
     }
   }
 

@@ -15,6 +15,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const AlterarPerfil = () => {
   const TB_PESSOA_IDD = useRef(null);
+  const TB_TIPO_IDD = useRef(null);
   const urlImg = useRef('imagem');
   const [nomePerfil, setNomePerfil] = useState('');
   const [bio, setBio] = useState('');
@@ -27,6 +28,7 @@ const AlterarPerfil = () => {
   const PegarId = async () => {
     const decodedToken = await DecodificarToken();
     TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+    TB_TIPO_IDD.current = decodedToken.TB_TIPO_IDD;
     urlImg.current = urlAPI + 'selpessoaimg/' + TB_PESSOA_IDD.current;
   }
 
@@ -104,7 +106,7 @@ const AlterarPerfil = () => {
       }
     })
   }
-  
+
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -133,9 +135,10 @@ const AlterarPerfil = () => {
           <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para facebook:'>
             <TextInput style={styles.Input} value={facebook} onChangeText={text => setFacebook(text)} />
           </GroupBox>
+          {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) && 
           <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
             <TextInput style={styles.Input} value={pix} onChangeText={text => setPix(text)} />
-          </GroupBox>
+          </GroupBox>}
           <BotaoCadastrar texto="Confirmar alterações" onPress={Alterar} />
         </View>
       </View >

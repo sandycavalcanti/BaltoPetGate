@@ -45,6 +45,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectAnimal, setSelectAnimal] = useState([]);
   const [selectPostagem, setSelectPostagem] = useState([]);
   const [selectAvaliacao, setSelectAvaliacao] = useState({});
+  const [selectSeguindo, setSelectSeguindo] = useState([]);
 
   const SelecionarPublicacoesAvaliacoes = async () => {
     axios.post(urlAPI + 'selanimal/filtrar', {
@@ -73,6 +74,18 @@ const Perfil = ({ navigation: { navigate } }) => {
       TB_PESSOA_AVALIADA_ID: id
     }).then((response) => {
       setSelectAvaliacao(response.data);
+    }).catch((error) => {
+      if (error.response.status !== 404) {
+        let erro = error.response.data;
+        ToastAndroid.show('Erro ao exibir itens', ToastAndroid.SHORT);
+        console.error('Erro ao selecionar:', erro.error);
+      };
+    });
+    axios.post(urlAPI + 'selinteracao/filtrar', {
+      TB_TIPO_INTERACAO_ID: 1,
+      TB_PESSOA_DESTINATARIO_ID: id
+    }).then((response) => {
+      setSelectSeguindo(response.data);
     }).catch((error) => {
       if (error.response.status !== 404) {
         let erro = error.response.data;
@@ -222,7 +235,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout avaliacoes={selectAvaliacao} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout avaliacoes={selectAvaliacao} seguindo={selectSeguindo} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };
@@ -231,7 +244,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab1Item = ({ item, index }) => {
     return (
       <>
-        <AnimalPost navigate={navigate} data={item} />
+        <Perfil_post data={item} pessoal={pessoal} tipo="animal" />
+        <AnimalPost data={item} />
       </>
     );
   };
@@ -239,7 +253,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const renderTab2Item = ({ item, index }) => {
     return (
       <View style={{ backgroundColor: '#CEF7FF', justifyContent: 'space-around' }}>
-        <Perfil_post navigate={navigate} data={item} pessoal={pessoal} />
+        <Perfil_post data={item} pessoal={pessoal}  tipo="post"/>
         <Post data={item} />
       </View>
     );

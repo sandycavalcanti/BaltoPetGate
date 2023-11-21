@@ -114,30 +114,20 @@ const PerfilLayout = (props) => {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', top: 20 }}>
             <View style={{ paddingHorizontal: 25, top: 5 }}>
-              <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>234</Text>
-              <Text style={{ color: '#5F7856', textAlign: 'center' }}>Seguidores</Text>
+              <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>{props.seguindo.length}</Text>
+              <Text style={{ color: '#5F7856', textAlign: 'center' }}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
               {possuiAvaliacoes ?
                 <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
                   <View style={styles.ratingContainer}>
                     {Array.from({ length: 5 }).map((_, index) => (
-                      <AntDesign
-                        key={index}
-                        name={index < Nota ? 'star' : 'staro'}
-                        size={18}
-                        color={index < Nota ? 'gold' : 'gray'}
-                      />
+                      <AntDesign key={index} name={index < Nota ? 'star' : 'staro'} size={18} color={index < Nota ? 'gold' : 'gray'} />
                     ))}
                   </View>
                 </TouchableOpacity>
                 :
                 <View style={styles.ratingContainer}>
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <AntDesign
-                      key={index}
-                      name={'star'}
-                      size={18}
-                      color={'#ddd'}
-                    />
+                    <AntDesign key={index} name={'star'} size={18} color={'#ddd'} />
                   ))}
                 </View>
               }
@@ -151,11 +141,12 @@ const PerfilLayout = (props) => {
                 </View>
               </Modal>
             </View>
-            <View>
-              <TouchableOpacity style={[styles.button, { width: '100%', paddingVertical: 4, paddingHorizontal: 5 }]} >
-                <Text style={[styles.buttonText, { fontSize: 17 }]}>Seguir</Text>
-              </TouchableOpacity>
-            </View>
+            {!props.pessoal &&
+              <View>
+                <TouchableOpacity style={[styles.button, { width: '100%', paddingVertical: 4, paddingHorizontal: 5 }]} >
+                  <Text style={[styles.buttonText, { fontSize: 17 }]}>Seguir</Text>
+                </TouchableOpacity>
+              </View>}
           </View>
         </View>
         <View style={styles.buttons}>
@@ -179,7 +170,7 @@ const PerfilLayout = (props) => {
                   </ScrollView>
                 </View>
               </Modal>
-              <TouchableOpacity style={styles.button} onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate)}>
+              <TouchableOpacity style={styles.button} onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}
