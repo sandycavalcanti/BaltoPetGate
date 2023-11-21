@@ -1,4 +1,4 @@
-const FormatarTexto = (texto, tipoTexto) => {
+const FormatarTextoCampo = (texto, tipoTexto) => {
     const tipo = tipoTexto.toLowerCase();
     switch (tipo) {
         case 'cpf':
@@ -25,7 +25,6 @@ const FormatarTexto = (texto, tipoTexto) => {
         default:
             return texto.replace(/\D/g, '');
     }
-
 }
 
-export default FormatarTexto;
+export default FormatarTextoCampo;

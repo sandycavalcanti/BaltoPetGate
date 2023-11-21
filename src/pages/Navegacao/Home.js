@@ -1,5 +1,5 @@
-import { TouchableOpacity, FlatList, Text, View, StyleSheet, ScrollView, SafeAreaView, Dimensions, } from "react-native";
-import { useState, useEffect } from "react";
+import { TouchableOpacity, FlatList, Text, View, StyleSheet, ScrollView, SafeAreaView, Dimensions, ActivityIndicator } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import DecodificarToken from "../../utils/DecodificarToken";
 import axios from 'axios';
 import { corFundoCad, urlAPI } from "../../constants";
@@ -12,15 +12,20 @@ const Home = ({ navigation: { navigate } }) => {
   const [temporario, setTemporario] = useState(false);
 
   const [select, setSelect] = useState([]);
+  const TB_PESSOA_IDD = useRef(null);
+  const carregando = useRef(true);
+  const [isFetching, setIsFetching] = useState(false);
   const controller = new AbortController();
 
   const Selecionar = async () => {
     const decodedToken = await DecodificarToken();
-    const TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-    await axios.get(urlAPI + 'selpostagemseguindo/' + TB_PESSOA_IDD, { signal: controller.signal })
-      .then((response) => {
-        setSelect(response.data)
-      }).catch((error) => {
+    TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+    await axios.get(urlAPI + 'selpostagemseguindo/' + TB_PESSOA_IDD.current, { signal: controller.signal })
+      .then(response => {
+        if (carregando.current) carregando.current = false;
+        setSelect(response.data);
+        setIsFetching(false);
+      }).catch(error => {
         if (error.response) {
           let erro = error.response.data;
           ToastAndroid.show(erro.message, ToastAndroid.SHORT);
@@ -38,18 +43,31 @@ const Home = ({ navigation: { navigate } }) => {
     })
   }, []);
 
+  const onRefresh = () => {
+    setIsFetching(true);
+    Selecionar();
+  }
+
   return (
     <>
       {temporario ? (
         <View style={styles.container}>
-          {select.length !== 0 &&
-            <FlatList style={styles.Lista} data={select} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={item => (
-              <>
-                <Perfil_post navigate={navigate} data={item} />
-                <Post data={item} />
-              </>
-            )} />}
-          <Text style={styles.textoPadrao}>Aqui você verá as postagens de quem você seguir</Text>
+          {select.length !== 0 ?
+            <>
+              {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+              <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
+                const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
+                return (
+                  <>
+                    <Perfil_post data={item} pessoal={pessoal} />
+                    <Post data={item} />
+                  </>
+                )
+              }} />
+            </>
+            :
+            <Text style={styles.textoPadrao}>Aqui você verá as postagens de quem você seguir</Text>
+          }
         </View>
       ) : (
         <ScrollView style={{ flex: 1 }}>

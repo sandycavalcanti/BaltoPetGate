@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 
 CampoMenor.propTypes = {
   set: PropTypes.func,
-  val: PropTypes.string,
+  val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   opcional: PropTypes.bool
 }
 

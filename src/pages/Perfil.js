@@ -18,7 +18,6 @@ const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 let HeaderHeight
 const PullToRefreshDist = 150;
-let TB_PESSOA_IDD;
 
 const Perfil = ({ navigation: { navigate } }) => {
   const route = useRoute();
@@ -37,6 +36,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const _tabIndex = useRef(0);
   const refreshStatusRef = useRef(false);
 
+  const TB_PESSOA_IDD = useRef(null);
   const [pessoal, setPessoal] = useState(false);
   const [perfilHeight, setPerfilHeight] = useState(450);
   HeaderHeight = perfilHeight;
@@ -46,7 +46,7 @@ const Perfil = ({ navigation: { navigate } }) => {
   const [selectPostagem, setSelectPostagem] = useState([]);
   const [selectAvaliacao, setSelectAvaliacao] = useState({});
 
-  const SelecionarPublicacoesAvaliacoes = () => {
+  const SelecionarPublicacoesAvaliacoes = async () => {
     axios.post(urlAPI + 'selanimal/filtrar', {
       TB_PESSOA_ID: id
     }).then((response) => {
@@ -85,8 +85,8 @@ const Perfil = ({ navigation: { navigate } }) => {
   useEffect(() => {
     const Selecionar = async () => {
       const decodedToken = await DecodificarToken();
-      TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-      if (TB_PESSOA_IDD === id) setPessoal(true);
+      TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+      if (TB_PESSOA_IDD.current === id) setPessoal(true);
       SelecionarPublicacoesAvaliacoes();
       await axios.get(urlAPI + 'selpessoa/' + id)
         .then(async (response) => {
@@ -223,7 +223,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout avaliacoes={selectAvaliacao} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout avaliacoes={selectAvaliacao} pessoal={pessoal} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
       </Animated.View>
     );
   };

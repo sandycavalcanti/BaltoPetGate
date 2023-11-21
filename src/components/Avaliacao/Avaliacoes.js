@@ -1,12 +1,9 @@
-import { View, Text, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { format } from "date-fns";
-import { Entypo, AntDesign } from '@expo/vector-icons';
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
-import { useState, useEffect } from "react";
+import { AntDesign } from '@expo/vector-icons';
+import { useState } from "react";
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
-
 
 const Avaliacoes = (props) => {
   const dataOriginal = props.data.createdAt;
@@ -18,11 +15,11 @@ const Avaliacoes = (props) => {
 
   const [rating, setRating] = useState(props.data.TB_AVALIACAO_NOTA);
   const urlIMG = urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_AVALIADORA_ID;
+
   return (
     <View style={styles.Container}>
       <View style={styles.ContainerHead}>
         <View style={styles.ImagemCirculo}>
-          {/* <ImageBackground style={styles.Imagem} resizeMode="contain" source={{uri: urlIMG}} /> */}
           <Imagem url={urlIMG} style={styles.Imagem} />
         </View>
         <View style={styles.ContainerTexto}>
@@ -30,6 +27,7 @@ const Avaliacoes = (props) => {
           <View style={styles.ratingContainer}>
             {Array.from({ length: 5 }).map((_, index) => (
               <AntDesign
+                key={index}
                 name={index < rating ? 'star' : 'staro'}
                 size={14}
                 color={index < rating ? 'gold' : 'gray'}
@@ -85,26 +83,6 @@ const styles = StyleSheet.create({
     color: '#707070',
     fontSize: 16,
     margin: 3
-  },
-  ContainerIcon: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  dropdownHeader: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-  },
-  dropdownOptions: {
-    height: 140,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#444',
-    borderRadius: 4,
-    marginTop: -20,
-    paddingTop: 5,
-    zIndex: 10,
   },
   Imagem: {
     width: 'auto',

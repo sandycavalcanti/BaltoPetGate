@@ -142,28 +142,6 @@ const AlterarSolicitacao = (props) => {
   );
 };
 const styles = StyleSheet.create({
-  Container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#D1BBB2',
-  },
-  InfoHead: {
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'column',
-    display: 'flex',
-    backgroundColor: '#A9DDAE',
-  },
-  ImagemCirculo: {
-    width: 230,
-    height: 230,
-    borderRadius: 150,
-    borderColor: '#fff',
-    borderWidth: 2,
-    alignItems: 'center',
-    overflow: 'hidden',
-    marginTop: 40
-  },
   Titulo: {
     fontSize: 25,
     color: '#fff',
@@ -213,4 +191,5 @@ const styles = StyleSheet.create({
     paddingVertical: 20
   }
 });
+
 export default AlterarSolicitacao;

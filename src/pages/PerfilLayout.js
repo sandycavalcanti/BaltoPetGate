@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import { corBordaBoxCad, urlAPI } from "../constants";
 import { useNavigation } from '@react-navigation/native';
@@ -9,10 +8,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
 import Imagem from "../components/geral/Imagem";
-import { color } from "react-native-elements/dist/helpers";
 import { Modal, ModalContent } from "react-native-modals";
 import Avaliacoes from "../components/Avaliacao/Avaliacoes";
 import Avaliar from "../components/Avaliacao/Avaliar";
+import IniciarChat from "../utils/IniciarChat";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -26,7 +25,6 @@ const PerfilLayout = (props) => {
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
   const [valorScroll, setValorScroll] = useState(0);
-  const [rating, setRating] = useState(0);
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
@@ -85,52 +83,13 @@ const PerfilLayout = (props) => {
     item3 = null;
   }
 
-  const IniciarChat = async () => {
-    await axios.post(urlAPI + 'selchat/filtrar', {
-      TB_PESSOA_IDD,
-      TB_PESSOA_ID,
-    }).then(response => {
-      const dados = response.data.Selecionar[0];
-      if (dados.TB_CHAT_STATUS == true) {
-        const TB_CHAT_ID = dados.TB_CHAT_ID;
-        navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
-      } else {
-        CadastrarChat();
-      }
-    }).catch(error => {
-      if (error.response) {
-        if (error.response.status == 404) {
-          CadastrarChat();
-        } else {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.log('Erro ao selecionar:', erro.error);
-        }
-      } else {
-        console.error(error)
-      }
-    });
-  }
-
-  const CadastrarChat = async () => {
-    await axios.post(urlAPI + 'cadchat', {
-      TB_PESSOA_REMETENTE_ID: TB_PESSOA_IDD,
-      TB_PESSOA_DESTINATARIO_ID: TB_PESSOA_ID,
-    }).then(response => {
-      const TB_CHAT_ID = response.data.Cadastrar.TB_CHAT_ID;
-      navigation.navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID })
-    }).catch(error => {
-      let erro = error.response.data;
-      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      console.log('Erro ao selecionar:', erro.error);
-    });
-  }
-
   const SairDaConta = async () => {
     await AsyncStorage.removeItem('token');
     navigation.navigate('Login');
   }
+
   const Nota = Math.round(props.avaliacoes.media)
+  const possuiAvaliacoes = Object.keys(props.avaliacoes).length !== 0;
 
   return (
     <View style={styles.container} onLayout={MedirAltura}>
@@ -157,18 +116,31 @@ const PerfilLayout = (props) => {
             <View style={{ paddingHorizontal: 25, top: 5 }}>
               <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>234</Text>
               <Text style={{ color: '#5F7856', textAlign: 'center' }}>Seguidores</Text>
-              <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
+              {possuiAvaliacoes ?
+                <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
+                  <View style={styles.ratingContainer}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <AntDesign
+                        key={index}
+                        name={index < Nota ? 'star' : 'staro'}
+                        size={18}
+                        color={index < Nota ? 'gold' : 'gray'}
+                      />
+                    ))}
+                  </View>
+                </TouchableOpacity>
+                :
                 <View style={styles.ratingContainer}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <AntDesign
                       key={index}
-                      name={index < Nota ? 'star' : 'staro'}
+                      name={'star'}
                       size={18}
-                      color={index < Nota ? 'gold' : 'gray'}
+                      color={'#ddd'}
                     />
                   ))}
                 </View>
-              </TouchableOpacity>
+              }
               <Modal visible={avaliacaoVisible} onTouchOutside={() => setAvaliacaoVisible(false)}>
                 <View style={styles.ContainerAvaliacao} >
                   <ScrollView style={{ flex: 1 }}>
@@ -207,7 +179,7 @@ const PerfilLayout = (props) => {
                   </ScrollView>
                 </View>
               </Modal>
-              <TouchableOpacity style={styles.button} onPress={IniciarChat}>
+              <TouchableOpacity style={styles.button} onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate)}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}

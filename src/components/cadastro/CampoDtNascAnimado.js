@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
 import { corDicaCad, corFundoCampoCad, corPlaceholderCad, valorBordaCampoCad } from '../../constants';
 import PropTypes from 'prop-types';
-import FormatarTexto from '../../utils/FormatarTexto';
+import FormatarTextoCampo from '../../utils/FormatarTextoCampo';
 import { Hoshi } from 'react-native-textinput-effects';
 
 const CampoDtNascAnimado = (props) => {
@@ -20,7 +20,7 @@ const CampoDtNascAnimado = (props) => {
     }, [focus, marginTopAnimation]);
 
     const onChangeText = (text) => {
-        const texto =FormatarTexto(text, 'data')
+        const texto = FormatarTextoCampo(text, 'data')
         setTexto(texto);
         props.setRef.current = ValidarDtNasc(texto);
     }
@@ -31,7 +31,7 @@ const CampoDtNascAnimado = (props) => {
             const partesData = dataOriginal.split("-");
 
             const novaData = partesData[2] + partesData[1] + partesData[0];
-            setTexto(FormatarTexto(novaData, 'data'));
+            setTexto(FormatarTextoCampo(novaData, 'data'));
         }
     }, [])
 
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 
 CampoDtNascAnimado.propTypes = {
     setRef: PropTypes.object,
-    val: PropTypes.number || PropTypes.string,
+    val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     opcional: PropTypes.bool,
     placeholder: PropTypes.string
 }

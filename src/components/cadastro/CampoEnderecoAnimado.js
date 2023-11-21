@@ -265,12 +265,12 @@ CampoEnderecoAnimado.propTypes = {
     set5: PropTypes.func,
     set6: PropTypes.func,
     set7: PropTypes.func,
-    val1: PropTypes.number || PropTypes.string,
+    val1: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     val2: PropTypes.string,
     val3: PropTypes.string,
     val4: PropTypes.string,
     val5: PropTypes.string,
-    val6: PropTypes.number || PropTypes.string,
+    val6: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     val7: PropTypes.string,
     opcional: PropTypes.bool
 }

@@ -9,7 +9,6 @@ import RadioButton3 from "../../components/animal/Radiobutton3";
 import RadioButton2 from "../../components/animal/radioButton2";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import CampoEndereco from "../../components/cadastro/CampoEndereco";
-// import CheckBoxComponent from "../../components/cadastro/CheckBoxComponent";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
@@ -18,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Mensagem from "../../components/cadastro/Mensagem";
 import { MultiSelect } from 'react-native-element-dropdown';
 import FormData from 'form-data';
+import BotaoCheckBox from "../../components/geral/BotaoCheckBox";
 
 let TB_PESSOA_IDD;
 
@@ -278,7 +278,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 <GroupBox titulo='Localização'>
                     <CampoEndereco set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} />
                 </GroupBox>
-                {/* <CheckBoxComponent texto='Animal em estado de alerta' set={setAlerta} /> */}
+                <BotaoCheckBox texto='Animal em estado de alerta' valor={alerta} onPress={() => setAlerta(prev => !prev)} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
                 <Mensagem texto={message} />
                 <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
             </ContainerCadastro>

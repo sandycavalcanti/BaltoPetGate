@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid, ActivityIndicator } from 'react-native'
 import { corTituloCad, urlAPI, corBordaBoxCad } from '../constants';
 import Questao from '../components/InfoChat/Questao';
@@ -9,24 +9,25 @@ import Imagem from '../components/geral/Imagem';
 import DropdownAlert from 'react-native-dropdownalert';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AlterarSolicitacao from '../components/InfoChat/AlterarSolicitacao';
-let TB_PESSOA_IDD = TB_TIPO_IDD = null;
 let alert = (_data) => new Promise(res => res);
 
 const InfoChat = () => {
     const route = useRoute();
-    const { TB_PESSOA_ID, dados, animais } = route.params;
+    const { TB_PESSOA_ID, TB_PESSOA_NOME_PERFIL, dados, animais } = route.params;
     const animalCadastro = dados.TB_ANIMAL_CADASTRADO;
-    const [info, setInfo] = useState({});
+    const info = useRef({})
+    const TB_PESSOA_IDD = useRef(null);
+    const TB_TIPO_IDD = useRef(null);
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
-        TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-        TB_TIPO_IDD = decodedToken.TB_TIPO_IDD
+        TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+        TB_TIPO_IDD.current = decodedToken.TB_TIPO_IDD
     }
 
     const Selecionar = async () => {
         await axios.get(urlAPI + 'selpessoa/' + TB_PESSOA_ID).then(response => {
-            setInfo(response.data[0]);
+            info.current = response.data[0];
             setCarregando(false)
         }).catch(error => {
             let erro = error.response.data;
@@ -48,9 +49,9 @@ const InfoChat = () => {
             <ScrollView>
                 <View style={styles.InfoHead}>
                     <View style={styles.ImagemCirculo}>
-                        <Imagem url={urlPessoa} />
+                        <Imagem url={urlPessoa} style={styles.Imagem} />
                     </View>
-                    <Text style={styles.Titulo}>Nome da pessoa</Text>
+                    <Text style={styles.Titulo}>{TB_PESSOA_NOME_PERFIL}</Text>
                 </View>
 
                 {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
@@ -60,13 +61,13 @@ const InfoChat = () => {
 
                         <View style={styles.InfoForm}>
                             <Text style={styles.Titulo}>Formulario adoção</Text>
-                            <Questao texto='Toda a familia esta ciente e apoia a adoção do animal?' resposta={info.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
-                            <Questao texto='Moradia' resposta={info.TB_PESSOA_ANIMAL_CASA} />
-                            <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.TB_PESSOA_ANIMAL_PASSEAR} />
-                            <Questao texto='Qual a quantidade media de espaço que o animal terá acesso?' resposta={info.TB_PESSOA_ANIMAL_ESPACO} />
-                            <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.TB_PESSOA_ANIMAL_AUSENCIA} />
-                            <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
-                            <Questao texto='Quantos animais você possuí em sua casa?' resposta={info.TB_PESSOA_ANIMAL_QUANTIDADE} />
+                            <Questao texto='Toda a fámilia esta ciente e apoia a adoção do animal?' resposta={info.current.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
+                            <Questao texto='Moradia' resposta={info.current.TB_PESSOA_ANIMAL_CASA} />
+                            <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.current.TB_PESSOA_ANIMAL_PASSEAR} />
+                            <Questao texto='Qual a quantidade média de espaço que o animal terá acesso?' resposta={info.current.TB_PESSOA_ANIMAL_ESPACO} />
+                            <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.current.TB_PESSOA_ANIMAL_AUSENCIA} />
+                            <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.current.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
+                            <Questao texto='Quantos animais você possui em sua casa?' resposta={info.current.TB_PESSOA_ANIMAL_QUANTIDADE} />
 
                             {animais.map(item => {
                                 return (
@@ -78,7 +79,7 @@ const InfoChat = () => {
                         :
                         animais.map(item => {
                             return (
-                                <Solicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} TB_PESSOA_ID={TB_PESSOA_IDD} TB_TIPO_IDD={TB_TIPO_IDD} alert={alert} />
+                                <Solicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} TB_PESSOA_ID={TB_PESSOA_IDD.current} TB_TIPO_IDD={TB_TIPO_IDD.current} alert={alert} />
                             );
                         })
                 }
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         display: 'flex',
         backgroundColor: '#A9DDAE',
+        paddingTop: 30
     },
     ImagemCirculo: {
         width: 230,
@@ -108,7 +110,11 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         alignItems: 'center',
         overflow: 'hidden',
-        marginTop: 40
+    },
+    Imagem: {
+        width: 230,
+        height: 230,
+        borderRadius: 150,
     },
     Titulo: {
         fontSize: 25,
