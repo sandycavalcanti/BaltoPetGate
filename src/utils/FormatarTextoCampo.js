@@ -23,13 +23,15 @@ const FormatarTextoCampo = (texto, tipoTexto) => {
             return texto.replace(/\D/g, '') // remove caracteres não numéricos
                 .replace(/(\d{5})(\d)/, '$1-$2'); // coloca hífen entre o quinto e o sexto dígitos
         case 'tel':
-            if (texto.length == 11) {
-                return texto.replace(/\D/g, '')
-                    .replace(/(\d{2})(\d{5})(\d{4})/, '($1)$2-$3'); // Telefone 9 dígitos
-            } else {
-                return texto.replace(/\D/g, '')
-                    .replace(/(\d{2})(\d{4})(\d{4})/, '($1)$2-$3'); // Telefone 8 dígitos
+            const textoFormatado = texto.replace(/\D/g, '') // remove caracteres não numéricos
+                .replace(/(\d{2})(\d{1})/, '($1)$2')
+            if (textoFormatado.length == 12) {
+                return textoFormatado.replace(/(\d{4})(\d)/, '$1-$2'); // Telefone 8 dígitos
             }
+            if (textoFormatado.length == 13) {
+                return textoFormatado.replace(/(\d{5})(\d)/, '$1-$2'); // Telefone 9 dígitos
+            }
+            return textoFormatado
         default:
             return texto.replace(/\D/g, '');
     }

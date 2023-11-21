@@ -93,12 +93,12 @@ function Ficha_animal({ navigation: { navigate } }) {
 
     const TenhoInteresse = () => {
         if (TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) {
-            IniciarChat(TB_PESSOA_IDD.current,TB_PESSOA_ID.current, navigate);
+            IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID.current, navigate);
         } else {
             navigate('QuestionarioAdocao');
         }
     }
-    
+
     return (
         <ScrollView>
             <View style={styles.Container}>

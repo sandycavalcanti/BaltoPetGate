@@ -22,14 +22,14 @@ const CampoEnderecoAnimado = (props) => {
             const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
             const endereco = response.data;
             await ListarCidades(endereco.uf);
+            props.setRef2.current = endereco.uf;
+            props.setRef3.current = endereco.localidade;
+            props.setRef4.current = endereco.bairro;
+            props.setRef5.current = endereco.logradouro;
             setUf(endereco.uf)
             setCidade(endereco.localidade);
             // setBairro(endereco.bairro);
             // setRua(endereco.logradouro);
-            props.set2(endereco.uf);
-            props.set3(endereco.localidade);
-            props.set4(endereco.bairro);
-            props.set5(endereco.logradouro);
 
             if (endereco.erro) {
                 ToastAndroid.show('CEP não encontrado', ToastAndroid.SHORT);
@@ -58,16 +58,16 @@ const CampoEnderecoAnimado = (props) => {
         }
     };
 
-    // useEffect(() => {
-    //     if (props.setRef1 && props.val1) {
-    //         setTexto(FormatarTextoCampo(props.val1, 'cep'));
-    //     }
-    //     setUf(props.val2);
-    //     ListarCidades(props.val2);
-    //     setCidade(props.val3);
-    //     setBairro(props.val4);
-    //     setRua(props.val5);
-    // }, [])
+    useEffect(() => {
+        if (props.setRef1 && props.val1) {
+            setTexto(FormatarTextoCampo(props.val1, 'cep'));
+        }
+        setUf(props.val2);
+        ListarCidades(props.val2);
+        setCidade(props.val3);
+        props.setRef4.current = props.val4;
+        props.setRef5.current = props.val5;
+    }, [])
 
     const onChangeText = (text) => {
         setTexto(FormatarTextoCampo(text, 'cep'));
@@ -82,7 +82,7 @@ const CampoEnderecoAnimado = (props) => {
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
-            <TouchableOpacity onPress={() => BuscarEndereco(cep)} style={styles.botaopesquisar}>
+            <TouchableOpacity onPress={() => BuscarEndereco(props.setRef1.current)} style={styles.botaopesquisar}>
                 <Text style={styles.textocadastro}>Pesquisar CEP</Text>
             </TouchableOpacity>
             <View style={styles.selecionar}>
@@ -127,19 +127,19 @@ const CampoEnderecoAnimado = (props) => {
                 {!opcional && <Text style={styles.asteriscoDropdown}>*</Text>}
             </View>
             <View>
-                <TextInput onChangeText={text => props.setRef4.current = text} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
+                <TextInput onChangeText={text => props.setRef4.current = text} defaultValue={props.setRef4.current} placeholderTextColor={corPlaceholderCad} placeholder={"Bairro"} style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
             <View>
-                <TextInput onChangeText={text => props.setRef5.current = text} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
+                <TextInput onChangeText={text => props.setRef5.current = text} defaultValue={props.setRef5.current} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
-            {props.set1 && <>
+            {props.setRef1 && <>
                 <View>
-                    <TextInput onChangeText={text => props.setRef6.current = text} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
+                    <TextInput onChangeText={text => props.setRef6.current = text} defaultValue={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
                     {!opcional && <Text style={styles.asterisco}>*</Text>}
                 </View>
-                <TextInput onChangeText={text => props.setRef7.current = text} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
+                <TextInput onChangeText={text => props.setRef7.current = text}  defaultValue={props.val7}  placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
             </>}
         </View>
     )

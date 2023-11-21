@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native';
-import CampoSimples from '../../components/cadastro/CampoSimples';
 import GroupBox from '../../components/cadastro/GroupBox';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
@@ -9,44 +8,40 @@ import axios from 'axios';
 import { corBotaoCad, urlAPI } from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mensagem from '../../components/cadastro/Mensagem';
-import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
-import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
-import CampoEndereco from '../../components/cadastro/CampoEndereco';
-import CampoTelefone from '../../components/cadastro/CampoTelefone';
-import CampoRede from '../../components/cadastro/CampoRede';
 import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 import AlertPro from 'react-native-alert-pro';
 import CampoSimplesAnimado from '../../components/cadastro/CampoSimplesAnimado';
 import CampoSenhaAnimado from '../../components/cadastro/CampoSenhaAnimado';
 import CampoDtNascAnimado from '../../components/cadastro/CampoDtNascAnimado';
 import CampoNumFormatadoAnimado from '../../components/cadastro/CampoNumFormatadoAnimado';
+import CampoEnderecoAnimado from '../../components/cadastro/CampoEnderecoAnimado';
 
 const CadConta = () => {
     const route = useRoute();
     const { tipo } = route.params;
     const navigation = useNavigation();
 
-    const nome = useRef('')
-    const nomePerfil = useRef('')
-    const email = useRef('')
-    const senha = useRef('');
-    const senhaConfirmacao = useRef('');
-    const dtNasc = useRef();
-    const cpf = useRef();
-    const crmv = useRef();
-    const cnpj = useRef();
-    const telefone1 = useRef();
-    const telefone2 = useRef();
-    const whatsapp = useRef();
-    const cep = useRef('');
-    const uf = useRef('');
-    const cidade = useRef('');
-    const bairro = useRef('');
-    const rua = useRef('');
-    const numero = useRef();
-    const complemento = useRef('');
-    const instagram = useRef('');
-    const facebook = useRef('');
+    const nome = useRef(null)
+    const nomePerfil = useRef(null)
+    const email = useRef(null)
+    const senha = useRef(null);
+    const senhaConfirmacao = useRef(null);
+    const dtNasc = useRef(null);
+    const cpf = useRef(null);
+    const crmv = useRef(null);
+    const cnpj = useRef(null);
+    const telefone1 = useRef(null);
+    const telefone2 = useRef(null);
+    const whatsapp = useRef(null);
+    const cep = useRef(null);
+    const uf = useRef(null);
+    const cidade = useRef(null);
+    const bairro = useRef(null);
+    const rua = useRef(null);
+    const numero = useRef(null);
+    const complemento = useRef(null);
+    const instagram = useRef(null);
+    const facebook = useRef(null);
 
     const alertRef = useRef(null);
     const tentativas = useRef(0);
@@ -109,6 +104,22 @@ const CadConta = () => {
             TB_PESSOA_NOME_PERFIL: nomePerfil.current,
             TB_PESSOA_EMAIL: email.current,
             TB_PESSOA_SENHA: senha.current,
+            TB_PESSOA_CEP: cep.current,
+            TB_PESSOA_UF: uf.current,
+            TB_PESSOA_CIDADE: cidade.current,
+            TB_PESSOA_BAIRRO: bairro.current,
+            TB_PESSOA_RUA: rua.current,
+            TB_PESSOA_NUMERO: numero.current,
+            TB_PESSOA_COMPLEMENTO: complemento.current,
+            TB_PESSOA_DT_NASC: dtNasc.current,
+            TB_PESSOA_CPF: cpf.current,
+            TB_PESSOA_WHATSAPP: whatsapp.current,
+            TB_PESSOA_INSTAGRAM: instagram.current,
+            TB_PESSOA_FACEBOOK: facebook.current,
+            TB_PESSOA_TELEFONE1: telefone1.current,
+            TB_PESSOA_TELEFONE2: telefone2.current,
+            TB_PESSOA_CRMV: crmv.current,
+            TB_PESSOA_CNPJ: cnpj.current,
         }).then(async response => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.removeItem('token');
@@ -146,36 +157,109 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações da cliníca veterinária">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} />
-                                    {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
-                                    {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
                                     <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
-                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional/>
-                                    {/* <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />
-                                    <CampoRede set1={setInstagram} set2={setFacebook} opcional /> */}
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional />
+                                    <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
+                                    <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />
                                 </GroupBox>
                             </>
                         )
                     case 3:
                         return (
                             <>
+                                <GroupBox titulo="Informações pessoais">
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoDtNascAnimado setRef={dtNasc} />
+                                    <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
+                                    <CampoNumFormatadoAnimado setRef={cnpj} tipo='cnpj' opcional />
+                                </GroupBox>
+                                <GroupBox titulo="Informações da instituição">
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da instituição"} />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                </GroupBox>
+                                <GroupBox titulo="Informações de contato">
+                                    <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
+                                    <View style={styles.viewAsterisco}>
+                                        <Text style={styles.textoAsterisco}>Insira pelo menos uma rede social</Text>
+                                        <Text style={styles.asterisco}>*</Text>
+                                    </View>
+                                    <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram"} opcional />
+                                    <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook"} opcional />
+                                </GroupBox>
                             </>
                         )
                     case 4:
                         return (
                             <>
+                                <GroupBox titulo="Informações pessoais">
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoDtNascAnimado setRef={dtNasc} />
+                                    <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
+                                </GroupBox>
+                                <GroupBox titulo="Informações do protetor">
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do protetor "} />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                </GroupBox>
+                                <GroupBox titulo="Informações de contato">
+                                    <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
+                                    <View style={styles.viewAsterisco}>
+                                        <Text style={styles.textoAsterisco}>Insira pelo menos uma rede social</Text>
+                                        <Text style={styles.asterisco}>*</Text>
+                                    </View>
+                                    <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram"} opcional />
+                                    <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook"} opcional />
+                                </GroupBox>
                             </>
                         )
                     case 5:
                         return (
                             <>
+                                <GroupBox titulo="Informações pessoais">
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoDtNascAnimado setRef={dtNasc} />
+                                    <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
+                                </GroupBox>
+                                <GroupBox titulo="Informações do abrigo">
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do abrigo"} />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                </GroupBox>
+                                <GroupBox titulo="Informações de contato">
+                                    <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
+                                    <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
+                                    <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />
+                                </GroupBox>
                             </>
                         )
                     case 6:
                         return (
                             <>
+                                <GroupBox titulo="Informações pessoais">
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoDtNascAnimado setRef={dtNasc} />
+                                    <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
+                                    <CampoNumFormatadoAnimado setRef={cnpj} tipo='cnpj' />
+                                </GroupBox>
+                                <GroupBox titulo="Informações do estabecimento">
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do estabelecimento"} />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                </GroupBox>
+                                <GroupBox titulo="Informações de contato">
+                                    <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional />
+                                    <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
+                                    <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />
+                                </GroupBox>
                             </>
                         )
                 }
@@ -198,5 +282,22 @@ const CadConta = () => {
         </ContainerCadastro>
     )
 }
+
+const styles = StyleSheet.create({
+    viewAsterisco: {
+        width: '90%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    textoAsterisco: {
+        color: '#fafafa'
+    },
+    asterisco: {
+        position: 'absolute',
+        fontSize: 25,
+        color: 'red',
+        right: 0,
+    },
+});
 
 export default CadConta

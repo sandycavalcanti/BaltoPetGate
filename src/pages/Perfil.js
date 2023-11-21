@@ -89,9 +89,10 @@ const Perfil = ({ navigation: { navigate } }) => {
       if (TB_PESSOA_IDD.current === id) setPessoal(true);
       SelecionarPublicacoesAvaliacoes();
       await axios.get(urlAPI + 'selpessoa/' + id)
-        .then(async (response) => {
+        .then(response => {
           setSelectPessoa(response.data[0]);
-        }).catch((error) => {
+          setCarregando(false)
+        }).catch(error => {
           try {
             setSelectPessoa({ "TB_PESSOA_NOME_PERFIL": error.response.data.message });
           } catch (error) {
@@ -101,9 +102,7 @@ const Perfil = ({ navigation: { navigate } }) => {
         });
     };
 
-    Selecionar().then(() => {
-      setCarregando(false)
-    });
+    Selecionar();
   }, []);
 
 
