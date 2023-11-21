@@ -176,6 +176,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
             setImage(result.assets[0].uri);
         }
     };
+    
 
     return (
         <ScrollView>

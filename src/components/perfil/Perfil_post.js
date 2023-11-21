@@ -14,7 +14,7 @@ const Perfil_post = (props) => {
   let dropdownOptions = [];
 
   if(props.pessoal){
-    dropdownOptions= ['Visualizar perfil', 'Editar'];
+    dropdownOptions= ['Visualizar perfil', 'Editar', ''];
   } else {
     dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
   }
