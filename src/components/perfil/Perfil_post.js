@@ -26,13 +26,13 @@ const Perfil_post = (props) => {
     if (index == 0) {
       NavegarParaPerfil()
     } else if (index == 1) {
-      if (tipo == 'animal') {
-
+      if (props.tipo == 'animal') {
+        navigation.navigate('AlterarAnimal', { id: props.itemId })
       } else {
 
       }
     } else if (index == 2) {
-      if (tipo == 'animal') {
+      if (props.tipo == 'animal') {
 
       } else {
 

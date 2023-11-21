@@ -15,6 +15,7 @@ import RecSenha from '../login/RecSenha';
 import VerCodigo from '../login/VerCodigo';
 import CriarSenha from '../login/CriarSenha';
 import Perfil from '../Perfil';
+import AlterarAnimal from '../cadastro/AlterarAnimal';
 import CadPostagem from '../cadastro/CadPostagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
@@ -66,6 +67,7 @@ export default function Navigation() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
           }} />
           <Stack.Screen name="Ficha" component={Ficha_animal} />
+          <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
           <Stack.Screen name="CadConta" component={CadConta} />
           <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
           <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
