@@ -49,7 +49,7 @@ const CampoDtNascAnimado = (props) => {
                 return dataObjetoDate;
             }
         }
-        return '';
+        return false;
     };
 
     return (

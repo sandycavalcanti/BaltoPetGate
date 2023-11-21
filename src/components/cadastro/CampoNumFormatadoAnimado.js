@@ -43,7 +43,7 @@ const CampoNumFormatadoAnimado = (props) => {
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
-                maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : null}
+                maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : tipo == 'tel' ? 16 : null}
                 keyboardType='numeric'
                 value={texto}
                 defaultValue={props.val}

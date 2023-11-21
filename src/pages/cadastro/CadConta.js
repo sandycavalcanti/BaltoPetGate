@@ -121,8 +121,7 @@ const CadConta = () => {
             setMensagem({ color: 'red', text: erro });
         });
     }
-    const [a, setA] = useState('');
-    const [b, setB] = useState('');
+
     return (
         <ContainerCadastro titulo="Crie sua conta!">
             {(() => {
@@ -148,9 +147,12 @@ const CadConta = () => {
                                 <GroupBox titulo="Informações da cliníca veterinária">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} />
                                     {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
-                                {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
+                                    {/* <CampoEndereco opcional set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} /> */}
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
+                                    <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional/>
                                     {/* <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} opcional />
                                     <CampoRede set1={setInstagram} set2={setFacebook} opcional /> */}
                                 </GroupBox>

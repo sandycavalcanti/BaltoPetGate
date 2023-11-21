@@ -22,6 +22,14 @@ const FormatarTextoCampo = (texto, tipoTexto) => {
         case 'cep':
             return texto.replace(/\D/g, '') // remove caracteres não numéricos
                 .replace(/(\d{5})(\d)/, '$1-$2'); // coloca hífen entre o quinto e o sexto dígitos
+        case 'tel':
+            if (texto.length == 11) {
+                return texto.replace(/\D/g, '')
+                    .replace(/(\d{2})(\d{5})(\d{4})/, '($1)$2-$3'); // Telefone 9 dígitos
+            } else {
+                return texto.replace(/\D/g, '')
+                    .replace(/(\d{2})(\d{4})(\d{4})/, '($1)$2-$3'); // Telefone 8 dígitos
+            }
         default:
             return texto.replace(/\D/g, '');
     }
