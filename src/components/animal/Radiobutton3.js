@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 const RadioButton3 = (props) => {
   const options = ['SIM', 'NAO', 'INDEFINIDO'];
@@ -11,6 +12,12 @@ const RadioButton3 = (props) => {
     props.set(option);
     setSelectedOption(option);
   };
+  
+  useEffect(() => {
+    if (props.val) {
+      setSelectedOption(props.val)
+    }
+  }, [props.val]);
 
   return (
     <View style={styles.container}>

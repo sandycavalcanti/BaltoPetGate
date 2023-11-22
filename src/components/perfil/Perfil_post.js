@@ -6,6 +6,7 @@ import { Divider } from 'react-native-elements';
 import Imagem from '../geral/Imagem';
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
+import DesativarCampo from '../../utils/DesativarCampo';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
@@ -23,20 +24,22 @@ const Perfil_post = (props) => {
   }
 
   const onSelect = (index, value) => {
-    if (index == 0) {
-      NavegarParaPerfil()
-    } else if (index == 1) {
-      if (tipo == 'animal') {
+    switch (index) {
+      case 0:
+        NavegarParaPerfil()
+        break;
+      case 1:
+        if (props.tipo == 'animal') {
+          navigation.navigate('AlterarAnimal', { id: props.itemId })
+        } else {
 
-      } else {
-
-      }
-    } else if (index == 2) {
-      if (tipo == 'animal') {
-
-      } else {
-
-      }
+        }
+        break;
+      case 2:
+        DesativarCampo(props.tipo, props.itemId);
+        break;
+      default:
+        break;
     }
   }
 
