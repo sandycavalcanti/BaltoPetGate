@@ -31,6 +31,7 @@ Campo.propTypes = {
     placeholder: PropTypes.string,
     set: PropTypes.func,
     opcional: PropTypes.bool,
+    defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default Campo
