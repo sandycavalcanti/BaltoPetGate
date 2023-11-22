@@ -1,4 +1,4 @@
-import { View, Text,TextInput } from 'react-native'
+import { View, Text, TextInput } from 'react-native'
 import React, { useState } from 'react'
 
 const Teste = () => {
@@ -10,11 +10,11 @@ const Teste = () => {
       .replace(/(-\d{2})\d+?$/, '$1') // captura 2 numeros seguidos de um traço e não deixa ser digitado mais nada
   }
 
-const [valor, setValor] = useState('');
+  const [valor, setValor] = useState('');
 
   return (
     <View>
-      <TextInput onChangeText={text => setValor(Formatar(text))} value={valor}/>
+      <TextInput onChangeText={text => setValor(Formatar(text))} value={valor} />
       <Text>{valor}</Text>
     </View>
   )

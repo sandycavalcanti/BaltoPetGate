@@ -97,7 +97,7 @@ export default function App() {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setSelectedImage(result.uri);
     }
   }
@@ -161,52 +161,8 @@ export default function App() {
               </Callout>
             </Marker>
           ))}
-          {pinkMarkersCoords.map((coords, index) => (
-            <Marker
-              key={index}
-              coordinate={coords}
-              pinColor='pink'
-            >
-              <Callout
-                // Adicionar a propriedade onPress para abrir o modal rosa
-                onPress={() => setIsPinkModalVisible(true)}
-              >
-                <Text>Animal em Alerta</Text>
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={{ width: 100, height: 100 }}
-                />
-              </Callout>
-            </Marker>
-          ))}
-          {/* Remover os marcadores amarelos */}
-          {/* {feedingPoints.map((coords, index) => (
-            <Marker
-              key={index}
-              coordinate={coords}
-              pinColor='yellow'
-            />
-          ))} */}
         </MapView>
       }
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Adicionar marcador laranja"
-          onPress={() => setIsOrangeModalVisible(true)}
-        />
-        <Button
-          title="Adicionar marcador rosa"
-          onPress={() => setIsPinkModalVisible(true)}
-        />
-        <Button
-          title="Mover marcador vermelho"
-          onPress={() =>
-            setRedMarkerCoords({
-              latitude: redMarkerCoords.latitude + 0.001,
-              longitude: redMarkerCoords.longitude + 0.001,
-            })}
-        />
-      </View>
       <Modal
         animationType="slide"
         transparent={false}
@@ -243,8 +199,7 @@ export default function App() {
           />
         </View>
       </Modal>
-      <Modal
-        animationType="slide"
+      <Modal animationType="slide"
         transparent={false}
         visible={isPinkModalVisible}
       >
