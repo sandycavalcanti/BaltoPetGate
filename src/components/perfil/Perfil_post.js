@@ -13,7 +13,6 @@ const Perfil_post = (props) => {
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const navigation = useNavigation();
   let dropdownOptions = [];
-  const itemid = props.itemId
 
   if (props.pessoal) {
     dropdownOptions = ['Visualizar perfil', 'Editar', 'Desativar'];
@@ -25,20 +24,22 @@ const Perfil_post = (props) => {
   }
 
   const onSelect = (index, value) => {
-    if (index == 0) {
-      NavegarParaPerfil()
-    } else if (index == 1) {
-      if (props.tipo == 'animal') {
-        navigation.navigate('AlterarAnimal', { id: props.itemId })
-      } else {
+    switch (index) {
+      case 0:
+        NavegarParaPerfil()
+        break;
+      case 1:
+        if (props.tipo == 'animal') {
+          navigation.navigate('AlterarAnimal', { id: props.itemId })
+        } else {
 
-      }
-    } else if (index == 2) {
-      if (props.tipo == 'animal') {
-        DesativarCampo(props.tipo, itemid);
-      } else {
-
-      }
+        }
+        break;
+      case 2:
+        DesativarCampo(props.tipo, props.itemId);
+        break;
+      default:
+        break;
     }
   }
 
