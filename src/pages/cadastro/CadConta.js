@@ -163,7 +163,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
-                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} opcional />
                                     <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional />
                                     <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
                                     <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />
@@ -185,7 +185,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
-                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} opcional />
                                     <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
                                     <View style={styles.viewAsterisco}>
                                         <Text style={styles.textoAsterisco}>Insira pelo menos uma rede social</Text>
@@ -210,7 +210,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
-                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} opcional />
                                     <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
                                     <View style={styles.viewAsterisco}>
                                         <Text style={styles.textoAsterisco}>Insira pelo menos uma rede social</Text>
@@ -235,7 +235,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
-                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} opcional />
                                     <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp'} />
                                     <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
                                     <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />
@@ -257,7 +257,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
-                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} />
+                                    <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' placeholder={'Outro Telefone (Opcional)'} opcional />
                                     <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' placeholder={'WhatsApp (Opcional)'} opcional />
                                     <CampoSimplesAnimado setRef={instagram} placeholder={"Instagram (Opcional)"} opcional />
                                     <CampoSimplesAnimado setRef={facebook} placeholder={"Link do Facebook (Opcional)"} opcional />

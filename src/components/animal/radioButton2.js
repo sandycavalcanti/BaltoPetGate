@@ -8,7 +8,11 @@ const RadioButton2 = (props) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionPress = (option) => {
-    props.set(option)
+    if(props.setRef){
+      props.setRef.current = option;
+    } else {
+      props.set(option);
+    }
     setSelectedOption(option)
   };
 
@@ -57,6 +61,7 @@ const styles = StyleSheet.create({
 
 RadioButton2.propTypes = {
   set: PropTypes.func,
+  setRef: PropTypes.object
 }
 
 export default RadioButton2;

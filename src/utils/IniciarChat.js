@@ -2,10 +2,6 @@ import axios from "axios";
 import { urlAPI } from "../constants";
 import CatchError from "./CatchError";
 
-const VerificarCampoObjeto = (objeto, campo) => {
-    return campo in objeto;
-}
-
 const IniciarChat = async (TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId) => {
     await axios.post(urlAPI + 'selchat/filtrar', { // Selecionar para verificar se há um chat existente
         TB_PESSOA_IDD,

@@ -14,7 +14,7 @@ const DropdownSimples = (props) => {
 
   return (
     <Dropdown
-      style={styles.dropdown}
+      style={[styles.dropdown, props.style]}
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
@@ -56,6 +56,7 @@ DropdownSimples.propTypes = {
   texto: PropTypes.string,
   set: PropTypes.func,
   val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }
 
 export default DropdownSimples;

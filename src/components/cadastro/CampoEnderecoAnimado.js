@@ -134,7 +134,7 @@ const CampoEnderecoAnimado = (props) => {
                 <TextInput onChangeText={text => props.setRef5.current = text} defaultValue={props.setRef5.current} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
-            {props.setRef1 && <>
+            {props.setRef6 && <>
                 <View>
                     <TextInput onChangeText={text => props.setRef6.current = text} defaultValue={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
                     {!opcional && <Text style={styles.asterisco}>*</Text>}

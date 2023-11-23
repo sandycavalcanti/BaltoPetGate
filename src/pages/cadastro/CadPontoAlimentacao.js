@@ -1,9 +1,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { Modal, StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity, ToastAndroid } from 'react-native';
+import { Modal, StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { requestForegroundPermissionsAsync, getCurrentPositionAsync, LocationObject, watchPositionAsync, LocationAccuracy } from 'expo-location';
 import axios from 'axios';
 import { corFundoCad, corRosaForte, urlAPI } from '../../constants';
 import Imagem from '../../components/geral/Imagem';
@@ -13,9 +12,11 @@ import DecodificarToken from '../../utils/DecodificarToken';
 import BotaoArquivo from '../../components/cadastro/BotaoArquivo';
 import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+
 const CadPontoAlimento = () => {
     const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
-    const [isOrangeModalVisible, setIsOrangeModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
     const [image, setImage] = useState(null);
     const [cadastrando, setCadastrando] = useState(false);
     const coordenadas = useRef({});
@@ -67,7 +68,7 @@ const CadPontoAlimento = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
             }).then(response => {
                 setCadastrando(false)
-                setIsOrangeModalVisible(false);
+                setModalVisible(false);
                 setImage(null)
                 const dados = response.data.response;
                 const id = dados.TB_PONTO_ALIMENTACAO_ID;
@@ -107,7 +108,7 @@ const CadPontoAlimento = () => {
 
     const onPress = (props) => {
         if (cadastrando) {
-            setIsOrangeModalVisible(true);
+            setModalVisible(true);
             setCadastrando(false);
             coordenadas.current = props.nativeEvent.coordinate
         }
@@ -115,20 +116,20 @@ const CadPontoAlimento = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{ position: 'absolute', left: 10, bottom: 20, zIndex: 10 }}>
+            <View style={styles.containerBottom}>
                 <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
                     {cadastrando ?
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                        <View style={styles.containerCadastrando}>
                             <Ionicons name="close-circle" size={50} color="black" />
                             <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 18 }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                                <Text style={{ fontSize: 18 }} textAlign={'justify'}>Clique em um lugar no mapa para cadastrar um ponto</Text>
                             </View>
                         </View>
                         :
                         <AntDesign name="pluscircle" size={50} color={corRosaForte} />}
                 </TouchableOpacity>
             </View>
-            <Text style={{ position: 'absolute', top: 10, textAlign: 'center', left: 0, right: 0, fontSize: 16, zIndex: 10 }}>Cadastre seu ponto de alimentação!</Text>
+            <Text style={styles.titulo}>Cadastre seu ponto de alimentação!</Text>
             <MapView style={{ width: '100%', height: '100%' }}
                 initialRegion={{
                     latitude:
@@ -150,7 +151,7 @@ const CadPontoAlimento = () => {
                     return (
                         <Marker key={index} coordinate={coords} >
                             <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ borderRadius: 125 }} />
-                            <Callout onPress={() => setIsOrangeModalVisible(true)} style={{ minWidth: 150, justifyContent: 'center', alignItems: 'center' }} >
+                            <Callout onPress={() => setModalVisible(true)} style={{ minWidth: 150, justifyContent: 'center', alignItems: 'center' }} >
                                 <Text>Ponto de Alimentação de {coords.nomePerfil}</Text>
                                 <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ height: 50 }} />
                                 <Text>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>
@@ -159,19 +160,19 @@ const CadPontoAlimento = () => {
                     )
                 })}
             </MapView>
-            <Modal animationType="slide" transparent={false} visible={isOrangeModalVisible}>
+            <Modal animationType="slide" transparent={false} visible={modalVisible}>
                 <View style={styles.modalContainer}>
-                    <Text>Selecione uma imagem:</Text>
-                    <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'}/>
+                    <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
+                    <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'} />
                     {image &&
                         <>
-                            <Text>Imagem selecionada:</Text>
-                            <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+                            <Text style={{ color: '#fafafa', fontSize: 16, marginTop: 15, marginBottom: 5 }}>Imagem selecionada:</Text>
+                            <Image source={{ uri: image }} style={{ width: 200, height: 200, borderRadius: 25 }} />
                         </>
                     }
-                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'}/>
-                    <TouchableOpacity  onPress={() => setIsOrangeModalVisible(false)}>
-                        <Text>Cancelar</Text>
+                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
+                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                        <Text style={{ color: '#fafafa' }}>Cancelar</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -185,6 +186,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    containerBottom: {
+        position: 'absolute',
+        left: 10,
+        bottom: 20,
+        zIndex: 10,
+        width: windowWidth - 10
     },
     buttonContainer: {
         position: 'absolute',
@@ -204,6 +212,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
     },
+    containerCadastrando: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1
+    },
+    titulo: {
+        position: 'absolute',
+        top: 10,
+        textAlign: 'center',
+        left: 0,
+        right: 0,
+        fontSize: 16,
+        zIndex: 10
+    }
 });
 
 export default CadPontoAlimento;

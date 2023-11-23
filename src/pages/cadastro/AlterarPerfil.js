@@ -127,7 +127,7 @@ const AlterarPerfil = () => {
             <TextInput style={styles.Input} value={nomePerfil} onChangeText={text => setNomePerfil(text)} />
           </GroupBox>
           <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar a bio:'>
-            <TextInput style={styles.Input} value={bio} onChangeText={text => setBio(text)} />
+            <TextInput style={styles.Input} value={bio} onChangeText={text => setBio(text)} multiline />
           </GroupBox>
           <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para Instagram:'>
             <TextInput style={styles.Input} value={instagram} onChangeText={text => setInstagram(text)} />
