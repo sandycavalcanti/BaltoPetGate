@@ -1,5 +1,6 @@
 import axios from "axios";
 import { urlAPI } from "../constants";
+import CatchError from "./CatchError";
 
 const VerificarCampoObjeto = (objeto, campo) => {
     return campo in objeto;
@@ -9,11 +10,20 @@ const IniciarChat = async (TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId) => {
     await axios.post(urlAPI + 'selchat/filtrar', { // Selecionar para verificar se há um chat existente
         TB_PESSOA_IDD,
         TB_PESSOA_ID
-    }).then(response => {
+    }).then(async response => {
         const dados = response.data.Selecionar[0];
         const TB_CHAT_ID = dados.TB_CHAT_ID;
         if (animalId) {
-            const existeAnimal = VerificarCampoObjeto(dados, "TB_ANIMAL_CADASTRADO");
+            let existeAnimal = false;
+            await axios.post(urlAPI + 'selchatmarcacoes/filtrar', {
+                TB_ANIMAL_ID: animalId,
+                TB_CHAT_ID,
+            }).then(response => {
+                const chatMarcacoes = response.data;
+                existeAnimal = chatMarcacoes.map(item => {
+                    if (item.TB_ANIMAL_ID == animalId) return true
+                })
+            }).catch(CatchError)
             if (existeAnimal) {
                 navigate('Chat', { TB_CHAT_ID, TB_PESSOA_ID });
             } else {

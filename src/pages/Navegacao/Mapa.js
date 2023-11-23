@@ -76,12 +76,13 @@ const Mapa = () => {
           const dataFornecida = new Date(coords.updatedAt);
           const diferencaEmMilissegundos = dataAtual - dataFornecida;
           const diferencaEmDias = Math.floor(diferencaEmMilissegundos / (1000 * 60 * 60 * 24));
+          const urlImg = urlAPI + 'selpontoalimentacaoimg/' + coords.id;
           return (
             <Marker key={index} coordinate={coords} >
-              <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ borderRadius: 125 }} />
-              <Callout onPress={() => setIsOrangeModalVisible(true)} style={{ minWidth: 200, justifyContent: 'center', alignItems: 'center' }} >
+              <Imagem url={urlImg} style={{ borderRadius: 125 }} />
+              <Callout onPress={() => setIsOrangeModalVisible(true)} style={{ minWidth: 175, justifyContent: 'center', alignItems: 'center' }} >
                 <Text>Ponto de Alimentação de {coords.nomePerfil}</Text>
-                <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ height: 50 }} />
+                <Imagem url={urlImg} style={{ height: 50, width: 50 }} />
                 <Text>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>
               </Callout>
             </Marker>

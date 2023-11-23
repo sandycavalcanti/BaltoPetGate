@@ -5,55 +5,30 @@ import { Modal, StyleSheet, Text, View, Button, TextInput, Image, TouchableOpaci
 import * as ImagePicker from 'expo-image-picker';
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync, LocationObject, watchPositionAsync, LocationAccuracy } from 'expo-location';
 import axios from 'axios';
-import { corRosaForte, urlAPI } from '../../constants';
+import { corFundoCad, corRosaForte, urlAPI } from '../../constants';
 import Imagem from '../../components/geral/Imagem';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
 import DecodificarToken from '../../utils/DecodificarToken';
+import BotaoArquivo from '../../components/cadastro/BotaoArquivo';
+import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 
 const CadPontoAlimento = () => {
-    const [location, setLocation] = useState(null);
-    const [redMarkerCoords, setRedMarkerCoords] = useState(null);
-    const [orangeMarkersCoords, setOrangeMarkersCoords] = useState([]);
+    const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
     const [isOrangeModalVisible, setIsOrangeModalVisible] = useState(false);
     const [image, setImage] = useState(null);
-    const [description, setDescription] = useState('');
     const [cadastrando, setCadastrando] = useState(false);
     const coordenadas = useRef({});
     const TB_PESSOA_IDD = useRef(null);
-
-    async function requestLocationPermissions() {
-        const { granted } = await requestForegroundPermissionsAsync();
-
-        if (granted) {
-            const currentPosition = await getCurrentPositionAsync();
-            setLocation(currentPosition);
-            setRedMarkerCoords(currentPosition.coords);
-            console.log("LOCALIZAÇÃO ATUAL =>", currentPosition);
-        }
-    }
-
-    useEffect(() => {
-        // requestLocationPermissions();
-    }, []);
-
-    // useEffect(() => {
-    //   watchPositionAsync({
-    //     accuracy: LocationAccuracy.Highest,
-    //     timeInterval: 1000,
-    //     distanceInterval: 1,
-    //   }, (response) => {
-    //     console.log("NOVA LOCALIZAÇÃO!", response);
-    //     setLocation(response);
-    //   });
-    // }, []);
+    const TB_PESSOA_NOME_PERFIL = useRef('')
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
         TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+        TB_PESSOA_NOME_PERFIL.current = decodedToken.TB_PESSOA_NOME_PERFIL
     }
 
-    const getMarkers = async () => {
+    const Selecionar = async () => {
         const response = await axios.get(urlAPI + 'selpontoalimentacao');
         const newCoords = response.data.map((item) => {
             const id = item.TB_PONTO_ALIMENTACAO_ID;
@@ -64,12 +39,12 @@ const CadPontoAlimento = () => {
             const updatedAt = item.updatedAt;
             return { latitude, longitude, id, nomePerfil, createdAt, updatedAt };
         });
-        setOrangeMarkersCoords([...orangeMarkersCoords, ...newCoords]);
+        setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
     };
 
     useEffect(() => {
         PegarId();
-        getMarkers();
+        Selecionar();
     }, [])
 
     const Inserir = async () => {
@@ -93,12 +68,24 @@ const CadPontoAlimento = () => {
             }).then(response => {
                 setCadastrando(false)
                 setIsOrangeModalVisible(false);
-                const coordenadasArray = [coordenadas.current]
-                setOrangeMarkersCoords([...orangeMarkersCoords, ...coordenadasArray]);
+                setImage(null)
+                const dados = response.data.response;
+                const id = dados.TB_PONTO_ALIMENTACAO_ID;
+                const nomePerfil = TB_PESSOA_NOME_PERFIL.current;
+                const latitude = parseFloat(dados.TB_PONTO_ALIMENTACAO_LATITUDE);
+                const longitude = parseFloat(dados.TB_PONTO_ALIMENTACAO_LONGITUDE);
+                const createdAt = new Date();
+                const updatedAt = new Date();
+                const newCoords = [{ latitude, longitude, id, nomePerfil, createdAt, updatedAt }];
+                setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
             }).catch(error => {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error(erro.error, error);
+                if (error.response) {
+                    let erro = error.response.data;
+                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                    console.error(erro.error, error);
+                } else {
+                    console.error(error)
+                }
             })
         } else {
             ToastAndroid.show('Insira uma imagem', ToastAndroid.SHORT);
@@ -133,7 +120,9 @@ const CadPontoAlimento = () => {
                     {cadastrando ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                             <Ionicons name="close-circle" size={50} color="black" />
-                            <Text style={{ fontSize: 18 }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ fontSize: 18 }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                            </View>
                         </View>
                         :
                         <AntDesign name="pluscircle" size={50} color={corRosaForte} />}
@@ -153,7 +142,7 @@ const CadPontoAlimento = () => {
                 }}
                 onPress={onPress}
             >
-                {orangeMarkersCoords.map((coords, index) => {
+                {pontosAlimentacao.map((coords, index) => {
                     const dataAtual = new Date();
                     const dataFornecida = new Date(coords.updatedAt);
                     const diferencaEmMilissegundos = dataAtual - dataFornecida;
@@ -161,7 +150,7 @@ const CadPontoAlimento = () => {
                     return (
                         <Marker key={index} coordinate={coords} >
                             <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ borderRadius: 125 }} />
-                            <Callout onPress={() => setIsOrangeModalVisible(true)} style={{ minWidth: 200, justifyContent: 'center', alignItems: 'center' }} >
+                            <Callout onPress={() => setIsOrangeModalVisible(true)} style={{ minWidth: 150, justifyContent: 'center', alignItems: 'center' }} >
                                 <Text>Ponto de Alimentação de {coords.nomePerfil}</Text>
                                 <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ height: 50 }} />
                                 <Text>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>
@@ -173,15 +162,17 @@ const CadPontoAlimento = () => {
             <Modal animationType="slide" transparent={false} visible={isOrangeModalVisible}>
                 <View style={styles.modalContainer}>
                     <Text>Selecione uma imagem:</Text>
-                    <Button title="Escolher imagem" onPress={pickImage} />
+                    <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'}/>
                     {image &&
                         <>
                             <Text>Imagem selecionada:</Text>
                             <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
                         </>
                     }
-                    <Button title="Confirmar" onPress={Inserir} />
-                    <Button title="Cancelar" onPress={() => setIsOrangeModalVisible(false)} />
+                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'}/>
+                    <TouchableOpacity  onPress={() => setIsOrangeModalVisible(false)}>
+                        <Text>Cancelar</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
         </View>
@@ -203,7 +194,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: corFundoCad,
         alignItems: 'center',
         justifyContent: 'center',
     },
