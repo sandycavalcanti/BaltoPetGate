@@ -2,11 +2,11 @@ import { Text } from 'react-native'
 import PropTypes from 'prop-types';
 
 const Mensagem = (props) => {
-    const texto = props.texto
+    const mensagem = props.mensagem
 
     return (
         <>
-            {texto && <Text style={{ color: texto.color }}>{texto.text}</Text>}
+            {mensagem && <Text style={{ color: mensagem.color }}>{mensagem.text}</Text>}
         </>
     )
 }

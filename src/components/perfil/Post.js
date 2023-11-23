@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 Post.propTypes = {
     data: PropTypes.object,
     text: PropTypes.string,
-    img: PropTypes.object
+    img: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 }
 
 export default Post;

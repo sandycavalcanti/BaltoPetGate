@@ -65,11 +65,11 @@ const CadConta = () => {
         switch (tipo) {
             case 2:
                 camposObrigatorios.push(crmv.current);
-                camposCadastro = { crmv: crmv.current };
+                camposCadastro = { ...camposCadastro, crmv: crmv.current };
                 break;
             case 3:
                 camposObrigatorios.push(whatsapp.current, redeExiste);
-                camposCadastro = { cnpj: cnpj.current };
+                camposCadastro = { ...camposCadastro, cnpj: cnpj.current };
                 break;
             case 4:
                 camposObrigatorios.push(whatsapp.current, redeExiste);
@@ -79,13 +79,14 @@ const CadConta = () => {
                 break;
             case 6:
                 camposObrigatorios.push(cnpj.current);
-                camposCadastro = { cnpj: cnpj.current };
+                camposCadastro = { ...camposCadastro, cnpj: cnpj.current };
                 break;
             default:
                 break;
         }
 
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
+        console.log(camposCadastro)
         if (!mensagemErro) {
             if (tentativas.current == 0)
                 InserirDados();
@@ -122,6 +123,7 @@ const CadConta = () => {
             TB_PESSOA_CNPJ: cnpj.current,
         }).then(async response => {
             const TokenUsuario = response.data.token;
+            setMensagem({ color: '#fafafa', text: 'Cadastrado com sucesso!' });
             await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });

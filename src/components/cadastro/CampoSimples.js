@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 CampoSimples.propTypes = {
   set: PropTypes.func,
   setRef: PropTypes.object,
-  val: PropTypes.string,
+  val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   opcional: PropTypes.bool,
   placeholder: PropTypes.string,
   keyboardType: PropTypes.string,

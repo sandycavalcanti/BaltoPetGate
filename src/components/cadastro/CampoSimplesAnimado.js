@@ -29,7 +29,7 @@ const CampoSimplesAnimado = (props) => {
                 borderHeight={1}
                 inputStyle={{ fontWeight: '600' }}
                 labelStyle={[styles.labelStyle, { display: (props.setRef.current && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
-                style={{ bottom: 4, width: !props.opcional ? '90%' : '94%', borderBottomColor: 'transparent', marginLeft: -5 }}
+                style={[styles.inputContainer, { width: !props.opcional ? '90%' : '94%' }]}
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
@@ -64,11 +64,16 @@ const styles = StyleSheet.create({
         color: 'red',
         right: 10,
     },
+    inputContainer: {
+        borderBottomColor: 'transparent',
+        marginLeft: -5,
+        bottom: 4,
+    }
 });
 
 CampoSimplesAnimado.propTypes = {
     setRef: PropTypes.object,
-    val: PropTypes.string,
+    val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     opcional: PropTypes.bool,
     placeholder: PropTypes.string,
     keyboardType: PropTypes.string,

@@ -93,14 +93,13 @@ const styles = StyleSheet.create({
     Container: {
         width: '100%',
         height: '100%',
-        backgroundColor: '#D1BBB2',
+        backgroundColor: '#BFDDE4',
     },
     InfoHead: {
         alignItems: 'center',
         width: '100%',
         flexDirection: 'column',
         display: 'flex',
-        backgroundColor: '#A9DDAE',
         paddingTop: 30
     },
     ImagemCirculo: {
@@ -125,7 +124,7 @@ const styles = StyleSheet.create({
     },
     InfoPet: {
         width: '100%',
-        backgroundColor: "#CC8F8F",
+        backgroundColor: "#75B2A7",
         borderColor: 'white',
         borderTopWidth: 1,
         borderBottomWidth: 1,
@@ -157,13 +156,11 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-around',
         alignItems: 'center',
-        paddingVertical: 20
     },
     Botao: {
         width: '100%',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        paddingVertical: 20
     }
 });
 

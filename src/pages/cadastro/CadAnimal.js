@@ -183,7 +183,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
             <ContainerCadastro titulo='Cadastro animal'>
                 <GroupBox titulo='Insira uma imagem do animal'>
                     {image && <Image style={styles.Imagem} source={{ uri: image }} />}
-                    <BotaoArquivo onPress={escolherImg} />
+                    <BotaoArquivo onPress={escolherImg} texto={image ? 'Trocar imagem' : null}/>
                 </GroupBox>
                 <GroupBox titulo='Informações'>
                     <CampoSimples placeholder="Nome do animal" set={setNome} />

@@ -50,7 +50,7 @@ export default function ValidarCamposCad(camposObrigatorios, dados) {
 
     const { nome, dtNasc, cpf, crmv, cnpj, uf, cidade, bairro, rua, numero, nomePerfil, telefone1, telefone2, whatsapp, facebook, instagram, email, senha, senhaConfirmacao } = dados;
 
-    if (camposObrigatorios.some(campo => campo === undefined || campo === '')) {
+    if (camposObrigatorios.some(campo => campo === undefined || campo === '' || campo === null)) {
         return mensagemErro = "Complete todos os campos obrigatórios.";
     }
     if (nome && !criteriosNome.test(nome)) {

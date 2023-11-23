@@ -149,6 +149,11 @@ const PerfilLayout = (props) => {
               </View>}
           </View>
         </View>
+        <View style={styles.content}>
+          <Text style={styles.contentText}>
+          {props.data.TB_PESSOA_BIO && props.data.TB_PESSOA_BIO}
+          </Text>
+        </View>
         <View style={styles.buttons}>
           {props.pessoal ?
             <>
@@ -174,11 +179,6 @@ const PerfilLayout = (props) => {
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}
-        </View>
-        <View style={styles.content}>
-          <Text style={styles.contentText}>
-            {props.data.TB_PESSOA_BIO}
-          </Text>
         </View>
       </View>
     </View >
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 60,
+    marginTop: 50,
   },
   profileContainer: {
     width: '100%',
@@ -253,6 +253,9 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 20,
+    backgroundColor: '#CEF7FF',
     justifyContent: 'space-around'
   },
   button: {
@@ -271,7 +274,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingVertical: 5,
     backgroundColor: '#CEF7FF',
   },
   contentText: {

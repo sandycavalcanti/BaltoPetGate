@@ -30,6 +30,7 @@ const AlterarPerfil = () => {
     TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
     TB_TIPO_IDD.current = decodedToken.TB_TIPO_IDD;
     urlImg.current = urlAPI + 'selpessoaimg/' + TB_PESSOA_IDD.current;
+    Selecionar();
   }
 
   const Selecionar = async () => {
@@ -55,7 +56,6 @@ const AlterarPerfil = () => {
 
   useEffect(() => {
     PegarId();
-    Selecionar();
     return (() => {
       controller.abort();
     });
@@ -135,10 +135,10 @@ const AlterarPerfil = () => {
           <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para facebook:'>
             <TextInput style={styles.Input} value={facebook} onChangeText={text => setFacebook(text)} />
           </GroupBox>
-          {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) && 
-          <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
-            <TextInput style={styles.Input} value={pix} onChangeText={text => setPix(text)} />
-          </GroupBox>}
+          {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) &&
+            <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
+              <TextInput style={styles.Input} value={pix} onChangeText={text => setPix(text)} />
+            </GroupBox>}
           <BotaoCadastrar texto="Confirmar alterações" onPress={Alterar} />
         </View>
       </View >
