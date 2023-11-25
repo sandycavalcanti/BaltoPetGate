@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid, ActivityIndicator } from 'react-native'
-import { corTituloCad, urlAPI, corBordaBoxCad } from '../constants';
+import { urlAPI, corBordaBoxCad } from '../constants';
 import Questao from '../components/InfoChat/Questao';
 import axios from 'axios';
 import DecodificarToken from '../utils/DecodificarToken';
@@ -10,6 +10,7 @@ import DropdownAlert from 'react-native-dropdownalert';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AlterarSolicitacao from '../components/InfoChat/AlterarSolicitacao';
 import FormatarTextoBanco from '../utils/FormatarTextoBanco';
+
 let alert = (_data) => new Promise(res => res);
 
 const InfoChat = () => {
@@ -70,19 +71,10 @@ const InfoChat = () => {
                             <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.current.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
                             <Questao texto='Quantos animais você possui em sua casa?' resposta={info.current.TB_PESSOA_ANIMAL_QUANTIDADE} />
 
-                            {animais.map(item => {
-                                return (
-                                    <AlterarSolicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} TB_PESSOA_ID={TB_PESSOA_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} alert={alert} />
-                                );
-                            })}
-
+                            {animais.map(item => <AlterarSolicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} TB_PESSOA_ID={TB_PESSOA_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} alert={alert} />)}
                         </View>
                         :
-                        animais.map(item => {
-                            return (
-                                <Solicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} TB_PESSOA_ID={TB_PESSOA_IDD.current} TB_TIPO_IDD={TB_TIPO_IDD.current} alert={alert} />
-                            );
-                        })
+                        animais.map(item => <Solicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} TB_PESSOA_ID={TB_PESSOA_IDD.current} TB_TIPO_IDD={TB_TIPO_IDD.current} alert={alert} />)
                 }
             </ScrollView>
             <DropdownAlert alert={func => (alert = func)} />

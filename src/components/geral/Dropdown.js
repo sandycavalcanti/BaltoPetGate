@@ -12,7 +12,7 @@ const Dropdown = (props) => {
             <Modal visible={props.val} transparent={true} animationType="none" onRequestClose={() => props.set(false)} >
                 <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => props.set(false)} >
                     <View style={[styles.dropdown, { top: 45 - valorScroll, right: 15 - valorDireita }]}>
-                        <TouchableOpacity style={styles.dropdownButton} onPress={props.item1.press} >
+                        <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item1.press; }}>
                             {props.item1.icone &&
                                 <View style={{ marginRight: 10 }}>
                                     {props.item1.icone}
@@ -22,7 +22,7 @@ const Dropdown = (props) => {
                         {props.item2 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={props.item2.press}>
+                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item2.press; }}>
                                     {props.item2.icone &&
                                         <View style={{ marginRight: 10 }}>
                                             {props.item2.icone}
@@ -33,7 +33,7 @@ const Dropdown = (props) => {
                         {props.item3 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={props.item3.press}>
+                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item3.press; }}>
                                     {props.item3.icone &&
                                         <View style={{ marginRight: 10 }}>
                                             {props.item3.icone}
@@ -44,7 +44,7 @@ const Dropdown = (props) => {
                         {props.item4 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={props.item4.press}>
+                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item4.press; }}>
                                     {props.item4.icone &&
                                         <View style={{ marginRight: 10 }}>
                                             {props.item4.icone}

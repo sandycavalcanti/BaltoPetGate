@@ -1,18 +1,23 @@
 
 import { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { Modal, StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
+import { Modal, StyleSheet, Text, View, ActivityIndicator, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { corFundoCad, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corFundoCad, corRosaForte, urlAPI } from '../../constants';
 import Imagem from '../../components/geral/Imagem';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
 import DecodificarToken from '../../utils/DecodificarToken';
 import BotaoArquivo from '../../components/cadastro/BotaoArquivo';
 import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
+import * as Location from "expo-location";
+import CalcularDistanciaCoordenadas from '../../utils/CalcularDistanciaCoordenadas';
+import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
+import MapaMapView from '../../components/navegacao/MapaMapView';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+let alert = (_data) => new Promise(res => res);
 
 const CadPontoAlimento = () => {
     const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
@@ -22,15 +27,32 @@ const CadPontoAlimento = () => {
     const coordenadas = useRef({});
     const TB_PESSOA_IDD = useRef(null);
     const TB_PESSOA_NOME_PERFIL = useRef('')
+    const [carregando, setCarregando] = useState(true);
+    const initialRegion = useRef({
+        latitude: -23.447440,
+        longitude: -46.917877,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005
+    })
+    const controller = new AbortController();
 
-    const PegarId = async () => {
-        const decodedToken = await DecodificarToken();
-        TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
-        TB_PESSOA_NOME_PERFIL.current = decodedToken.TB_PESSOA_NOME_PERFIL
+    const PegarLocalizacao = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status == "granted") {
+            let location = await Location.getCurrentPositionAsync({});
+
+            initialRegion.current = {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+            };
+        }
+        setCarregando(false);
     }
 
     const Selecionar = async () => {
-        const response = await axios.get(urlAPI + 'selpontoalimentacao');
+        const response = await axios.get(urlAPI + 'selpontoalimentacao', { signal: controller.signal });
         const newCoords = response.data.map((item) => {
             const id = item.TB_PONTO_ALIMENTACAO_ID;
             const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
@@ -43,10 +65,20 @@ const CadPontoAlimento = () => {
         setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
     };
 
+    const PegarId = async () => {
+        const decodedToken = await DecodificarToken();
+        TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+        TB_PESSOA_NOME_PERFIL.current = decodedToken.TB_PESSOA_NOME_PERFIL;
+    }
+
     useEffect(() => {
-        PegarId();
+        PegarLocalizacao();
         Selecionar();
-    }, [])
+        PegarId();
+        return (() => {
+            controller.abort();
+        })
+    }, []);
 
     const Inserir = async () => {
         if (image) {
@@ -67,9 +99,8 @@ const CadPontoAlimento = () => {
             await axios.post(urlAPI + 'cadpontoalimentacao/', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             }).then(response => {
-                setCadastrando(false)
                 setModalVisible(false);
-                setImage(null)
+                setImage(null);
                 const dados = response.data.response;
                 const id = dados.TB_PONTO_ALIMENTACAO_ID;
                 const nomePerfil = TB_PESSOA_NOME_PERFIL.current;
@@ -85,6 +116,7 @@ const CadPontoAlimento = () => {
                     ToastAndroid.show(erro.message, ToastAndroid.SHORT);
                     console.error(erro.error, error);
                 } else {
+                    ToastAndroid.show('Houve um erro', ToastAndroid.SHORT);
                     console.error(error)
                 }
             })
@@ -108,74 +140,69 @@ const CadPontoAlimento = () => {
 
     const onPress = (props) => {
         if (cadastrando) {
-            setModalVisible(true);
-            setCadastrando(false);
-            coordenadas.current = props.nativeEvent.coordinate
+            const coordenadasPress = props.nativeEvent.coordinate;
+            const distancia = CalcularDistanciaCoordenadas(coordenadasPress, initialRegion.current).toFixed(2);
+            if (distancia <= 1) {
+                setModalVisible(true);
+                setCadastrando(false);
+                coordenadas.current = coordenadasPress;
+            } else {
+                alert({
+                    type: DropdownAlertType.Error,
+                    title: 'Escolha um ponto mais próximo',
+                    interval: 6000,
+                    message: 'Não é possível cadastrar um ponto a mais de 1Km de distância',
+                });
+            }
         }
     }
 
     return (
         <View style={styles.container}>
-            <View style={styles.containerBottom}>
-                <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
-                    {cadastrando ?
-                        <View style={styles.containerCadastrando}>
-                            <Ionicons name="close-circle" size={50} color="black" />
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 18 }} textAlign={'justify'}>Clique em um lugar no mapa para cadastrar um ponto</Text>
-                            </View>
-                        </View>
-                        :
-                        <AntDesign name="pluscircle" size={50} color={corRosaForte} />}
-                </TouchableOpacity>
-            </View>
-            <Text style={styles.titulo}>Cadastre seu ponto de alimentação!</Text>
-            <MapView style={{ width: '100%', height: '100%' }}
-                initialRegion={{
-                    latitude:
-                        -23.447440,
-                    //  location.coords.latitude,
-                    longitude:
-                        -46.917877,
-                    // location.coords.longitude,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005
-                }}
-                onPress={onPress}
-            >
-                {pontosAlimentacao.map((coords, index) => {
-                    const dataAtual = new Date();
-                    const dataFornecida = new Date(coords.updatedAt);
-                    const diferencaEmMilissegundos = dataAtual - dataFornecida;
-                    const diferencaEmDias = Math.floor(diferencaEmMilissegundos / (1000 * 60 * 60 * 24));
-                    return (
-                        <Marker key={index} coordinate={coords} >
-                            <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ borderRadius: 125 }} />
-                            <Callout onPress={() => setModalVisible(true)} style={{ minWidth: 150, justifyContent: 'center', alignItems: 'center' }} >
-                                <Text>Ponto de Alimentação de {coords.nomePerfil}</Text>
-                                <Imagem url={urlAPI + 'selpontoalimentacaoimg/' + coords.id} style={{ height: 50 }} />
-                                <Text>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>
-                            </Callout>
-                        </Marker>
-                    )
-                })}
-            </MapView>
-            <Modal animationType="slide" transparent={false} visible={modalVisible}>
-                <View style={styles.modalContainer}>
-                    <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
-                    <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'} />
-                    {image &&
-                        <>
-                            <Text style={{ color: '#fafafa', fontSize: 16, marginTop: 15, marginBottom: 5 }}>Imagem selecionada:</Text>
-                            <Image source={{ uri: image }} style={{ width: 200, height: 200, borderRadius: 25 }} />
-                        </>
-                    }
-                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
-                    <TouchableOpacity onPress={() => setModalVisible(false)}>
-                        <Text style={{ color: '#fafafa' }}>Cancelar</Text>
-                    </TouchableOpacity>
+            {carregando ?
+                <View style={styles.viewCarregando}>
+                    <ActivityIndicator size='large' color={corRosaForte} />
                 </View>
-            </Modal>
+                :
+                <>
+                    <View style={styles.containerBottom}>
+                        <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
+                            <View style={styles.containerCadastrando}>
+                                {cadastrando ?
+                                    <>
+                                        <Ionicons name="close-circle" size={50} color="black" />
+                                        <Text style={{ fontSize: 18, textAlign: 'justify' }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                                    </>
+                                    :
+                                    <>
+                                        <AntDesign name="pluscircle" size={50} color={corRosaForte} />
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Cadastre seu ponto de alimentação!</Text>
+                                        </View>
+                                    </>}
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <MapaMapView onPress={onPress} pontosAlimentacao={pontosAlimentacao} initialRegion={initialRegion.current} />
+                    <Modal animationType="slide" transparent={false} visible={modalVisible}>
+                        <View style={styles.modalContainer}>
+                            <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
+                            <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'} />
+                            {image &&
+                                <>
+                                    <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
+                                    <Image source={{ uri: image }} style={styles.selectedImage} />
+                                </>
+                            }
+                            <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
+                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                <Text style={{ color: '#fafafa' }}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
+                    <DropdownAlert alert={func => (alert = func)} />
+                </>
+            }
         </View>
     );
 }
@@ -187,6 +214,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    viewCarregando: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: corFundo,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    containerCallout: {
+        minWidth: 175,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 50,
+    },
+    titleCallout: {
+        fontSize: 15
+    },
+    nameCallout: {
+        fontSize: 18
+    },
+    textCallout: {
+        marginTop: 20,
+        fontSize: 16,
+    },
     containerBottom: {
         position: 'absolute',
         left: 10,
@@ -194,23 +244,11 @@ const styles = StyleSheet.create({
         zIndex: 10,
         width: windowWidth - 10
     },
-    buttonContainer: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        right: 20,
-    },
     modalContainer: {
         flex: 1,
         backgroundColor: corFundoCad,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
     },
     containerCadastrando: {
         flexDirection: 'row',
@@ -225,6 +263,17 @@ const styles = StyleSheet.create({
         right: 0,
         fontSize: 16,
         zIndex: 10
+    },
+    textSelectedImage: {
+        color: '#fafafa',
+        fontSize: 16,
+        marginTop: 15,
+        marginBottom: 5
+    },
+    selectedImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 25
     }
 });
 

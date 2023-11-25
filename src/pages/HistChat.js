@@ -31,10 +31,7 @@ const HistChat = () => {
         }
       })
       .catch(error => {
-        if(error.toJSON().message === 'Network Error'){
-          console.log('Sem conexão')
-        }
-        else if (error.response) {
+        if (error.response) {
           if (error.response.status !== 404) {
             let erro = error.response.data;
             console.error(erro.error, error);
