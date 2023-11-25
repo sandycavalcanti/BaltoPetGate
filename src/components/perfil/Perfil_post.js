@@ -1,45 +1,27 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { urlAPI } from '../../constants';
-import ModalDropdown from 'react-native-modal-dropdown';
 import { Divider } from 'react-native-elements';
 import Imagem from '../geral/Imagem';
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import DesativarCampo from '../../utils/DesativarCampo';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const navigation = useNavigation();
-  let dropdownOptions = [];
 
-  if (props.pessoal) {
-    dropdownOptions = ['Visualizar perfil', 'Editar', 'Desativar'];
-  } else {
-    dropdownOptions = ['Visualizar perfil', 'Denunciar publicação', 'Bloquear pessoa'];
-  }
   const NavegarParaPerfil = () => {
     navigation.navigate("Perfil", { id: TB_PESSOA_ID });
   }
 
-  const onSelect = (index, value) => {
-    switch (index) {
-      case 0:
-        NavegarParaPerfil()
-        break;
-      case 1:
-        if (props.tipo == 'animal') {
-          navigation.navigate('AlterarAnimal', { id: props.itemId })
-        } else {
-
-        }
-        break;
-      case 2:
-        DesativarCampo(props.tipo, props.itemId);
-        break;
-      default:
-        break;
+  const Editar = () => {
+    if (props.tipo == 'animal') {
+      navigation.navigate('AlterarAnimal', { id: props.itemId })
+    } else {
+      navigation.navigate('AlterarPostagem', { id: props.itemId })
     }
   }
 
@@ -56,11 +38,40 @@ const Perfil_post = (props) => {
         </View>
       </TouchableOpacity>
       <View style={styles.ContainerIcon}>
-        <ModalDropdown options={dropdownOptions} defaultIndex={null} onSelect={onSelect} renderSeparator={() => <Divider width={1} color='gray' />} dropdownStyle={styles.dropdownOptions} dropdownTextStyle={{ fontSize: 16, paddingLeft: 10, paddingRight: 20, color: '#000' }}>
-          <View style={styles.dropdownHeader}>
-            <Feather name="more-vertical" size={30} color="#B66F6F" />
-          </View>
-        </ModalDropdown>
+        <Menu>
+          <MenuTrigger>
+            <View style={{ padding: 10 }}>
+              <Feather name="more-vertical" size={30} color="#B66F6F" />
+            </View>
+          </MenuTrigger>
+          <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
+            <MenuOption onSelect={() => NavegarParaPerfil()}>
+              <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
+            </MenuOption>
+            <Divider width={1} color='gray' />
+            {props.pessoal ?
+              <>
+                <MenuOption onSelect={() => Editar()}>
+                  <Text style={styles.dropdownText}>Editar</Text>
+                </MenuOption>
+                <Divider width={1} color='gray' />
+                <MenuOption onSelect={() => DesativarCampo(props.tipo, props.itemId)}>
+                  <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar</Text>
+                </MenuOption>
+              </>
+              :
+              <>
+                <MenuOption onSelect={() => console.log('Denunciar publicação')}>
+                  <Text style={styles.dropdownText}>Denunciar publicação</Text>
+                </MenuOption>
+                <Divider width={1} color='gray' />
+                <MenuOption onSelect={() => console.log('Bloquear')}>
+                  <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
+                </MenuOption>
+              </>
+            }
+          </MenuOptions>
+        </Menu>
       </View>
     </View>
   )
@@ -102,27 +113,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  dropdownHeader: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    borderRadius: 4,
-  },
   dropdownOptions: {
-    height: 140,
+    marginTop: 50,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#444',
     borderRadius: 4,
-    marginTop: -20,
-    paddingTop: 5,
-    zIndex: 10,
+  },
+  dropdownText: {
+    fontSize: 16,
+    paddingLeft: 10,
+    paddingRight: 20,
+    color: '#000',
+    paddingVertical: 5
   },
   Imagem: {
     width: 'auto',
     height: 50,
     aspectRatio: 1,
-  },
+  }
 });
 
 Perfil_post.propTypes = {

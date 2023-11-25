@@ -14,8 +14,7 @@ import Avaliar from "../components/Avaliacao/Avaliar";
 import IniciarChat from "../utils/IniciarChat";
 import RetornarTipoNome from "../utils/RetornarTipoNome";
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let scrollY = 0;
 let item1 = item2 = item3 = {};
 
@@ -245,6 +244,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   profileName: {
+    maxWidth: 200,
     fontSize: 20,
     fontWeight: 'bold',
     color: '#093C4B',

@@ -4,7 +4,6 @@ import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Splash = ({ navigation }) => {
-
   const rota = useRef('');
 
   const VerificarLogin = async () => {
@@ -14,12 +13,12 @@ const Splash = ({ navigation }) => {
     } else {
       rota.current = 'Menu'
     }
+    setTimeout(() => {
+      navigation.replace(rota.current);
+    }, 2000);
   }
   useEffect(() => {
     VerificarLogin();
-    setTimeout(() => {
-      navigation.replace(rota.current);
-    }, 4000);
   });
 
   return (

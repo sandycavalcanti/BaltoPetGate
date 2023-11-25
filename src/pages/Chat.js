@@ -153,7 +153,7 @@ const Chat = () => {
         setTextoDigitado(mensagemSelecionada.current.text);
     }
     const ResponderMensagem = () => {
-        editando.current = false
+        editando.current = false;
         respondendo.current = true;
     }
     const ExcluirMensagem = async () => {
@@ -271,9 +271,6 @@ const Chat = () => {
         }));
         onSend(messagesToUpload);
     };
-    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
-    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
-    // };
     const onLongPress = (context, message) => {
         podeExcluir.current = true;
         podeEditar.current = !message.image;
@@ -291,6 +288,10 @@ const Chat = () => {
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
+    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
+    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
+    // };
+
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />

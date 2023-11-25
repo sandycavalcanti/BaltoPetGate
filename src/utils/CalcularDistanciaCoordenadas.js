@@ -1,5 +1,3 @@
-
-
 const CalcularDistanciaCoordenadas = (coord1, coord2) => {
     const raioTerra = 6371; // Raio médio da Terra em quilômetros
 

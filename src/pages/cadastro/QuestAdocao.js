@@ -20,11 +20,11 @@ const QuestionarioAdocao = ({ navigation: { navigate } }) => {
 
     const [moradia, setMoradia] = useState('');
     const [espaco, setEspaco] = useState('');
-    const [passear, setPassear] = useState();
+    const [passear, setPassear] = useState(0);
     const [ausencia, setAusencia] = useState('');
     const [acessoRua, setAcessoRua] = useState();
     const [ciente, setCiente] = useState();
-    const [quantidade, setQuantidade] = useState();
+    const [quantidade, setQuantidade] = useState(0);
 
 
     const Alterar = async () => {
@@ -106,7 +106,7 @@ const QuestionarioAdocao = ({ navigation: { navigate } }) => {
                     <GroupBox titulo='Durante o dia-a-dia, o animal terá acesso a rua?'>
                         <RadioButton opcoes={SimNao} set={setAcessoRua} />
                     </GroupBox>
-                    <GroupBox titulo='Quantos animais você possuí em sua casa?' >
+                    <GroupBox titulo='Quantos animais você possui em sua casa?' >
                         <BotaoQuantidade set={setQuantidade} />
                     </GroupBox>
                     <BotaoCadastrar onPress={Alterar} texto='Enviar' />

@@ -17,11 +17,11 @@ const AlterarPerfil = () => {
   const TB_PESSOA_IDD = useRef(null);
   const TB_TIPO_IDD = useRef(null);
   const urlImg = useRef('imagem');
-  const [nomePerfil, setNomePerfil] = useState('');
-  const [bio, setBio] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [pix, setPix] = useState('');
+  const [nomePerfil, setNomePerfil] = useState(null);
+  const [bio, setBio] = useState(null);
+  const [instagram, setInstagram] = useState(null);
+  const [facebook, setFacebook] = useState(null);
+  const [pix, setPix] = useState(null);
   const [image, setImage] = useState(null);
   const controller = new AbortController();
 

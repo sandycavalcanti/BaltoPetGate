@@ -26,13 +26,19 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
     let foiExcluida = props.currentMessage.mensagemExcluida;
     let foiAlterada = props.currentMessage.mensagemAlterada;
     let textoResposta = resposta = imagemResposta = quantidadeLetras = null;
+    let respostaFoiExcluida = false;
     if (foiExcluida) {
         dados.currentMessage = { ...props.currentMessage, text: "(Mensagem excluída)" };
     }
     mensagens.current.map(item => {
         if (item._id == props.currentMessage.reply_id) {
             if (item.text) {
-                textoResposta = item.text;
+                respostaFoiExcluida = item.mensagemExcluida;
+                if (respostaFoiExcluida) {
+                    textoResposta = "(Mensagem excluída)";
+                } else {
+                    textoResposta = item.text;
+                }
             } else {
                 imagemResposta = item.image;
             }
@@ -51,7 +57,11 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
 
     let pessoal = dados.currentMessage.user._id == user._id;
     const AoDeslizarMensagem = () => {
-        mensagemSelecionada.current = props.currentMessage;
+        if (foiExcluida) {
+            mensagemSelecionada.current.text = "(Mensagem excluída)";
+        } else {
+            mensagemSelecionada.current = props.currentMessage;
+        }
         ResponderMensagem();
         reRender();
     }
@@ -66,12 +76,12 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
                             {(quantidadeLetras > 8 || (quantidadeLetras > 5 && foiAlterada)) && <View style={{ width: 60 }}></View>}
                             <View style={[styles.bubbleRespondendo, { padding: imagemResposta ? 0 : 5, flex: imagemResposta ? 0 : 1, backgroundColor: estaNoLadoEsquerdo ? '#B0B0B0' : '#E0E0E0', alignSelf: estaNoLadoEsquerdo ? 'flex-start' : 'flex-end' }]}>
                                 <Text style={[{ color: estaNoLadoEsquerdo ? '#fdfdfd' : '#505050', padding: imagemResposta ? 5 : 0 }]}>Respondendo:</Text>
-                                {textoResposta && <Text style={[{ color: estaNoLadoEsquerdo ? '#fafafa' : '#020202', fontSize: 16 }]}>{textoResposta}</Text>}
+                                {textoResposta && <Text style={[!respostaFoiExcluida ? { color: estaNoLadoEsquerdo ? '#fafafa' : '#020202' } : styles.mensagemExcluida, { fontSize: 16 }]}>{textoResposta}</Text>}
                                 {imagemResposta && <MessageImage currentMessage={resposta} />}
                             </View>
                         </View>}
                     <SwipeableMessage enabled={!pessoal} onActivated={AoDeslizarMensagem}>
-                        <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: foiExcluida && { fontStyle: 'italic', color: '#505050' }, right: foiExcluida && { fontStyle: 'italic', color: '#ededed' } }} />
+                        <Bubble {...dados} wrapperStyle={{ left: { backgroundColor: '#fafafa' }, right: { backgroundColor: '#E6C3C3' } }} textStyle={{ left: foiExcluida && styles.mensagemExcluida, right: foiExcluida && { fontStyle: 'italic', color: '#ededed' } }} />
                     </SwipeableMessage>
                 </View>}
         </>
@@ -239,4 +249,8 @@ const styles = StyleSheet.create({
     bubbleRespondendo: {
         borderRadius: 10,
     },
+    mensagemExcluida: {
+        fontStyle: 'italic',
+        color: '#505050'
+    }
 })
