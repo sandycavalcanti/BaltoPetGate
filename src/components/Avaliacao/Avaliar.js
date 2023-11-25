@@ -2,29 +2,39 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import { format } from "date-fns";
 import Imagem from '../geral/Imagem';
 import { AntDesign } from '@expo/vector-icons';
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { urlAPI } from '../../constants';
+import DecodificarToken from '../../utils/DecodificarToken';
+import CatchError from '../../utils/CatchError';
 
 const Avaliar = (props) => {
   const [rating, setRating] = useState(0);
   const dataformatada = format(new Date(), 'dd/MM/yy')
   const texto = useRef('')
+  const [pessoaNome, setPessoaNome] = useState('');
+
+
+  const PegarId = async () => {
+    const decodedToken = await DecodificarToken();
+    setPessoaNome(decodedToken.TB_PESSOA_NOME_PERFIL);
+  }
+
+  useEffect(() => {
+    PegarId();
+  }, []);
 
   const Cadastrar = () => {
-    axios.post(urlAPI + 'cadavaliacao', {
-      TB_AVALIACAO_TEXTO: texto.current,
-      TB_AVALIACAO_NOTA: rating,
-      TB_PESSOA_AVALIADORA_ID: props.TB_PESSOA_IDD,
-      TB_PESSOA_AVALIADA_ID: props.TB_PESSOA_ID
-    }).then(response => {
-      console.log('Cadastrado')
-    }).catch(error => {
-      let erro = error.response.data;
-      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      console.error(erro.error, error);
-    });
-
+    if (texto.current && rating) {
+      axios.post(urlAPI + 'cadavaliacao', {
+        TB_AVALIACAO_TEXTO: texto.current,
+        TB_AVALIACAO_NOTA: rating,
+        TB_PESSOA_AVALIADORA_ID: props.TB_PESSOA_IDD,
+        TB_PESSOA_AVALIADA_ID: props.TB_PESSOA_ID
+      }).then(response => {
+        console.log('Cadastrado')
+      }).catch(CatchError);
+    }
   }
 
   return (
@@ -34,15 +44,11 @@ const Avaliar = (props) => {
           <Imagem style={styles.Imagem} url={urlAPI + 'selpessoaimg/' + props.TB_PESSOA_IDD} />
         </View>
         <View style={styles.ContainerTexto}>
-          <Text style={styles.Texto}>ty6rfiutf</Text>
+          <Text style={styles.Texto}>{pessoaNome}</Text>
           <View style={styles.ratingContainer}>
             {Array.from({ length: 5 }).map((_, index) => (
               <TouchableOpacity key={index} onPress={() => setRating(index + 1)}>
-                <AntDesign
-                  name={index < rating ? 'star' : 'staro'}
-                  size={22}
-                  color={index < rating ? 'gold' : 'gray'}
-                />
+                <AntDesign name={index < rating ? 'star' : 'staro'} size={22} color={index < rating ? 'gold' : 'gray'} />
               </TouchableOpacity>
             ))}
           </View>

@@ -38,40 +38,46 @@ const Perfil_post = (props) => {
         </View>
       </TouchableOpacity>
       <View style={styles.ContainerIcon}>
-        <Menu>
-          <MenuTrigger>
-            <View style={{ padding: 10 }}>
-              <Feather name="more-vertical" size={30} color="#B66F6F" />
-            </View>
-          </MenuTrigger>
-          <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
-            <MenuOption onSelect={() => NavegarParaPerfil()}>
-              <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
-            </MenuOption>
-            <Divider width={1} color='gray' />
-            {props.pessoal ?
-              <>
-                <MenuOption onSelect={() => Editar()}>
-                  <Text style={styles.dropdownText}>Editar</Text>
-                </MenuOption>
-                <Divider width={1} color='gray' />
-                <MenuOption onSelect={() => DesativarCampo(props.tipo, props.itemId)}>
-                  <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar</Text>
-                </MenuOption>
-              </>
-              :
-              <>
-                <MenuOption onSelect={() => console.log('Denunciar publicação')}>
-                  <Text style={styles.dropdownText}>Denunciar publicação</Text>
-                </MenuOption>
-                <Divider width={1} color='gray' />
-                <MenuOption onSelect={() => console.log('Bloquear')}>
-                  <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
-                </MenuOption>
-              </>
-            }
-          </MenuOptions>
-        </Menu>
+        {!props.naoExibirOpcoes ?
+          <Menu>
+            <MenuTrigger>
+              <View style={{ padding: 10 }}>
+                <Feather name="more-vertical" size={30} color="#B66F6F" />
+              </View>
+            </MenuTrigger>
+            <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
+              <MenuOption onSelect={() => NavegarParaPerfil()}>
+                <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
+              </MenuOption>
+              <Divider width={1} color='gray' />
+              {props.pessoal ?
+                <>
+                  <MenuOption onSelect={() => Editar()}>
+                    <Text style={styles.dropdownText}>Editar</Text>
+                  </MenuOption>
+                  <Divider width={1} color='gray' />
+                  <MenuOption onSelect={() => DesativarCampo(props.tipo, props.itemId, props.onRefresh)}>
+                    <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar</Text>
+                  </MenuOption>
+                </>
+                :
+                <>
+                  <MenuOption onSelect={() => console.log('Denunciar publicação')}>
+                    <Text style={styles.dropdownText}>Denunciar publicação</Text>
+                  </MenuOption>
+                  <Divider width={1} color='gray' />
+                  <MenuOption onSelect={() => console.log('Bloquear')}>
+                    <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
+                  </MenuOption>
+                </>
+              }
+            </MenuOptions>
+          </Menu>
+          :
+          <View style={{ padding: 10 }}>
+            <Feather name="more-vertical" size={30} color="#B66F6F" />
+          </View>
+        }
       </View>
     </View>
   )
@@ -137,7 +143,9 @@ const styles = StyleSheet.create({
 Perfil_post.propTypes = {
   data: PropTypes.object,
   pessoal: PropTypes.bool,
-  tipo: PropTypes.string
+  tipo: PropTypes.string,
+  onRefresh: PropTypes.func,
+  naoExibirOpcoes: PropTypes.bool
 }
 
 export default Perfil_post;

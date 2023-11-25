@@ -1,30 +1,30 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, Alert, StatusBar, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Alert, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
 import { Entypo, AntDesign } from '@expo/vector-icons';
-import { corBordaBoxCad, urlAPI } from "../constants";
-import { useNavigation } from '@react-navigation/native';
+import { urlAPI } from "../constants";
 import Dropdown from "../components/geral/Dropdown";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
 import Imagem from "../components/geral/Imagem";
-import { Modal, ModalContent } from "react-native-modals";
+import { Modal} from "react-native-modals";
 import Avaliacoes from "../components/Avaliacao/Avaliacoes";
 import Avaliar from "../components/Avaliacao/Avaliar";
 import IniciarChat from "../utils/IniciarChat";
 import RetornarTipoNome from "../utils/RetornarTipoNome";
+import DesativarCampo from "../utils/DesativarCampo";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let scrollY = 0;
 let item1 = item2 = item3 = {};
 
 const PerfilLayout = (props) => {
-  const navigation = useNavigation();
+  const navigation = props.navigation;
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalSairVisible, setModalSairVisible] = useState(false);
+  const [modalDesativarVisible, setModalDesativarVisible] = useState(false);
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
-  const [valorScroll, setValorScroll] = useState(0);
+  const [valorScroll, setValorScroll] = useState(-20);
   scrollY = props.scrollY;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
@@ -50,26 +50,11 @@ const PerfilLayout = (props) => {
     }
     item2 = {
       texto: 'Desativar conta',
-      press: () => Alert.alert(
-        "Desativar o Perfil",
-        "Tem certeza de que deseja desativar sua conta? Ela não poderá ser reativada.",
-        [{
-          text: "Não",
-          style: "cancel"
-        },
-        {
-          text: "Sim",
-          onPress: async () => {
-            await AsyncStorage.removeItem('token');
-            await axios.put(urlAPI + 'delpessoa/' + TB_PESSOA_ID);
-            navigation.navigate('Login');
-          }
-        }]
-      )
+      press: () => { setModalDesativarVisible(true); setDropdownVisible(false); }
     }
     item3 = {
       texto: 'Sair da conta',
-      press: () => { setModalVisible(true); setDropdownVisible(false); }
+      press: () => { setModalSairVisible(true); setDropdownVisible(false); }
     }
   } else {
     item1 = {
@@ -86,6 +71,20 @@ const PerfilLayout = (props) => {
   const SairDaConta = async () => {
     await AsyncStorage.removeItem('token');
     navigation.navigate('Login');
+  }
+
+  const DesativarConta = () => {
+    Alert.alert(
+      "Desativar a conta",
+      "Caso desativar sua conta, suas publicações, animais e mensagens não aparecerão mais",
+      [{ text: "Não", style: "cancel" }, {
+        text: "Desativar", onPress: async () => {
+          await AsyncStorage.removeItem('token');
+          await DesativarCampo('pessoa', TB_PESSOA_ID)
+          navigation.navigate('Login');
+        }
+      }]
+    )
   }
 
   const Nota = Math.round(props.avaliacoes.media)
@@ -105,7 +104,8 @@ const PerfilLayout = (props) => {
             <Entypo name="dots-three-vertical" size={30} color="white" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
-          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalVisible} set={setModalVisible} sim='Sair' />
+          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalSairVisible} set={setModalSairVisible} sim='Sair' />
+          <ModalConfirmacao texto="Deseja desativar sua conta?" press={DesativarConta} val={modalDesativarVisible} set={setModalDesativarVisible} sim='Desativar' />
         </View>
         <View style={styles.profileContainer}>
           <View>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   Fundo: {
     position: 'absolute',
     width: '100%',
-    height: 130,
+    height: 100,
     top: 300,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',

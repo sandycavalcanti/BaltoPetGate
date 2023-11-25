@@ -57,7 +57,7 @@ const Explorar = ({ navigation: { navigate } }) => {
         const postagemId = item.TB_POSTAGEM_ID;
         return (
           <>
-            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} />
+            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} onRefresh={onRefresh} />
             <Post data={item} />
           </>
         )

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ToastAndroid } from "react-native";
 
-const catchError = (error, mostrar404) => {
+const CatchError = (error, mostrar404) => {
     if (axios.isCancel(error)) return;
 
     if (error.response) {
@@ -18,4 +18,4 @@ const catchError = (error, mostrar404) => {
     }
 };
 
-export default catchError;
+export default CatchError;

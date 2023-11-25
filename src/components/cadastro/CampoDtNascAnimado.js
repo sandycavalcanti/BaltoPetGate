@@ -59,7 +59,7 @@ const CampoDtNascAnimado = (props) => {
                 borderColor={corPlaceholderCad}
                 borderHeight={1}
                 inputStyle={{ fontWeight: '600' }}
-                labelStyle={[styles.labelStyle, { display: ((props.setRef.current !== null) && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
+                labelStyle={[styles.labelStyle, { display: (props.setRef.current !== null && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
                 style={[styles.inputContainer, { width: !props.opcional ? '90%' : '94%' }]}
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}

@@ -19,7 +19,7 @@ let HeaderHeight
 const PullToRefreshDist = 10;
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
-const Perfil = ({ navigation: { navigate } }) => {
+const Perfil = ({ navigation }) => {
   const route = useRoute();
   const { id } = route.params;
 
@@ -122,7 +122,7 @@ const Perfil = ({ navigation: { navigate } }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }] }]}>
-        <PerfilLayout avaliacoes={selectAvaliacao.current} seguindo={selectSeguindo.current} pessoal={pessoal.current} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} />
+        <PerfilLayout avaliacoes={selectAvaliacao.current} seguindo={selectSeguindo.current} pessoal={pessoal.current} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} navigation={navigation} />
       </Animated.View>
     );
   };
@@ -185,7 +185,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1.5,
     borderColor: '#fff'
-
   },
 });
 

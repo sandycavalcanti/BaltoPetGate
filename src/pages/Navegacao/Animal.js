@@ -59,7 +59,7 @@ const Animal = ({ navigation: { navigate } }) => {
                 const animalId = item.TB_ANIMAL_ID;
                 return (
                     <>
-                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} />
+                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} onRefresh={onRefresh}/>
                         <AnimalPost data={item} />
                     </>
                 )
