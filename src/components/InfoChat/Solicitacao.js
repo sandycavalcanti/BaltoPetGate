@@ -95,7 +95,7 @@ const Solicitacao = (props) => {
             !existeAdocao &&
             <>
               <View style={styles.Botao}>
-                <BotaoCadastrar onPress={() => Solicitar(1)} texto="Quero adotar" />
+                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(1)} texto="Quero adotar" />
               </View>
             </>
           }
@@ -103,7 +103,7 @@ const Solicitacao = (props) => {
             !existeAbrigo &&
             <>
               <View style={styles.Botao}>
-                <BotaoCadastrar onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
+                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
               </View>
             </>
           }
@@ -111,7 +111,7 @@ const Solicitacao = (props) => {
             !existeTratamento &&
             <>
               <View style={styles.Botao}>
-                <BotaoCadastrar onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
+                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
               </View>
             </>
           }
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   InfoPet: {
     width: '100%',
-    backgroundColor: "#CC8F8F",
+    backgroundColor: "#A8DDAE",
     borderColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -183,13 +183,17 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 20
   },
   Botao: {
     width: '100%',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingVertical: 20
+  },
+  botaoCad:{
+    backgroundColor: '#64939D',
+    borderColor: '#fff',
+    borderWidth: 2,
+    elevation: 1,
   }
 });
 

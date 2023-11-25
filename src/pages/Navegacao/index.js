@@ -70,14 +70,14 @@ export default function Navigation() {
           <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
           <Stack.Screen name="CadConta" component={CadConta} />
           <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
-          <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
+          <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{
+            gestureEnabled: false,
+          }} />
           <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
           <Stack.Screen name="CadOpcao" component={CadOpcao} />
           <Stack.Screen name="RecSenha" component={RecSenha} />
           <Stack.Screen name="VerCodigo" component={VerCodigo} />
-          <Stack.Screen name="Perfil" component={Perfil} options={{
-            
-          }}/>
+          <Stack.Screen name="Perfil" component={Perfil} />
           <Stack.Screen name="CriarSenha" component={CriarSenha} />
           <Stack.Screen name="CadPostagem" component={CadPostagem} />
           <Stack.Screen name="HistChat" component={HistChat} options={{

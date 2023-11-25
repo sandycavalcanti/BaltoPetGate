@@ -11,6 +11,7 @@ import axios from "axios";
 import DecodificarToken from "../utils/DecodificarToken";
 import FormatarTextoBanco from "../utils/FormatarTextoBanco";
 import IniciarChat from "../utils/IniciarChat";
+import CatchError from "../utils/CatchError";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -29,19 +30,6 @@ function Ficha_animal({ navigation: { navigate } }) {
     const pessoal = useRef(false);
     const [carregando, setCarregando] = useState(true);
     const controller = new AbortController();
-
-    const CatchError = (error) => {
-        if (error.response) {
-            if (error.response.status !== 404) {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error('Erro ao selecionar:', erro.error, error);
-            }
-        } else {
-            console.error(error);
-            ToastAndroid.show('Houve um erro', ToastAndroid.SHORT);
-        }
-    }
 
     const Selecionar = async () => {
         await PegarId();
@@ -95,7 +83,8 @@ function Ficha_animal({ navigation: { navigate } }) {
         if (TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) {
             IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID.current, navigate, id);
         } else {
-            navigate('QuestionarioAdocao');
+            navigate('QuestionarioAdocao', { TB_PESSOA_ID: TB_PESSOA_ID.current, id });
+            // navigate('AlterarCad', { modoAlterar: false });
         }
     }
 

@@ -22,8 +22,6 @@ const Splash = ({ navigation }) => {
     }, 4000);
   });
 
-  const animation = useRef(null);
-
   return (
 
     <View style={styles.Container}>

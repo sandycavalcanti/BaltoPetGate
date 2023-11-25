@@ -149,7 +149,7 @@ const HeaderExplorar = (props) => {
     const item3 = {
         icone: <Feather name="map-pin" size={28} color="black" />,
         texto: 'Cadastrar um ponto de alimentação',
-        press: () => navigation.navigate('Mapa')
+        press: () => navigation.navigate('CadastroPontoAlimento')
     }
 
     const Abrir = () => {

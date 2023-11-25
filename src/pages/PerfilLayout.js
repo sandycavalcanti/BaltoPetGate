@@ -12,6 +12,7 @@ import { Modal, ModalContent } from "react-native-modals";
 import Avaliacoes from "../components/Avaliacao/Avaliacoes";
 import Avaliar from "../components/Avaliacao/Avaliar";
 import IniciarChat from "../utils/IniciarChat";
+import RetornarTipoNome from "../utils/RetornarTipoNome";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -111,6 +112,7 @@ const PerfilLayout = (props) => {
           <View>
             <Imagem url={urlImg} style={styles.profileImage} />
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
+            {props.data.TB_TIPO_ID != 1 && <Text style={[{ fontStyle: 'italic', fontSize: 15, color: 'gray', textAlign: 'center' }]}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', top: 20 }}>
             <View style={{ paddingHorizontal: 25, top: 5 }}>
@@ -149,6 +151,11 @@ const PerfilLayout = (props) => {
               </View>}
           </View>
         </View>
+        <View style={styles.content}>
+          <Text style={styles.contentText}>
+            {props.data.TB_PESSOA_BIO && props.data.TB_PESSOA_BIO}
+          </Text>
+        </View>
         <View style={styles.buttons}>
           {props.pessoal ?
             <>
@@ -174,11 +181,6 @@ const PerfilLayout = (props) => {
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
             </>}
-        </View>
-        <View style={styles.content}>
-          <Text style={styles.contentText}>
-            {props.data.TB_PESSOA_BIO}
-          </Text>
         </View>
       </View>
     </View >
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
   Fundo: {
     position: 'absolute',
     width: '100%',
-    height: 150,
+    height: 130,
     top: 300,
     backgroundColor: '#CEF7FF',
     shadowColor: '#519546',
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 60,
+    marginTop: 20,
   },
   profileContainer: {
     width: '100%',
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 3,
     paddingHorizontal: 30,
-    paddingTop: 50
+    paddingTop: 50,
   },
   profileImage: {
     width: 170,
@@ -248,11 +250,13 @@ const styles = StyleSheet.create({
     color: '#093C4B',
     textAlign: 'center',
     marginRight: 5,
-    marginBottom: 20
   },
   buttons: {
     flexDirection: 'row',
     paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 20,
+    backgroundColor: '#CEF7FF',
     justifyContent: 'space-around'
   },
   button: {
@@ -271,13 +275,13 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingVertical: 5,
     backgroundColor: '#CEF7FF',
   },
   contentText: {
-    fontSize: 15,
+    fontSize: 18,
     color: '#093C4B',
     textAlign: 'justify',
+    paddingBottom: 5
   },
   ratingContainer: {
     flexDirection: 'row',

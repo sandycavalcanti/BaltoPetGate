@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import BotaoCadastrar from "../cadastro/BotaoCadastrar";
 import { useState, useRef } from "react";
 import axios from "axios";
 import React from "react";

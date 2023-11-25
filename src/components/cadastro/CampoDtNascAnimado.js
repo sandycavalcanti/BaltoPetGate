@@ -59,8 +59,8 @@ const CampoDtNascAnimado = (props) => {
                 borderColor={corPlaceholderCad}
                 borderHeight={1}
                 inputStyle={{ fontWeight: '600' }}
-                labelStyle={[styles.labelStyle, { display: (props.setRef.current && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
-                style={{ bottom: 4, width: !props.opcional ? '90%' : '94%', borderBottomColor: 'transparent', marginLeft: -5 }}
+                labelStyle={[styles.labelStyle, { display: ((props.setRef.current !== null) && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
+                style={[styles.inputContainer, { width: !props.opcional ? '90%' : '94%' }]}
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
@@ -111,6 +111,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: corFundoCampoCad,
     },
+    inputContainer: {
+        borderBottomColor: 'transparent',
+        marginLeft: -5,
+        bottom: 4,
+    }
 });
 
 CampoDtNascAnimado.propTypes = {

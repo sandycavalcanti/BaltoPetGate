@@ -21,7 +21,7 @@ const Imagem = (props) => {
                 })
         }
     };
-    
+
     useEffect(() => {
         ChecarImagem();
         return (() => {
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 
 Imagem.propTypes = {
     url: PropTypes.string,
-    style: PropTypes.object,
+    style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     setResult: PropTypes.func,
     desativado: PropTypes.bool,
     remove: PropTypes.bool
