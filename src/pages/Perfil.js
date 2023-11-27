@@ -16,25 +16,12 @@ const AnimatedIndicator = Animated.createAnimatedComponent(ActivityIndicator);
 const TabBarHeight = 48;
 const SafeStatusBar = Platform.select({ ios: 44, android: StatusBar.currentHeight, });
 let HeaderHeight
-const PullToRefreshDist = 10;
+const PullToRefreshDist = 150;
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Perfil = ({ navigation }) => {
   const route = useRoute();
   const { id } = route.params;
-
-  const [tabIndex, setIndex] = useState(0);
-  const routes = [{ key: 'tab1', title: 'Animais' }, { key: 'tab2', title: 'Postagens' },];
-  const [canScroll, setCanScroll] = useState(true);
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const headerScrollY = useRef(new Animated.Value(0)).current;
-  const headerMoveScrollY = useRef(new Animated.Value(0)).current;
-  const listRefArr = useRef([]);
-  const listOffset = useRef({});
-  const isListGliding = useRef(false);
-  const headerScrollStart = useRef(0);
-  const _tabIndex = useRef(0);
-  const refreshStatusRef = useRef(false);
 
   const TB_PESSOA_IDD = useRef(null);
   const [perfilHeight, setPerfilHeight] = useState(400);
@@ -99,12 +86,19 @@ const Perfil = ({ navigation }) => {
 
 
   // CÓDIGO DA TAB
-  const refresh = async () => {
-    refreshStatusRef.current = true;
-    await new Promise((resolve, reject) => {
-      SelecionarItens().then(() => { resolve('done'); })
-    }).then(value => { refreshStatusRef.current = false; });
-  };
+  const [tabIndex, setIndex] = useState(0);
+  const routes = [{ key: 'tab1', title: 'Animais' }, { key: 'tab2', title: 'Postagens' },];
+  const [canScroll, setCanScroll] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const headerScrollY = useRef(new Animated.Value(0)).current;
+  const headerMoveScrollY = useRef(new Animated.Value(0)).current;
+  const listRefArr = useRef([]);
+  const listOffset = useRef({});
+  const isListGliding = useRef(false);
+  const headerScrollStart = useRef(0);
+  const _tabIndex = useRef(0);
+  const refreshStatusRef = useRef(false);
+  const refresh = async () => { refreshStatusRef.current = true; await new Promise((resolve, reject) => { SelecionarItens().then(() => { resolve('done'); }) }).then(value => { refreshStatusRef.current = false; }); };
   const headerPanResponder = useRef(PanResponder.create({ onStartShouldSetPanResponderCapture: (evt, gestureState) => false, onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, onStartShouldSetPanResponder: (evt, gestureState) => { headerScrollY.stopAnimation(); syncScrollOffset(); return false; }, onMoveShouldSetPanResponder: (evt, gestureState) => { headerScrollY.stopAnimation(); return Math.abs(gestureState.dy) > 5; }, onPanResponderEnd: (evt, gestureState) => { handlePanReleaseOrEnd(evt, gestureState); }, onPanResponderMove: (evt, gestureState) => { const curListRef = listRefArr.current.find(ref => ref.key === routes[_tabIndex.current].key,); const headerScrollOffset = -gestureState.dy + headerScrollStart.current; if (curListRef.value) { if (headerScrollOffset > 0) { curListRef.value.scrollToOffset({ offset: headerScrollOffset, animated: false }); } else { if (Platform.OS === 'ios') { curListRef.value.scrollToOffset({ offset: headerScrollOffset / 3, animated: false }); } else if (Platform.OS === 'android') { if (!refreshStatusRef.current) { headerMoveScrollY.setValue(headerScrollOffset / 1.5); } } } } }, onShouldBlockNativeResponder: () => true, onPanResponderGrant: (evt, gestureState) => { headerScrollStart.current = scrollY._value; }, })).current;
   const listPanResponder = useRef(PanResponder.create({ onStartShouldSetPanResponderCapture: (evt, gestureState) => false, onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, onStartShouldSetPanResponder: (evt, gestureState) => false, onMoveShouldSetPanResponder: (evt, gestureState) => { headerScrollY.stopAnimation(); return false; }, onShouldBlockNativeResponder: () => true, onPanResponderGrant: (evt, gestureState) => { headerScrollY.stopAnimation(); }, }),).current;
   useEffect(() => { scrollY.addListener(({ value }) => { const curRoute = routes[tabIndex].key; listOffset.current[curRoute] = value; }); headerScrollY.addListener(({ value }) => { listRefArr.current.forEach((item) => { if (item.key !== routes[tabIndex].key) return; if (value > HeaderHeight || value < 0) { headerScrollY.stopAnimation(); syncScrollOffset(); } if (item.value && value <= HeaderHeight) { item.value.scrollToOffset({ offset: value, animated: false }); } }); }); return () => { scrollY.removeAllListeners(); headerScrollY.removeAllListeners(); }; }, [routes, tabIndex]);

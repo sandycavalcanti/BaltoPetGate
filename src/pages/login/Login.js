@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator, ImageBackground, TouchableOpacity, TextInput, TouchableWithoutFeedback, ToastAndroid, StatusBar } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator, ImageBackground, TouchableOpacity, ToastAndroid, StatusBar, Pressable } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
@@ -9,12 +9,12 @@ import AlertPro from "react-native-alert-pro";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
 import { Sae } from "react-native-textinput-effects";
 import OcticonsIcon from "react-native-vector-icons/Octicons";
+import ValidarCamposCad from "../../utils/ValidarCamposCad";
 
 const corPlaceholderAtivo = '#fff'
 
 const Login = () => {
     const navigation = useNavigation();
-
     const email = useRef('');
     const senha = useRef('');
     const [mensagem, setMensagem] = useState("");
@@ -25,29 +25,46 @@ const Login = () => {
     const numeroTentativas = useRef(0);
     const alertRef = useRef(null);
     const [textoAlert, setTextoAlert] = useState('');
+    const [desativado, setDesativado] = useState(false);
 
     const Logar = () => {
-        if (!email.current || !senha.current) {
-            let mensagem;
-            if (!email.current && !senha.current) {
-                mensagem = 'Email e senha não informados';
-            } else if (!email.current) {
-                mensagem = 'Email não informado';
-            } else {
-                mensagem = 'Senha não informada';
-            }
+        const mensagem = VerificarCampos();
+        if (mensagem) {
             setTextoAlert(mensagem);
             alertRef.current.open();
         } else {
-            if (numeroTentativas.current > 5) {
+            if (numeroTentativas.current >= 10) {
                 numeroTentativas.current = 0;
-                alert("Complete o captcha.");
+                setDesativado(true);
+                alert("Muitas tentativas realizadas, espere por 30 segundos");
+                setTimeout(() => {
+                    setDesativado(false);
+                }, 30000);
                 return;
             }
             numeroTentativas.current += 1;
             Autenticar();
         }
     };
+
+    const VerificarCampos = () => {
+        if (!email.current && !senha.current) {
+            return 'Email e senha não informados';
+        }
+        let mensagem = '';
+        if (!email.current) {
+            mensagem += 'Email não informado';
+        } else {
+            const ValidarEmail = ValidarCamposCad([], { email: email.current })
+            if (ValidarEmail) {
+                mensagem += 'Email inválido\n';
+            }
+        }
+        if (!senha.current) {
+            mensagem += 'Senha não informada';
+        }
+        return mensagem;
+    }
 
     const Autenticar = async () => {
         await axios.post(urlAPI + 'login', {
@@ -85,44 +102,42 @@ const Login = () => {
                     onFocus={() => setColorEmail(corPlaceholderAtivo)}
                     onEndEditing={() => { if (!email.current) setColorEmail(corPlaceholderCad) }}
                     labelStyle={{ color: colorEmail, fontWeight: colorEmail == corPlaceholderCad ? 'normal' : 'bold', fontSize: 20, paddingBottom: 5 }}
-                    inputStyle={{ color: '#000', fontSize: 18 }}
+                    inputStyle={styles.inputStyle}
                     style={{ width: '95%', marginBottom: 30, marginHorizontal: 10 }}
                     onChangeText={text => email.current = text}
                 />
             </View>
             <View style={styles.containersenha}>
-                <View style={styles.containercamposenha}>
-                    <View style={styles.caixacampo}>
-                        <Sae
-                            label={"Senha"}
-                            iconClass={OcticonsIcon}
-                            iconName={"pencil"}
-                            iconColor={"#ccc"}
-                            iconSize={25}
-                            onFocus={() => setColorSenha(corPlaceholderAtivo)}
-                            onEndEditing={() => { if (!senha.current) setColorSenha(corPlaceholderCad) }}
-                            labelStyle={{ color: colorSenha, fontWeight: colorSenha == corPlaceholderCad ? 'normal' : 'bold', fontSize: 20, paddingBottom: 5 }}
-                            inputStyle={{ color: '#000', fontSize: 18 }}
-                            style={{ flex: 1, marginBottom: 30, marginHorizontal: 10 }}
-                            onChangeText={text => senha.current = text}
-                            secureTextEntry={!mostrarSenha} underlineColorAndroid={'grey'}
-                        />
-                        <TouchableWithoutFeedback onPress={() => setMostrarSenha(!mostrarSenha)}>
-                            {mostrarSenha ? (
-                                <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 15 }} />
-                            ) : (
-                                <FontAwesome5 name="eye" size={25} color="grey" style={{ marginRight: 15 }} />
-                            )}
-                        </TouchableWithoutFeedback>
-                    </View>
+                <View style={styles.caixacampo}>
+                    <Sae
+                        label={"Senha"}
+                        iconClass={OcticonsIcon}
+                        iconName={"pencil"}
+                        iconColor={"#ccc"}
+                        iconSize={25}
+                        onFocus={() => setColorSenha(corPlaceholderAtivo)}
+                        onEndEditing={() => { if (!senha.current) setColorSenha(corPlaceholderCad) }}
+                        labelStyle={{ color: colorSenha, fontWeight: colorSenha == corPlaceholderCad ? 'normal' : 'bold', fontSize: 20, paddingBottom: 5 }}
+                        inputStyle={styles.inputStyle}
+                        style={{ flex: 1, marginBottom: 30, marginHorizontal: 10 }}
+                        onChangeText={text => senha.current = text}
+                        secureTextEntry={!mostrarSenha}
+                    />
+                    <Pressable onPress={() => setMostrarSenha(prev => !prev)}>
+                        {mostrarSenha ?
+                            <FontAwesome5 name="eye-slash" size={25} color="grey" style={{ marginRight: 15 }} />
+                            :
+                            <FontAwesome5 name="eye" size={25} color="grey" style={{ marginRight: 15 }} />
+                        }
+                    </Pressable>
                 </View>
                 <TouchableOpacity onPress={() => navigation.navigate("RecSenha")} style={{ alignSelf: "flex-end" }} >
                     <Text style={styles.esqueceu}>Esqueci minha senha</Text>
                 </TouchableOpacity>
             </View>
-            <BotaoCadastrarAnimado onPress={Logar} texto={'Entrar'} marginBottom={5} />
+            <BotaoCadastrarAnimado onPress={Logar} texto={'Entrar'} marginBottom={5} disabled={desativado} />
             <TouchableOpacity onPress={() => navigation.navigate("CadOpcao")}>
-                <Text style={styles.textocad}> Não tenho uma conta</Text>
+                <Text style={styles.textocad}>Não tenho uma conta</Text>
             </TouchableOpacity>
             <AlertPro
                 ref={alertRef}
@@ -175,15 +190,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    containercamposenha: {
-        flexDirection: "row",
+    containersenha: {
+        width: "90%",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 10,
+        marginBottom: 20
+    },
+    caixacampo: {
         width: "100%",
         height: 45,
-        margin: 10,
+        flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        borderRadius: 20,
+        backgroundColor: corFundoCampoCad,
         marginTop: 15,
-        columnGap: 10,
+        marginBottom: 10,
     },
     campo: {
         flex: 1,
@@ -195,22 +218,9 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginVertical: 10,
     },
-    caixacampo: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        borderRadius: 20,
-        height: "100%",
-        backgroundColor: corFundoCampoCad,
-    },
-    containersenha: {
-        width: "90%",
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 10,
-        marginBottom: 20
+    inputStyle: {
+        color: '#000',
+        fontSize: 18
     },
     mensagem: {
         color: 'red',

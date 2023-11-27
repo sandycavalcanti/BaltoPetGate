@@ -6,12 +6,13 @@ import Dropdown from "../components/geral/Dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
 import Imagem from "../components/geral/Imagem";
-import { Modal} from "react-native-modals";
-import Avaliacoes from "../components/Avaliacao/Avaliacoes";
+import { Modal } from "react-native-modals";
 import Avaliar from "../components/Avaliacao/Avaliar";
 import IniciarChat from "../utils/IniciarChat";
 import RetornarTipoNome from "../utils/RetornarTipoNome";
 import DesativarCampo from "../utils/DesativarCampo";
+import Estrelas from "../components/Avaliacao/Estrelas";
+import ModalAvaliacao from "../components/Avaliacao/ModalAvaliacao";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let scrollY = 0;
@@ -87,9 +88,6 @@ const PerfilLayout = (props) => {
     )
   }
 
-  const Nota = Math.round(props.avaliacoes.media)
-  const possuiAvaliacoes = Object.keys(props.avaliacoes).length !== 0;
-
   return (
     <View style={styles.container} onLayout={MedirAltura}>
       <View>
@@ -113,34 +111,12 @@ const PerfilLayout = (props) => {
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
             {props.data.TB_TIPO_ID != 1 && <Text style={[{ fontStyle: 'italic', fontSize: 15, color: 'gray', textAlign: 'center' }]}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', top: 20 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', top: 40 }}>
             <View style={{ paddingHorizontal: 25, top: 5 }}>
               <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>{props.seguindo.length}</Text>
               <Text style={{ color: '#5F7856', textAlign: 'center' }}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
-              {possuiAvaliacoes ?
-                <TouchableOpacity onPress={() => setAvaliacaoVisible(true)}>
-                  <View style={styles.ratingContainer}>
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <AntDesign key={index} name={index < Nota ? 'star' : 'staro'} size={18} color={index < Nota ? 'gold' : 'gray'} />
-                    ))}
-                  </View>
-                </TouchableOpacity>
-                :
-                <View style={styles.ratingContainer}>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <AntDesign key={index} name={'star'} size={18} color={'#ddd'} />
-                  ))}
-                </View>
-              }
-              <Modal visible={avaliacaoVisible} onTouchOutside={() => setAvaliacaoVisible(false)}>
-                <View style={styles.ContainerAvaliacao} >
-                  <ScrollView style={{ flex: 1 }}>
-                    <View>
-                      {props.avaliacoes.Selecionar && props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
-                    </View>
-                  </ScrollView>
-                </View>
-              </Modal>
+              <Estrelas avaliacoes={props.avaliacoes} set={setAvaliacaoVisible} />
+              <ModalAvaliacao avaliacoes={props.avaliacoes} val={avaliacaoVisible} set={setAvaliacaoVisible} />
             </View>
             {!props.pessoal &&
               <View>
@@ -282,20 +258,6 @@ const styles = StyleSheet.create({
     color: '#093C4B',
     textAlign: 'justify',
     paddingBottom: 5
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 5,
-  },
-  ContainerAvaliacao: {
-    width: 320,
-    height: 500,
-    backgroundColor: '#EFEFEF',
-    borderColor: '#CF8989',
-    borderWidth: 2,
-    borderRadius: 6
   },
   ContainerAvaliar: {
     width: 320,
