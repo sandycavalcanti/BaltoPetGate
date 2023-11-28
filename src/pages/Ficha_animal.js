@@ -15,7 +15,7 @@ import CatchError from "../utils/CatchError";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
-function Ficha_animal({ navigation: { navigate } }) {
+const Ficha_animal = ({ navigation: { navigate } }) => {
     const route = useRoute();
     const { id } = route.params;
     const TB_TIPO_IDD = useRef(null);
@@ -241,7 +241,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingLeft: 10,
         backgroundColor: corFundo,
-
     },
     Barras: {
         flex: 1,

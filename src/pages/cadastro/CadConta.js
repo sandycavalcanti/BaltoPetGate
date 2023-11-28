@@ -86,7 +86,7 @@ const CadConta = () => {
         }
 
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
-        console.log(camposCadastro)
+        
         if (!mensagemErro) {
             if (tentativas.current == 0)
                 InserirDados();
@@ -181,7 +181,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações da instituição">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da instituição"} />
-                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
@@ -206,7 +206,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações do protetor">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do protetor "} />
-                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
@@ -231,7 +231,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações do abrigo">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do abrigo"} />
-                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />
@@ -253,7 +253,7 @@ const CadConta = () => {
                                 </GroupBox>
                                 <GroupBox titulo="Informações do estabecimento">
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do estabelecimento"} />
-                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
+                                    <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
                                     <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' placeholder={'Telefone de contato'} />

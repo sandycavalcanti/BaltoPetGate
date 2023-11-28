@@ -9,7 +9,7 @@ import Post from '../../components/perfil/Post';
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Home = ({ navigation: { navigate } }) => {
-  const [temporario, setTemporario] = useState(true); // false
+  const [temporario, setTemporario] = useState(false); // true
 
   const [select, setSelect] = useState([]);
   const TB_PESSOA_IDD = useRef(null);

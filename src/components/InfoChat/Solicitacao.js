@@ -7,6 +7,7 @@ import { urlAPI, corBordaBoxCad } from "../../constants";
 import { useEffect } from "react";
 import Imagem from "../geral/Imagem";
 import { DropdownAlertType } from 'react-native-dropdownalert';
+import CatchError from "../../utils/CatchError";
 
 const Solicitacao = (props) => {
   const dadosSolicitacaoRef = useRef([]);
@@ -18,16 +19,13 @@ const Solicitacao = (props) => {
   const TB_TIPO_IDD = props.TB_TIPO_IDD;
   const [carregando, setCarregando] = useState(true);
   const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
-
-  useEffect(() => {
-    SelSolicitacao();
-  }, []);
+  const controller = new AbortController();
 
   const SelSolicitacao = async () => {
     await axios.post(urlAPI + "selsolicitacao/filtrar", {
       TB_PESSOA_ID,
       TB_ANIMAL_ID,
-    }).then(async (response) => {
+    }, { signal: controller.signal }).then(async (response) => {
       dadosSolicitacaoRef.current = response.data;
       await dadosSolicitacaoRef.current.map((item) => {
         if (item["TB_TIPO_SOLICITACAO_ID"] == 1) {
@@ -41,13 +39,15 @@ const Solicitacao = (props) => {
         }
       });
       setCarregando(false);
-    }).catch((error) => {
-      if (error.response.status !== 404) {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      }
-    });
+    }).catch(CatchError);
   };
+
+  useEffect(() => {
+    SelSolicitacao();
+    return (() => {
+      controller.abort();
+    })
+  }, []);
 
   const Solicitar = (tipoSolicitacao) => {
     const NovaData = new Date();
@@ -72,12 +72,7 @@ const Solicitacao = (props) => {
         interval: 6000,
         message: 'Aguardando resposta da solicitação',
       });
-    })
-      .catch(error => {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.error("Erro ao selecionar: ", erro.error);
-      });
+    }).catch(CatchError);
   };
   return (
     <>
@@ -189,7 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  botaoCad:{
+  botaoCad: {
     backgroundColor: '#64939D',
     borderColor: '#fff',
     borderWidth: 2,

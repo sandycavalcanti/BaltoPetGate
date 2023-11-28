@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { urlAPI } from '../../constants';
 import { Divider } from 'react-native-elements';
@@ -7,22 +7,32 @@ import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import DesativarCampo from '../../utils/DesativarCampo';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import ModalConfirmacao from '../geral/ModalConfirmacao';
+import { useState } from 'react';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
+  const [modalDesativarVisible, setModalDesativarVisible] = useState(false);
   const navigation = useNavigation();
+  const tipoAnimal = props.tipo == 'animal';
 
   const NavegarParaPerfil = () => {
     navigation.navigate("Perfil", { id: TB_PESSOA_ID });
   }
 
   const Editar = () => {
-    if (props.tipo == 'animal') {
+    if (tipoAnimal) {
       navigation.navigate('AlterarAnimal', { id: props.itemId })
     } else {
       navigation.navigate('AlterarPostagem', { id: props.itemId })
     }
+  }
+
+  const textoConfirmacao = "Deseja desativar " + (tipoAnimal ? 'esse animal?' : 'essa postagem?');
+  const aoDesativar = () => {
+    props.onRefresh();
+    ToastAndroid.show(tipoAnimal ? 'Animal desativado' : 'Postagem desativada',ToastAndroid.SHORT);
   }
 
   return (
@@ -39,40 +49,43 @@ const Perfil_post = (props) => {
       </TouchableOpacity>
       <View style={styles.ContainerIcon}>
         {!props.naoExibirOpcoes ?
-          <Menu>
-            <MenuTrigger>
-              <View style={{ padding: 10 }}>
-                <Feather name="more-vertical" size={30} color="#B66F6F" />
-              </View>
-            </MenuTrigger>
-            <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
-              <MenuOption onSelect={() => NavegarParaPerfil()}>
-                <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
-              </MenuOption>
-              <Divider width={1} color='gray' />
-              {props.pessoal ?
-                <>
-                  <MenuOption onSelect={() => Editar()}>
-                    <Text style={styles.dropdownText}>Editar</Text>
-                  </MenuOption>
-                  <Divider width={1} color='gray' />
-                  <MenuOption onSelect={() => DesativarCampo(props.tipo, props.itemId, props.onRefresh)}>
-                    <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar</Text>
-                  </MenuOption>
-                </>
-                :
-                <>
-                  <MenuOption onSelect={() => console.log('Denunciar publicação')}>
-                    <Text style={styles.dropdownText}>Denunciar publicação</Text>
-                  </MenuOption>
-                  <Divider width={1} color='gray' />
-                  <MenuOption onSelect={() => console.log('Bloquear')}>
-                    <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
-                  </MenuOption>
-                </>
-              }
-            </MenuOptions>
-          </Menu>
+          <>
+            <Menu>
+              <MenuTrigger>
+                <View style={{ padding: 10 }}>
+                  <Feather name="more-vertical" size={30} color="#B66F6F" />
+                </View>
+              </MenuTrigger>
+              <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
+                <MenuOption onSelect={() => NavegarParaPerfil()}>
+                  <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
+                </MenuOption>
+                <Divider width={1} color='gray' />
+                {props.pessoal ?
+                  <>
+                    <MenuOption onSelect={() => Editar()}>
+                      <Text style={styles.dropdownText}>Editar {tipoAnimal ? 'animal' : 'postagem'}</Text>
+                    </MenuOption>
+                    <Divider width={1} color='gray' />
+                    <MenuOption onSelect={() => setModalDesativarVisible(true)}>
+                      <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
+                    </MenuOption>
+                  </>
+                  :
+                  <>
+                    <MenuOption onSelect={() => console.log('Denunciar')}>
+                      <Text style={styles.dropdownText}>Denunciar {tipoAnimal ? 'publicação' : 'postagem'}</Text>
+                    </MenuOption>
+                    <Divider width={1} color='gray' />
+                    <MenuOption onSelect={() => console.log('Bloquear')}>
+                      <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
+                    </MenuOption>
+                  </>
+                }
+              </MenuOptions>
+            </Menu>
+            <ModalConfirmacao texto={textoConfirmacao} press={() => DesativarCampo(props.tipo, props.itemId, aoDesativar)} val={modalDesativarVisible} set={setModalDesativarVisible} sim='Desativar' />
+          </>
           :
           <View style={{ padding: 10 }}>
             <Feather name="more-vertical" size={30} color="#B66F6F" />

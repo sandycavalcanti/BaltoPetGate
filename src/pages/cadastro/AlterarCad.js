@@ -40,6 +40,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
   const [complemento, setComplemento] = useState('');
   const [instagram, setInstagram] = useState('');
   const [facebook, setFacebook] = useState('');
+  const controller = new AbortController();
 
   const Alterar = async () => {
     let camposObrigatorios = [];
@@ -65,7 +66,7 @@ const AlterarCad = ({ navigation: { navigate } }) => {
     TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
     await axios.post(urlAPI + 'selpessoa/filtrar', {
       TB_PESSOA_ID: TB_PESSOA_IDD
-    }).then(response => {
+    }, { signal: controller.signal }).then(response => {
       info = response.data[0];
       setNome(info.TB_PESSOA_NOME);
       setEmail(info.TB_PESSOA_EMAIL);
@@ -122,6 +123,9 @@ const AlterarCad = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     PegarInfo();
+    return (() => {
+      controller.abort();
+  })
   }, []);
 
   return (

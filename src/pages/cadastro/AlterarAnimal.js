@@ -57,6 +57,7 @@ const AlterarAnimal = ({ navigation: { navigate } }) => {
 
     const [message, setMessage] = useState('');
     const [carregando, setCarregando] = useState(true);
+    const controller = new AbortController();
 
     const Cadastrar = () => {
         InserirDados();

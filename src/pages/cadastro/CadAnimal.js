@@ -59,6 +59,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const [message, setMessage] = useState('');
     const alertRef = useRef(null);
     const [textoAlert, setTextoAlert] = useState('');
+    const controller = new AbortController();
 
     const Cadastrar = () => {
         InserirDados();
@@ -71,7 +72,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
 
     const ListarOpcoes = async () => {
         await Promise.all([
-            axios.get(urlAPI + 'selsituacao')
+            axios.get(urlAPI + 'selsituacao', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -80,7 +81,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     }));
                     situacoesBanco.current = options;
                 }).catch(CatchError),
-            axios.get(urlAPI + 'seltrauma')
+            axios.get(urlAPI + 'seltrauma', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -89,7 +90,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     }));
                     traumasBanco.current = options;
                 }).catch(CatchError),
-            axios.get(urlAPI + 'seltemperamento')
+            axios.get(urlAPI + 'seltemperamento', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -105,6 +106,9 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     useEffect(() => {
         PegarId();
         ListarOpcoes();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
     const TipoIdade = [

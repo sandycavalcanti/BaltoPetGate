@@ -8,6 +8,7 @@ import Imagem from "../geral/Imagem";
 import BotaoAceitar from "./BotaoAceitar";
 import BotaoNegar from "./BotaoNegar";
 import { DropdownAlertType } from 'react-native-dropdownalert';
+import CatchError from "../../utils/CatchError";
 
 const AlterarSolicitacao = (props) => {
   const dadosSolicitacaoRef = useRef([]);
@@ -21,12 +22,13 @@ const AlterarSolicitacao = (props) => {
   const TB_ANIMAL_ID = props.TB_ANIMAL_ID;
   const [carregando, setCarregando] = useState(true);
   const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
+  const controller = new AbortController();
 
   const SelSolicitacao = async () => {
     await axios.post(urlAPI + 'selsolicitacao/filtrar', {
       TB_PESSOA_ID,
       TB_ANIMAL_ID
-    }).then(async response => {
+    }, { signal: controller.signal }).then(async response => {
       dadosSolicitacaoRef.current = response.data
       await dadosSolicitacaoRef.current.map(item => {
         if (item['TB_TIPO_SOLICITACAO_ID'] == 1) {
@@ -41,18 +43,14 @@ const AlterarSolicitacao = (props) => {
         }
       })
       setCarregando(false);
-    }).catch(error => {
-      console.error(error)
-      if (error.response.status !== 404) {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.error('Erro ao selecionar: ', erro.error);
-      }
-    });
+    }).catch(CatchError);
   };
 
   useEffect(() => {
     SelSolicitacao();
+    return (() => {
+      controller.abort();
+    })
   }, []);
 
   const AlterarSolicitacao = async (tipoSolicitacao, situacao) => {
@@ -92,14 +90,8 @@ const AlterarSolicitacao = (props) => {
           interval: 6000,
           message: textoSolicitacao + 'foi cancelada',
         });
-
       }
-    }).catch(error => {
-      console.error(error)
-      let erro = error.response.data;
-      ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-      console.error('Erro ao alterar: ', erro.error, error);
-    });
+    }).catch(CatchError);
   };
 
   return (
@@ -110,9 +102,8 @@ const AlterarSolicitacao = (props) => {
           <Imagem url={urlAnimal} />
         </View>
       </View>
-      {carregando ? (
-        <ActivityIndicator size="large" color={corBordaBoxCad} />
-      ) :
+      {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
+        :
         <>
           {dadosSolicitacaoRef.current.length > 0 ?
             <>

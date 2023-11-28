@@ -20,6 +20,7 @@ const InfoChat = () => {
     const info = useRef({})
     const TB_PESSOA_IDD = useRef(null);
     const TB_TIPO_IDD = useRef(null);
+    const controller = new AbortController();
 
     const PegarId = async () => {
         const decodedToken = await DecodificarToken();
@@ -28,19 +29,23 @@ const InfoChat = () => {
     }
 
     const Selecionar = async () => {
-        await axios.get(urlAPI + 'selpessoa/' + TB_PESSOA_ID).then(response => {
-            info.current = response.data[0];
-            setCarregando(false)
-        }).catch(error => {
-            let erro = error.response.data;
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar: ', erro.error, error);
-        });
+        await axios.get(urlAPI + 'selpessoa/' + TB_PESSOA_ID, { signal: controller.signal })
+            .then(response => {
+                info.current = response.data[0];
+                setCarregando(false)
+            }).catch(error => {
+                let erro = error.response.data;
+                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+                console.error('Erro ao selecionar: ', erro.error, error);
+            });
     }
 
     useEffect(() => {
         PegarId();
         Selecionar();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
     const urlPessoa = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;

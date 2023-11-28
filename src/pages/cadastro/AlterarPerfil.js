@@ -9,6 +9,7 @@ import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import * as ImagePicker from 'expo-image-picker';
 import FormData from 'form-data';
+import CatchError from "../../utils/CatchError";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -96,15 +97,7 @@ const AlterarPerfil = () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then(response => {
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-    }).catch(error => {
-      if (error.respose) {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.log('Erro ao selecionar:', erro.error);
-      } else {
-        console.error(error)
-      }
-    })
+    }).catch(CatchError)
   }
 
   return (

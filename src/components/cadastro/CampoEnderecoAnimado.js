@@ -11,15 +11,16 @@ const CampoEnderecoAnimado = (props) => {
     let opcional = props.opcional;
     const [uf, setUf] = useState('');
     const [cidade, setCidade] = useState('');
-    const [textoDica, setTextoDica] = useState(false);
+    const [rerender, setRerender] = useState(0);
     const [texto, setTexto] = useState('');
 
     const tentativas = useRef(0)
     const [cidades, setCidades] = useState([]);
+    const controller = new AbortController();
 
     const BuscarEndereco = async (cep) => {
         try {
-            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`, { signal: controller.signal });
             const endereco = response.data;
             await ListarCidades(endereco.uf);
             props.setRef2.current = endereco.uf;
@@ -28,8 +29,7 @@ const CampoEnderecoAnimado = (props) => {
             props.setRef5.current = endereco.logradouro;
             setUf(endereco.uf)
             setCidade(endereco.localidade);
-            // setBairro(endereco.bairro);
-            // setRua(endereco.logradouro);
+            setRerender(prev => prev + 1);
 
             if (endereco.erro) {
                 ToastAndroid.show('CEP não encontrado', ToastAndroid.SHORT);
@@ -41,7 +41,7 @@ const CampoEnderecoAnimado = (props) => {
 
     const ListarCidades = async (uf) => {
         try {
-            const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
+            const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`, { signal: controller.signal });
             const cidadesData = response.data.map(city => ({
                 label: city.nome,
                 value: city.nome,
@@ -67,24 +67,27 @@ const CampoEnderecoAnimado = (props) => {
         setCidade(props.val3);
         props.setRef4.current = props.val4;
         props.setRef5.current = props.val5;
+        return (() => {
+            controller.abort();
+        })
     }, [])
 
     const onChangeText = (text) => {
         setTexto(FormatarTextoCampo(text, 'cep'));
-        props.setRef1.current = text.replace(/\D/g, '');
+        const cepNumeros = text.replace(/\D/g, '');
+        props.setRef1.current = cepNumeros;
+        if (cepNumeros.length === 8) {
+            BuscarEndereco(cepNumeros)
+        }
     }
 
     return (
         <View style={styles.containercampo}>
-            {opcional && <Text style={styles.titulocampo}>Localização (Opcional):</Text>}
+            <Text style={styles.titulocampo}>Localização {opcional && '(Opcional)'}:</Text>
             <View>
-                <TextInput onChangeText={onChangeText} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={opcional ? "CEP (Opcional)" : "CEP"} onFocus={() => setTextoDica(true)} onBlur={() => setTextoDica(false)} keyboardType='numeric' style={styles.campo} />
+                <TextInput onChangeText={onChangeText} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={props.cepOpcional ? "CEP (Opcional)" : "CEP"} keyboardType='numeric' style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
-            {textoDica && <Text style={styles.dica}>Insira apenas números</Text>}
-            <TouchableOpacity onPress={() => BuscarEndereco(props.setRef1.current)} style={styles.botaopesquisar}>
-                <Text style={styles.textocadastro}>Pesquisar CEP</Text>
-            </TouchableOpacity>
             <View style={styles.selecionar}>
                 <Dropdown
                     style={[styles.dropdown, { width: !opcional ? '96%' : '100%' }]}
@@ -134,13 +137,14 @@ const CampoEnderecoAnimado = (props) => {
                 <TextInput onChangeText={text => props.setRef5.current = text} defaultValue={props.setRef5.current} placeholderTextColor={corPlaceholderCad} placeholder={"Rua"} style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
             </View>
-            {props.setRef6 && <>
-                <View>
-                    <TextInput onChangeText={text => props.setRef6.current = text} defaultValue={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
-                    {!opcional && <Text style={styles.asterisco}>*</Text>}
-                </View>
-                <TextInput onChangeText={text => props.setRef7.current = text} defaultValue={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
-            </>}
+            {props.setRef6 &&
+                <>
+                    <View>
+                        <TextInput onChangeText={text => props.setRef6.current = text} defaultValue={props.val6} placeholderTextColor={corPlaceholderCad} placeholder={"Número"} keyboardType='numeric' style={styles.campo} />
+                        {!opcional && <Text style={styles.asterisco}>*</Text>}
+                    </View>
+                    <TextInput onChangeText={text => props.setRef7.current = text} defaultValue={props.val7} placeholderTextColor={corPlaceholderCad} placeholder={"Complemento"} style={styles.campo} />
+                </>}
         </View>
     )
 }
@@ -172,22 +176,6 @@ const styles = StyleSheet.create({
         backgroundColor: corFundoCampoCad,
         borderRadius: valorBordaCampoCad,
         marginVertical: 5,
-    },
-    dica: {
-        fontSize: 14,
-        color: corDicaCad,
-        textAlign: 'center',
-    },
-    botaopesquisar: {
-        width: '100%',
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: corBotaoCad,
-        borderRadius: valorBordaCampoCad,
-        elevation: 5,
-        marginTop: 5,
-        marginBottom: valorBordaCampoCad,
     },
     textocadastro: {
         color: corTextoBotaoCad,
@@ -235,7 +223,8 @@ CampoEnderecoAnimado.propTypes = {
     val5: PropTypes.string,
     val6: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     val7: PropTypes.string,
-    opcional: PropTypes.bool
+    opcional: PropTypes.bool,
+    cepOpcional: PropTypes.bool
 }
 
 export default CampoEnderecoAnimado

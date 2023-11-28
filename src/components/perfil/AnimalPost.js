@@ -13,6 +13,7 @@ const AnimalPost = memo((props) => {
   const dataOriginal = props.data.createdAt;
   const urlImg = urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID;
   let dataFormatada = "";
+  const controller = new AbortController();
 
   if (dataOriginal && !isNaN(new Date(dataOriginal))) {
     dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
@@ -21,7 +22,7 @@ const AnimalPost = memo((props) => {
   const [temperamento, setTemperamento] = useState([])
 
   const Selecionar = () => {
-    axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID)
+    axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID, { signal: controller.signal })
       .then(response => {
         setTemperamento(response.data);
       }).catch(error => {
@@ -35,6 +36,9 @@ const AnimalPost = memo((props) => {
 
   useEffect(() => {
     Selecionar();
+    return (() => {
+      controller.abort();
+    })
   }, []);
 
   return (
