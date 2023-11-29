@@ -1,5 +1,5 @@
 const FormatarTextoBanco = (textoBanco) => {
-    const texto = textoBanco.toString().toLowerCase();
+    const texto = textoBanco ? textoBanco.toString().toLowerCase() : textoBanco;
     switch (texto) {
         case 'grande':
             return 'Grande'

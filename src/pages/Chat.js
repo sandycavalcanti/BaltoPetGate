@@ -236,7 +236,7 @@ const Chat = () => {
                     console.error(erro.error);
                 })
             }
-        } else {// Editar mensagem de texto
+        } else { // Editar mensagem de texto
             if (texto != mensagemSelecionada.current.text) { // Se o texto tiver sido modificado
                 const modifiedMessages = state.messages.map(message => {
                     if (message._id === mensagemSelecionada.current._id) return { ...message, mensagemAlterada: true, text: texto };
@@ -260,10 +260,7 @@ const Chat = () => {
         }
     }, [dispatch, state.messages]);
     const onSendCustomActions = (messages = []) => {
-        const sentMessages = [{ ...messages[0] }];
-        const newMessages = GiftedChat.append(state.messages, sentMessages, true);
-
-        const messagesToUpload = messages.map((message) => ({
+        const messagesToUpload = messages.map(message => ({
             ...message,
             user,
             createdAt: new Date(),

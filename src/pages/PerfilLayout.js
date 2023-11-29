@@ -15,8 +15,6 @@ import Estrelas from "../components/Avaliacao/Estrelas";
 import ModalAvaliacao from "../components/Avaliacao/ModalAvaliacao";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
-let scrollY = 0;
-let item1 = item2 = item3 = {};
 
 const PerfilLayout = (props) => {
   const navigation = props.navigation;
@@ -26,7 +24,7 @@ const PerfilLayout = (props) => {
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
   const [valorScroll, setValorScroll] = useState(-20);
-  scrollY = props.scrollY;
+  let scrollY = props.scrollY ? props.scrollY : 0;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
 
@@ -40,33 +38,27 @@ const PerfilLayout = (props) => {
   useEffect(() => {
     let timeoutId = null;
     let listener;
-    setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 2500);
+    setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 500);
     return () => scrollY.removeListener(listener);
   }, [scrollY]);
 
+  let item1, item2, item3 = {};
   if (props.pessoal) {
-    item1 = {
-      texto: 'Alterar minhas informações',
-      press: () => navigation.navigate('AlterarCad', { modoAlterar: true })
-    }
-    item2 = {
-      texto: 'Desativar conta',
-      press: () => { setModalDesativarVisible(true); setDropdownVisible(false); }
-    }
-    item3 = {
-      texto: 'Sair da conta',
-      press: () => { setModalSairVisible(true); setDropdownVisible(false); }
-    }
+    item1 = { texto: 'Alterar minhas informações', press: () => navigation.navigate('AlterarCad', { modoAlterar: true }) }
+    item2 = { texto: 'Desativar conta', press: () => { setModalDesativarVisible(true); setDropdownVisible(false); } }
+    item3 = { texto: 'Sair da conta', press: () => { setModalSairVisible(true); setDropdownVisible(false); } }
   } else {
-    item1 = {
-      texto: 'Denunciar perfil',
-      press: () => { }
-    }
-    item2 = {
-      texto: 'Bloquear pessoa',
-      press: () => { }
-    }
+    item1 = { texto: 'Denunciar perfil', press: () => DenunciarPessoa() }
+    item2 = { texto: 'Bloquear pessoa', press: () => BloquearPessoa() }
     item3 = null;
+  }
+
+  const BloquearPessoa = () => {
+    console.log('Bloquear')
+  }
+
+  const DenunciarPessoa = () => {
+    console.log('Bloquear')
   }
 
   const SairDaConta = async () => {
@@ -98,7 +90,7 @@ const PerfilLayout = (props) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={33} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
+          <TouchableOpacity onPress={() => setDropdownVisible(prev => !prev)}>
             <Entypo name="dots-three-vertical" size={30} color="white" />
           </TouchableOpacity>
           <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
@@ -109,18 +101,18 @@ const PerfilLayout = (props) => {
           <View>
             <Imagem url={urlImg} style={styles.profileImage} />
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
-            {props.data.TB_TIPO_ID != 1 && <Text style={[{ fontStyle: 'italic', fontSize: 15, color: 'gray', textAlign: 'center' }]}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
+            {props.data.TB_TIPO_ID != 1 && <Text style={styles.tipoUsuario}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', top: 40 }}>
-            <View style={{ paddingHorizontal: 25, top: 5 }}>
-              <Text style={{ color: '#096D82', fontSize: 23, paddingVertical: 3, paddingHorizontal: 2, borderBottomWidth: 2, borderColor: '#216357', textAlign: 'center' }}>{props.seguindo.length}</Text>
-              <Text style={{ color: '#5F7856', textAlign: 'center' }}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
+          <View style={styles.containerEstrelasSeguindo}>
+            <View style={styles.viewEstrelas}>
+              <Text style={styles.quantidadeSeguidores}>{props.seguindo.length}</Text>
+              <Text style={styles.textoSeguidores}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
               <Estrelas avaliacoes={props.avaliacoes} set={setAvaliacaoVisible} />
               <ModalAvaliacao avaliacoes={props.avaliacoes} val={avaliacaoVisible} set={setAvaliacaoVisible} />
             </View>
             {!props.pessoal &&
               <View>
-                <TouchableOpacity style={[styles.button, { width: '100%', paddingVertical: 4, paddingHorizontal: 5 }]} >
+                <TouchableOpacity style={styles.buttonSeguir} >
                   <Text style={[styles.buttonText, { fontSize: 17 }]}>Seguir</Text>
                 </TouchableOpacity>
               </View>}
@@ -267,6 +259,45 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 6
   },
+  containerEstrelasSeguindo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    top: 40
+  },
+  viewEstrelas: {
+    paddingHorizontal: 25,
+    top: 5
+  },
+  quantidadeSeguidores: {
+    color: '#096D82',
+    fontSize: 23,
+    paddingVertical: 3,
+    paddingHorizontal: 2,
+    borderBottomWidth: 2,
+    borderColor: '#216357',
+    textAlign: 'center'
+  },
+  textoSeguidores: {
+    color: '#5F7856',
+    textAlign: 'center'
+  },
+  buttonSeguir: {
+    backgroundColor: '#B2EDC5',
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: 'center',
+    borderColor: "#84B794",
+    borderWidth: 1,
+    width: '100%',
+    paddingVertical: 4,
+    paddingHorizontal: 5
+  },
+  tipoUsuario: {
+    fontStyle: 'italic',
+    fontSize: 15,
+    color: 'gray',
+    textAlign: 'center'
+  }
 });
 
 export default PerfilLayout;

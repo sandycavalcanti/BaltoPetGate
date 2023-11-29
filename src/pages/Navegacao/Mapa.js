@@ -1,10 +1,8 @@
 
 import { useState, useEffect, useRef } from 'react';
-import MapView, { Marker, Callout } from 'react-native-maps';
-import { Modal, StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
+import { Modal, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { corFundo, corRosaForte, urlAPI } from '../../constants';
-import Imagem from '../../components/geral/Imagem';
 import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
 

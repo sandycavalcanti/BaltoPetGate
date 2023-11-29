@@ -8,12 +8,11 @@ import ModalConfirmacao from '../geral/ModalConfirmacao';
 import Imagem from '../geral/Imagem';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-let item1 = item2 = item3 = item4 = {};
-
 const NavbarChat = (props) => {
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
+  const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);  
+  const [showText, setShowText] = useState(true);
   const dados = props.dados;
   const animais = props.animais;
   const existeAnimal = animais.length !== 0;
@@ -21,33 +20,31 @@ const NavbarChat = (props) => {
   const pessoaId = props.id
   const urlPessoaImg = urlAPI + 'selpessoaimg/';
   const urlAnimalImg = urlAPI + 'selanimalimg/';
-
-  item1 = {
-    texto: 'Visualizar perfil',
-    press: () => navigation.navigate('Perfil', { id: pessoaId })
-  }
-  if (!props.desativado) {
-    item2 = {
-      texto: 'Desativar conversa',
-      press: () => { setmodalConfirmacaoVisible(true); setDropdownVisible(false) }
-    }
-  } else {
-    item2 = null
-  }
-  item3 = {
-    texto: 'Bloquear pessoa',
-    press: () => { }
-  }
-  item4 = {
-    texto: 'Denunciar conversa',
-    press: () => { }
-  }
-
-  const nomeUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"] : dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
-  const [showText, setShowText] = useState(true);
-
   const translateYText = useRef(new Animated.Value(5)).current;
   const translateYContent = useRef(new Animated.Value(50)).current;
+
+  let item1, item2, item3, item4 = {};
+  item1 = { texto: 'Visualizar perfil', press: () => navigation.navigate('Perfil', { id: pessoaId }) };
+  item2 = !props.desativado ? { texto: 'Desativar conversa', press: () => { setmodalConfirmacaoVisible(true); setDropdownVisible(false) } } : null;
+  item3 = { texto: 'Bloquear pessoa', press: () => BloquearPessoa() };
+  item4 = { texto: 'Denunciar conversa', press: () => DenunciarConversa() };
+  
+  const nomeUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"] : dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
+  const tipoUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_TIPO_ID"] : dados["TB_PESSOA_REMETENTE.TB_TIPO_ID"];
+
+  const dadosPessoa = {
+    TB_PESSOA_ID: pessoaId,
+    TB_PESSOA_NOME_PERFIL: nomeUsuario,
+    TB_TIPO_ID: tipoUsuario
+  }
+
+  const BloquearPessoa = () => {
+    console.log('Bloquear')
+  }
+
+  const DenunciarConversa = () => {
+    console.log('Bloquear')
+  }
 
   useEffect(() => {
     const animateText = () => {
@@ -55,8 +52,8 @@ const NavbarChat = (props) => {
         toValue: -50,
         duration: 800,
         useNativeDriver: true,
-      }).start(async () => {
-        await setShowText(false)
+      }).start(() => {
+        setShowText(false)
         animateContent();
       });
     };
@@ -83,7 +80,7 @@ const NavbarChat = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
-        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (existeAnimal) navigation.navigate('InfoChat', { TB_PESSOA_ID: pessoaId, TB_PESSOA_NOME_PERFIL: nomeUsuario, animais, dados }) }} >
+        <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (existeAnimal) navigation.navigate('InfoChat', { dadosPessoa, animais, dados }) }} >
           {existeAnimal && showText && <Animated.View style={{ transform: [{ translateY: translateYText }] }}>
             <Text style={{ color: '#fafafa', fontSize: 16 }}>Clique aqui para ver as informações do chat</Text>
           </Animated.View>}

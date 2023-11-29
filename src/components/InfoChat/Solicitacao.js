@@ -1,41 +1,43 @@
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import BotaoCadastrar from "../cadastro/BotaoCadastrar";
-import { useState, useRef } from "react";
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import React from "react";
 import { urlAPI, corBordaBoxCad } from "../../constants";
-import { useEffect } from "react";
 import Imagem from "../geral/Imagem";
+import BotaoCadastrar from "../cadastro/BotaoCadastrar";
 import { DropdownAlertType } from 'react-native-dropdownalert';
 import CatchError from "../../utils/CatchError";
+import { useNavigation } from "@react-navigation/native";
 
 const Solicitacao = (props) => {
-  const dadosSolicitacaoRef = useRef([]);
-  const [existeAdocao, setExisteAdocao] = useState(false);
-  const [existeAbrigo, setExisteAbrigo] = useState(false);
-  const [existeTratamento, setExisteTratamento] = useState(false);
+  const navigation = useNavigation();
+  const existeAdocao = useRef(false);
+  const existeAbrigo = useRef(false);
+  const existeTratamento = useRef(false);
   const TB_PESSOA_ID = props.TB_PESSOA_ID;
   const TB_ANIMAL_ID = props.TB_ANIMAL_ID;
   const TB_TIPO_IDD = props.TB_TIPO_IDD;
-  const [carregando, setCarregando] = useState(true);
   const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
+  const [rerender, setRerender] = useState(0);
+  const [carregando, setCarregando] = useState(true);
   const controller = new AbortController();
 
   const SelSolicitacao = async () => {
     await axios.post(urlAPI + "selsolicitacao/filtrar", {
       TB_PESSOA_ID,
       TB_ANIMAL_ID,
-    }, { signal: controller.signal }).then(async (response) => {
-      dadosSolicitacaoRef.current = response.data;
-      await dadosSolicitacaoRef.current.map((item) => {
-        if (item["TB_TIPO_SOLICITACAO_ID"] == 1) {
-          setExisteAdocao(true);
-        }
-        if (item["TB_TIPO_SOLICITACAO_ID"] == 2) {
-          setExisteAbrigo(true);
-        }
-        if (item["TB_TIPO_SOLICITACAO_ID"] == 3) {
-          setExisteTratamento(true);
+    }, { signal: controller.signal }).then(response => {
+      const dadosSolicitacao = response.data;
+      dadosSolicitacao.map(item => {
+        switch (item["TB_TIPO_SOLICITACAO_ID"]) {
+          case 1:
+            existeAdocao.current = true;
+            break;
+          case 2:
+            existeAbrigo.current = true;
+            break;
+          case 3:
+            existeTratamento.current = true;
+            break;
         }
       });
       setCarregando(false);
@@ -57,15 +59,18 @@ const Solicitacao = (props) => {
       TB_SOLICITACAO_DT_SOLICITACAO: NovaData,
       TB_TIPO_SOLICITACAO_ID: tipoSolicitacao,
     }).then(response => {
-      if (tipoSolicitacao == 1) {
-        setExisteAdocao(true);
+      switch (tipoSolicitacao) {
+        case 1:
+          existeAdocao.current = true;
+          break;
+        case 2:
+          existeAbrigo.current = true;
+          break;
+        case 3:
+          existeTratamento.current = true;
+          break;
       }
-      if (tipoSolicitacao == 2) {
-        setExisteAbrigo(true);
-      }
-      if (tipoSolicitacao == 3) {
-        setExisteTratamento(true);
-      }
+      setRerender(prev => prev + 1);
       props.alert({
         type: DropdownAlertType.Info,
         title: 'Solicitação em andamento',
@@ -74,69 +79,49 @@ const Solicitacao = (props) => {
       });
     }).catch(CatchError);
   };
+
   return (
     <>
       <View style={styles.InfoPet}>
         <Text style={styles.TituloPet}>{props.nome}</Text>
-        <View style={styles.ImagemPet}>
-          <Imagem url={urlAnimal} />
-        </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: TB_ANIMAL_ID })}>
+          <Imagem url={urlAnimal} style={styles.ImagemPet} />
+        </TouchableOpacity>
       </View>
-      {carregando ? (
-        <ActivityIndicator size="large" color={corBordaBoxCad} />
-      ) : (
-        <>
-          {(TB_TIPO_IDD == 1 || TB_TIPO_IDD == 2 || TB_TIPO_IDD == 6) &&
-            !existeAdocao &&
-            <>
-              <View style={styles.Botao}>
-                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(1)} texto="Quero adotar" />
-              </View>
-            </>
-          }
-          {(TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4 || TB_TIPO_IDD == 5) &&
-            !existeAbrigo &&
-            <>
-              <View style={styles.Botao}>
-                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
-              </View>
-            </>
-          }
-          {(TB_TIPO_IDD == 2 || TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4) &&
-            !existeTratamento &&
-            <>
-              <View style={styles.Botao}>
-                <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
-              </View>
-            </>
-          }
-        </>
-      )}
+      {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
+        :
+        <View style={styles.Botao}>
+          {(TB_TIPO_IDD == 1 || TB_TIPO_IDD == 2 || TB_TIPO_IDD == 6) && (!existeAdocao.current ?
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(1)} texto="Quero adotar" />
+            :
+            <Text style={styles.mensagemFeita}>Solicitação de adoção feita</Text>
+          )}
+          {(TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4 || TB_TIPO_IDD == 5) && (!existeAbrigo.current ?
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
+            :
+            <Text style={styles.mensagemFeita}>Solicitação de abrigo feita</Text>
+          )}
+          {(TB_TIPO_IDD == 2 || TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4) && (!existeTratamento.current ?
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
+            :
+            <Text style={styles.mensagemFeita}>Solicitação de tratamentos feita</Text>
+          )}
+        </View>
+      }
     </>
   );
 };
+
 const styles = StyleSheet.create({
-  Container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#D1BBB2',
-  },
-  InfoHead: {
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'column',
-    display: 'flex',
-    backgroundColor: '#A9DDAE',
-  },
-  ImagemCirculo: {
-    width: 230,
-    height: 230,
-    borderRadius: 150,
+  ImagemPet: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderColor: '#fff',
-    borderWidth: 2,
+    borderWidth: 1,
     alignItems: 'center',
     overflow: 'hidden',
-    marginTop: 40
+    margin: 2
   },
   Titulo: {
     fontSize: 25,
@@ -156,28 +141,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  ImagemPet: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderColor: '#fff',
-    borderWidth: 1,
-    alignItems: 'center',
-    overflow: 'hidden',
-    margin: 2
-  },
   TituloPet: {
     fontSize: 20,
     color: '#fff',
     marginRight: 20
-  },
-  InfoForm: {
-    alignItems: 'center'
-  },
-  Botoes: {
-    width: '100%',
-    justifyContent: 'space-around',
-    alignItems: 'center',
   },
   Botao: {
     width: '100%',
@@ -189,6 +156,11 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     borderWidth: 2,
     elevation: 1,
+  },
+  mensagemFeita: {
+    marginVertical: 10,
+    color: '#fafafa',
+    fontSize: 18
   }
 });
 

@@ -3,7 +3,6 @@ import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
 import TextosOpcionais from "../components/ficha/TextosOpcionais";
-import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
 import { corBordaBoxCad, corFundo, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState, useRef } from "react";
@@ -12,6 +11,7 @@ import DecodificarToken from "../utils/DecodificarToken";
 import FormatarTextoBanco from "../utils/FormatarTextoBanco";
 import IniciarChat from "../utils/IniciarChat";
 import CatchError from "../utils/CatchError";
+import BotaoCadastrarAnimado from "../components/cadastro/BotaoCadastrarAnimado";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -175,7 +175,7 @@ const Ficha_animal = ({ navigation: { navigate } }) => {
                             </View>
                         </View>
                         {!pessoal.current && <View style={styles.ConjuntoBotao}>
-                            <BotaoCadastrar onPress={TenhoInteresse} texto="Tenho interesse" />
+                            <BotaoCadastrarAnimado onPress={TenhoInteresse} texto="Tenho interesse" width={300} />
                         </View>}
                     </>
                 }

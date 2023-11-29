@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { corBotaoCad, corBotaoAceitar, corTextoBotaoCad } from '../../constants';
+import { corBotaoAceitar, corTextoBotaoCad } from '../../constants';
 import PropTypes from 'prop-types';
 
-const BotaoAceitar = (props) => {
+const BotaoSolicitacao = (props) => {
     return (
-        <TouchableOpacity {...props} style={styles.botaocadastro}>
-            <Text style={styles.textocadastro}>{props.texto ? props.texto : 'Cadastrar'}</Text>
+        <TouchableOpacity {...props} style={[styles.botaocadastro, props.styleBotao]}>
+            <Text style={[styles.textocadastro,props.styleTexto]}>{props.texto ? props.texto : 'Aceitar'}</Text>
         </TouchableOpacity>
     )
 }
@@ -27,9 +27,11 @@ const styles = StyleSheet.create({
     },
 });
 
-BotaoAceitar.propTypes = {
+BotaoSolicitacao.propTypes = {
     texto: PropTypes.string,
     onPress: PropTypes.func,
+    styleBotao: PropTypes.object,
+    styleTexto: PropTypes.object
 }
 
-export default BotaoAceitar
+export default BotaoSolicitacao

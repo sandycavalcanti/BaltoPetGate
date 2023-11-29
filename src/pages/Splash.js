@@ -8,21 +8,17 @@ const Splash = ({ navigation }) => {
 
   const VerificarLogin = async () => {
     const TokenUsuario = await AsyncStorage.getItem('token');
-    if (TokenUsuario == null) {
-      rota.current = 'Login'
-    } else {
-      rota.current = 'Menu'
-    }
+    rota.current = TokenUsuario ? 'Menu' : 'Login'
     setTimeout(() => {
       navigation.replace(rota.current);
     }, 2000);
   }
+
   useEffect(() => {
     VerificarLogin();
   });
 
   return (
-
     <View style={styles.Container}>
       <Image source={require('../../assets/img/splash.png')} style={styles.ImagemFundo} />
       <View style={styles.ContainerLogo}>

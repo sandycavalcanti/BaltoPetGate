@@ -73,17 +73,18 @@ const Login = () => {
         }).then(async response => {
             setCarregando(true);
             const TokenUsuario = response.data.token;
-            await AsyncStorage.removeItem('token');
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
         }).catch(error => {
-            try {
-                let erro = error.response.data.message;
+            if (error.response) {
+                const erro = error.response.data.message;
                 ToastAndroid.show(erro, ToastAndroid.SHORT);
                 setMensagem(erro);
-            } catch (error) {
-                ToastAndroid.show('Conecte-se à Internet', ToastAndroid.SHORT);
-                setMensagem('Conecte-se à Internet');
+            } else {
+                const erro = 'Houve um erro'
+                ToastAndroid.show(erro, ToastAndroid.SHORT);
+                setMensagem(erro);
+                console.error(error)
             }
         })
     };
@@ -122,6 +123,7 @@ const Login = () => {
                         style={{ flex: 1, marginBottom: 30, marginHorizontal: 10 }}
                         onChangeText={text => senha.current = text}
                         secureTextEntry={!mostrarSenha}
+                        onSubmitEditing={Logar}
                     />
                     <Pressable onPress={() => setMostrarSenha(prev => !prev)}>
                         {mostrarSenha ?

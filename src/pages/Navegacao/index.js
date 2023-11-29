@@ -23,8 +23,6 @@ import AlterarPerfil from '../cadastro/AlterarPerfil';
 import AlterarPostagem from '../cadastro/AlterarPostagem';
 import QuestionarioAdocao from '../cadastro/QuestAdocao';
 import Chat from '../Chat';
-
-import uploadimg from '../uploadimg';
 import Teste from '../Teste';
 
 const Stack = createStackNavigator();
@@ -49,58 +47,57 @@ const closeConfig = {
   }
 }
 
-export default function Navigation() {
+const Navigation = () => {
   return (
-    <>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{
-          headerShown: false,
-          gestureEnabled: true,
-          gestureDirection: 'horizontal',
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
-        }} >
-          <Stack.Screen name="Splash" component={Splash} />
-          <Stack.Screen name="Login" component={Login} options={{
-            gestureDirection: 'vertical',
-            cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
-          }} />
-          <Stack.Screen name="Menu" component={Menu} options={{
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="Ficha" component={Ficha_animal} />
-          <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
-          <Stack.Screen name="CadConta" component={CadConta} />
-          <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
-          <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{ gestureEnabled: false }} />
-          <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
-          <Stack.Screen name="CadOpcao" component={CadOpcao} />
-          <Stack.Screen name="RecSenha" component={RecSenha} />
-          <Stack.Screen name="VerCodigo" component={VerCodigo} />
-          <Stack.Screen name="Perfil" component={Perfil} />
-          <Stack.Screen name="CriarSenha" component={CriarSenha} />
-          <Stack.Screen name="CadPostagem" component={CadPostagem} />
-          <Stack.Screen name="Chat" component={Chat} options={{ gestureEnabled: false }} />
-          <Stack.Screen name="AlterarCad" component={AlterarCad} />
-          <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
-          <Stack.Screen name="AlterarPostagem" component={AlterarPostagem} />
-          <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
-          <Stack.Screen name="HistChat" component={HistChat} options={{
-            gestureDirection: 'vertical',
-            transitionSpec: {
-              open: openConfig,
-              close: closeConfig,
-            },
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="InfoChat" component={InfoChat} options={{
-            gestureEnabled: false,
-            gestureDirection: 'vertical-inverted',
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="Teste" component={Teste} />
-          <Stack.Screen name="uploadimg" component={uploadimg} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false,
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+      }} >
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Login" component={Login} options={{
+          gestureDirection: 'vertical',
+          cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
+        }} />
+        <Stack.Screen name="Menu" component={Menu} options={{
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="Ficha" component={Ficha_animal} />
+        <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
+        <Stack.Screen name="CadConta" component={CadConta} />
+        <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
+        <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
+        <Stack.Screen name="CadOpcao" component={CadOpcao} />
+        <Stack.Screen name="RecSenha" component={RecSenha} />
+        <Stack.Screen name="VerCodigo" component={VerCodigo} />
+        <Stack.Screen name="Perfil" component={Perfil} />
+        <Stack.Screen name="CriarSenha" component={CriarSenha} />
+        <Stack.Screen name="CadPostagem" component={CadPostagem} />
+        <Stack.Screen name="Chat" component={Chat} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="AlterarCad" component={AlterarCad} />
+        <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
+        <Stack.Screen name="AlterarPostagem" component={AlterarPostagem} />
+        <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
+        <Stack.Screen name="HistChat" component={HistChat} options={{
+          gestureDirection: 'vertical',
+          transitionSpec: {
+            open: openConfig,
+            close: closeConfig,
+          },
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="InfoChat" component={InfoChat} options={{
+          gestureEnabled: false,
+          gestureDirection: 'vertical-inverted',
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="Teste" component={Teste} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
+
+export default Navigation;
