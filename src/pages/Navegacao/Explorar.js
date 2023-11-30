@@ -51,13 +51,14 @@ const Explorar = ({ navigation: { navigate } }) => {
 
   return (
     <View style={styles.container}>
-      {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+      {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
       <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
         const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
         const postagemId = item.TB_POSTAGEM_ID;
+        const podeEditar = item.createdAt == item.updatedAt;
         return (
           <>
-            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} onRefresh={onRefresh} />
+            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} onRefresh={onRefresh} podeEditar={podeEditar} />
             <Post data={item} />
           </>
         )
@@ -77,6 +78,11 @@ const styles = StyleSheet.create({
   },
   Lista: {
     width: '100%'
+  },
+  containerCarregando: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

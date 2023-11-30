@@ -83,7 +83,7 @@ const CampoEnderecoAnimado = (props) => {
 
     return (
         <View style={styles.containercampo}>
-            <Text style={styles.titulocampo}>Localização {opcional && '(Opcional)'}:</Text>
+            {!props.removerTitulo && <Text style={styles.titulocampo}>Localização {opcional && '(Opcional)'}:</Text>}
             <View>
                 <TextInput onChangeText={onChangeText} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={props.cepOpcional ? "CEP (Opcional)" : "CEP"} keyboardType='numeric' style={styles.campo} />
                 {!opcional && <Text style={styles.asterisco}>*</Text>}
@@ -224,7 +224,8 @@ CampoEnderecoAnimado.propTypes = {
     val6: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     val7: PropTypes.string,
     opcional: PropTypes.bool,
-    cepOpcional: PropTypes.bool
+    cepOpcional: PropTypes.bool,
+    removerTitulo: PropTypes.bool,
 }
 
 export default CampoEnderecoAnimado

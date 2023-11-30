@@ -83,7 +83,7 @@ const Ficha_animal = ({ navigation: { navigate } }) => {
         if (TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) {
             IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID.current, navigate, id);
         } else {
-            navigate('QuestionarioAdocao', { TB_PESSOA_ID: TB_PESSOA_ID.current, id });
+            navigate('QuestAdocao', { TB_PESSOA_ID: TB_PESSOA_ID.current, id });
             // navigate('AlterarCad', { modoAlterar: false });
         }
     }

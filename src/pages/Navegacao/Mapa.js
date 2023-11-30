@@ -5,6 +5,7 @@ import axios from 'axios';
 import { corFundo, corRosaForte, urlAPI } from '../../constants';
 import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
+import CatchError from '../../utils/CatchError';
 
 const Mapa = () => {
   const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
@@ -33,17 +34,21 @@ const Mapa = () => {
   }
 
   const Selecionar = async () => {
-    const response = await axios.get(urlAPI + 'selpontoalimentacao', { signal: controller.signal });
-    const newCoords = response.data.map((item) => {
-      const id = item.TB_PONTO_ALIMENTACAO_ID;
-      const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
-      const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
-      const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
-      const createdAt = item.createdAt;
-      const updatedAt = item.updatedAt;
-      return { latitude, longitude, id, nomePerfil, createdAt, updatedAt };
-    });
-    setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
+    await axios.get(urlAPI + 'selpontoalimentacao', { signal: controller.signal })
+      .then(response => {
+        const newCoords = response.data.map(item => {
+          const id = item.TB_PONTO_ALIMENTACAO_ID;
+          const idPerfil = item.TB_PESSOA_ID;
+          const tipoIdPerfil = item.TB_PESSOA.TB_TIPO_ID;
+          const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
+          const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
+          const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
+          const createdAt = item.createdAt;
+          const updatedAt = item.updatedAt;
+          return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, createdAt, updatedAt };
+        });
+        setPontosAlimentacao([...newCoords]);
+      }).catch(CatchError);
   };
 
   useEffect(() => {

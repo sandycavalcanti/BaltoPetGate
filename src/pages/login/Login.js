@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator, ImageBackgroun
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
-import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corBordaBoxCad } from "../../constants";
+import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corBordaBoxCad, corRosaFraco } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertPro from "react-native-alert-pro";
@@ -148,7 +148,7 @@ const Login = () => {
                 message={textoAlert}
                 showCancel={false}
                 textConfirm="OK"
-                customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, }}
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco }, }}
             />
             {carregando &&
                 <View style={styles.carregandoContainer}>

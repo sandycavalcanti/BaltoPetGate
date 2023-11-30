@@ -50,6 +50,7 @@ CampoSimples.propTypes = {
   placeholder: PropTypes.string,
   keyboardType: PropTypes.string,
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  multiline: PropTypes.bool
 }
 
 export default CampoSimples

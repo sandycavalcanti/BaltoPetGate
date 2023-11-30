@@ -5,25 +5,39 @@ import { corBordaBoxCad, corPlaceholderCad } from '../../constants';
 import PropTypes from 'prop-types';
 
 const BotaoQuantidade = (props) => {
-  const [quantidade, setQuantidade] = useState(0);
+  const defaultNumber = props.defaultValue ? props.defaultValue : 0;
+  const [quantidade, setQuantidade] = useState(defaultNumber);
 
   const aumentarQuantidade = () => {
-    setQuantidade(quantidade + 1);
-    props.set(quantidade + 1);
+    if (!props.limite || quantidade < props.limite) {
+      const novaQuantidade = quantidade + 1;
+      setQuantidade(novaQuantidade);
+      if (props.setRef) {
+        props.setRef.current = novaQuantidade;
+      } else {
+        props.set(novaQuantidade);
+      }
+    }
+
   };
 
   const diminuirQuantidade = () => {
     if (quantidade > 0) {
-      setQuantidade(quantidade - 1);
-      props.set(quantidade - 1);
+      const novaQuantidade = quantidade - 1;
+      setQuantidade(novaQuantidade);
+      if (props.setRef) {
+        props.setRef.current = novaQuantidade;
+      } else {
+        props.set(novaQuantidade);
+      }
     }
   };
 
   return (
     <View style={styles.Container}>
-    <TouchableOpacity style={styles.Menos} onPress={diminuirQuantidade}>
-      <Text style={styles.Texto}>-</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.Menos} onPress={diminuirQuantidade}>
+        <Text style={styles.Texto}>-</Text>
+      </TouchableOpacity>
       <Text style={styles.Texto}>{quantidade}</Text>
       <TouchableOpacity style={styles.Mais} onPress={aumentarQuantidade}>
         <Text style={styles.Texto}>+</Text>
@@ -34,7 +48,7 @@ const BotaoQuantidade = (props) => {
 
 const styles = StyleSheet.create({
   Container: {
-    justifyContent:'space-evenly',
+    justifyContent: 'space-evenly',
     display: 'flex',
     flexDirection: 'row',
     width: '80%',
@@ -46,23 +60,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   Mais: {
-    width:'40%',
+    width: '40%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
   Menos: {
-    width:'40%',
+    width: '40%',
     alignItems: 'center',
     justifyContent: 'space-evenly'
   },
-  Texto:{
+  Texto: {
     color: corPlaceholderCad,
     fontSize: 22
   }
 });
 
 BotaoQuantidade.propTypes = {
-  set: PropTypes.func
+  set: PropTypes.func,
+  setRef: PropTypes.object,
+  limite: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default BotaoQuantidade;

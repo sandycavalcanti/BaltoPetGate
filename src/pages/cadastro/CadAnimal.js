@@ -293,7 +293,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                 </>
             }
             <GroupBox titulo='Localização'>
-                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} />
+                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo />
             </GroupBox>
             <BotaoCheckBox texto='Animal em estado de alerta' valor={alerta} onPress={() => setAlerta(prev => !prev)} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
             <Mensagem texto={message} />

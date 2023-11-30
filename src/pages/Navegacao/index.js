@@ -21,7 +21,7 @@ import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
 import AlterarPerfil from '../cadastro/AlterarPerfil';
 import AlterarPostagem from '../cadastro/AlterarPostagem';
-import QuestionarioAdocao from '../cadastro/QuestAdocao';
+import QuestAdocao from '../cadastro/QuestAdocao';
 import Chat from '../Chat';
 import Teste from '../Teste';
 
@@ -80,7 +80,7 @@ const Navigation = () => {
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
         <Stack.Screen name="AlterarPostagem" component={AlterarPostagem} />
-        <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
+        <Stack.Screen name="QuestAdocao" component={QuestAdocao} />
         <Stack.Screen name="HistChat" component={HistChat} options={{
           gestureDirection: 'vertical',
           transitionSpec: {

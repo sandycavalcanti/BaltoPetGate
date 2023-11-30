@@ -11,6 +11,7 @@ import DecodificarToken from "../../utils/DecodificarToken";
 import FormData from 'form-data';
 import Mensagem from "../../components/cadastro/Mensagem";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
+import CatchError from "../../utils/CatchError";
 
 const CadPostagem = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
@@ -64,17 +65,8 @@ const CadPostagem = ({ navigation }) => {
         setMensagem({ color: '#fff', text: 'Postagem realizada!' });
         setTimeout(() => {
           navigation.goBack();
-        }, 2000);
-      }).catch(error => {
-        if (error.response) {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.error(erro.error, error);
-        } else {
-          console.error(error);
-          setMensagem({ color: 'red', text: 'Houve um erro ao postar' });
-        }
-      })
+        }, 1000);
+      }).catch(error => CatchError(error, false, setMensagem({ color: 'red', text: 'Houve um erro ao postar' })));
     } else {
       ToastAndroid.show('Insira uma imagem ou um comentario', ToastAndroid.SHORT);
     }

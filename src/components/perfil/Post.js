@@ -8,8 +8,9 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
     const dataOriginal = props.data ? props.data.createdAt : new Date();
+    const foiEditado = props.alterado ? props.alterado : props.data && props.data.TB_POSTAGEM_TEXTO_ALTERADO;
     const texto = props.text ? props.text : props.data ? props.data.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO : '';
-    let dataFormatada = urlImg = "";
+    let dataFormatada, urlImg = "";
 
     if (dataOriginal) {
         dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
@@ -32,6 +33,7 @@ const Post = (props) => {
                         <Text style={[styles.Texto, { textAlign: (possuiImg || props.img) ? 'left' : 'center' }]}>{texto}</Text>
                     </View>}
                 <View style={styles.ContainerData}>
+                    <Text style={styles.mensagemEditada}>{foiEditado && '(Editada)'}</Text>
                     <Text style={styles.Data}>{dataFormatada}</Text>
                 </View>
             </View>
@@ -65,10 +67,18 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         borderColor: "#FFBEBE",
         borderTopWidth: 1,
+        flexDirection: 'row',
         alignItems: "flex-end",
+        justifyContent: 'space-between'
     },
     Data: {
         color: "#216357",
+    },
+    mensagemEditada: {
+        fontStyle: 'italic',
+        fontSize: 15,
+        color: 'gray',
+        textAlign: 'center'
     },
     Imagem: {
         width: windowWidth,

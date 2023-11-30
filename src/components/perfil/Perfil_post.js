@@ -32,7 +32,7 @@ const Perfil_post = (props) => {
   const textoConfirmacao = "Deseja desativar " + (tipoAnimal ? 'esse animal?' : 'essa postagem?');
   const aoDesativar = () => {
     props.onRefresh();
-    ToastAndroid.show(tipoAnimal ? 'Animal desativado' : 'Postagem desativada',ToastAndroid.SHORT);
+    ToastAndroid.show(tipoAnimal ? 'Animal desativado' : 'Postagem desativada', ToastAndroid.SHORT);
   }
 
   return (
@@ -63,9 +63,10 @@ const Perfil_post = (props) => {
                 <Divider width={1} color='gray' />
                 {props.pessoal ?
                   <>
-                    <MenuOption onSelect={() => Editar()}>
-                      <Text style={styles.dropdownText}>Editar {tipoAnimal ? 'animal' : 'postagem'}</Text>
-                    </MenuOption>
+                    {props.podeEditar &&
+                      <MenuOption onSelect={() => Editar()}>
+                        <Text style={styles.dropdownText}>Editar {tipoAnimal ? 'animal' : 'postagem'}</Text>
+                      </MenuOption>}
                     <Divider width={1} color='gray' />
                     <MenuOption onSelect={() => setModalDesativarVisible(true)}>
                       <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
@@ -158,6 +159,7 @@ Perfil_post.propTypes = {
   pessoal: PropTypes.bool,
   tipo: PropTypes.string,
   onRefresh: PropTypes.func,
+  podeEditar: PropTypes.bool,
   naoExibirOpcoes: PropTypes.bool
 }
 

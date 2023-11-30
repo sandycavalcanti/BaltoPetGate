@@ -53,13 +53,13 @@ const Animal = ({ navigation: { navigate } }) => {
 
     return (
         <View style={styles.container}>
-            {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+            {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
             <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => {
                 const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
                 const animalId = item.TB_ANIMAL_ID;
                 return (
                     <>
-                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} onRefresh={onRefresh}/>
+                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} onRefresh={onRefresh} podeEditar />
                         <AnimalPost data={item} />
                     </>
                 )
@@ -79,6 +79,11 @@ const styles = StyleSheet.create({
     },
     Lista: {
         width: '100%'
+    },
+    containerCarregando: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 

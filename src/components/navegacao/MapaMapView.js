@@ -11,12 +11,17 @@ const MapaMapView = (props) => {
                 const diferencaEmMilissegundos = new Date() - new Date(coords.updatedAt);
                 const diferencaEmDias = Math.floor(diferencaEmMilissegundos / (1000 * 60 * 60 * 24));
                 const urlImg = urlAPI + 'selpontoalimentacaoimg/' + coords.id;
+                const urlImgPerfil = urlAPI + 'selpessoaimg/' + coords.idPerfil;
+
                 return (
                     <Marker key={index} coordinate={coords} >
                         <Imagem url={urlImg} style={{ borderRadius: 125 }} />
                         <Callout style={styles.containerCallout}>
                             <Text style={styles.titleCallout}>Ponto de Alimentação de:</Text>
-                            <Text style={styles.nameCallout}>{coords.nomePerfil}</Text>
+                            <View style={styles.containerPerfil}>
+                                {/* <Text style={{ height: 50 }}><Imagem url={urlImgPerfil} style={{ borderRadius: 25 }} /></Text> */}
+                                <Text style={styles.nameCallout}>{coords.nomePerfil}</Text>
+                            </View>
                             <Text style={styles.textCallout}>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>
                         </Callout>
                     </Marker>
@@ -43,6 +48,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
     },
+    containerPerfil: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
 });
 
 export default MapaMapView

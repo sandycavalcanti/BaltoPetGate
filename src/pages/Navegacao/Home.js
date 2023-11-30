@@ -54,7 +54,7 @@ const Home = ({ navigation: { navigate } }) => {
         <View style={styles.container}>
           {select.length !== 0 ?
             <>
-              {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+              {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
               <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
                 const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
                 return (
@@ -80,9 +80,6 @@ const Home = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setTemporario(true)}>
               <Text>Ativar a Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate("QuestionarioAdocao")}>
-              <Text>Questionario Adoção</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigate("AlterarCad", { modoAlterar: false })}>
               <Text>Completar Cadastro</Text>
@@ -116,6 +113,11 @@ const styles = StyleSheet.create({
   },
   Lista: {
     width: '100%',
+  },
+  containerCarregando: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   textoPadrao: {
     width: '80%',

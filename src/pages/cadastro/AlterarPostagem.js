@@ -74,7 +74,7 @@ const AlterarPostagem = ({ navigation }) => {
       if (imagem || comentario) {
         const formData = new FormData();
 
-        formData.append('TB_POSTAGEM_TEXTO', comentario);
+        formData.append('TB_POSTAGEM_TEXTO_ALTERADO', comentario);
         formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
         if (imagem) {
           let image = {
@@ -95,17 +95,8 @@ const AlterarPostagem = ({ navigation }) => {
           setMensagem({ color: '#fff', text: 'Postagem editada!' });
           setTimeout(() => {
             navigation.goBack();
-          }, 2000);
-        }).catch(error => {
-          if (error.response) {
-            let erro = error.response.data;
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error(erro.error, error);
-          } else {
-            console.error(error);
-            setMensagem({ color: 'red', text: 'Houve um erro ao postar' });
-          }
-        })
+          }, 1000);
+        }).catch(error => CatchError(error, false, setMensagem({ color: 'red', text: 'Houve um erro ao editar a postagem' })));
       } else {
         ToastAndroid.show('Insira uma imagem ou um comentario', ToastAndroid.SHORT);
       }
@@ -126,9 +117,10 @@ const AlterarPostagem = ({ navigation }) => {
         <>
           <Text style={styles.subtitle}>Pré-visualização:</Text>
           <Perfil_post data={dataPerfilPost} naoExibirOpcoes />
-          <Post text={comentario} img={imagem} />
+          <Post text={comentario} img={imagem} alterado />
         </>}
       <Mensagem mensagem={mensagem} style={styles.subtitle} />
+      <Text style={styles.dica}>Você só poderá editar essa postagem uma vez</Text>
       <BotaoCadastrarAnimado texto="Editar" onPress={Alterar} width={250} />
     </ContainerCadastro>
   );
@@ -166,6 +158,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     margin: 10,
   },
+  dica: {
+    fontSize: 15,
+    color: 'gray',
+    textAlign: 'center'
+  }
 });
 
 export default AlterarPostagem;

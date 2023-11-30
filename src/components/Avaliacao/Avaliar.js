@@ -14,7 +14,6 @@ const Avaliar = (props) => {
   const texto = useRef('')
   const [pessoaNome, setPessoaNome] = useState('');
 
-
   const PegarId = async () => {
     const decodedToken = await DecodificarToken();
     setPessoaNome(decodedToken.TB_PESSOA_NOME_PERFIL);

@@ -4,7 +4,6 @@ import axios from 'axios';
 import CampoMenor from "../../components/FormDiario/CampoMenor";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import GroupBox from "../../components/cadastro/GroupBox";
-import Campo from "../../components/animal/Campo";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import BotaoImg from "../../components/FormDiario/BotaoImg";
 
