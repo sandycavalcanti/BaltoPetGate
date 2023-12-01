@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, Activity
 import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
-import { corBordaBoxCad, urlAPI } from "../constants";
+import { corBordaBoxCad, corRosaFraco, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import axios from "axios";
@@ -11,6 +11,7 @@ import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
 import ModalMensagem from '../components/chat/ModalMensagem';
 import { renderActions, renderBubble, renderChatEmpty, renderComposer, renderCustomView, renderInputToolbar, renderSend, renderSystemMessage, renderTime } from '../components/chat/ChatRenders';
+import AlertPro from 'react-native-alert-pro';
 
 const ActionKind = {
     SEND_MESSAGE: 'SEND_MESSAGE',
@@ -49,6 +50,8 @@ const Chat = () => {
     const [alturaViewRespondendo, setAlturaViewRespondendo] = useState(50);
     const [carregando, setCarregando] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const alertRef = useRef(null);
+    const [textoAlert, setTextoAlert] = useState('');
 
     let user = { _id: TB_PESSOA_IDD.current }
     const [state, dispatch] = useReducer(reducer, {
@@ -309,7 +312,7 @@ const Chat = () => {
                             renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
                             renderSend={props => renderSend(props, editando, respondendo)}
                             renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
-                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
+                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef)}
                             renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
                             keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
@@ -329,6 +332,15 @@ const Chat = () => {
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
                         <StatusBar />
+                        <AlertPro
+                            ref={alertRef}
+                            onConfirm={() => alertRef.current.close()}
+                            title="Arquivo inválido"
+                            message={textoAlert}
+                            showCancel={false}
+                            textConfirm="OK"
+                            customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+                        />
                     </>}
             </View>
         </SafeAreaView>

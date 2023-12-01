@@ -11,6 +11,7 @@ import { Divider } from 'react-native-elements';
 import ModalFiltrarPesquisa from './ModalFiltrarPesquisa';
 import RetornarTipoNome from '../../utils/RetornarTipoNome';
 import RemoverAcentos from '../../utils/RemoverAcentos';
+import CatchError from '../../utils/CatchError';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 function ChecarTiposFiltro(array) {
@@ -69,27 +70,11 @@ const HeaderExplorar = (props) => {
         axios.get(urlAPI + 'selpessoaspesquisa', { signal: controller.signal })
             .then(response => {
                 if (response.data) dadosPessoas.current = response.data;
-            }).catch(error => {
-                if (error.response.data) {
-                    let erro = error.response.data;
-                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                } else {
-                    console.error(error)
-                }
-            });
+            }).catch(CatchError);
         axios.get(urlAPI + 'selanimaispesquisa', { signal: controller.signal })
             .then(response => {
                 if (response.data) dadosAnimais.current = response.data;
-            }).catch(error => {
-                if (error.response.data) {
-                    let erro = error.response.data;
-                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                } else {
-                    console.error(error)
-                }
-            });
+            }).catch(CatchError);
     }
 
     const PegarId = async () => {
@@ -215,7 +200,7 @@ const HeaderExplorar = (props) => {
                 <View style={styles.containerResults}>
                     <ScrollView keyboardShouldPersistTaps='always'>
                         {filtroSelecionar.current ?
-                            usuarios.map((item) => {
+                            usuarios.map(item => {
                                 const urlImg = urlAPI + 'selpessoaimg/' + item.TB_PESSOA_ID;
                                 let tipoNome;
                                 if (item.TB_TIPO_ID != 1) {
@@ -239,7 +224,7 @@ const HeaderExplorar = (props) => {
                                 const urlImg = urlAPI + 'selanimalimg/' + item.TB_ANIMAL_ID;
                                 let tipoNome = item.TB_ANIMAL_ESPECIE == 'CACHORRO' ? 'Cachorro' : 'Gato';
                                 return (
-                                    <Pressable key={item.TB_PESSOA_ID} onPress={() => navigation.navigate('Ficha', { id: item.TB_ANIMAL_ID })}>
+                                    <Pressable key={item.TB_ANIMAL_ID} onPress={() => navigation.navigate('Ficha', { id: item.TB_ANIMAL_ID })}>
                                         <View style={styles.contatoPessoa}>
                                             <Imagem url={urlImg} style={styles.contatoImagem} />
                                             <View>

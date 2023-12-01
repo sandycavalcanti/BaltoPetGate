@@ -10,12 +10,12 @@ const CatchError = (error, mostrar404, functionNonServerError) => {
 
         if (status !== 404 || mostrar404) { // Por padrão, apenas erros diferentes de 404
             ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar:', data.error, error);
+            console.error('Erro ao executar a ação:', data.error, error);
         }
     } else { // Erros não relacionados ao servidor
         console.error(error);
         ToastAndroid.show('Houve um erro', ToastAndroid.SHORT);
-        if(functionNonServerError){
+        if (functionNonServerError) {
             functionNonServerError();
         }
     }

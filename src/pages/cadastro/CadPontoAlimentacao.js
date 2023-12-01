@@ -4,7 +4,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import { Modal, StyleSheet, Text, View, ActivityIndicator, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { corFundo, corFundoCad, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corFundoCad, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import Imagem from '../../components/geral/Imagem';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
@@ -16,6 +16,7 @@ import CalcularDistanciaCoordenadas from '../../utils/CalcularDistanciaCoordenad
 import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
+import AlertPro from 'react-native-alert-pro';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let alert = (_data) => new Promise(res => res);
@@ -35,6 +36,8 @@ const CadPontoAlimento = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005
     })
+    const alertRef = useRef(null);
+    const [textoAlert, setTextoAlert] = useState('');
     const controller = new AbortController();
 
     const PegarLocalizacao = async () => {
@@ -130,8 +133,9 @@ const CadPontoAlimento = () => {
         }
     }
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+
+    const EscolherImagem = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
@@ -139,9 +143,16 @@ const CadPontoAlimento = () => {
         });
 
         if (!result.canceled) {
+            const mensagemArquivo = await VerificarTamanhoImagem(result);
+            if (mensagemArquivo) {
+                setTextoAlert(mensagemArquivo);
+                alertRef.current.open();
+                return
+            }
             setImage(result.assets[0].uri);
         }
     };
+
 
     const onPress = (props) => {
         if (cadastrando) {
@@ -192,7 +203,7 @@ const CadPontoAlimento = () => {
                     <Modal animationType="slide" transparent={false} visible={modalVisible}>
                         <View style={styles.modalContainer}>
                             <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
-                            <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'} />
+                            <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
                             {image &&
                                 <>
                                     <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
@@ -206,6 +217,15 @@ const CadPontoAlimento = () => {
                         </View>
                     </Modal>
                     <DropdownAlert alert={func => (alert = func)} />
+                    <AlertPro
+                        ref={alertRef}
+                        onConfirm={() => alertRef.current.close()}
+                        title="Arquivo inválido"
+                        message={textoAlert}
+                        showCancel={false}
+                        textConfirm="OK"
+                        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+                    />
                 </>
             }
         </View>

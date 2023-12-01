@@ -7,6 +7,8 @@ import BotaoCadastrar from "../cadastro/BotaoCadastrar";
 import { DropdownAlertType } from 'react-native-dropdownalert';
 import CatchError from "../../utils/CatchError";
 import { useNavigation } from "@react-navigation/native";
+import ModalConfirmacao from "../geral/ModalConfirmacao";
+import RetornarTipoNome from "../../utils/RetornarTipoNome";
 
 const Solicitacao = (props) => {
   const navigation = useNavigation();
@@ -17,6 +19,8 @@ const Solicitacao = (props) => {
   const TB_ANIMAL_ID = props.TB_ANIMAL_ID;
   const TB_TIPO_IDD = props.TB_TIPO_IDD;
   const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
+  const tipoDaSolicitacao = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const [rerender, setRerender] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const controller = new AbortController();
@@ -80,6 +84,25 @@ const Solicitacao = (props) => {
     }).catch(CatchError);
   };
 
+  const PressSolicitar = (tipoSolicitacao) => {
+    tipoDaSolicitacao.current = tipoSolicitacao;
+    setModalVisible(true);
+  }
+
+  const RetornarSubTexto = (tipoSolicitacao) => {
+    switch (tipoSolicitacao) {
+      case 1:
+        return 'Ao adotar um animal, você assume um compromisso que exige responsabilidade e atenção'
+      case 2:
+        return 'Ao apertar em Abrigar, você assume a responsabilidade de abrigar o animal'
+      case 3:
+        return 'Ao apertar em Cuidar, você assume a responsabilidade de oferecer tratamentos ao animal'
+    }
+  }
+
+  const textoConfimacaoModal = RetornarTipoNome(tipoDaSolicitacao.current, true);
+  const textoSubTextoModal = RetornarSubTexto(tipoDaSolicitacao.current);
+
   return (
     <>
       <View style={styles.InfoPet}>
@@ -92,20 +115,21 @@ const Solicitacao = (props) => {
         :
         <View style={styles.Botao}>
           {(TB_TIPO_IDD == 1 || TB_TIPO_IDD == 2 || TB_TIPO_IDD == 6) && (!existeAdocao.current ?
-            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(1)} texto="Quero adotar" />
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => PressSolicitar(1)} texto="Quero adotar" />
             :
             <Text style={styles.mensagemFeita}>Solicitação de adoção feita</Text>
           )}
           {(TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4 || TB_TIPO_IDD == 5) && (!existeAbrigo.current ?
-            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(2)} texto="Oferecer abrigo" />
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => PressSolicitar(2)} texto="Oferecer abrigo" />
             :
             <Text style={styles.mensagemFeita}>Solicitação de abrigo feita</Text>
           )}
           {(TB_TIPO_IDD == 2 || TB_TIPO_IDD == 3 || TB_TIPO_IDD == 4) && (!existeTratamento.current ?
-            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => Solicitar(3)} texto="Oferecer tratamentos" />
+            <BotaoCadastrar styleBotao={styles.botaoCad} onPress={() => PressSolicitar(3)} texto="Oferecer tratamentos" />
             :
             <Text style={styles.mensagemFeita}>Solicitação de tratamentos feita</Text>
           )}
+          <ModalConfirmacao texto={`Deseja ${textoConfimacaoModal}?`} subtexto={textoSubTextoModal} sim={textoConfimacaoModal} press={() => Solicitar(tipoDaSolicitacao.current)} val={modalVisible} set={setModalVisible} />
         </View>
       }
     </>

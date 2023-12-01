@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const BotaoSolicitacao = (props) => {
     return (
         <TouchableOpacity {...props} style={[styles.botaocadastro, props.styleBotao]}>
-            <Text style={[styles.textocadastro,props.styleTexto]}>{props.texto ? props.texto : 'Aceitar'}</Text>
+            <Text style={[styles.textocadastro, props.styleTexto]}>{props.texto ? props.texto : 'Aceitar'}</Text>
         </TouchableOpacity>
     )
 }

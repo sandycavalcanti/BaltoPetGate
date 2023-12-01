@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ToastAndroid, TextInput } from "react-native";
+import { View, Text, StyleSheet, ToastAndroid, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import BotaoImg from "../../components/FormDiario/BotaoImg";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import axios from "axios";
-import { corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, urlAPI } from "../../constants";
+import { corFundoCad, corFundoCampoCad, corPlaceholderCad, corRosaFraco, corTextoBotaoCad, urlAPI } from "../../constants";
 import Perfil_post from "../../components/perfil/Perfil_post";
 import Post from "../../components/perfil/Post";
 import DecodificarToken from "../../utils/DecodificarToken";
@@ -12,6 +12,8 @@ import FormData from 'form-data';
 import Mensagem from "../../components/cadastro/Mensagem";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
 import CatchError from "../../utils/CatchError";
+import AlertPro from "react-native-alert-pro";
+import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
 
 const CadPostagem = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
@@ -19,6 +21,8 @@ const CadPostagem = ({ navigation }) => {
   const [imagem, setImagem] = useState(null);
   const [comentario, setComentario] = useState('');
   const [mensagem, setMensagem] = useState({});
+  const alertRef = useRef(null);
+  const [textoAlert, setTextoAlert] = useState('');
 
   const PegarId = async () => {
     const decodedToken = await DecodificarToken();
@@ -31,7 +35,7 @@ const CadPostagem = ({ navigation }) => {
   }, [])
 
   const escolherImagem = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
@@ -39,6 +43,12 @@ const CadPostagem = ({ navigation }) => {
     });
 
     if (!result.canceled) {
+      const mensagemArquivo = await VerificarTamanhoImagem(result);
+      if (mensagemArquivo) {
+        setTextoAlert(mensagemArquivo);
+        alertRef.current.open();
+        return
+      }
       setImagem(result.assets[0].uri);
     }
   };
@@ -90,6 +100,15 @@ const CadPostagem = ({ navigation }) => {
         </>}
       <Mensagem mensagem={mensagem} style={styles.subtitle} />
       <BotaoCadastrarAnimado texto="Postar" onPress={Cadastrar} width={250} />
+      <AlertPro
+        ref={alertRef}
+        onConfirm={() => alertRef.current.close()}
+        title="Arquivo inválido"
+        message={textoAlert}
+        showCancel={false}
+        textConfirm="OK"
+        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+      />
     </ContainerCadastro>
   );
 };

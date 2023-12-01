@@ -4,7 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import BotaoImg from "../../components/FormDiario/BotaoImg";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import axios from "axios";
-import { corFundoCad, corFundoCampoCad, corPlaceholderCad, corTextoBotaoCad, urlAPI } from "../../constants";
+import { corFundoCad, corFundoCampoCad, corPlaceholderCad, corRosaFraco, corTextoBotaoCad, urlAPI } from "../../constants";
 import Perfil_post from "../../components/perfil/Perfil_post";
 import Post from "../../components/perfil/Post";
 import DecodificarToken from "../../utils/DecodificarToken";
@@ -13,6 +13,8 @@ import { useRoute } from "@react-navigation/native";
 import CatchError from "../../utils/CatchError";
 import Mensagem from "../../components/cadastro/Mensagem";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
+import AlertPro from "react-native-alert-pro";
+import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
 
 const AlterarPostagem = ({ navigation }) => {
   const route = useRoute();
@@ -24,6 +26,8 @@ const AlterarPostagem = ({ navigation }) => {
   const [mensagem, setMensagem] = useState({});
   const comentarioOriginal = useRef('');
   const possuiImgOriginal = useRef(false);
+  const alertRef = useRef(null);
+  const [textoAlert, setTextoAlert] = useState('');
   const controller = new AbortController();
 
   const PegarId = async () => {
@@ -57,7 +61,7 @@ const AlterarPostagem = ({ navigation }) => {
   }, [])
 
   const escolherImagem = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
@@ -65,6 +69,12 @@ const AlterarPostagem = ({ navigation }) => {
     });
 
     if (!result.canceled) {
+      const mensagemArquivo = await VerificarTamanhoImagem(result);
+      if (mensagemArquivo) {
+        setTextoAlert(mensagemArquivo);
+        alertRef.current.open();
+        return
+      }
       setImagem(result.assets[0].uri);
     }
   };
@@ -122,6 +132,15 @@ const AlterarPostagem = ({ navigation }) => {
       <Mensagem mensagem={mensagem} style={styles.subtitle} />
       <Text style={styles.dica}>Você só poderá editar essa postagem uma vez</Text>
       <BotaoCadastrarAnimado texto="Editar" onPress={Alterar} width={250} />
+      <AlertPro
+        ref={alertRef}
+        onConfirm={() => alertRef.current.close()}
+        title="Arquivo inválido"
+        message={textoAlert}
+        showCancel={false}
+        textConfirm="OK"
+        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+      />
     </ContainerCadastro>
   );
 };

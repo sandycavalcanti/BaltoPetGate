@@ -4,7 +4,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getLocationAsync, pickImageAsync, takePictureAsync } from './mediaUtils';
 import { AntDesign } from '@expo/vector-icons';
 
-const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle, onSend }) => {
+const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle, onSend, setTextoAlert, alertRef }) => {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const onActionsPress = useCallback(() => {
@@ -21,7 +21,7 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
       async (buttonIndex) => {
         switch (buttonIndex) {
           case 0:
-            pickImageAsync(onSend);
+            pickImageAsync(onSend, setTextoAlert, alertRef);
             return;
           case 1:
             takePictureAsync(onSend);
@@ -44,8 +44,11 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
   }, []);
 
   const handleOnPress = () => {
+    // Outras opções
     // onActionsPress();
-    pickImageAsync(onSend);
+
+    // Apenas carregar imagem
+    pickImageAsync(onSend, setTextoAlert, alertRef);
 
   }
   return (

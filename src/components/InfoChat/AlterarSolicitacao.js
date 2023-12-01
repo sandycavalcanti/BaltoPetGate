@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { urlAPI, corBordaBoxCad, corBotaoNegar } from "../../constants";
+import { urlAPI, corBordaBoxCad, corBotaoNegar, corRosaForte } from "../../constants";
 import Imagem from "../geral/Imagem";
 import BotaoSolicitacao from "./BotaoSolicitacao";
 import { DropdownAlertType } from 'react-native-dropdownalert';
 import CatchError from "../../utils/CatchError";
 import { useNavigation } from "@react-navigation/native";
+import ModalConfirmacao from "../geral/ModalConfirmacao";
 
 const AlterarSolicitacao = (props) => {
   const navigation = useNavigation();
@@ -20,6 +21,9 @@ const AlterarSolicitacao = (props) => {
   const TB_PESSOA_ID = props.TB_PESSOA_ID;
   const TB_ANIMAL_ID = props.TB_ANIMAL_ID;
   const urlAnimal = urlAPI + 'selanimalimg/' + TB_ANIMAL_ID;
+  const tipoDaSolicitacao = useRef(null);
+  const situacaoDaSolicitacao = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const [rerender, setRerender] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const controller = new AbortController();
@@ -56,8 +60,8 @@ const AlterarSolicitacao = (props) => {
       controller.abort();
     })
   }, []);
-  
-  const AlterarSolicitacao = async (tipoSolicitacao, situacao) => {
+
+  const AlterarSituacaoSolicitacao = async (tipoSolicitacao, situacao) => {
     let id;
     dadosSolicitacaoRef.current.map(item => {
       if (item['TB_TIPO_SOLICITACAO_ID'] == tipoSolicitacao) {
@@ -105,6 +109,26 @@ const AlterarSolicitacao = (props) => {
     }).catch(CatchError);
   };
 
+  const PressAlterarSolicitar = (tipoSolicitacao, situacao) => {
+    tipoDaSolicitacao.current = tipoSolicitacao;
+    situacaoDaSolicitacao.current = situacao;
+    setModalVisible(true);
+  }
+
+  const RetornarSubTexto = (tipoSolicitacao) => {
+    switch (tipoSolicitacao) {
+      case 1:
+        return situacaoDaSolicitacao.current == 'APROVADA' ? 'Ao aceitar a solicitação você confirma a adoção deste animal' : 'Ao negar a solicitação você cancela a adoção deste animal'
+      case 2:
+        return situacaoDaSolicitacao.current == 'APROVADA' ? 'Ao aceitar a solicitação você confirma o abrigo deste animal' : 'Ao negar a solicitação você cancela o abrigo deste animal'
+      case 3:
+        return situacaoDaSolicitacao.current == 'APROVADA' ? 'Ao aceitar a solicitação você confirma o tratamento deste animal' : 'Ao negar a solicitação você cancela o tratamento deste animal'
+    }
+  }
+
+  const textoConfimacaoModal = situacaoDaSolicitacao.current == 'APROVADA' ? 'Aceitar' : 'Negar';
+  const textoSubTextoModal = RetornarSubTexto(tipoDaSolicitacao.current);
+
   return (
     <>
       <View style={styles.InfoPet}>
@@ -113,7 +137,7 @@ const AlterarSolicitacao = (props) => {
           <Imagem url={urlAnimal} style={styles.ImagemPet} />
         </TouchableOpacity>
       </View>
-      {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
+      {carregando ? <ActivityIndicator size="large" color={corRosaForte} />
         :
         <>
           {dadosSolicitacaoRef.current.length > 0 ?
@@ -121,8 +145,8 @@ const AlterarSolicitacao = (props) => {
               {existeAdocao.current &&
                 (dadosAdocaoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
                   <View style={styles.Botoes}>
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(1, "APROVADA")} texto="Aceitar solicitação de adoção" />
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(1, "NEGADA")} texto="Negar solicitação de adoção" styleBotao={{ backgroundColor: corBotaoNegar }} />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(1, "APROVADA")} texto="Aceitar solicitação de adoção" />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(1, "NEGADA")} texto="Negar solicitação de adoção" styleBotao={{ backgroundColor: corBotaoNegar }} />
                   </View>
                   :
                   <Text style={styles.Titulo}>Solicitação de adoção finalizada</Text>)
@@ -130,8 +154,8 @@ const AlterarSolicitacao = (props) => {
               {existeAbrigo.current &&
                 (dadosAbrigoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
                   <View style={styles.Botoes}>
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(2, "APROVADA")} texto="Aceitar solicitação de abrigo" />
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(2, "NEGADA")} texto="Negar solicitação de abrigo" styleBotao={{ backgroundColor: corBotaoNegar }} />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(2, "APROVADA")} texto="Aceitar solicitação de abrigo" />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(2, "NEGADA")} texto="Negar solicitação de abrigo" styleBotao={{ backgroundColor: corBotaoNegar }} />
                   </View>
                   :
                   <Text style={styles.Titulo}>Solicitação de abrigo finalizada</Text>)
@@ -139,12 +163,13 @@ const AlterarSolicitacao = (props) => {
               {existeTratamento.current &&
                 (dadosTratamentoRef.current["TB_SOLICITACAO_SITUACAO"] == "EM ANDAMENTO" ?
                   <View style={styles.Botoes}>
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(3, "APROVADA")} texto="Aceitar solicitação de cuidados" />
-                    <BotaoSolicitacao onPress={() => AlterarSolicitacao(3, "NEGADA")} texto="Negar solicitação de cuidados" styleBotao={{ backgroundColor: corBotaoNegar }} />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(3, "APROVADA")} texto="Aceitar solicitação de cuidados" />
+                    <BotaoSolicitacao onPress={() => PressAlterarSolicitar(3, "NEGADA")} texto="Negar solicitação de cuidados" styleBotao={{ backgroundColor: corBotaoNegar }} />
                   </View>
                   :
                   <Text style={styles.Titulo}>Solicitação de cuidados finalizada</Text>)
               }
+              <ModalConfirmacao texto={`Deseja ${textoConfimacaoModal} essa solicitação?`} subtexto={textoSubTextoModal} sim={textoConfimacaoModal} press={() => AlterarSituacaoSolicitacao(tipoDaSolicitacao.current, situacaoDaSolicitacao.current)} val={modalVisible} set={setModalVisible} />
             </>
             :
             <Text style={styles.Titulo}>Nenhuma solicitação feita por enquanto</Text>

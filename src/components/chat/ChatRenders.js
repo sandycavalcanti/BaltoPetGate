@@ -147,7 +147,7 @@ export const renderSend = (props, editando, respondendo) => {
     );
 };
 
-export const renderActions = (props, editando, setTextoDigitado, onSendCustomActions) => {
+export const renderActions = (props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef) => {
     const Fechar = () => {
         editando.current = false;
         setTextoDigitado('');
@@ -157,7 +157,7 @@ export const renderActions = (props, editando, setTextoDigitado, onSendCustomAct
             {editando.current ?
                 <AntDesign name="close" size={35} color="#9e9e9e" style={{ marginLeft: 10, marginBottom: 7 }} onPress={Fechar} />
                 :
-                <CustomActions {...props} onSend={onSendCustomActions} />}
+                <CustomActions {...props} onSend={onSendCustomActions} setTextoAlert={setTextoAlert} alertRef={alertRef} />}
         </>
     )
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { StyleSheet, Dimensions, Text, View, Alert, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
-import { Entypo, AntDesign } from '@expo/vector-icons';
-import { urlAPI } from "../constants";
+import { Entypo, AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { corRosaForte, corRosaFraco, urlAPI } from "../constants";
 import Dropdown from "../components/geral/Dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
@@ -13,6 +13,7 @@ import RetornarTipoNome from "../utils/RetornarTipoNome";
 import DesativarCampo from "../utils/DesativarCampo";
 import Estrelas from "../components/Avaliacao/Estrelas";
 import ModalAvaliacao from "../components/Avaliacao/ModalAvaliacao";
+import ModalAvaliar from "../components/Avaliacao/ModalAvaliar";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -112,8 +113,8 @@ const PerfilLayout = (props) => {
             </View>
             {!props.pessoal &&
               <View>
-                <TouchableOpacity style={styles.buttonSeguir} >
-                  <Text style={[styles.buttonText, { fontSize: 17 }]}>Seguir</Text>
+                <TouchableOpacity style={styles.buttonSeguir}>
+                  <MaterialIcons name="person-add-alt-1" size={35} color='#84B794' />
                 </TouchableOpacity>
               </View>}
           </View>
@@ -123,6 +124,7 @@ const PerfilLayout = (props) => {
             {props.data.TB_PESSOA_BIO && props.data.TB_PESSOA_BIO}
           </Text>
         </View>
+        {/* Botões */}
         <View style={styles.buttons}>
           {props.pessoal ?
             <>
@@ -135,15 +137,7 @@ const PerfilLayout = (props) => {
               <TouchableOpacity style={styles.button} onPress={() => setAvaliar(true)}>
                 <Text style={styles.buttonText}>Avaliar</Text>
               </TouchableOpacity>
-              <Modal visible={avaliar} onTouchOutside={() => setAvaliar(false)}>
-                <View style={styles.ContainerAvaliar} >
-                  <ScrollView style={{ flex: 1 }}>
-                    <View>
-                      <Avaliar TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
-                    </View>
-                  </ScrollView>
-                </View>
-              </Modal>
+              <ModalAvaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
               <TouchableOpacity style={styles.button} onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)}>
                 <Text style={styles.buttonText}>Iniciar Chat</Text>
               </TouchableOpacity>
@@ -239,7 +233,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#448659',
-    fontSize: 16
+    fontSize: 16,
+    textAlign: 'center'
   },
   content: {
     paddingHorizontal: 20,
@@ -250,14 +245,6 @@ const styles = StyleSheet.create({
     color: '#093C4B',
     textAlign: 'justify',
     paddingBottom: 5
-  },
-  ContainerAvaliar: {
-    width: 320,
-    minHeight: 200,
-    backgroundColor: '#EFEFEF',
-    borderColor: '#CF8989',
-    borderWidth: 2,
-    borderRadius: 6
   },
   containerEstrelasSeguindo: {
     flexDirection: 'row',

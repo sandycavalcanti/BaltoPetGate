@@ -148,7 +148,7 @@ const Login = () => {
                 message={textoAlert}
                 showCancel={false}
                 textConfirm="OK"
-                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco }, }}
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
             />
             {carregando &&
                 <View style={styles.carregandoContainer}>

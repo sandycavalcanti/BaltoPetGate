@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, Text, View, Image, ScrollView, TouchableOpacity
 import Imagem from "../../components/geral/Imagem";
 import GroupBox from '../../components/cadastro/GroupBox';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
-import { corFundo, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
@@ -12,6 +12,8 @@ import FormData from 'form-data';
 import CatchError from "../../utils/CatchError";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
 import Mensagem from "../../components/cadastro/Mensagem";
+import AlertPro from "react-native-alert-pro";
+import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -27,6 +29,8 @@ const AlterarPerfil = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState({});
+  const alertRef = useRef(null);
+  const [textoAlert, setTextoAlert] = useState('');
   const controller = new AbortController();
 
   const PegarId = async () => {
@@ -59,7 +63,7 @@ const AlterarPerfil = ({ navigation }) => {
   }, []);
 
   const EscolherImagem = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
@@ -67,6 +71,12 @@ const AlterarPerfil = ({ navigation }) => {
     });
 
     if (!result.canceled) {
+      const mensagemArquivo = await VerificarTamanhoImagem(result);
+      if (mensagemArquivo) {
+        setTextoAlert(mensagemArquivo);
+        alertRef.current.open();
+        return
+      }
       setImage(result.assets[0].uri);
     }
   };
@@ -136,6 +146,15 @@ const AlterarPerfil = ({ navigation }) => {
                 </GroupBox>}
               <Mensagem mensagem={mensagem} style={styles.subtitle} />
               <BotaoCadastrarAnimado texto="Confirmar alterações" onPress={Alterar} width={300} />
+              <AlertPro
+                ref={alertRef}
+                onConfirm={() => alertRef.current.close()}
+                title="Arquivo inválido"
+                message={textoAlert}
+                showCancel={false}
+                textConfirm="OK"
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+              />
             </View>
           </>
         }
