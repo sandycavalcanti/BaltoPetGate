@@ -46,7 +46,7 @@ const CampoNumFormatadoAnimado = (props) => {
                 maxLength={tipo == 'cpf' ? 14 : tipo == 'crmv' ? 7 : tipo == 'cnpj' ? 18 : tipo == 'tel' ? 16 : null}
                 keyboardType='numeric'
                 value={texto}
-                defaultValue={props.val}
+                defaultValue={props.val?.toString()}
             />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
         </Animated.View>

@@ -3,9 +3,9 @@ import { StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 're
 import { useRoute } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import GroupBox from '../../components/cadastro/GroupBox';
-import RadioButton from '../../components/QuestAdocao/RadioButton';
+import RadioButton from '../../components/cadastro/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
-import BotaoQuantidade from '../../components/QuestAdocao/BotaoQuantidade';
+import BotaoQuantidade from '../../components/cadastro/BotaoQuantidade';
 import { corBordaBoxCad, corRosaFraco, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
@@ -13,10 +13,11 @@ import IniciarChat from '../../utils/IniciarChat';
 import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 import AlertPro from 'react-native-alert-pro';
 import CatchError from '../../utils/CatchError';
+import Mensagem from '../../components/cadastro/Mensagem';
 
-const QuestAdocao = ({ navigation: { navigate } }) => {
+const QuestAdocao = ({ navigation }) => {
     const route = useRoute();
-    const { TB_PESSOA_ID, id } = route.params;
+    const { TB_PESSOA_ID, TB_ANIMAL_ID } = route.params;
     const TB_PESSOA_IDD = useRef(null);
 
     const moradia = useRef('');
@@ -30,31 +31,28 @@ const QuestAdocao = ({ navigation: { navigate } }) => {
     const alertRef = useRef(null);
     const [textoAlert, setTextoAlert] = useState('');
     const [carregando, setCarregando] = useState(true);
+    const [mensagem, setMensagem] = useState({});
     const controller = new AbortController();
 
-    const PegarId = async () => {
+    const Selecionar = async () => {
         const decodedToken = await DecodificarToken();
         TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
-    }
-
-    const Selecionar = () => {
         axios.post(urlAPI + 'selpessoa/filtrar', {
-            TB_PESSOA_ID
+            TB_PESSOA_ID: TB_PESSOA_IDD.current
         }).then(response => {
             const dados = response.data[0];
             moradia.current = dados.TB_PESSOA_ANIMAL_CASA;
             espaco.current = dados.TB_PESSOA_ANIMAL_ESPACO;
-            passear.current = dados.TB_PESSOA_ANIMAL_PASSEAR;
+            passear.current = dados.TB_PESSOA_ANIMAL_PASSEAR ? dados.TB_PESSOA_ANIMAL_PASSEAR : 0;
             ausencia.current = dados.TB_PESSOA_ANIMAL_AUSENCIA;
             ciente.current = dados.TB_PESSOA_ANIMAL_FAMILIA;
-            quantidade.current = dados.TB_PESSOA_ANIMAL_QUANTIDADE;
+            quantidade.current = dados.TB_PESSOA_ANIMAL_QUANTIDADE ? dados.TB_PESSOA_ANIMAL_QUANTIDADE : 0;
             acessoRua.current = dados.TB_PESSOA_ANIMAL_RUA;
             setCarregando(false);
         }).catch(CatchError)
     }
 
     useEffect(() => {
-        PegarId();
         Selecionar();
         return (() => {
             controller.abort();
@@ -62,7 +60,7 @@ const QuestAdocao = ({ navigation: { navigate } }) => {
     }, []);
 
     const Alterar = async () => {
-        const camposObrigatorios = [moradia.current, espaco.current, passear.current, ausencia.current, acessoRua.current, ciente.current, quantidade.current];
+        const camposObrigatorios = [ciente.current, moradia.current, passear.current, espaco.current, ausencia.current, acessoRua.current, quantidade.current];
         const mensagemErro = ValidarCampos(camposObrigatorios);
         if (mensagemErro) {
             setTextoAlert(mensagemErro);
@@ -74,7 +72,7 @@ const QuestAdocao = ({ navigation: { navigate } }) => {
 
     const ValidarCampos = (array) => {
         if (array.some(campo => campo === undefined || campo === '' || campo === null)) {
-            return mensagemErro = "Complete todos os campos obrigatórios.";
+            return "Complete todos os campos obrigatórios.";
         }
     }
 
@@ -89,7 +87,10 @@ const QuestAdocao = ({ navigation: { navigate } }) => {
             TB_PESSOA_ANIMAL_RUA: acessoRua.current,
             TB_PESSOA_ANIMAL_QUANTIDADE: quantidade.current,
         }).then(response => {
-            IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID, navigate, id)
+            setMensagem({ color: '#fafafa', text: 'Questionário respondido!' })
+            setTimeout(() => {
+                IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID, navigation, TB_ANIMAL_ID, true)
+            }, 1000);
         }).catch(CatchError);
     };
 
@@ -123,6 +124,7 @@ const QuestAdocao = ({ navigation: { navigate } }) => {
                     <GroupBox titulo='Quantos animais você possui em sua casa?' >
                         <BotaoQuantidade setRef={quantidade} limite={300} defaultValue={quantidade.current} />
                     </GroupBox>
+                    <Mensagem mensagem={mensagem} />
                     <BotaoCadastrarAnimado onPress={Alterar} texto='Enviar' width={350} />
                     <AlertPro
                         ref={alertRef}

@@ -86,7 +86,7 @@ const CadConta = () => {
         }
 
         let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
-        
+
         if (!mensagemErro) {
             if (tentativas.current == 0)
                 InserirDados();

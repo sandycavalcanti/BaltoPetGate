@@ -34,7 +34,7 @@ const CampoSimplesAnimado = (props) => {
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
                 keyboardType={props.keyboardType}
-                defaultValue={props.val}
+                defaultValue={props.val?.toString()}
                 multiline={props.multiline}
             />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}

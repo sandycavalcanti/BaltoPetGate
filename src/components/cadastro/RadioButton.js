@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { corBotaoCad, corPlaceholderCad } from '../../constants';
 import PropTypes from 'prop-types';
@@ -7,7 +7,7 @@ const RadioButton = (props) => {
   const options = props.opcoes;
   const defaultValue = (props.defaultValue != null || props.defaultValue != undefined) ? props.defaultValue : null;
   const [selectedOption, setSelectedOption] = useState(defaultValue);
-
+  
   const handleOptionPress = (option) => {
     setSelectedOption(option);
     if (props.setRef) {

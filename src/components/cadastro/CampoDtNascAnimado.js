@@ -67,7 +67,7 @@ const CampoDtNascAnimado = (props) => {
                 maxLength={10}
                 keyboardType='numeric'
                 value={texto}
-                defaultValue={props.val}
+                defaultValue={props.val?.toString()}
             />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
         </Animated.View>

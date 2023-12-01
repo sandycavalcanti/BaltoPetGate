@@ -6,7 +6,7 @@ const Mensagem = (props) => {
 
     return (
         <>
-            {mensagem && <Text style={[{ color: mensagem.color, fontSize: 16 }, props.style]}>{mensagem.text}</Text>}
+            {mensagem && <Text style={[{ color: mensagem.color, fontSize: 18 }, props.style]}>{mensagem.text}</Text>}
         </>
     )
 }

@@ -1,133 +1,132 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
-import CampoSimples from '../../components/cadastro/CampoSimples';
-import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
-import CampoTelefone from '../../components/cadastro/CampoTelefone';
-import CampoRede from '../../components/cadastro/CampoRede';
-import CampoEndereco from '../../components/cadastro/CampoEndereco';
 import GroupBox from '../../components/cadastro/GroupBox';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
-import CampoDtNasc from '../../components/cadastro/CampoDtNasc';
-import CampoNumFormatado from '../../components/cadastro/CampoNumFormatado';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
-import { corBordaBoxCad, urlAPI } from '../../constants';
+import { corBordaBoxCad, corRosaFraco, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import { useRoute } from '@react-navigation/native';
 import Mensagem from '../../components/cadastro/Mensagem';
+import CampoSimplesAnimado from '../../components/cadastro/CampoSimplesAnimado';
+import CampoNumFormatadoAnimado from '../../components/cadastro/CampoNumFormatadoAnimado';
+import CampoDtNascAnimado from '../../components/cadastro/CampoDtNascAnimado';
+import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
+import CatchError from '../../utils/CatchError';
+import CampoEnderecoAnimado from '../../components/cadastro/CampoEnderecoAnimado';
+import AlertPro from 'react-native-alert-pro';
 
-let TB_PESSOA_IDD;
-
-const AlterarCad = ({ navigation: { navigate } }) => {
+const AlterarCad = ({ navigation }) => {
   const route = useRoute();
-  const { modoAlterar } = route.params;
+  const { modoAlterar, TB_PESSOA_ID, TB_ANIMAL_ID } = route.params;
 
-  const [mensagem, setMensagem] = useState('');
-
-  const [email, setEmail] = useState('');
-  const [dtNasc, setDtNasc] = useState();
-  const [nome, setNome] = useState('');
-  const [cpf, setCpf] = useState();
-  const [telefone1, setTelefone1] = useState();
-  const [telefone2, setTelefone2] = useState();
-  const [whatsapp, setWhatsapp] = useState();
-  const [cep, setCep] = useState('');
-  const [uf, setUf] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [bairro, setBairro] = useState('');
-  const [rua, setRua] = useState('');
-  const [numero, setNumero] = useState();
-  const [complemento, setComplemento] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [facebook, setFacebook] = useState('');
+  const TB_PESSOA_IDD = useRef('');
+  const email = useRef('');
+  const dtNasc = useRef();
+  const nome = useRef('');
+  const cpf = useRef();
+  const telefone1 = useRef();
+  const telefone2 = useRef();
+  const whatsapp = useRef();
+  const cep = useRef('');
+  const uf = useRef('');
+  const cidade = useRef('');
+  const bairro = useRef('');
+  const rua = useRef('');
+  const numero = useRef();
+  const complemento = useRef('');
+  const instagram = useRef('');
+  const facebook = useRef('');
+  const [mensagem, setMensagem] = useState({});
+  const [carregando, setCarregando] = useState(true);
+  const alertRef = useRef(null);
+  const [textoAlert, setTextoAlert] = useState('');
   const controller = new AbortController();
 
   const Alterar = async () => {
     let camposObrigatorios = [];
-    if (modoAlterarCad) {
-      camposObrigatorios = [email, dtNasc, nome, cpf, telefone1, whatsapp, uf, cidade, bairro, rua, numero];
+    if (!modoAlterar) {
+      camposObrigatorios = [email.current, dtNasc.current, nome.current, cpf.current, telefone1.current, whatsapp.current, uf.current, cidade.current, bairro.current, rua.current, numero.current];
     }
     const camposCadastro = {
-      email, nome, cep, uf, cidade, bairro, rua, numero, complemento,
-      dtNasc, cpf, facebook, instagram, whatsapp, telefone1, telefone2
+      email: email.current, nome: nome.current, cep: cep.current, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current, numero: numero.current, complemento: complemento.current,
+      dtNasc: dtNasc.current, cpf: cpf.current, facebook: facebook.current, instagram: instagram.current, whatsapp: whatsapp.current, telefone1: telefone1.current, telefone2: telefone2.current
     }
-    let mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
+    const mensagemErro = ValidarCamposCad(camposObrigatorios, camposCadastro);
     if (!mensagemErro) {
       InserirDados();
     } else {
-      alert(mensagemErro);
+      setTextoAlert(mensagemErro);
+      alertRef.current.open();
     }
   }
 
-  let info = [];
-
   const PegarInfo = async () => {
     const decodedToken = await DecodificarToken();
-    TB_PESSOA_IDD = decodedToken.TB_PESSOA_IDD;
-    await axios.post(urlAPI + 'selpessoa/filtrar', {
-      TB_PESSOA_ID: TB_PESSOA_IDD
-    }, { signal: controller.signal }).then(response => {
-      info = response.data[0];
-      setNome(info.TB_PESSOA_NOME);
-      setEmail(info.TB_PESSOA_EMAIL);
-      setDtNasc(info.TB_PESSOA_DT_NASC);
-      setCpf(info.TB_PESSOA_CPF);
-      setTelefone1(info.TB_PESSOA_TELEFONE1);
-      setTelefone2(info.TB_PESSOA_TELEFONE2);
-      setWhatsapp(info.TB_PESSOA_WHATSAPP);
-      setCep(info.TB_PESSOA_CEP);
-      setUf(info.TB_PESSOA_UF);
-      setCidade(info.TB_PESSOA_CIDADE);
-      setBairro(info.TB_PESSOA_BAIRRO);
-      setRua(info.TB_PESSOA_RUA);
-      setNumero(info.TB_PESSOA_NUMERO);
-      setComplemento(info.TB_PESSOA_COMPLEMENTO);
-      setInstagram(info.TB_PESSOA_INSTAGRAM);
-      setFacebook(info.TB_PESSOA_FACEBOOK);
-      setCarregando(false);
-    }).catch(error => {
-      let erro = error.response.data.message;
-      console.error('Erro ao selecionar:', erro);
-    })
+    TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
+    axios.post(urlAPI + 'selpessoa/filtrar', {
+      TB_PESSOA_ID: TB_PESSOA_IDD.current
+    }, { signal: controller.signal })
+      .then(response => {
+        const info = response.data[0];
+        nome.current = info.TB_PESSOA_NOME;
+        email.current = info.TB_PESSOA_EMAIL;
+        dtNasc.current = info.TB_PESSOA_DT_NASC;
+        cpf.current = info.TB_PESSOA_CPF;
+        telefone1.current = info.TB_PESSOA_TELEFONE1;
+        telefone2.current = info.TB_PESSOA_TELEFONE2;
+        whatsapp.current = info.TB_PESSOA_WHATSAPP;
+        cep.current = info.TB_PESSOA_CEP;
+        uf.current = info.TB_PESSOA_UF;
+        cidade.current = info.TB_PESSOA_CIDADE;
+        bairro.current = info.TB_PESSOA_BAIRRO;
+        rua.current = info.TB_PESSOA_RUA;
+        numero.current = info.TB_PESSOA_NUMERO;
+        complemento.current = info.TB_PESSOA_COMPLEMENTO;
+        instagram.current = info.TB_PESSOA_INSTAGRAM;
+        facebook.current = info.TB_PESSOA_FACEBOOK;
+        setCarregando(false);
+      }).catch(CatchError)
   }
 
   const InserirDados = async () => {
-    const url = urlAPI + 'altpessoa/' + TB_PESSOA_IDD;
+    const url = urlAPI + 'altpessoa/' + TB_PESSOA_IDD.current;
     await axios.put(url, {
-      TB_PESSOA_NOME: nome,
-      TB_PESSOA_EMAIL: email,
-      TB_PESSOA_CEP: cep,
-      TB_PESSOA_UF: uf,
-      TB_PESSOA_CIDADE: cidade,
-      TB_PESSOA_BAIRRO: bairro,
-      TB_PESSOA_RUA: rua,
-      TB_PESSOA_NUMERO: numero,
-      TB_PESSOA_COMPLEMENTO: complemento,
-      TB_PESSOA_DT_NASC: dtNasc,
-      TB_PESSOA_CPF: cpf,
-      TB_PESSOA_WHATSAPP: whatsapp,
-      TB_PESSOA_INSTAGRAM: instagram,
-      TB_PESSOA_FACEBOOK: facebook,
-      TB_PESSOA_TELEFONE1: telefone1,
-      TB_PESSOA_TELEFONE2: telefone2
+      TB_PESSOA_NOME: nome.current,
+      TB_PESSOA_EMAIL: email.current,
+      TB_PESSOA_CEP: cep.current,
+      TB_PESSOA_UF: uf.current,
+      TB_PESSOA_CIDADE: cidade.current,
+      TB_PESSOA_BAIRRO: bairro.current,
+      TB_PESSOA_RUA: rua.current,
+      TB_PESSOA_NUMERO: numero.current,
+      TB_PESSOA_COMPLEMENTO: complemento.current,
+      TB_PESSOA_DT_NASC: dtNasc.current,
+      TB_PESSOA_CPF: cpf.current,
+      TB_PESSOA_WHATSAPP: whatsapp.current,
+      TB_PESSOA_INSTAGRAM: instagram.current,
+      TB_PESSOA_FACEBOOK: facebook.current,
+      TB_PESSOA_TELEFONE1: telefone1.current,
+      TB_PESSOA_TELEFONE2: telefone2.current,
     }).then(response => {
-      navigate('QuestionarioAdocao');
-    }).catch(error => {
-      let erro = error.response.data.message;
-      ToastAndroid.show(erro, ToastAndroid.SHORT);
-      setMensagem(erro);
-    })
+      setMensagem({ color: '#fafafa', text: 'Informações alteradas!' })
+      setTimeout(() => {
+        if (modoAlterar) {
+          navigation.goBack();
+        } else {
+          navigation.navigate('QuestAdocao', { TB_PESSOA_ID, TB_ANIMAL_ID });
+        }
+      }, 1000);
+    }).catch(CatchError)
   }
-
-  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     PegarInfo();
     return (() => {
       controller.abort();
-  })
+    })
   }, []);
-
+  
   return (
     <ContainerCadastro titulo={modoAlterar ? "Alterar informações" : "Complete seu cadastro"}>
       {carregando ?
@@ -136,21 +135,33 @@ const AlterarCad = ({ navigation: { navigate } }) => {
         <>
           <GroupBox titulo="Informações pessoais">
             {!modoAlterar && <Text style={styles.titulocampo}>Confirme ou complete suas informações</Text>}
-            <CampoSimples set={setNome} placeholder="Nome Completo" val={nome} opcional={modoAlterar} />
-            <CampoSimples set={setEmail} placeholder="Email" val={email} opcional={modoAlterar} />
-            <CampoDtNasc set={setDtNasc} val={dtNasc} opcional={modoAlterar} />
-            <CampoNumFormatado set={setCpf} tipo='cpf' val={cpf} opcional={modoAlterar} />
+            <CampoSimplesAnimado setRef={nome} placeholder="Nome Completo" val={nome.current} opcional={modoAlterar} />
+            <CampoSimplesAnimado setRef={email} placeholder="Email" val={email.current} opcional={modoAlterar} />
+            <CampoDtNascAnimado setRef={dtNasc} val={dtNasc.current} opcional={modoAlterar} />
+            <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' val={cpf.current} opcional={modoAlterar} />
           </GroupBox>
           <GroupBox titulo="Informações de endereço">
-            <CampoEndereco val1={cep} val2={uf} val3={cidade} val4={bairro} val5={rua} val6={numero} val7={complemento} obrigatorio={modoAlterar ? false : true} opcional={modoAlterar ? true : false}
-              set1={setCep} set2={setUf} set3={setCidade} set4={setBairro} set5={setRua} set6={setNumero} set7={setComplemento} />
+            <CampoEnderecoAnimado val1={cep.current} val2={uf.current} val3={cidade.current} val4={bairro.current} val5={rua.current} val6={numero.current} val7={complemento.current}
+              setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} removerTitulo opcional={modoAlterar} />
           </GroupBox>
           <GroupBox titulo="Informações de contato">
-            <CampoTelefone set1={setTelefone1} set2={setTelefone2} set3={setWhatsapp} val1={telefone1} val2={telefone2} val3={whatsapp} opcional={modoAlterar ? true : false} />
-            <CampoRede set1={setInstagram} set2={setFacebook} opcional val1={instagram} val2={facebook} />
+            <CampoNumFormatadoAnimado setRef={telefone1} tipo='tel' val={telefone1.current} placeholder={'Telefone de contato'} opcional={modoAlterar} />
+            <CampoNumFormatadoAnimado setRef={telefone2} tipo='tel' val={telefone2.current} placeholder={modoAlterar ? 'Outro Telefone' : 'Outro Telefone (Opcional)'} opcional />
+            <CampoNumFormatadoAnimado setRef={whatsapp} tipo='tel' val={whatsapp.current} placeholder={'WhatsApp'} opcional={modoAlterar} />
+            <CampoSimplesAnimado setRef={instagram} val={instagram.current} placeholder={"Instagram"} opcional />
+            <CampoSimplesAnimado setRef={facebook} val={facebook.current} placeholder={"Link do Facebook"} opcional />
           </GroupBox>
-          <Mensagem texto={mensagem} />
-          <BotaoCadastrar onPress={Alterar} texto={modoAlterar ? "Alterar" : "Continuar"} />
+          <Mensagem mensagem={mensagem} />
+          <BotaoCadastrarAnimado onPress={Alterar} texto={modoAlterar ? "Alterar" : "Continuar"} width={300} />
+          <AlertPro
+            ref={alertRef}
+            onConfirm={() => alertRef.current.close()}
+            title="Insira seu email e senha."
+            message={textoAlert}
+            showCancel={false}
+            textConfirm="OK"
+            customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+          />
         </>}
     </ContainerCadastro>
   )
@@ -162,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: '#fff',
     textAlign: 'center',
-  }
+  },
 });
 
 export default AlterarCad

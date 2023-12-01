@@ -8,8 +8,8 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
     const dataOriginal = props.data ? props.data.createdAt : new Date();
-    const foiEditado = props.alterado ? props.alterado : props.data && props.data.TB_POSTAGEM_TEXTO_ALTERADO;
-    const texto = props.text ? props.text : props.data ? props.data.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO : '';
+    const foiEditado = props.alterado ? props.alterado : props.data?.TB_POSTAGEM_TEXTO_ALTERADO;
+    const texto = props.text ? props.text : props.data?.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO;
     let dataFormatada, urlImg = "";
 
     if (dataOriginal) {

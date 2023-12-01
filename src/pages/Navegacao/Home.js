@@ -71,7 +71,7 @@ const Home = ({ navigation: { navigate } }) => {
         </View>
       ) : (
         <ScrollView style={{ flex: 1 }}>
-          <SafeAreaView style={styles.containertemp}>
+          <SafeAreaView style={{ backgroundColor: corFundoCad, alignItems: "center", justifyContent: "center", rowGap: 5, width: "100%", minHeight: windowHeight - 131 }}>
             <TouchableOpacity onPress={() => navigate("Cadastroformulariodiario")}>
               <Text>form diario</Text>
             </TouchableOpacity>
@@ -81,20 +81,9 @@ const Home = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={() => setTemporario(true)}>
               <Text>Ativar a Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate("AlterarCad", { modoAlterar: false })}>
-              <Text>Completar Cadastro</Text>
+            <TouchableOpacity onPress={() => navigate("Teste")}>
+              <Text>Teste</Text>
             </TouchableOpacity>
-            <View style={{ alignItems: "center", justifyContent: "center", rowGap: 5, marginTop: 15 }}>
-              <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                Telas temporárias e de teste:
-              </Text>
-              <TouchableOpacity onPress={() => navigate("Teste")}>
-                <Text>Teste</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigate("uploadimg")}>
-                <Text>Upload Img</Text>
-              </TouchableOpacity>
-            </View>
           </SafeAreaView>
         </ScrollView>
       )}
@@ -124,14 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     color: '#fff',
-  },
-  containertemp: {
-    backgroundColor: corFundoCad,
-    alignItems: "center",
-    justifyContent: "center",
-    rowGap: 5,
-    width: "100%",
-    minHeight: windowHeight - 131,
   },
 });
 

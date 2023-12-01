@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 
 const CampoSimples = (props) => {
   const onChangeText = (text) => {
-    if(props.set){
+    if (props.set) {
       props.set(text)
-    } else if(props.setRef){
+    } else if (props.setRef) {
       props.setRef.current = text;
     }
   }
-  
+
   return (
     <View style={styles.containercampo}>
       <TextInput onChangeText={onChangeText} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
