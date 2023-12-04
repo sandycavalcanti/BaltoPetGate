@@ -1,3 +1,4 @@
+// Função que valida se as informações fornecidas pelo usuário nos campos estão válidas
 export default function ValidarCamposCad(camposObrigatorios, dados) {
     let mensagemErro = "";
     const criteriosEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

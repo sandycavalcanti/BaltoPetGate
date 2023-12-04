@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Dimensions } from "react-native";
 import { memo, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { urlAPI } from "../../constants";
@@ -7,12 +7,14 @@ import axios from "axios";
 import Imagem from "../geral/Imagem";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
+import CatchError from "../../utils/CatchError";
 
-const AnimalPost = memo((props) => {
+const AnimalPost = (props) => {
   const navigation = useNavigation();
   const dataOriginal = props.data.createdAt;
   const urlImg = urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID;
   let dataFormatada = "";
+  const controller = new AbortController();
 
   if (dataOriginal && !isNaN(new Date(dataOriginal))) {
     dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
@@ -21,20 +23,17 @@ const AnimalPost = memo((props) => {
   const [temperamento, setTemperamento] = useState([])
 
   const Selecionar = () => {
-    axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID)
+    axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID, { signal: controller.signal })
       .then(response => {
         setTemperamento(response.data);
-      }).catch(error => {
-        if (error.response.status !== 404) {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.log('Erro ao selecionar:', erro.error);
-        }
-      })
+      }).catch(CatchError)
   }
 
   useEffect(() => {
     Selecionar();
+    return (() => {
+      controller.abort();
+    })
   }, []);
 
   return (
@@ -61,7 +60,7 @@ const AnimalPost = memo((props) => {
       </View>
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   profileContainer: {
@@ -131,4 +130,4 @@ AnimalPost.propTypes = {
   data: PropTypes.object
 }
 
-export default AnimalPost;
+export default  memo(AnimalPost);

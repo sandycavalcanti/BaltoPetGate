@@ -3,7 +3,6 @@ import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
 import TextosOpcionais from "../components/ficha/TextosOpcionais";
-import BotaoCadastrar from "../components/cadastro/BotaoCadastrar";
 import { corBordaBoxCad, corFundo, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState, useRef } from "react";
@@ -12,22 +11,24 @@ import DecodificarToken from "../utils/DecodificarToken";
 import FormatarTextoBanco from "../utils/FormatarTextoBanco";
 import IniciarChat from "../utils/IniciarChat";
 import CatchError from "../utils/CatchError";
+import BotaoCadastrarAnimado from "../components/cadastro/BotaoCadastrarAnimado";
+import Lightbox from 'react-native-lightbox-v2'
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
-function Ficha_animal({ navigation: { navigate } }) {
+const Ficha_animal = ({ navigation: { navigate } }) => {
     const route = useRoute();
     const { id } = route.params;
     const TB_TIPO_IDD = useRef(null);
     const TB_PESSOA_IDD = useRef(null);
     const TB_PESSOA_ID = useRef(null);
     const tipoIdade = useRef('');
-
     const select = useRef([]);
     const temperamento = useRef([]);
     const situacao = useRef([]);
     const trauma = useRef([]);
     const pessoal = useRef(false);
+    const urlImg = urlAPI + 'selanimalimg/' + id;
     const [carregando, setCarregando] = useState(true);
     const controller = new AbortController();
 
@@ -77,29 +78,31 @@ function Ficha_animal({ navigation: { navigate } }) {
         })
     }, [])
 
-    const urlImg = urlAPI + 'selanimalimg/' + id;
-
+    // Função botão, se o usuário for um usuário comum, navegar para AlterarCad, se não, iniciar o chat direto
     const TenhoInteresse = () => {
         if (TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) {
             IniciarChat(TB_PESSOA_IDD.current, TB_PESSOA_ID.current, navigate, id);
         } else {
-            navigate('QuestionarioAdocao', { TB_PESSOA_ID: TB_PESSOA_ID.current, id });
-            // navigate('AlterarCad', { modoAlterar: false });
+            navigate('AlterarCad', { modoAlterar: false, TB_PESSOA_ID: TB_PESSOA_ID.current, TB_ANIMAL_ID: id });
         }
     }
 
     return (
         <ScrollView>
             <View style={styles.Container}>
-                <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
+                <Lightbox activeProps={{ style: styles.imageActive }}>
+                    <Image style={styles.Imagem} resizeMode='cover' source={{ uri: urlImg }} />
+                </Lightbox>
                 {carregando ?
                     <ActivityIndicator size="large" color={corBordaBoxCad} style={{ marginTop: 20 }} />
                     :
                     <>
+                        {/* Nome e porte */}
                         <View style={styles.Conjunto1}>
                             <TextoComum textoTitulo='Nome:' textoDescricao={select.current.TB_ANIMAL_NOME} />
                             <TextoComum textoTitulo='Porte:' textoDescricao={FormatarTextoBanco(select.current.TB_ANIMAL_PORTE)} />
                         </View>
+                        {/* Caixa informações */}
                         <View style={styles.Conjunto2}>
                             <View style={{ flex: 1, alignItems: 'center' }}>
                                 <TextoComum textoTitulo={select.current.TB_ANIMAL_PESO} textoDescricao='Kg' />
@@ -111,6 +114,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                                 <TextoComum textoTitulo={select.current.TB_ANIMAL_IDADE} textoDescricao={tipoIdade.current} />
                             </View>
                         </View>
+                        {/* Itens associativos */}
                         {temperamento.current.length !== 0 &&
                             <View style={styles.Conjunto3}>
                                 <TextoComum textoTitulo='Temperamento:' />
@@ -146,6 +150,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                                 <TextoComum textoTitulo='Cuidado:' />
                                 <TextoMultiplo textoMultiplo={select.current.TB_ANIMAL_CUIDADO_ESPECIAL} />
                             </View>}
+                        {/* Chips rosas */}
                         <View style={styles.Conjunto4}>
                             {select.current.TB_ANIMAL_CASTRADO == 'SIM' &&
                                 <TextosOpcionais textosOpcionais='Castrado(a)' />}
@@ -154,12 +159,13 @@ function Ficha_animal({ navigation: { navigate } }) {
                             {select.current.TB_ANIMAL_MICROCHIP == 'SIM' &&
                                 <TextosOpcionais textosOpcionais='Microchipado(a)' />}
                         </View>
+                        {/* Descrição */}
                         <View style={styles.GroupBox}>
                             <Text style={styles.Titulo}>Descrição</Text>
                             <TextoMenor textoDescricao={select.current.TB_ANIMAL_DESCRICAO} />
-                            {/* <TextoMenor textoTitulo='Cor(es):' textoDescricao='Cores' /> */}
                             <TextoMenor textoTitulo='Local do resgate:' textoDescricao={select.current.TB_ANIMAL_LOCAL_RESGATE} />
                         </View>
+                        {/* Localização */}
                         <View style={styles.GroupBox}>
                             <Text style={styles.Titulo}>Localização</Text>
                             <View style={styles.GroupBox2}>
@@ -175,7 +181,7 @@ function Ficha_animal({ navigation: { navigate } }) {
                             </View>
                         </View>
                         {!pessoal.current && <View style={styles.ConjuntoBotao}>
-                            <BotaoCadastrar onPress={TenhoInteresse} texto="Tenho interesse" />
+                            <BotaoCadastrarAnimado onPress={TenhoInteresse} texto="Tenho interesse" width={300} />
                         </View>}
                     </>
                 }
@@ -241,7 +247,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingLeft: 10,
         backgroundColor: corFundo,
-
     },
     Barras: {
         flex: 1,
@@ -275,8 +280,12 @@ const styles = StyleSheet.create({
     },
     ConjuntoBotao: {
         alignItems: "center"
-    }
-
+    },
+    imageActive: {
+        width: windowWidth,
+        height: windowWidth,
+        resizeMode: 'contain',
+    },
 });
 
 export default Ficha_animal;

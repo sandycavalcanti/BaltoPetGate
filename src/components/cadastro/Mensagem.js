@@ -6,13 +6,14 @@ const Mensagem = (props) => {
 
     return (
         <>
-            {mensagem && <Text style={{ color: mensagem.color }}>{mensagem.text}</Text>}
+            {mensagem && <Text style={[{ color: mensagem.color, fontSize: 18 }, props.style]}>{mensagem.text}</Text>}
         </>
     )
 }
 
 Mensagem.propTypes = {
     mensagem: PropTypes.object,
+    style: PropTypes.object,
 }
 
 export default Mensagem

@@ -1,12 +1,11 @@
 import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useState } from "react";
 import axios from 'axios';
-import CampoMenor from "../../components/FormDiario/CampoMenor";
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import GroupBox from "../../components/cadastro/GroupBox";
-import Campo from "../../components/animal/Campo";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
-import BotaoImg from "../../components/FormDiario/BotaoImg";
+import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
+import CampoSimples from "../../components/cadastro/CampoSimples";
 
 const CadFormularioDiario = ({ navigation: { navigate } }) => {
 
@@ -35,13 +34,13 @@ const CadFormularioDiario = ({ navigation: { navigate } }) => {
         <ContainerCadastro titulo='Formulário diario'>
             <GroupBox titulo='Horário do abastecimento'>
                 <View style={styles.Container}>
-                    <CampoMenor placeholder="00:00h" opcional />
-                    <CampoMenor placeholder="00/00/0000" opcional />
+                    <CampoSimples placeholder="00:00h" opcional styleView={styles.CampoMenor} />
+                    <CampoSimples placeholder="00/00/0000" opcional styleView={styles.CampoMenor} />
                 </View>
             </GroupBox>
-            <BotaoImg />
+            <BotaoCadastrar texto='Acresentar uma imagem' styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />
             <Text style={styles.Texto}>Ao acrescentar uma imagem, você estara acrescentando uma prova, caso seu ponto seja denunciado por um usuário. </Text>
-            <BotaoCadastrar onPress={Cadastrar} texto='Cadastrar' />
+            <BotaoCadastrarAnimado onPress={Cadastrar} width={300} />
         </ContainerCadastro>
 
     );
@@ -64,6 +63,12 @@ const styles = StyleSheet.create({
         marginBottom: '20%',
         alignItems: "center",
         marginVertical: 5,
+    },
+    CampoMenor: {
+        width: '50%',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        marginHorizontal: 30,
     }
 });
 

@@ -28,13 +28,14 @@ const CampoSimplesAnimado = (props) => {
                 borderColor={corPlaceholderCad}
                 borderHeight={1}
                 inputStyle={{ fontWeight: '600' }}
-                labelStyle={[styles.labelStyle, { display: (props.setRef.current && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
+                labelStyle={[styles.labelStyle, { display: ((props.setRef.current || props.val) && !focus) ? 'none' : 'flex', paddingHorizontal: focus ? 10 : 0 }]}
                 style={[styles.inputContainer, { width: !props.opcional ? '90%' : '94%' }]}
                 onChangeText={onChangeText}
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
                 keyboardType={props.keyboardType}
-                defaultValue={props.val}
+                defaultValue={props.val?.toString()}
+                multiline={props.multiline}
             />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
         </Animated.View>
@@ -77,6 +78,7 @@ CampoSimplesAnimado.propTypes = {
     opcional: PropTypes.bool,
     placeholder: PropTypes.string,
     keyboardType: PropTypes.string,
+    multiline: PropTypes.bool
 };
 
 export default CampoSimplesAnimado;

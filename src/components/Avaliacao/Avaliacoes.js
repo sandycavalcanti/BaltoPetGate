@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { format } from "date-fns";
 import { AntDesign } from '@expo/vector-icons';
-import { useState } from "react";
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 
@@ -13,7 +12,7 @@ const Avaliacoes = (props) => {
     dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
   }
 
-  const [rating, setRating] = useState(props.data.TB_AVALIACAO_NOTA);
+  const rating = props.data.TB_AVALIACAO_NOTA;
   const urlIMG = urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_AVALIADORA_ID;
 
   return (

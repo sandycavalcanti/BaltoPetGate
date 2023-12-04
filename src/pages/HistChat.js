@@ -32,15 +32,15 @@ const HistChat = () => {
       })
       .catch(error => {
         if (error.response) {
-          if (error.response.status !== 404) {
+          if (error.response.status !== 404) { // Se houver um erro do servidor
             let erro = error.response.data;
             console.error(erro.error, error);
             ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          } else {
+          } else { // Se não houver nenhum chat iniciado
             empty.current = true;
             setCarregando(false);
           }
-        } else {
+        } else { // Se houver um erro do aplicativo
           console.error(error);
           ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
         }
@@ -89,6 +89,7 @@ const HistChat = () => {
               <ActivityIndicator size="large" color={corBordaBoxCad} />
             </View> : !empty.current ?
               <>
+                {/* Barra de pesquisa */}
                 <View style={styles.searchBar}>
                   <TextInput onChangeText={text => setPesquisa(text)} value={pesquisa} style={styles.searchInput} placeholder="Pesquisar" ref={textInputRef} />
                   {pesquisa !== '' &&
@@ -96,6 +97,7 @@ const HistChat = () => {
                       <AntDesign name="close" size={24} color="black" />
                     </TouchableOpacity>}
                 </View>
+                {/* Grupo de contatos */}
                 <View style={styles.contacts}>
                   <GrupoContatos data={usuarios} titulo="Usuários" />
                   <GrupoContatos data={veterinarios} titulo="Veterinários" />

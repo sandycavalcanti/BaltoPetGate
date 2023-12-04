@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator, TransitionSpecs, HeaderStyleInterpolators, CardStyleInterpolators } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { Easing } from 'react-native';
 import Splash from '../Splash';
 import Menu from './Menu';
@@ -20,14 +20,14 @@ import CadPostagem from '../cadastro/CadPostagem';
 import CadFormularioDiario from '../cadastro/CadFormularioDiario';
 import AlterarCad from '../cadastro/AlterarCad';
 import AlterarPerfil from '../cadastro/AlterarPerfil';
-import QuestionarioAdocao from '../cadastro/QuestAdocao';
+import AlterarPostagem from '../cadastro/AlterarPostagem';
+import QuestAdocao from '../cadastro/QuestAdocao';
 import Chat from '../Chat';
-
-import uploadimg from '../uploadimg';
 import Teste from '../Teste';
 
 const Stack = createStackNavigator();
 
+// Animação abertura da tela
 const openConfig = {
   animation: 'spring',
   config: {
@@ -39,7 +39,6 @@ const openConfig = {
     restSpeedThreshold: 0.01,
   }
 }
-
 const closeConfig = {
   animation: 'timing',
   config: {
@@ -48,61 +47,57 @@ const closeConfig = {
   }
 }
 
-export default function Navigation() {
+const Navigation = () => {
   return (
-    <>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{
-          headerShown: false,
-          gestureEnabled: true,
-          gestureDirection: 'horizontal',
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
-        }} >
-          <Stack.Screen name="Splash" component={Splash} />
-          <Stack.Screen name="Login" component={Login} options={{
-            gestureDirection: 'vertical',
-            cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
-          }} />
-          <Stack.Screen name="Menu" component={Menu} options={{
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="Ficha" component={Ficha_animal} />
-          <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
-          <Stack.Screen name="CadConta" component={CadConta} />
-          <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
-          <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{
-            gestureEnabled: false,
-          }} />
-          <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
-          <Stack.Screen name="CadOpcao" component={CadOpcao} />
-          <Stack.Screen name="RecSenha" component={RecSenha} />
-          <Stack.Screen name="VerCodigo" component={VerCodigo} />
-          <Stack.Screen name="Perfil" component={Perfil} />
-          <Stack.Screen name="CriarSenha" component={CriarSenha} />
-          <Stack.Screen name="CadPostagem" component={CadPostagem} />
-          <Stack.Screen name="HistChat" component={HistChat} options={{
-            gestureDirection: 'vertical',
-            transitionSpec: {
-              open: openConfig,
-              close: closeConfig,
-            },
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="Chat" component={Chat} options={{
-            gestureEnabled: false,
-          }} />
-          <Stack.Screen name="Teste" component={Teste} />
-          <Stack.Screen name="AlterarCad" component={AlterarCad} />
-          <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
-          <Stack.Screen name="QuestionarioAdocao" component={QuestionarioAdocao} />
-          <Stack.Screen name="InfoChat" component={InfoChat} options={{
-            gestureEnabled: false,
-            gestureDirection: 'vertical-inverted',
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
-          }} />
-          <Stack.Screen name="uploadimg" component={uploadimg} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false,
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+      }} >
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Login" component={Login} options={{
+          gestureDirection: 'vertical',
+          cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
+        }} />
+        <Stack.Screen name="Menu" component={Menu} options={{
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="Ficha" component={Ficha_animal} />
+        <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
+        <Stack.Screen name="CadConta" component={CadConta} />
+        <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
+        <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
+        <Stack.Screen name="CadOpcao" component={CadOpcao} />
+        <Stack.Screen name="RecSenha" component={RecSenha} />
+        <Stack.Screen name="VerCodigo" component={VerCodigo} />
+        <Stack.Screen name="Perfil" component={Perfil} />
+        <Stack.Screen name="CriarSenha" component={CriarSenha} />
+        <Stack.Screen name="CadPostagem" component={CadPostagem} />
+        <Stack.Screen name="Chat" component={Chat} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="AlterarCad" component={AlterarCad} />
+        <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
+        <Stack.Screen name="AlterarPostagem" component={AlterarPostagem} />
+        <Stack.Screen name="QuestAdocao" component={QuestAdocao} />
+        <Stack.Screen name="HistChat" component={HistChat} options={{
+          gestureDirection: 'vertical',
+          transitionSpec: {
+            open: openConfig,
+            close: closeConfig,
+          },
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="InfoChat" component={InfoChat} options={{
+          gestureEnabled: false,
+          gestureDirection: 'vertical-inverted',
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+        }} />
+        <Stack.Screen name="Teste" component={Teste} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
+
+export default Navigation;

@@ -1,7 +1,6 @@
-// import JWT from 'expo-jwt';
 import jwt_decode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+// Função para decodificar o token e devolver o id da pessoa, id do tipo e nome de perfil
 export default async function DecodificarToken() {
     try {
         const TokenUsuario = await AsyncStorage.getItem('token');

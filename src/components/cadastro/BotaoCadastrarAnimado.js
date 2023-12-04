@@ -16,6 +16,7 @@ const BotaoCadastrarAnimado = (props) => {
                 borderRadius={15}
                 textSize={20}
                 width={props.width ? props.width : 175}
+                disabled={props.disabled}
             >
                 {props.texto ? props.texto : 'Cadastrar'}
             </ThemedButton>
@@ -30,7 +31,8 @@ BotaoCadastrarAnimado.propTypes = {
     corBotaoFundo: PropTypes.string,
     width: PropTypes.number,
     marginTop: PropTypes.number,
-    marginBottom: PropTypes.number
+    marginBottom: PropTypes.number,
+    disabled: PropTypes.bool
 }
 
 export default BotaoCadastrarAnimado

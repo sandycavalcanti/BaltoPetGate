@@ -4,26 +4,22 @@ import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Splash = ({ navigation }) => {
-
   const rota = useRef('');
 
+  // Função que verifica se a pessoa já fez login e navega para o menu, se não, para o login
   const VerificarLogin = async () => {
     const TokenUsuario = await AsyncStorage.getItem('token');
-    if (TokenUsuario == null) {
-      rota.current = 'Login'
-    } else {
-      rota.current = 'Menu'
-    }
-  }
-  useEffect(() => {
-    VerificarLogin();
+    rota.current = TokenUsuario ? 'Menu' : 'Login'
     setTimeout(() => {
       navigation.replace(rota.current);
-    }, 4000);
+    }, 2000);
+  }
+
+  useEffect(() => {
+    VerificarLogin();
   });
 
   return (
-
     <View style={styles.Container}>
       <Image source={require('../../assets/img/splash.png')} style={styles.ImagemFundo} />
       <View style={styles.ContainerLogo}>

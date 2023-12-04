@@ -4,7 +4,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import { Modal, StyleSheet, Text, View, ActivityIndicator, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { corFundo, corFundoCad, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corFundoCad, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import Imagem from '../../components/geral/Imagem';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
@@ -15,6 +15,8 @@ import * as Location from "expo-location";
 import CalcularDistanciaCoordenadas from '../../utils/CalcularDistanciaCoordenadas';
 import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
 import MapaMapView from '../../components/navegacao/MapaMapView';
+import CatchError from '../../utils/CatchError';
+import AlertPro from 'react-native-alert-pro';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let alert = (_data) => new Promise(res => res);
@@ -34,6 +36,8 @@ const CadPontoAlimento = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005
     })
+    const alertRef = useRef(null);
+    const [textoAlert, setTextoAlert] = useState('');
     const controller = new AbortController();
 
     const PegarLocalizacao = async () => {
@@ -52,17 +56,21 @@ const CadPontoAlimento = () => {
     }
 
     const Selecionar = async () => {
-        const response = await axios.get(urlAPI + 'selpontoalimentacao', { signal: controller.signal });
-        const newCoords = response.data.map((item) => {
-            const id = item.TB_PONTO_ALIMENTACAO_ID;
-            const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
-            const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
-            const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
-            const createdAt = item.createdAt;
-            const updatedAt = item.updatedAt;
-            return { latitude, longitude, id, nomePerfil, createdAt, updatedAt };
-        });
-        setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
+        await axios.get(urlAPI + 'selpontoalimentacao', { signal: controller.signal })
+            .then(response => {
+                const newCoords = response.data.map(item => {
+                    const id = item.TB_PONTO_ALIMENTACAO_ID;
+                    const idPerfil = item.TB_PESSOA_ID;
+                    const tipoIdPerfil = item.TB_PESSOA.TB_TIPO_ID;
+                    const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
+                    const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
+                    const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
+                    const createdAt = item.createdAt;
+                    const updatedAt = item.updatedAt;
+                    return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, createdAt, updatedAt };
+                });
+                setPontosAlimentacao([...newCoords]);
+            }).catch(CatchError);
     };
 
     const PegarId = async () => {
@@ -125,18 +133,26 @@ const CadPontoAlimento = () => {
         }
     }
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+
+    const EscolherImagem = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
         });
 
         if (!result.canceled) {
+            const mensagemArquivo = await VerificarTamanhoImagem(result);
+            if (mensagemArquivo) {
+                setTextoAlert(mensagemArquivo);
+                alertRef.current.open();
+                return
+            }
             setImage(result.assets[0].uri);
         }
     };
+
 
     const onPress = (props) => {
         if (cadastrando) {
@@ -187,7 +203,7 @@ const CadPontoAlimento = () => {
                     <Modal animationType="slide" transparent={false} visible={modalVisible}>
                         <View style={styles.modalContainer}>
                             <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
-                            <BotaoArquivo onPress={pickImage} texto={'Escolher imagem'} />
+                            <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
                             {image &&
                                 <>
                                     <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
@@ -201,6 +217,15 @@ const CadPontoAlimento = () => {
                         </View>
                     </Modal>
                     <DropdownAlert alert={func => (alert = func)} />
+                    <AlertPro
+                        ref={alertRef}
+                        onConfirm={() => alertRef.current.close()}
+                        title="Arquivo inválido"
+                        message={textoAlert}
+                        showCancel={false}
+                        textConfirm="OK"
+                        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+                    />
                 </>
             }
         </View>

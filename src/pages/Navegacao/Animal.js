@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Perfil_post from '../../components/perfil/Perfil_post';
 import DecodificarToken from '../../utils/DecodificarToken';
+import CatchError from '../../utils/CatchError';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -26,16 +27,7 @@ const Animal = ({ navigation: { navigate } }) => {
                 if (carregando.current) carregando.current = false;
                 setSelect(response.data);
                 setIsFetching(false);
-            }).catch(error => {
-                if (error.response) {
-                    let erro = error.response.data;
-                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                } else {
-                    console.error('Error:', error);
-                    ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
-                }
-            })
+            }).catch(CatchError)
     }
 
     useEffect(() => {
@@ -53,13 +45,13 @@ const Animal = ({ navigation: { navigate } }) => {
 
     return (
         <View style={styles.container}>
-            {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+            {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
             <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_ANIMAL_ID} renderItem={({ item }) => {
                 const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
                 const animalId = item.TB_ANIMAL_ID;
                 return (
                     <>
-                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} />
+                        <Perfil_post data={item} pessoal={pessoal} tipo='animal' itemId={animalId} onRefresh={onRefresh} podeEditar />
                         <AnimalPost data={item} />
                     </>
                 )
@@ -79,6 +71,11 @@ const styles = StyleSheet.create({
     },
     Lista: {
         width: '100%'
+    },
+    containerCarregando: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 

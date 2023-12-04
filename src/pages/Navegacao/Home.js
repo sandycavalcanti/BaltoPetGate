@@ -9,7 +9,7 @@ import Post from '../../components/perfil/Post';
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Home = ({ navigation: { navigate } }) => {
-  const [temporario, setTemporario] = useState(true); // false
+  const [temporario, setTemporario] = useState(false); // true
 
   const [select, setSelect] = useState([]);
   const TB_PESSOA_IDD = useRef(null);
@@ -54,7 +54,7 @@ const Home = ({ navigation: { navigate } }) => {
         <View style={styles.container}>
           {select.length !== 0 ?
             <>
-              {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+              {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
               <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
                 const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
                 return (
@@ -71,7 +71,7 @@ const Home = ({ navigation: { navigate } }) => {
         </View>
       ) : (
         <ScrollView style={{ flex: 1 }}>
-          <SafeAreaView style={styles.containertemp}>
+          <SafeAreaView style={{ backgroundColor: corFundoCad, alignItems: "center", justifyContent: "center", rowGap: 5, width: "100%", minHeight: windowHeight - 131 }}>
             <TouchableOpacity onPress={() => navigate("Cadastroformulariodiario")}>
               <Text>form diario</Text>
             </TouchableOpacity>
@@ -81,23 +81,9 @@ const Home = ({ navigation: { navigate } }) => {
             <TouchableOpacity onPress={() => setTemporario(true)}>
               <Text>Ativar a Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate("QuestionarioAdocao")}>
-              <Text>Questionario Adoção</Text>
+            <TouchableOpacity onPress={() => navigate("Teste")}>
+              <Text>Teste</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate("AlterarCad", { modoAlterar: false })}>
-              <Text>Completar Cadastro</Text>
-            </TouchableOpacity>
-            <View style={{ alignItems: "center", justifyContent: "center", rowGap: 5, marginTop: 15 }}>
-              <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                Telas temporárias e de teste:
-              </Text>
-              <TouchableOpacity onPress={() => navigate("Teste")}>
-                <Text>Teste</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigate("uploadimg")}>
-                <Text>Upload Img</Text>
-              </TouchableOpacity>
-            </View>
           </SafeAreaView>
         </ScrollView>
       )}
@@ -117,19 +103,16 @@ const styles = StyleSheet.create({
   Lista: {
     width: '100%',
   },
+  containerCarregando: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   textoPadrao: {
     width: '80%',
     fontSize: 20,
     textAlign: 'center',
     color: '#fff',
-  },
-  containertemp: {
-    backgroundColor: corFundoCad,
-    alignItems: "center",
-    justifyContent: "center",
-    rowGap: 5,
-    width: "100%",
-    minHeight: windowHeight - 131,
   },
 });
 

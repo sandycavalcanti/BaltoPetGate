@@ -1,18 +1,32 @@
-export default function RetornarTipoNome(TB_TIPO_ID) {
-    switch (TB_TIPO_ID) {
-        case 1:
-            return 'Usuário Comum'
-        case 2:
-            return 'Veterinário'
-        case 3:
-            return 'Instituição'
-        case 4:
-            return 'Protetor'
-        case 5:
-            return 'Abrigo'
-        case 6:
-            return 'Estabelecimento'
-        default:
-            break;
+// Função que recebe um id e retorna o nome do tipo desse id, podendo ser de tipo de pessoas ou tipo de solicitação
+export default function RetornarTipoNome(tipoId, solicitacao) {
+    if (!solicitacao) {
+        switch (tipoId) {
+            case 1:
+                return 'Usuário Comum'
+            case 2:
+                return 'Veterinário'
+            case 3:
+                return 'Instituição'
+            case 4:
+                return 'Protetor'
+            case 5:
+                return 'Abrigo'
+            case 6:
+                return 'Estabelecimento'
+            default:
+                return ''
+        }
+    } else {
+        switch (tipoId) {
+            case 1:
+                return 'Adotar'
+            case 2:
+                return 'Abrigar'
+            case 3:
+                return 'Cuidar'
+            default:
+                return ''
+        }
     }
 } 

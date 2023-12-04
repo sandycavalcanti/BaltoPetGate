@@ -6,7 +6,6 @@ import Campo from "../../components/animal/Campo";
 import DropdownSimples from "../../components/animal/DropdownSimples";
 import RadioButton3 from "../../components/animal/Radiobutton3";
 import RadioButton2 from "../../components/animal/radioButton2";
-import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { corBotaoCad, corRosaForte, corRosaFraco, urlAPI } from "../../constants";
 import DecodificarToken from "../../utils/DecodificarToken";
@@ -21,17 +20,18 @@ import CampoSimplesAnimado from "../../components/cadastro/CampoSimplesAnimado";
 import CampoEnderecoAnimado from "../../components/cadastro/CampoEnderecoAnimado";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
 import AlertPro from "react-native-alert-pro";
+import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
+import ValidarCamposAnimal from "../../utils/ValidarCamposAnimal";
 
-const CadAnimal = ({ navigation: { navigate } }) => {
+const CadAnimal = ({ navigation }) => {
     const TB_PESSOA_IDD = useRef(null);
     const nome = useRef('');
     const idade = useRef();
-    const [idadeTipo, setIdadeTipo] = useState('');
-    const [porte, setPorte] = useState('');
+    const idadeTipo = useRef('');
+    const porte = useRef('');
     const peso = useRef();
-    const [cor, setCor] = useState('');
-    const [sexo, setSexo] = useState('');
-    const [especie, setEspecie] = useState('');
+    const sexo = useRef('');
+    const especie = useRef('');
     const descricao = useRef('');
     const localResgate = useRef('');
     const cuidadoEspecial = useRef('');
@@ -39,29 +39,39 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     const vermifugado = useRef('');
     const microchip = useRef('');
     const saude = useRef();
-
     const cep = useRef('');
     const uf = useRef('');
     const cidade = useRef('');
     const bairro = useRef('');
     const rua = useRef('');
-    const [alerta, setAlerta] = useState(false);
+    const alerta = useRef(false);
 
     const situacoesBanco = useRef([]);
     const traumasBanco = useRef([]);
     const temperamentosBanco = useRef([]);
-
     const [situacoes, setSituacoes] = useState([]);
     const [traumas, setTraumas] = useState([]);
     const [temperamentos, setTemperamentos] = useState([]);
 
     const [carregando, setCarregando] = useState(true);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState({});
+    const [image, setImage] = useState(null);
     const alertRef = useRef(null);
     const [textoAlert, setTextoAlert] = useState('');
+    const controller = new AbortController();
 
     const Cadastrar = () => {
-        InserirDados();
+        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, rua.current];
+        const camposCadastro = { nome: nome.current, idade: idade.current, idadeTipo: idadeTipo.current, porte: porte.current, peso: peso.current, especie: especie.current, sexo: sexo.current, descricao: descricao.current, localResgate: localResgate.current, cuidadoEspecial: cuidadoEspecial.current, saude: saude.current, castrado: castrado.current, vermifugado: vermifugado.current, microchip: microchip.current, temperamentos, situacoes, traumas, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current }
+
+        const mensagemErro = ValidarCamposAnimal(camposObrigatorios, camposCadastro);
+
+        if (!mensagemErro) {
+            InserirDados();
+        } else {
+            setTextoAlert(mensagemErro);
+            alertRef.current.open();
+        }
     }
 
     const PegarId = async () => {
@@ -71,7 +81,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
 
     const ListarOpcoes = async () => {
         await Promise.all([
-            axios.get(urlAPI + 'selsituacao')
+            axios.get(urlAPI + 'selsituacao', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -80,7 +90,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     }));
                     situacoesBanco.current = options;
                 }).catch(CatchError),
-            axios.get(urlAPI + 'seltrauma')
+            axios.get(urlAPI + 'seltrauma', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -89,7 +99,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                     }));
                     traumasBanco.current = options;
                 }).catch(CatchError),
-            axios.get(urlAPI + 'seltemperamento')
+            axios.get(urlAPI + 'seltemperamento', { signal: controller.signal })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item => ({
@@ -105,8 +115,12 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     useEffect(() => {
         PegarId();
         ListarOpcoes();
+        return (() => {
+            controller.abort();
+        })
     }, []);
 
+    // Opções dropdown
     const TipoIdade = [
         { label: 'Ano(s)', value: 'ANO' },
         { label: 'Mes(es)', value: 'MES' }
@@ -126,58 +140,68 @@ const CadAnimal = ({ navigation: { navigate } }) => {
     ];
 
     const InserirDados = async () => {
-        const formData = new FormData();
-        let imagem = {
-            uri: image,
-            type: 'image/jpeg',
-            name: 'image.jpg',
-        };
+        if (image) {
+            const formData = new FormData();
+            const imagem = {
+                uri: image,
+                type: 'image/jpeg',
+                name: 'image.jpg',
+            };
 
-        formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
-        formData.append('TB_ANIMAL_NOME', nome.current);
-        formData.append('TB_ANIMAL_IDADE', idade.current);
-        formData.append('TB_ANIMAL_IDADE_TIPO', idadeTipo);
-        formData.append('TB_ANIMAL_PORTE', porte);
-        formData.append('TB_ANIMAL_PESO', peso.current);
-        formData.append('TB_ANIMAL_SEXO', sexo);
-        formData.append('TB_ANIMAL_ESPECIE', especie);
-        formData.append('TB_ANIMAL_SAUDE', saude.current);
-        formData.append('TB_ANIMAL_DESCRICAO', descricao.current);
-        formData.append('TB_ANIMAL_LOCALIZACAO_UF', uf.current);
-        formData.append('TB_ANIMAL_LOCALIZACAO_CIDADE', cidade.current);
-        formData.append('TB_ANIMAL_LOCALIZACAO_BAIRRO', bairro.current);
-        formData.append('TB_ANIMAL_LOCALIZACAO_RUA', rua.current);
-        formData.append('TB_ANIMAL_CUIDADO_ESPECIAL', cuidadoEspecial.current);
-        formData.append('TB_ANIMAL_VERMIFUGADO', vermifugado.current);
-        formData.append('TB_ANIMAL_CASTRADO', castrado.current);
-        formData.append('TB_ANIMAL_MICROCHIP', microchip.current);
-        formData.append('TB_ANIMAL_LOCAL_RESGATE', localResgate.current);
-        formData.append('TB_ANIMAL_ALERTA', alerta);
-        formData.append('TEMPERAMENTOS', temperamentos);
-        formData.append('SITUACOES', situacoes);
-        formData.append('TRAUMAS', traumas);
-        formData.append('img', imagem);
+            formData.append('TB_PESSOA_ID', TB_PESSOA_IDD.current);
+            formData.append('TB_ANIMAL_NOME', nome.current);
+            formData.append('TB_ANIMAL_IDADE', idade.current);
+            formData.append('TB_ANIMAL_IDADE_TIPO', idadeTipo.current);
+            formData.append('TB_ANIMAL_PORTE', porte.current);
+            formData.append('TB_ANIMAL_PESO', peso.current);
+            formData.append('TB_ANIMAL_SEXO', sexo.current);
+            formData.append('TB_ANIMAL_ESPECIE', especie.current);
+            formData.append('TB_ANIMAL_SAUDE', saude.current);
+            formData.append('TB_ANIMAL_DESCRICAO', descricao.current);
+            formData.append('TB_ANIMAL_LOCALIZACAO_UF', uf.current);
+            formData.append('TB_ANIMAL_LOCALIZACAO_CIDADE', cidade.current);
+            formData.append('TB_ANIMAL_LOCALIZACAO_BAIRRO', bairro.current);
+            formData.append('TB_ANIMAL_LOCALIZACAO_RUA', rua.current);
+            formData.append('TB_ANIMAL_CUIDADO_ESPECIAL', cuidadoEspecial.current);
+            formData.append('TB_ANIMAL_VERMIFUGADO', vermifugado.current);
+            formData.append('TB_ANIMAL_CASTRADO', castrado.current);
+            formData.append('TB_ANIMAL_MICROCHIP', microchip.current);
+            formData.append('TB_ANIMAL_LOCAL_RESGATE', localResgate.current);
+            formData.append('TB_ANIMAL_ALERTA', alerta.current);
+            formData.append('TEMPERAMENTOS', temperamentos);
+            formData.append('SITUACOES', situacoes);
+            formData.append('TRAUMAS', traumas);
+            formData.append('img', imagem);
 
-        await axios.post(urlAPI + 'cadanimal', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        }).then(response => {
-            setTextoAlert(response.data.message);
+            await axios.post(urlAPI + 'cadanimal', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            }).then(response => {
+                setMessage({ color: '#fafafa', text: response.data.message });
+                setTimeout(() => {
+                    navigation.goBack();
+                }, 1000);
+            }).catch(CatchError);
+        } else {
+            setTextoAlert('Insira uma imagem');
             alertRef.current.open();
-            setMessage('Cadastrado');
-        }).catch(CatchError)
+        }
     };
 
-    const [image, setImage] = useState(null);
-
-    const escolherImg = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+    const escolherImagem = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
         });
 
         if (!result.canceled) {
+            const mensagemArquivo = await VerificarTamanhoImagem(result);
+            if (mensagemArquivo) {
+                setTextoAlert(mensagemArquivo);
+                alertRef.current.open();
+                return
+            }
             setImage(result.assets[0].uri);
         }
     };
@@ -187,45 +211,43 @@ const CadAnimal = ({ navigation: { navigate } }) => {
         <ContainerCadastro titulo='Cadastro animal'>
             <GroupBox titulo='Insira uma imagem do animal'>
                 {image && <Image style={styles.Imagem} source={{ uri: image }} />}
-                <BotaoArquivo onPress={escolherImg} texto={image ? 'Trocar imagem' : null} />
+                <BotaoArquivo onPress={escolherImagem} texto={image ? 'Trocar imagem' : null} />
             </GroupBox>
             <GroupBox titulo='Informações'>
                 <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} />
                 <View style={styles.containerCampos}>
-                    <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} />
-                    <DropdownSimples data={TipoIdade} set={setIdadeTipo} texto='Ano(s) ou Mes(es)' />
+                    <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} maxLength={2} />
+                    <DropdownSimples data={TipoIdade} setRef={idadeTipo} texto='Ano(s) ou Mes(es)' />
                 </View>
                 <View style={styles.ContainerDublo}>
                     <View style={styles.campo}>
-                        <DropdownSimples data={Porte} texto='Porte' set={setPorte} />
+                        <DropdownSimples data={Porte} texto='Porte' setRef={porte} />
                     </View>
                     <View style={styles.campo}>
-                        <Campo styleView={{ flex: 0.9 }} placeholder="Peso" keyboardType="numeric" setRef={peso} />
+                        <Campo styleView={{ flex: 0.9 }} placeholder="Peso" keyboardType="numeric" setRef={peso} maxLength={2} />
                         <Text style={styles.Texto}>Kg</Text>
                     </View>
                 </View>
                 <View style={styles.containerCampos}>
-                    <DropdownSimples data={Especie} texto='Especie' set={setEspecie} />
-                    <DropdownSimples data={Sexo} texto='Sexo' set={setSexo} />
+                    <DropdownSimples data={Especie} texto='Especie' setRef={especie} />
+                    <DropdownSimples data={Sexo} texto='Sexo' setRef={sexo} />
                 </View>
             </GroupBox>
-
             <GroupBox titulo='Descrição'>
-                {/* <CampoSimples placeholder="Cor(es)" set={setCor} /> */}
                 <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} />
                 <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} />
                 <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional />
             </GroupBox>
-            <GroupBox titulo='Saúde'>
+            <GroupBox titulo='Saúde *'>
                 <RadioButton2 setRef={saude} />
             </GroupBox>
-            <GroupBox titulo='Castrado'>
+            <GroupBox titulo='Castrado *'>
                 <RadioButton3 setRef={castrado} />
             </GroupBox>
-            <GroupBox titulo='Vermifugado'>
+            <GroupBox titulo='Vermifugado *'>
                 <RadioButton3 setRef={vermifugado} />
             </GroupBox>
-            <GroupBox titulo='Microchipado'>
+            <GroupBox titulo='Microchipado *'>
                 <RadioButton3 setRef={microchip} />
             </GroupBox>
             {carregando ?
@@ -245,10 +267,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                             valueField="value"
                             placeholder="Selecione os temperamentos"
                             value={temperamentos}
-                            onChange={item => {
-                                console.log(item)
-                                setTemperamentos(item);
-                            }}
+                            onChange={item => setTemperamentos(item)}
                             selectedStyle={styles.selectedStyle}
                         />
                     </GroupBox>
@@ -263,9 +282,7 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                             valueField="value"
                             placeholder="Selecione as situações"
                             value={situacoes}
-                            onChange={item => {
-                                setSituacoes(item);
-                            }}
+                            onChange={item => setSituacoes(item)}
                             selectedStyle={styles.selectedStyle}
                         />
                     </GroupBox>
@@ -280,24 +297,22 @@ const CadAnimal = ({ navigation: { navigate } }) => {
                             valueField="value"
                             placeholder="Selecione os traumas"
                             value={traumas}
-                            onChange={item => {
-                                setTraumas(item);
-                            }}
+                            onChange={item => setTraumas(item)}
                             selectedStyle={styles.selectedStyle}
                         />
                     </GroupBox>
                 </>
             }
             <GroupBox titulo='Localização'>
-                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} />
+                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo />
             </GroupBox>
-            <BotaoCheckBox texto='Animal em estado de alerta' valor={alerta} onPress={() => setAlerta(prev => !prev)} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
-            <Mensagem texto={message} />
-            <BotaoCadastrarAnimado onPress={Cadastrar} texto='Cadastrar' />
+            <BotaoCheckBox texto='Animal em estado de alerta' setRef={alerta} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
+            <Mensagem mensagem={message} />
+            <BotaoCadastrarAnimado onPress={Cadastrar} />
             <AlertPro
                 ref={alertRef}
                 onConfirm={() => alertRef.current.close()}
-                title="Cadastrado!"
+                title="Campos inválidos"
                 message={textoAlert}
                 showCancel={false}
                 textConfirm="OK"

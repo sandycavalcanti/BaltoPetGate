@@ -1,19 +1,25 @@
+import axios from "axios";
 import { ToastAndroid } from "react-native";
+// Função para lidar com o catch do axios
+export default function CatchError(error, mostrar404, functionNonServerError, functionServerError) {
+    if (axios.isCancel(error)) return; // Caso a requisição for cancelada pelo controller
 
-const CatchError = (error, mostrar404) => {
-    if (error.response) {
-        let erro = error.response.data;
-        if (error.response.status !== 404) {
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-            console.error('Erro ao selecionar:', erro.error, error);
+    if (error.response) { // Caso houver uma resposta do servidor
+        const { status, data } = error.response;
+        const errorMessage = data.message;
+
+        if (status !== 404 || mostrar404) { // Por padrão, apenas erros que não são de status 404
+            ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+            if (!functionServerError) console.error('Erro ao executar a ação:', data.error, error);
         }
-        else if (mostrar404) {
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
+        if (functionServerError) { // Função passada pelos parâmetros
+            functionServerError();
         }
-    } else {
+    } else { // Erros não relacionados ao servidor
         console.error(error);
         ToastAndroid.show('Houve um erro', ToastAndroid.SHORT);
+        if (functionNonServerError) { // Função passada pelos parâmetros
+            functionNonServerError();
+        }
     }
 }
-
-export default CatchError

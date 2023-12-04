@@ -11,8 +11,13 @@ const BotaoCheckBox = (props) => {
     const corTextoAtivado = props.corTextoAtivado ? props.corTextoAtivado : '#000';
 
     const toggleCheckBox = () => {
-        if (props.set) props.set(!isChecked)
-        setIsChecked(!isChecked);
+        const valor = !isChecked;
+        if (props.setRef) {
+            props.setRef.current = valor
+        } else if (props.set) {
+            props.set(valor)
+        }
+        setIsChecked(valor);
         if (props.onPress) props.onPress()
     }
 
@@ -53,7 +58,8 @@ BotaoCheckBox.propTypes = {
     styleTexto: PropTypes.object,
     styleBotao: PropTypes.object,
     styleViewTexto: PropTypes.object,
-    onPress: PropTypes.func
+    onPress: PropTypes.func,
+    setRef: PropTypes.object
 }
 
 export default BotaoCheckBox

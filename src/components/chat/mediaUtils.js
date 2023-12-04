@@ -3,6 +3,8 @@ import * as Location from 'expo-location'
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 import { Alert } from 'react-native'
+import { any } from 'prop-types'
+import VerificarTamanhoImagem from '../../utils/VerificarTamanhoImagem'
 
 export default async function getPermissionAsync(permission) {
   const { status } = await Permissions.askAsync(permission)
@@ -35,16 +37,22 @@ export async function getLocationAsync(onSend) {
   }
 }
 
-export async function pickImageAsync(onSend) {
-  if (await ImagePicker.requestMediaLibraryPermissionsAsync()) {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-    })
+export async function pickImageAsync(onSend, setTextoAlert, alertRef) {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    quality: 1,
+  });
 
-    if (!result.canceled) {
-      onSend([{ image: result.assets[0].uri }])
-      return result.assets[0].uri
+  if (!result.canceled) {
+    const mensagemArquivo = await VerificarTamanhoImagem(result);
+    if (mensagemArquivo) {
+      setTextoAlert(mensagemArquivo);
+      alertRef.current.open();
+      return
     }
+    onSend([{ image: result.assets[0].uri }])
+    return result.assets[0].uri
   }
 }
 

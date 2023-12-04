@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, Activity
 import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
-import { corBordaBoxCad, urlAPI } from "../constants";
+import { corBordaBoxCad, corRosaFraco, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import axios from "axios";
@@ -11,6 +11,8 @@ import parsePatterns from '../components/chat/parsePatterns';
 import FormData from 'form-data';
 import ModalMensagem from '../components/chat/ModalMensagem';
 import { renderActions, renderBubble, renderChatEmpty, renderComposer, renderCustomView, renderInputToolbar, renderSend, renderSystemMessage, renderTime } from '../components/chat/ChatRenders';
+import AlertPro from 'react-native-alert-pro';
+import CatchError from '../utils/CatchError';
 
 const ActionKind = {
     SEND_MESSAGE: 'SEND_MESSAGE',
@@ -49,6 +51,8 @@ const Chat = () => {
     const [alturaViewRespondendo, setAlturaViewRespondendo] = useState(50);
     const [carregando, setCarregando] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const alertRef = useRef(null);
+    const [textoAlert, setTextoAlert] = useState('');
 
     let user = { _id: TB_PESSOA_IDD.current }
     const [state, dispatch] = useReducer(reducer, {
@@ -90,19 +94,14 @@ const Chat = () => {
                 mensagens.current = mensagensGiftedChat
                 dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
             }
-        }).catch(error => {
-            if (error.response.status !== 404 && error.response) {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error('Erro ao selecionar:', erro.error);
-            }
-        });
+        }).catch(CatchError);
     };
+
     const SelecionarInfoChat = async () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }, { signal: controller.signal }).then(async response => {
+        }, { signal: controller.signal }).then(response => {
             if (response.data) {
                 const dados = response.data.Selecionar[0];
                 animais.current = response.data.Animais
@@ -111,19 +110,13 @@ const Chat = () => {
                 if (dados.TB_CHAT_STATUS) {
                     msgEmptyChat.current = 'Nenhuma mensagem ainda';
                     desativado.current = false;
-                    await SelecionarMensagens();
+                    SelecionarMensagens();
                 } else {
                     msgEmptyChat.current = "Esse chat foi desativado";
                     desativado.current = true;
                 }
             }
-        }).catch(error => {
-            if (error.response) {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error('Erro ao selecionar:', erro.error);
-            }
-        });
+        }).catch(CatchError);
         setCarregando(false);
     };
 
@@ -145,7 +138,7 @@ const Chat = () => {
         });
     }
     const DenunciarMensagem = () => {
-        console.log('Denuncia');
+        ToastAndroid.show('A função de denunciar conversa ainda será implementada', ToastAndroid.SHORT);
     }
     const AlterarMensagem = () => {
         editando.current = true;
@@ -153,7 +146,7 @@ const Chat = () => {
         setTextoDigitado(mensagemSelecionada.current.text);
     }
     const ResponderMensagem = () => {
-        editando.current = false
+        editando.current = false;
         respondendo.current = true;
     }
     const ExcluirMensagem = async () => {
@@ -174,7 +167,7 @@ const Chat = () => {
             });
     }
 
-    const onSend = useCallback(async (messages) => {
+    const onSend = useCallback(async (messages) => { // Enviar mensagem
         const sentMessages = [{ ...messages[0] }];
         const texto = sentMessages[0].text
         const imagem = sentMessages[0].image
@@ -236,7 +229,7 @@ const Chat = () => {
                     console.error(erro.error);
                 })
             }
-        } else {// Editar mensagem de texto
+        } else { // Editar mensagem de texto
             if (texto != mensagemSelecionada.current.text) { // Se o texto tiver sido modificado
                 const modifiedMessages = state.messages.map(message => {
                     if (message._id === mensagemSelecionada.current._id) return { ...message, mensagemAlterada: true, text: texto };
@@ -259,11 +252,9 @@ const Chat = () => {
             }
         }
     }, [dispatch, state.messages]);
-    const onSendCustomActions = (messages = []) => {
-        const sentMessages = [{ ...messages[0] }];
-        const newMessages = GiftedChat.append(state.messages, sentMessages, true);
 
-        const messagesToUpload = messages.map((message) => ({
+    const onSendCustomActions = (messages = []) => { // Função botão mais (Enviar Imagem)
+        const messagesToUpload = messages.map(message => ({
             ...message,
             user,
             createdAt: new Date(),
@@ -271,10 +262,8 @@ const Chat = () => {
         }));
         onSend(messagesToUpload);
     };
-    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
-    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
-    // };
-    const onLongPress = (context, message) => {
+    
+    const onLongPress = (context, message) => { // Segurar dedo na mensagem
         podeExcluir.current = true;
         podeEditar.current = !message.image;
         mensagemSelecionada.current = message;
@@ -287,10 +276,17 @@ const Chat = () => {
             setModalVisible(true);
         }
     }
+
+    // forçar renderização
     const [forceUpdate, setForceUpdate] = useState(0);
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
+    
+    // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
+    //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
+    // };
+
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
@@ -311,7 +307,7 @@ const Chat = () => {
                             renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
                             renderSend={props => renderSend(props, editando, respondendo)}
                             renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
-                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions)}
+                            renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef)}
                             renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
                             keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
@@ -331,6 +327,15 @@ const Chat = () => {
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
                         <StatusBar />
+                        <AlertPro
+                            ref={alertRef}
+                            onConfirm={() => alertRef.current.close()}
+                            title="Arquivo inválido"
+                            message={textoAlert}
+                            showCancel={false}
+                            textConfirm="OK"
+                            customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+                        />
                     </>}
             </View>
         </SafeAreaView>

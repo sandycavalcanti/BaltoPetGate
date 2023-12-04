@@ -5,6 +5,7 @@ import { corFundoCad, corRosaForte, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 import DecodificarToken from '../../utils/DecodificarToken';
+import CatchError from '../../utils/CatchError';
 
 const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
@@ -24,16 +25,7 @@ const Explorar = ({ navigation: { navigate } }) => {
         if (carregando.current) carregando.current = false;
         setSelect(response.data);
         setIsFetching(false);
-      }).catch(error => {
-        if (error.response) {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.error(erro.error, error);
-        } else {
-          console.error('Error:', error);
-          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
-        }
-      })
+      }).catch(CatchError)
   }
 
   useEffect(() => {
@@ -51,13 +43,14 @@ const Explorar = ({ navigation: { navigate } }) => {
 
   return (
     <View style={styles.container}>
-      {carregando.current && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator color={corRosaForte} size='large' /></View>}
+      {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
       <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
         const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
         const postagemId = item.TB_POSTAGEM_ID;
+        const podeEditar = item.createdAt == item.updatedAt;
         return (
           <>
-            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} />
+            <Perfil_post data={item} pessoal={pessoal} tipo='postagem' itemId={postagemId} onRefresh={onRefresh} podeEditar={podeEditar} />
             <Post data={item} />
           </>
         )
@@ -77,6 +70,11 @@ const styles = StyleSheet.create({
   },
   Lista: {
     width: '100%'
+  },
+  containerCarregando: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

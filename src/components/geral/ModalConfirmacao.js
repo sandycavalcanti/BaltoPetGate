@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Modal } from 'react-native-modals';
+import { Modal, SlideAnimation } from 'react-native-modals';
 import { Divider } from "react-native-elements";
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,7 @@ const ModalConfirmacao = (props) => {
     }
 
     return (
-        <Modal visible={props.val} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={Fechar} onTouchOutside={Fechar}>
+        <Modal visible={props.val} modalAnimation={new SlideAnimation({ slideFrom: 'bottom' })} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={Fechar} onTouchOutside={Fechar}>
             <View style={styles.dropdown}>
                 <Text style={[styles.dropdownTitle, { paddingBottom: props.subtexto ? 15 : 25 }]}>{props.texto}</Text>
                 {props.subtexto &&

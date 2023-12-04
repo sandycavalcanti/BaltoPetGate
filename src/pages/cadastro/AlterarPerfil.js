@@ -1,28 +1,36 @@
 import { useState, useEffect, useRef } from "react";
-import { StyleSheet, Dimensions, Text, View, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, TextInput } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, TextInput, ActivityIndicator } from "react-native";
 import Imagem from "../../components/geral/Imagem";
 import GroupBox from '../../components/cadastro/GroupBox';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
-import { corFundo, urlAPI } from '../../constants';
+import { corFundo, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import * as ImagePicker from 'expo-image-picker';
 import FormData from 'form-data';
+import CatchError from "../../utils/CatchError";
+import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
+import Mensagem from "../../components/cadastro/Mensagem";
+import AlertPro from "react-native-alert-pro";
+import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
 
-const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
-const AlterarPerfil = () => {
+const AlterarPerfil = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
   const TB_TIPO_IDD = useRef(null);
   const urlImg = useRef('imagem');
-  const [nomePerfil, setNomePerfil] = useState('');
-  const [bio, setBio] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [pix, setPix] = useState('');
+  const nomePerfil = useRef(null);
+  const bio = useRef(null);
+  const instagram = useRef(null);
+  const facebook = useRef(null);
+  const pix = useRef(null);
   const [image, setImage] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [mensagem, setMensagem] = useState({});
+  const alertRef = useRef(null);
+  const [textoAlert, setTextoAlert] = useState('');
   const controller = new AbortController();
 
   const PegarId = async () => {
@@ -38,20 +46,13 @@ const AlterarPerfil = () => {
       TB_PESSOA_ID: TB_PESSOA_IDD.current
     }, { signal: controller.signal }).then(response => {
       const dados = response.data[0];
-      setNomePerfil(dados.TB_PESSOA_NOME_PERFIL);
-      setBio(dados.TB_PESSOA_BIO);
-      setInstagram(dados.TB_PESSOA_INSTAGRAM);
-      setFacebook(dados.TB_PESSOA_FACEBOOK);
-      setPix(dados.TB_PESSOA_PIX);
-    }).catch(error => {
-      if (error.respose) {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.log('Erro ao selecionar:', erro.error);
-      } else {
-        console.error(error)
-      }
-    });
+      nomePerfil.current = dados.TB_PESSOA_NOME_PERFIL;
+      bio.current = dados.TB_PESSOA_BIO;
+      instagram.current = dados.TB_PESSOA_INSTAGRAM;
+      facebook.current = dados.TB_PESSOA_FACEBOOK;
+      pix.current = dados.TB_PESSOA_PIX;
+      setCarregando(false);
+    }).catch(CatchError);
   }
 
   useEffect(() => {
@@ -62,14 +63,20 @@ const AlterarPerfil = () => {
   }, []);
 
   const EscolherImagem = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.canceled) {
+      const mensagemArquivo = await VerificarTamanhoImagem(result);
+      if (mensagemArquivo) {
+        setTextoAlert(mensagemArquivo);
+        alertRef.current.open();
+        return
+      }
       setImage(result.assets[0].uri);
     }
   };
@@ -86,62 +93,72 @@ const AlterarPerfil = () => {
       formData.append('img', imagemData);
     }
 
-    formData.append('TB_PESSOA_NOME_PERFIL', nomePerfil);
-    formData.append('TB_PESSOA_BIO', bio);
-    formData.append('TB_PESSOA_INSTAGRAM', instagram);
-    formData.append('TB_PESSOA_FACEBOOK', facebook);
-    formData.append('TB_PESSOA_PIX', pix);
+    formData.append('TB_PESSOA_NOME_PERFIL', nomePerfil.current);
+    formData.append('TB_PESSOA_BIO', bio.current);
+    formData.append('TB_PESSOA_INSTAGRAM', instagram.current);
+    formData.append('TB_PESSOA_FACEBOOK', facebook.current);
+    formData.append('TB_PESSOA_PIX', pix.current);
 
     await axios.put(urlAPI + 'altpessoa/' + TB_PESSOA_IDD.current, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then(response => {
-      ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-    }).catch(error => {
-      if (error.respose) {
-        let erro = error.response.data;
-        ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-        console.log('Erro ao selecionar:', erro.error);
-      } else {
-        console.error(error)
-      }
-    })
+      setMensagem({ color: '#fafafa', text: 'Alterações feitas' });
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1000);
+    }).catch(CatchError)
   }
 
   return (
     <ScrollView style={styles.container}>
       <View>
         <ImageBackground style={styles.imagemFundo} resizeMode="cover" source={require("../../../assets/img/FundoPerfil.png")} />
-        <View style={styles.Oval}></View>
-        <View style={styles.profileContainer}>
-          {!image ?
-            <Imagem style={styles.profileImage} url={urlImg.current} />
-            :
-            <Image style={styles.profileImage} source={{ uri: image }} />
-          }
-        </View>
-        <TouchableOpacity style={styles.AltImagem} onPress={EscolherImagem} >
-          <Ionicons name="camera-outline" size={30} color='#096D82' />
-        </TouchableOpacity>
-        <View style={styles.GroupContainer}>
-          <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Nome de perfil:'>
-            <TextInput style={styles.Input} value={nomePerfil} onChangeText={text => setNomePerfil(text)} />
-          </GroupBox>
-          <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar a bio:'>
-            <TextInput style={styles.Input} value={bio} onChangeText={text => setBio(text)} multiline />
-          </GroupBox>
-          <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para Instagram:'>
-            <TextInput style={styles.Input} value={instagram} onChangeText={text => setInstagram(text)} />
-          </GroupBox>
-          <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para facebook:'>
-            <TextInput style={styles.Input} value={facebook} onChangeText={text => setFacebook(text)} />
-          </GroupBox>
-          {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) &&
-            <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
-              <TextInput style={styles.Input} value={pix} onChangeText={text => setPix(text)} />
-            </GroupBox>}
-          <BotaoCadastrar texto="Confirmar alterações" onPress={Alterar} />
-        </View>
-      </View >
+        {carregando ? <View style={styles.containerCarregando}><ActivityIndicator size='large' color={corRosaForte} /></View>
+          :
+          <>
+            <View style={styles.Oval}></View>
+            <View style={styles.profileContainer}>
+              {!image ?
+                <Imagem style={styles.profileImage} url={urlImg.current} />
+                :
+                <Image style={styles.profileImage} source={{ uri: image }} />
+              }
+            </View>
+            <TouchableOpacity style={styles.AltImagem} onPress={EscolherImagem} >
+              <Ionicons name="camera-outline" size={30} color='#096D82' />
+            </TouchableOpacity>
+            <View style={styles.GroupContainer}>
+              <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Nome de perfil:'>
+                <TextInput style={styles.Input} defaultValue={nomePerfil.current} onChangeText={text => nomePerfil.current = text} />
+              </GroupBox>
+              <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar a bio:'>
+                <TextInput style={styles.Input} defaultValue={bio.current} onChangeText={text => bio.current = text} multiline />
+              </GroupBox>
+              <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para Instagram:'>
+                <TextInput style={styles.Input} defaultValue={instagram.current} onChangeText={text => instagram.current = text} />
+              </GroupBox>
+              <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para facebook:'>
+                <TextInput style={styles.Input} defaultValue={facebook.current} onChangeText={text => facebook.current = text} />
+              </GroupBox>
+              {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) &&
+                <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
+                  <TextInput style={styles.Input} defaultValue={pix.current} onChangeText={text => pix.current = text} />
+                </GroupBox>}
+              <Mensagem mensagem={mensagem} style={styles.subtitle} />
+              <BotaoCadastrarAnimado texto="Confirmar alterações" onPress={Alterar} width={300} />
+              <AlertPro
+                ref={alertRef}
+                onConfirm={() => alertRef.current.close()}
+                title="Arquivo inválido"
+                message={textoAlert}
+                showCancel={false}
+                textConfirm="OK"
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+              />
+            </View>
+          </>
+        }
+      </View>
     </ScrollView >
   );
 }
@@ -218,6 +235,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#096D82',
-  }
+  },
+  containerCarregando: {
+    minHeight: windowHeight,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#096D82',
+  },
 });
 export default AlterarPerfil;
