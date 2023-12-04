@@ -1,5 +1,6 @@
 import axios from "axios";
 import { urlAPI } from "../constants";
+import CatchError from "./CatchError";
 // Função para desativar um campo no banco de dados
 export default async function DesativarCampo(tipo, id, functionthen) {
     await axios.put(urlAPI + "del" + tipo + "/" + id)
@@ -7,7 +8,5 @@ export default async function DesativarCampo(tipo, id, functionthen) {
             if (functionthen) {
                 functionthen();
             }
-        }).catch(error => {
-            console.error(error);
-        });
+        }).catch(CatchError);
 };

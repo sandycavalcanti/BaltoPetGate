@@ -14,6 +14,7 @@ import Mensagem from "../../components/cadastro/Mensagem";
 import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnimado";
 import AlertPro from "react-native-alert-pro";
 import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
+import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 
 const AlterarPostagem = ({ navigation }) => {
   const route = useRoute();
@@ -118,8 +119,8 @@ const AlterarPostagem = ({ navigation }) => {
   }
 
   return (
-    <ContainerCadastro titulo='Faça sua postagem!'>
-      <BotaoCadastrar texto={imagem ? 'Alterar Imagem' : 'Acresentar uma imagem'} onPress={escolherImagem} styleBotao={{ backgroundColor: '#EEECEC', width: '90%'}} styleTexto={{ color: '#8EBF81' }} />
+    <ContainerCadastro titulo='Edite sua postagem!'>
+      <BotaoCadastrar texto={imagem ? 'Alterar Imagem' : 'Acresentar uma imagem'} onPress={escolherImagem} styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />
       {imagem && <BotaoCadastrar texto='Remover Imagem' onPress={() => setImagem(null)} styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />}
       <TextInput placeholder="Digite um comentário" value={comentario} onChangeText={text => setComentario(text)} autoCorrect={false} multiline style={styles.input} placeholderTextColor={corPlaceholderCad} />
       {(imagem || comentario) &&

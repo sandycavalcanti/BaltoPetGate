@@ -11,6 +11,7 @@ import { Sae } from "react-native-textinput-effects";
 import OcticonsIcon from "react-native-vector-icons/Octicons";
 import ValidarCamposCad from "../../utils/ValidarCamposCad";
 import CatchError from "../../utils/CatchError";
+import Mensagem from "../../components/cadastro/Mensagem";
 
 const corPlaceholderAtivo = '#fff'
 
@@ -18,7 +19,7 @@ const Login = () => {
     const navigation = useNavigation();
     const email = useRef('');
     const senha = useRef('');
-    const [mensagem, setMensagem] = useState("");
+    const [mensagem, setMensagem] = useState({});
     const [carregando, setCarregando] = useState(false);
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [colorEmail, setColorEmail] = useState(corPlaceholderCad);
@@ -72,17 +73,18 @@ const Login = () => {
             TB_PESSOA_EMAIL: email.current,
             TB_PESSOA_SENHA: senha.current,
         }).then(async response => {
+            setMensagem({ color: '#fafafa', text: 'Login realizado!' })
             setCarregando(true);
             const TokenUsuario = response.data.token;
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-        }).catch(error => CatchError(error, false, setMensagem('Houve um erro'), setMensagem(error.response.data.message)));
+        }).catch(error => CatchError(error, false, () => setMensagem({ color: 'red', text: 'Houve um erro' }), () => setMensagem({ color: 'red', text: error.response.data.message })));
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
-            {mensagem && <Text style={styles.mensagem}>{mensagem}</Text>}
+            <Mensagem mensagem={mensagem} style={{ marginBottom: 20, fontSize: 16 }} />
             <View style={styles.containercampo}>
                 <Sae
                     label={"Email"}
