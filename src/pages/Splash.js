@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Splash = ({ navigation }) => {
   const rota = useRef('');
 
+  // Função que verifica se a pessoa já fez login e navega para o menu, se não, para o login
   const VerificarLogin = async () => {
     const TokenUsuario = await AsyncStorage.getItem('token');
     rota.current = TokenUsuario ? 'Menu' : 'Login'

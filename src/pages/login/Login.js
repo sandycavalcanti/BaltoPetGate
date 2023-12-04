@@ -10,6 +10,7 @@ import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnima
 import { Sae } from "react-native-textinput-effects";
 import OcticonsIcon from "react-native-vector-icons/Octicons";
 import ValidarCamposCad from "../../utils/ValidarCamposCad";
+import CatchError from "../../utils/CatchError";
 
 const corPlaceholderAtivo = '#fff'
 
@@ -29,11 +30,11 @@ const Login = () => {
 
     const Logar = () => {
         const mensagem = VerificarCampos();
-        if (mensagem) {
+        if (mensagem) { // Se houver algum campo inválido
             setTextoAlert(mensagem);
             alertRef.current.open();
         } else {
-            if (numeroTentativas.current >= 10) {
+            if (numeroTentativas.current >= 10) { // Bloquear tentativas caso houverem 10
                 numeroTentativas.current = 0;
                 setDesativado(true);
                 alert("Muitas tentativas realizadas, espere por 30 segundos");
@@ -75,18 +76,7 @@ const Login = () => {
             const TokenUsuario = response.data.token;
             await AsyncStorage.setItem('token', TokenUsuario);
             navigation.reset({ index: 0, routes: [{ name: 'Menu' }] });
-        }).catch(error => {
-            if (error.response) {
-                const erro = error.response.data.message;
-                ToastAndroid.show(erro, ToastAndroid.SHORT);
-                setMensagem(erro);
-            } else {
-                const erro = 'Houve um erro'
-                ToastAndroid.show(erro, ToastAndroid.SHORT);
-                setMensagem(erro);
-                console.error(error)
-            }
-        })
+        }).catch(error => CatchError(error, false, setMensagem('Houve um erro'), setMensagem(error.response.data.message)));
     };
 
     return (
@@ -133,10 +123,13 @@ const Login = () => {
                         }
                     </Pressable>
                 </View>
+
                 <TouchableOpacity onPress={() => navigation.navigate("RecSenha")} style={{ alignSelf: "flex-end" }} >
                     <Text style={styles.esqueceu}>Esqueci minha senha</Text>
                 </TouchableOpacity>
+
             </View>
+
             <BotaoCadastrarAnimado onPress={Logar} texto={'Entrar'} marginBottom={5} disabled={desativado} />
             <TouchableOpacity onPress={() => navigation.navigate("CadOpcao")}>
                 <Text style={styles.textocad}>Não tenho uma conta</Text>

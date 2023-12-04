@@ -1,21 +1,25 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, Text, View, Alert, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground } from "react-native";
+import { useState, useEffect, useRef } from "react";
+import { StyleSheet, Dimensions, Text, View, Alert, Animated, TouchableOpacity, ToastAndroid, ImageBackground, Image } from "react-native";
 import { Entypo, AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { corRosaForte, corRosaFraco, urlAPI } from "../constants";
+import { urlAPI } from "../constants";
 import Dropdown from "../components/geral/Dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
 import Imagem from "../components/geral/Imagem";
-import { Modal } from "react-native-modals";
-import Avaliar from "../components/Avaliacao/Avaliar";
 import IniciarChat from "../utils/IniciarChat";
 import RetornarTipoNome from "../utils/RetornarTipoNome";
 import DesativarCampo from "../utils/DesativarCampo";
 import Estrelas from "../components/Avaliacao/Estrelas";
 import ModalAvaliacao from "../components/Avaliacao/ModalAvaliacao";
-import ModalAvaliar from "../components/Avaliacao/ModalAvaliar";
+import Avaliar from "../components/Avaliacao/Avaliar";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+
+const BotaoPerfil = (props) => (
+  <TouchableOpacity style={[styles.button, props.style]} onPress={props.onPress}>
+    <Text style={styles.buttonText}>{props.texto}</Text>
+  </TouchableOpacity>
+)
 
 const PerfilLayout = (props) => {
   const navigation = props.navigation;
@@ -28,21 +32,21 @@ const PerfilLayout = (props) => {
   let scrollY = props.scrollY ? props.scrollY : 0;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
-
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
 
   const MedirAltura = (event) => {
-    const height = event.nativeEvent.layout.height;
+    const height = Math.floor(event.nativeEvent.layout.height);
     props.setPerfilHeight(height);
   };
 
+  // Calcular o movimento do modal três pontos quando descer a tela
   useEffect(() => {
-    let timeoutId = null;
-    let listener;
+    let timeoutId, listener = null;
     setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 500);
     return () => scrollY.removeListener(listener);
   }, [scrollY]);
 
+  // Opções botão três pontos
   let item1, item2, item3 = {};
   if (props.pessoal) {
     item1 = { texto: 'Alterar minhas informações', press: () => navigation.navigate('AlterarCad', { modoAlterar: true }) }
@@ -55,11 +59,11 @@ const PerfilLayout = (props) => {
   }
 
   const BloquearPessoa = () => {
-    console.log('Bloquear')
+    ToastAndroid.show('A função de bloquear pessoa ainda será implementada', ToastAndroid.SHORT);
   }
 
   const DenunciarPessoa = () => {
-    console.log('Bloquear')
+    ToastAndroid.show('A função de denunciar pessoa ainda será implementada', ToastAndroid.SHORT);
   }
 
   const SairDaConta = async () => {
@@ -81,16 +85,36 @@ const PerfilLayout = (props) => {
     )
   }
 
+  // Animação da info sobre puxar a tela
+  const translateYInfo = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    let animationTimeout = null;
+    if (!props.carregando) {
+      animationTimeout = setTimeout(() => {
+        Animated.timing(translateYInfo, {
+          toValue: -100,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      }, 2000);
+    }
+    return () => clearTimeout(animationTimeout);
+  }, [translateYInfo, props.carregando]);
+
   return (
     <View style={styles.container} onLayout={MedirAltura}>
       <View>
         <ImageBackground style={styles.imagemFundo} resizeMode="cover" source={require("../../assets/img/FundoPerfil.png")} />
         <View style={styles.Oval}></View>
         <View style={styles.Fundo}></View>
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={33} color="white" />
           </TouchableOpacity>
+          <Animated.View style={[styles.infoContainer, { transform: [{ translateY: translateYInfo }] }]}>
+            <Text style={styles.infoText}>Puxe a tela para baixo para atualizar as informações</Text>
+          </Animated.View>
           <TouchableOpacity onPress={() => setDropdownVisible(prev => !prev)}>
             <Entypo name="dots-three-vertical" size={30} color="white" />
           </TouchableOpacity>
@@ -100,11 +124,13 @@ const PerfilLayout = (props) => {
         </View>
         <View style={styles.profileContainer}>
           <View>
+            {/* Foto e nome */}
             <Imagem url={urlImg} style={styles.profileImage} />
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
             {props.data.TB_TIPO_ID != 1 && <Text style={styles.tipoUsuario}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>
           <View style={styles.containerEstrelasSeguindo}>
+            {/* Estrelas e seguindo */}
             <View style={styles.viewEstrelas}>
               <Text style={styles.quantidadeSeguidores}>{props.seguindo.length}</Text>
               <Text style={styles.textoSeguidores}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
@@ -119,6 +145,7 @@ const PerfilLayout = (props) => {
               </View>}
           </View>
         </View>
+        {/* Bio */}
         <View style={styles.content}>
           <Text style={styles.contentText}>
             {props.data.TB_PESSOA_BIO && props.data.TB_PESSOA_BIO}
@@ -126,25 +153,17 @@ const PerfilLayout = (props) => {
         </View>
         {/* Botões */}
         <View style={styles.buttons}>
-          {props.pessoal ?
+          {props.pessoal ? // Botões para a conta pessoal
+            <BotaoPerfil texto='Alterar perfil' style={{ width: '90%' }} onPress={() => navigation.navigate('AlterarPerfil')} />
+            : // Botões para a conta de outros
             <>
-              <TouchableOpacity style={[styles.button, { width: '90%' }]} onPress={() => navigation.navigate('AlterarPerfil')}>
-                <Text style={styles.buttonText}>Alterar perfil</Text>
-              </TouchableOpacity>
-            </>
-            :
-            <>
-              <TouchableOpacity style={styles.button} onPress={() => setAvaliar(true)}>
-                <Text style={styles.buttonText}>Avaliar</Text>
-              </TouchableOpacity>
-              <ModalAvaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
-              <TouchableOpacity style={styles.button} onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)}>
-                <Text style={styles.buttonText}>Iniciar Chat</Text>
-              </TouchableOpacity>
+              <BotaoPerfil texto='Avaliar' onPress={() => setAvaliar(true)} />
+              <Avaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
+              <BotaoPerfil texto='Iniciar Chat' onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)} />
             </>}
         </View>
       </View>
-    </View >
+    </View>
   );
 }
 
@@ -217,7 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 30,
     backgroundColor: '#CEF7FF',
     justifyContent: 'space-around'
   },
@@ -244,7 +263,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#093C4B',
     textAlign: 'justify',
-    paddingBottom: 5
+    paddingBottom: 5,
+    marginLeft: 10
   },
   containerEstrelasSeguindo: {
     flexDirection: 'row',
@@ -284,6 +304,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'gray',
     textAlign: 'center'
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoText: {
+    textAlign: 'center',
+    color: '#fafafa',
+    fontSize: 16
   }
 });
 

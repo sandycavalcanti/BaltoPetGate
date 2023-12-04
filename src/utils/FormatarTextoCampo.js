@@ -1,4 +1,5 @@
-const FormatarTextoCampo = (texto, tipoTexto) => {
+// Função que recebe um tipo para formatar o texto digitado nos campos de texto a partir desse tipo
+export default function FormatarTextoCampo(texto, tipoTexto) {
     const tipo = tipoTexto.toLowerCase();
     const textoSemNumeros = texto.toString().replace(/\D/g, '');
     switch (tipo) {
@@ -32,5 +33,3 @@ const FormatarTextoCampo = (texto, tipoTexto) => {
             return textoSemNumeros;
     }
 }
-
-export default FormatarTextoCampo;

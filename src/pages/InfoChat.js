@@ -65,21 +65,22 @@ const InfoChat = () => {
                 {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
                     :
                     animalCadastro
-                        ?
+                        ? // Caso o usuário que estiver usando for quem cadastrou o animal
                         <View style={styles.InfoForm}>
-                            {TB_TIPO_ID == 1 && <>
-                                <Text style={styles.Titulo}>Formulario adoção</Text>
-                                <Questao texto='Toda a fámilia esta ciente e apoia a adoção do animal?' resposta={info.current.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
-                                <Questao texto='Moradia' resposta={FormatarTextoBanco(info.current.TB_PESSOA_ANIMAL_CASA)} />
-                                <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.current.TB_PESSOA_ANIMAL_PASSEAR} />
-                                <Questao texto='Qual a quantidade média de espaço que o animal terá acesso?' resposta={FormatarTextoBanco(info.current.TB_PESSOA_ANIMAL_ESPACO)} />
-                                <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.current.TB_PESSOA_ANIMAL_AUSENCIA} />
-                                <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.current.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
-                                <Questao texto='Quantos animais você possui em sua casa?' resposta={info.current.TB_PESSOA_ANIMAL_QUANTIDADE} />
-                            </>}
+                            {TB_TIPO_ID == 1 && // Mostrar formulário apenas se o tipo da outra pessoa for 1
+                                <>
+                                    <Text style={styles.Titulo}>Formulario adoção</Text>
+                                    <Questao texto='Toda a fámilia esta ciente e apoia a adoção do animal?' resposta={info.current.TB_PESSOA_ANIMAL_FAMILIA ? 'Sim' : 'Não'} />
+                                    <Questao texto='Moradia' resposta={FormatarTextoBanco(info.current.TB_PESSOA_ANIMAL_CASA)} />
+                                    <Questao texto='Quantas vezes por semana o animal será levado a passeios?' resposta={info.current.TB_PESSOA_ANIMAL_PASSEAR} />
+                                    <Questao texto='Qual a quantidade média de espaço que o animal terá acesso?' resposta={FormatarTextoBanco(info.current.TB_PESSOA_ANIMAL_ESPACO)} />
+                                    <Questao texto='Em caso de sua ausência, quem ficará responsável pelo animal?' resposta={info.current.TB_PESSOA_ANIMAL_AUSENCIA} />
+                                    <Questao texto='Durante o dia-a-dia, o animal terá acesso a rua?' resposta={info.current.TB_PESSOA_ANIMAL_RUA ? 'Sim' : 'Não'} />
+                                    <Questao texto='Quantos animais você possui em sua casa?' resposta={info.current.TB_PESSOA_ANIMAL_QUANTIDADE} />
+                                </>}
                             {animais.map(item => <AlterarSolicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} TB_PESSOA_ID={TB_PESSOA_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} alert={alert} />)}
                         </View>
-                        :
+                        : // Caso a outra pessoa for quem cadastrou o animal
                         animais.map(item => <Solicitacao key={item.TB_ANIMAL_ID} TB_ANIMAL_ID={item.TB_ANIMAL_ID} nome={item['TB_ANIMAL.TB_ANIMAL_NOME']} TB_PESSOA_ID={TB_PESSOA_IDD.current} TB_TIPO_IDD={TB_TIPO_IDD.current} alert={alert} />)
                 }
             </ScrollView>

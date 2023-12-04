@@ -1,4 +1,5 @@
-const CalcularDistanciaCoordenadas = (coord1, coord2) => {
+// Função para calcular a distância entre dois pontos do mapa
+export default function CalcularDistanciaCoordenadas(coord1, coord2) {
     const raioTerra = 6371; // Raio médio da Terra em quilômetros
 
     const paraRadianos = (valor) => {
@@ -25,5 +26,3 @@ const CalcularDistanciaCoordenadas = (coord1, coord2) => {
 
     return distancia;
 }
-
-export default CalcularDistanciaCoordenadas;

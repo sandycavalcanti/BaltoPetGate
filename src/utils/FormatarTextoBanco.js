@@ -1,4 +1,5 @@
-const FormatarTextoBanco = (textoBanco) => {
+// Função que recebe o texto armazenado no banco de dados e formata o texto para ser exibido no aplicativo
+export default function FormatarTextoBanco(textoBanco) {
     const texto = textoBanco ? textoBanco.toString().toLowerCase() : textoBanco;
     switch (texto) {
         case 'grande':
@@ -19,5 +20,3 @@ const FormatarTextoBanco = (textoBanco) => {
             return textoBanco;
     }
 }
-
-export default FormatarTextoBanco;

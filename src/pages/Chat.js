@@ -12,6 +12,7 @@ import FormData from 'form-data';
 import ModalMensagem from '../components/chat/ModalMensagem';
 import { renderActions, renderBubble, renderChatEmpty, renderComposer, renderCustomView, renderInputToolbar, renderSend, renderSystemMessage, renderTime } from '../components/chat/ChatRenders';
 import AlertPro from 'react-native-alert-pro';
+import CatchError from '../utils/CatchError';
 
 const ActionKind = {
     SEND_MESSAGE: 'SEND_MESSAGE',
@@ -93,19 +94,14 @@ const Chat = () => {
                 mensagens.current = mensagensGiftedChat
                 dispatch({ type: ActionKind.SEND_MESSAGE, payload: mensagensGiftedChat });
             }
-        }).catch(error => {
-            if (error.response.status !== 404 && error.response) {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error('Erro ao selecionar:', erro.error);
-            }
-        });
+        }).catch(CatchError);
     };
+
     const SelecionarInfoChat = async () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }, { signal: controller.signal }).then(async response => {
+        }, { signal: controller.signal }).then(response => {
             if (response.data) {
                 const dados = response.data.Selecionar[0];
                 animais.current = response.data.Animais
@@ -114,19 +110,13 @@ const Chat = () => {
                 if (dados.TB_CHAT_STATUS) {
                     msgEmptyChat.current = 'Nenhuma mensagem ainda';
                     desativado.current = false;
-                    await SelecionarMensagens();
+                    SelecionarMensagens();
                 } else {
                     msgEmptyChat.current = "Esse chat foi desativado";
                     desativado.current = true;
                 }
             }
-        }).catch(error => {
-            if (error.response) {
-                let erro = error.response.data;
-                ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                console.error('Erro ao selecionar:', erro.error);
-            }
-        });
+        }).catch(CatchError);
         setCarregando(false);
     };
 
@@ -148,7 +138,7 @@ const Chat = () => {
         });
     }
     const DenunciarMensagem = () => {
-        console.log('Denuncia');
+        ToastAndroid.show('A função de denunciar conversa ainda será implementada', ToastAndroid.SHORT);
     }
     const AlterarMensagem = () => {
         editando.current = true;
@@ -177,7 +167,7 @@ const Chat = () => {
             });
     }
 
-    const onSend = useCallback(async (messages) => {
+    const onSend = useCallback(async (messages) => { // Enviar mensagem
         const sentMessages = [{ ...messages[0] }];
         const texto = sentMessages[0].text
         const imagem = sentMessages[0].image
@@ -262,7 +252,8 @@ const Chat = () => {
             }
         }
     }, [dispatch, state.messages]);
-    const onSendCustomActions = (messages = []) => {
+
+    const onSendCustomActions = (messages = []) => { // Função botão mais (Enviar Imagem)
         const messagesToUpload = messages.map(message => ({
             ...message,
             user,
@@ -271,7 +262,8 @@ const Chat = () => {
         }));
         onSend(messagesToUpload);
     };
-    const onLongPress = (context, message) => {
+    
+    const onLongPress = (context, message) => { // Segurar dedo na mensagem
         podeExcluir.current = true;
         podeEditar.current = !message.image;
         mensagemSelecionada.current = message;
@@ -284,10 +276,13 @@ const Chat = () => {
             setModalVisible(true);
         }
     }
+
+    // forçar renderização
     const [forceUpdate, setForceUpdate] = useState(0);
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
+    
     // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
     //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     // };

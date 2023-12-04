@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system'
 
-const VerificarTamanhoImagem = async (result, tamanho) => {
+// Função que retorna uma mensagem se o tamanho da imagem for maior do que o tamanho pedido
+export default async function VerificarTamanhoImagem(result, tamanho) {
 
     const getFileInfo = async (fileURI) => {
         const fileInfo = await FileSystem.getInfoAsync(fileURI)
@@ -20,11 +21,9 @@ const VerificarTamanhoImagem = async (result, tamanho) => {
         return 'Selecione um arquivo do tipo imagem';
     }
     const arquivoPermitido = isLessThanTheMB(fileInfo.size, tamanhoPermitido);
-    
+
     if (!arquivoPermitido) {
         return `Selecione uma imagem com menos de ${tamanhoPermitido}MB`;
     }
     return null;
 }
-
-export default VerificarTamanhoImagem; 

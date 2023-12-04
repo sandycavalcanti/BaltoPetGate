@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ToastAndroid } from 'react-native'
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import Dropdown from '../geral/Dropdown';
@@ -11,7 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const NavbarChat = (props) => {
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);  
+  const [modalConfirmacaoVisible, setmodalConfirmacaoVisible] = useState(false);
   const [showText, setShowText] = useState(true);
   const dados = props.dados;
   const animais = props.animais;
@@ -23,29 +23,27 @@ const NavbarChat = (props) => {
   const translateYText = useRef(new Animated.Value(5)).current;
   const translateYContent = useRef(new Animated.Value(50)).current;
 
+  // Itens modal botão três pontos
   let item1, item2, item3, item4 = {};
   item1 = { texto: 'Visualizar perfil', press: () => navigation.navigate('Perfil', { id: pessoaId }) };
   item2 = !props.desativado ? { texto: 'Desativar conversa', press: () => { setmodalConfirmacaoVisible(true); setDropdownVisible(false) } } : null;
   item3 = { texto: 'Bloquear pessoa', press: () => BloquearPessoa() };
   item4 = { texto: 'Denunciar conversa', press: () => DenunciarConversa() };
-  
+
+  // Variaveis a serem passadas ao infochat
   const nomeUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"] : dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
   const tipoUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_TIPO_ID"] : dados["TB_PESSOA_REMETENTE.TB_TIPO_ID"];
-
-  const dadosPessoa = {
-    TB_PESSOA_ID: pessoaId,
-    TB_PESSOA_NOME_PERFIL: nomeUsuario,
-    TB_TIPO_ID: tipoUsuario
-  }
+  const dadosPessoa = { TB_PESSOA_ID: pessoaId, TB_PESSOA_NOME_PERFIL: nomeUsuario, TB_TIPO_ID: tipoUsuario };
 
   const BloquearPessoa = () => {
-    console.log('Bloquear')
+    ToastAndroid.show('A função de bloquear pessoa ainda será implementada', ToastAndroid.SHORT);
   }
 
   const DenunciarConversa = () => {
-    console.log('Bloquear')
+    ToastAndroid.show('A função de denunciar conversa ainda será implementada', ToastAndroid.SHORT);
   }
 
+  // Animação dica info
   useEffect(() => {
     const animateText = () => {
       Animated.timing(translateYText, {
@@ -64,7 +62,6 @@ const NavbarChat = (props) => {
         useNativeDriver: true,
       }).start();
     };
-
     if (existeAnimal) {
       setTimeout(() => {
         animateText();
@@ -75,15 +72,18 @@ const NavbarChat = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.containerHeaderLeft}>
+        {/* Imagem do usuário */}
         <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: pessoaId })}>
           <Imagem url={urlPessoaImg + pessoaId} style={styles.profileImage} />
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
         <TouchableWithoutFeedback style={{ width: '100%', height: 50 }} onPress={() => { if (existeAnimal) navigation.navigate('InfoChat', { dadosPessoa, animais, dados }) }} >
-          {existeAnimal && showText && <Animated.View style={{ transform: [{ translateY: translateYText }] }}>
-            <Text style={{ color: '#fafafa', fontSize: 16 }}>Clique aqui para ver as informações do chat</Text>
-          </Animated.View>}
+          {existeAnimal && showText && // Dica info
+            <Animated.View style={{ transform: [{ translateY: translateYText }] }}>
+              <Text style={{ color: '#fafafa', fontSize: 16 }}>Clique aqui para ver as informações do chat</Text>
+            </Animated.View>}
+          {/* Nome do usuário e do animal caso houver */}
           <Animated.View style={{ flex: 1, transform: [{ translateY: existeAnimal ? translateYContent : 0 }] }}>
             <View style={[styles.subContainerHeaderMiddle, { alignItems: 'flex-start', justifyContent: 'center' }]}>
               <Text style={[styles.nome, { marginBottom: existeAnimal ? 0 : 5 }]} numberOfLines={1} ellipsizeMode="tail">{nomeUsuario}</Text>
@@ -97,14 +97,14 @@ const NavbarChat = (props) => {
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>
-        {existeAnimal &&
+        {existeAnimal && // Imagem do animal
           <>
-            {animais.length == 1 ?
+            {animais.length == 1 ? // Um animal
               <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animais[0].TB_ANIMAL_ID })}>
                 <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={styles.profileImage} />
               </TouchableOpacity>
-              :
-              <TouchableOpacity onPress={() => console.log('botao')} style={{ height: 50, width: 70 }}>
+              : // Mais de um animal
+              <TouchableOpacity onPress={() => navigation.navigate('InfoChat', { dadosPessoa, animais, dados })} style={{ height: 50, width: 70 }}>
                 <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', top: 0, left: 0 }]} />
                 <Imagem url={urlAnimalImg + animais[1].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', bottom: 0, right: 0 }]} />
                 {animais.length > 2 && <Text style={{ position: 'absolute', top: 0, right: 0, fontSize: 18, color: '#fff' }}>+{animais.length - 2}</Text>}

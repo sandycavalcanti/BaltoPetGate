@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Perfil_post from '../../components/perfil/Perfil_post';
 import DecodificarToken from '../../utils/DecodificarToken';
+import CatchError from '../../utils/CatchError';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -26,16 +27,7 @@ const Animal = ({ navigation: { navigate } }) => {
                 if (carregando.current) carregando.current = false;
                 setSelect(response.data);
                 setIsFetching(false);
-            }).catch(error => {
-                if (error.response) {
-                    let erro = error.response.data;
-                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                } else {
-                    console.error('Error:', error);
-                    ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
-                }
-            })
+            }).catch(CatchError)
     }
 
     useEffect(() => {

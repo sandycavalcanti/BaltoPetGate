@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Dimensions } from "react-native";
 import { memo, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { urlAPI } from "../../constants";
@@ -7,6 +7,9 @@ import axios from "axios";
 import Imagem from "../geral/Imagem";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
+import CatchError from "../../utils/CatchError";
+
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const AnimalPost = memo((props) => {
   const navigation = useNavigation();
@@ -25,13 +28,7 @@ const AnimalPost = memo((props) => {
     axios.get(urlAPI + 'seltemperamentos/' + props.data.TB_ANIMAL_ID, { signal: controller.signal })
       .then(response => {
         setTemperamento(response.data);
-      }).catch(error => {
-        if (error.response.status !== 404) {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.log('Erro ao selecionar:', erro.error);
-        }
-      })
+      }).catch(CatchError)
   }
 
   useEffect(() => {

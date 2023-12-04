@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 import PropTypes from 'prop-types';
+import Lightbox from 'react-native-lightbox-v2'
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -26,7 +27,9 @@ const Post = (props) => {
                 {props.img ?
                     <Image source={{ uri: props.img }} style={styles.Imagem} />
                     :
-                    <Imagem url={urlImg} style={styles.Imagem} remove={!possuiImg} />
+                    <Lightbox activeProps={{ style: styles.imageActive }} underlayColor='transparent'>
+                        <Imagem url={urlImg} style={styles.Imagem} remove={!possuiImg} />
+                    </Lightbox>
                 }
                 {texto &&
                     <View style={styles.ContainerTexto}>
@@ -84,7 +87,12 @@ const styles = StyleSheet.create({
         width: windowWidth,
         height: 'auto',
         aspectRatio: 1
-    }
+    },
+    imageActive: {
+        width: windowWidth,
+        height: windowWidth,
+        resizeMode: 'contain',
+    },
 });
 
 Post.propTypes = {

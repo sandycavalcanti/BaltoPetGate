@@ -12,13 +12,13 @@ const Imagem = (props) => {
     const ChecarImagem = async () => {
         if (props.url.startsWith(urlAPI)) {
             await axios.get(props.url, { signal: controller.signal })
-                .then(response => {
-                    setImageExists(true);
-                    if (props.setResult) props.setResult(true)
-                }).catch(error => {
-                    setImageExists(false);
-                    if (props.setResult) props.setResult(false)
-                })
+            .then(() => {
+                setImageExists(true);
+                if (props.setResult) props.setResult(true)
+            }).catch(() => {
+                setImageExists(false);
+                if (props.setResult) props.setResult(false)
+            })
         }
     };
 

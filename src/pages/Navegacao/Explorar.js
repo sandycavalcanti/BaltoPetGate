@@ -5,6 +5,7 @@ import { corFundoCad, corRosaForte, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 import DecodificarToken from '../../utils/DecodificarToken';
+import CatchError from '../../utils/CatchError';
 
 const Explorar = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
@@ -24,16 +25,7 @@ const Explorar = ({ navigation: { navigate } }) => {
         if (carregando.current) carregando.current = false;
         setSelect(response.data);
         setIsFetching(false);
-      }).catch(error => {
-        if (error.response) {
-          let erro = error.response.data;
-          ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          console.error(erro.error, error);
-        } else {
-          console.error('Error:', error);
-          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
-        }
-      })
+      }).catch(CatchError)
   }
 
   useEffect(() => {

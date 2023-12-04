@@ -1,3 +1,4 @@
+// Função que recebe um id e retorna o nome do tipo desse id, podendo ser de tipo de pessoas ou tipo de solicitação
 export default function RetornarTipoNome(tipoId, solicitacao) {
     if (!solicitacao) {
         switch (tipoId) {

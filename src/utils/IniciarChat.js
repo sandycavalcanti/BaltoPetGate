@@ -2,8 +2,8 @@ import axios from "axios";
 import { urlAPI } from "../constants";
 import CatchError from "./CatchError";
 import { CommonActions } from "@react-navigation/native";
-
-const IniciarChat = async (TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId, replace) => {
+// Função para iniciar o chat, navegando para ele caso o chat já existir, criar um novo, ou adicionar um animal
+export default async function IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId, replace) {
     const navigateToNewScreen = (TB_CHAT_ID, TB_PESSOA_ID) => {
         if (replace) {
             navigate.dispatch(state => {
@@ -93,5 +93,3 @@ const IniciarChat = async (TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId, repl
         }
     });
 }
-
-export default IniciarChat;

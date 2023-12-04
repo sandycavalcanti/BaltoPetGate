@@ -27,6 +27,7 @@ import Teste from '../Teste';
 
 const Stack = createStackNavigator();
 
+// Animação abertura da tela
 const openConfig = {
   animation: 'spring',
   config: {
@@ -38,7 +39,6 @@ const openConfig = {
     restSpeedThreshold: 0.01,
   }
 }
-
 const closeConfig = {
   animation: 'timing',
   config: {
