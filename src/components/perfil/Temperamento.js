@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
 const Temperamento = (props) => {
     return (
@@ -29,4 +30,4 @@ Temperamento.propTypes = {
     texto: PropTypes.object
 }
 
-export default Temperamento;
+export default memo(Temperamento);

@@ -4,13 +4,14 @@ import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 import PropTypes from 'prop-types';
 import Lightbox from 'react-native-lightbox-v2'
+import { memo } from 'react';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const Post = (props) => {
     const dataOriginal = props.data ? props.data.createdAt : new Date();
     const foiEditado = props.alterado ? props.alterado : props.data?.TB_POSTAGEM_TEXTO_ALTERADO;
-    const texto = props.text ? props.text : props.data?.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO;
+    const texto = (props.text !== undefined) ? props.text : props.data?.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO;
     let dataFormatada, urlImg = "";
 
     if (dataOriginal) {
@@ -101,4 +102,4 @@ Post.propTypes = {
     img: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 }
 
-export default Post;
+export default memo(Post);

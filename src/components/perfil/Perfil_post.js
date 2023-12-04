@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import DesativarCampo from '../../utils/DesativarCampo';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import ModalConfirmacao from '../geral/ModalConfirmacao';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
@@ -95,7 +95,7 @@ const Perfil_post = (props) => {
       </View>
     </View>
   )
-}
+};
 
 const styles = StyleSheet.create({
   Container: {
@@ -163,4 +163,4 @@ Perfil_post.propTypes = {
   naoExibirOpcoes: PropTypes.bool
 }
 
-export default Perfil_post;
+export default memo(Perfil_post);

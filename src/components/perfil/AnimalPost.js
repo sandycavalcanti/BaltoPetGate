@@ -9,9 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
 import CatchError from "../../utils/CatchError";
 
-const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
-
-const AnimalPost = memo((props) => {
+const AnimalPost = (props) => {
   const navigation = useNavigation();
   const dataOriginal = props.data.createdAt;
   const urlImg = urlAPI + 'selanimalimg/' + props.data.TB_ANIMAL_ID;
@@ -62,7 +60,7 @@ const AnimalPost = memo((props) => {
       </View>
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   profileContainer: {
@@ -132,4 +130,4 @@ AnimalPost.propTypes = {
   data: PropTypes.object
 }
 
-export default AnimalPost;
+export default  memo(AnimalPost);

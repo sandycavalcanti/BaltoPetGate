@@ -12,6 +12,14 @@ const DropdownSimples = (props) => {
     }
   }, [props.val]);
 
+  const onChange = (item) => {
+    setValue(item.value);
+    if (props.setRef) {
+      props.setRef.current = item.value;
+    } else {
+      props.set(item.value);
+    }
+  }
   return (
     <Dropdown
       style={[styles.dropdown, props.style]}
@@ -23,10 +31,7 @@ const DropdownSimples = (props) => {
       valueField="value"
       placeholder={props.texto}
       value={value}
-      onChange={item => {
-        setValue(item.value);
-        props.set(item.value);
-      }}
+      onChange={onChange}
     />
   )
 }
@@ -55,6 +60,7 @@ DropdownSimples.propTypes = {
   data: PropTypes.array,
   texto: PropTypes.string,
   set: PropTypes.func,
+  setRef: PropTypes.object,
   val: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }

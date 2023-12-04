@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, ToastAndroid, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import BotaoImg from "../../components/FormDiario/BotaoImg";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import axios from "axios";
 import { corFundoCad, corFundoCampoCad, corPlaceholderCad, corRosaFraco, corTextoBotaoCad, urlAPI } from "../../constants";
@@ -14,6 +13,7 @@ import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnima
 import CatchError from "../../utils/CatchError";
 import AlertPro from "react-native-alert-pro";
 import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
+import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
 
 const CadPostagem = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
@@ -89,8 +89,8 @@ const CadPostagem = ({ navigation }) => {
 
   return (
     <ContainerCadastro titulo='Faça sua postagem!'>
-      <BotaoImg onPress={escolherImagem} texto={imagem ? 'Alterar Imagem' : ''} />
-      {imagem && <BotaoImg onPress={() => setImagem(null)} texto='Remover Imagem' />}
+      <BotaoCadastrar texto={imagem ? 'Alterar Imagem' : 'Acrescentar uma imagem'} onPress={escolherImagem} styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />
+      {imagem && <BotaoCadastrar texto='Remover Imagem' onPress={() => setImagem(null)} styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />}
       <TextInput placeholder="Digite um comentário" value={comentario} onChangeText={text => setComentario(text)} multiline style={styles.input} placeholderTextColor={corPlaceholderCad} />
       {(imagem || comentario) &&
         <>

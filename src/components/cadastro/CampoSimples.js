@@ -12,8 +12,8 @@ const CampoSimples = (props) => {
   }
 
   return (
-    <View style={styles.containercampo}>
-      <TextInput onChangeText={onChangeText} placeholderTextColor={corPlaceholderCad} style={styles.campo} value={props.val} {...props} />
+    <View style={[styles.containercampo, props.styleView]}>
+      <TextInput onChangeText={onChangeText} placeholderTextColor={corPlaceholderCad} style={[styles.campo,props.styleCampo]} value={props.val} {...props} />
       {!props.opcional && <Text style={styles.asterisco}>*</Text>}
     </View>
   )
@@ -50,7 +50,9 @@ CampoSimples.propTypes = {
   placeholder: PropTypes.string,
   keyboardType: PropTypes.string,
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  multiline: PropTypes.bool
+  multiline: PropTypes.bool,
+  styleView: PropTypes.object,
+  styleCampo: PropTypes.object
 }
 
 export default CampoSimples
