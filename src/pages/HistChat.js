@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 import DecodificarToken from '../utils/DecodificarToken';
 import GrupoContatos from '../components/chat/GrupoContatos';
 import RemoverAcentos from '../utils/RemoverAcentos';
+import CatchError from '../utils/CatchError';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -20,31 +21,20 @@ const HistChat = () => {
   const [carregando, setCarregando] = useState(true);
   const empty = useRef(false)
 
+  const NenhumChatIniciado = () => {
+    empty.current = true;
+    setCarregando(false);
+  }
+
   const Selecionar = async () => {
     const decodedToken = await DecodificarToken();
     TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
     await axios.get(urlAPI + 'selchat/' + TB_PESSOA_IDD.current, { signal: controller.signal })
       .then(response => {
-        if (response.data) {
-          pessoasJson.current = response.data;
-          setCarregando(false);
-        }
+        pessoasJson.current = response.data;
+        setCarregando(false);
       })
-      .catch(error => {
-        if (error.response) {
-          if (error.response.status !== 404) { // Se houver um erro do servidor
-            let erro = error.response.data;
-            console.error(erro.error, error);
-            ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-          } else { // Se não houver nenhum chat iniciado
-            empty.current = true;
-            setCarregando(false);
-          }
-        } else { // Se houver um erro do aplicativo
-          console.error(error);
-          ToastAndroid.show('Um erro aconteceu', ToastAndroid.SHORT);
-        }
-      })
+      .catch(error => CatchError(error, false, null, null, () => NenhumChatIniciado()));
   };
 
   useEffect(() => {

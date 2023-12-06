@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback } from "react-native";
 import { memo, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { urlAPI } from "../../constants";
 import Temperamento from "./Temperamento";
 import axios from "axios";
-import Imagem from "../geral/Imagem";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
 import CatchError from "../../utils/CatchError";
@@ -36,11 +35,13 @@ const AnimalPost = (props) => {
     })
   }, []);
 
+  const estaEmAlerta = props.data.TB_ANIMAL_ALERTA;
+
   return (
-    <View style={styles.Container}>
+    <View style={[styles.Container, { backgroundColor: estaEmAlerta ? '#EBC8C8' : '#CEF7FF', opacity: props.desativado ? 0.5 : 1 }]}>
       <TouchableWithoutFeedback onPress={() => navigation.navigate("Ficha", { id: props.data.TB_ANIMAL_ID })}>
         <View style={styles.ContainerImagem}>
-          <Imagem url={urlImg} style={styles.Imagem} />
+          <Image source={{ uri: urlImg }} style={styles.Imagem} resizeMode="cover" />
         </View>
       </TouchableWithoutFeedback>
       <View style={styles.Content}>
@@ -56,6 +57,7 @@ const AnimalPost = (props) => {
         }
       </View>
       <View style={styles.ContainerData}>
+        <Text style={styles.mensagemEditada}>{props.desativado && '(Desativado)'}</Text>
         <Text style={styles.Data}>{dataFormatada}</Text>
       </View>
     </View>
@@ -80,8 +82,7 @@ const styles = StyleSheet.create({
   },
   Container: {
     width: "100%",
-    height: "auto",
-    backgroundColor: '#CEF7FF'
+    height: "auto"
   },
   ContainerImagem: {
     width: "100%",
@@ -109,15 +110,22 @@ const styles = StyleSheet.create({
     marginLeft: 10
   },
   ContainerData: {
-    marginTop: 15,
     padding: 10,
     paddingRight: 15,
     borderColor: "#FFBEBE",
     borderTopWidth: 1,
+    flexDirection: 'row',
     alignItems: "flex-end",
+    justifyContent: 'space-between'
   },
   Data: {
     color: "#216357",
+  },
+  mensagemEditada: {
+    fontStyle: 'italic',
+    fontSize: 15,
+    color: 'gray',
+    textAlign: 'center'
   },
   HeaderPerfil: {
     width: "100%",
@@ -127,7 +135,8 @@ const styles = StyleSheet.create({
 });
 
 AnimalPost.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  desativado: PropTypes.bool
 }
 
-export default  memo(AnimalPost);
+export default memo(AnimalPost);

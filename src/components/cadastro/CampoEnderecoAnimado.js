@@ -86,7 +86,7 @@ const CampoEnderecoAnimado = (props) => {
             {!props.removerTitulo && <Text style={styles.titulocampo}>Localização {opcional && '(Opcional)'}:</Text>}
             <View>
                 <TextInput onChangeText={onChangeText} value={texto} maxLength={9} placeholderTextColor={corPlaceholderCad} placeholder={props.cepOpcional ? "CEP (Opcional)" : "CEP"} keyboardType='numeric' style={styles.campo} />
-                {!opcional && <Text style={styles.asterisco}>*</Text>}
+                {(!opcional && !props.cepOpcional) && <Text style={styles.asterisco}>*</Text>}
             </View>
             <View style={styles.selecionar}>
                 <Dropdown

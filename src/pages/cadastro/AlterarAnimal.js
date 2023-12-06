@@ -50,7 +50,7 @@ const AlterarAnimal = ({ navigation }) => {
     const rua = useRef('');
     const alerta = useRef(false);
 
-    const [dadosanimal, setDadosanimal] = useState({});
+    const dadosanimal = useRef({});
     const situacoesBanco = useRef([]);
     const traumasBanco = useRef([]);
     const temperamentosBanco = useRef([]);
@@ -70,7 +70,7 @@ const AlterarAnimal = ({ navigation }) => {
         const camposCadastro = { nome: nome.current, idade: idade.current, idadeTipo: idadeTipo.current, porte: porte.current, peso: peso.current, especie: especie.current, sexo: sexo.current, descricao: descricao.current, localResgate: localResgate.current, cuidadoEspecial: cuidadoEspecial.current, saude: saude.current, castrado: castrado.current, vermifugado: vermifugado.current, microchip: microchip.current, temperamentos, situacoes, traumas, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current }
 
         const mensagemErro = ValidarCamposAnimal(camposObrigatorios, camposCadastro);
-
+        console.log(camposObrigatorios)
         if (!mensagemErro) {
             InserirDados();
         } else {
@@ -89,8 +89,9 @@ const AlterarAnimal = ({ navigation }) => {
             axios.post(urlAPI + 'selanimal/filtrar', {
                 TB_ANIMAL_ID: id,
             }).then(response => {
-                setDadosanimal(response.data[0]);
-                setCarregando(false)
+                const dados = response.data[0];
+                dadosanimal.current = dados;
+                nome.current = dados.TB_ANIMAL_NOME;
             }).catch(CatchError),
             axios.get(urlAPI + 'selsituacao', { signal: controller.signal })
                 .then(response => {
@@ -119,7 +120,7 @@ const AlterarAnimal = ({ navigation }) => {
                     }));
                     temperamentosBanco.current = options;
                 }).catch(CatchError),
-            axios.get(urlAPI + 'selsituacoes/filtrar', { TB_ANIMAL_ID: id })
+            axios.post(urlAPI + 'selsituacoes/filtrar', { TB_ANIMAL_ID: id })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item =>
@@ -127,7 +128,7 @@ const AlterarAnimal = ({ navigation }) => {
                     );
                     setSituacoes(options);
                 }).catch(CatchError),
-            axios.get(urlAPI + 'seltraumas/filtrar', { TB_ANIMAL_ID: id })
+            axios.post(urlAPI + 'seltraumas/filtrar', { TB_ANIMAL_ID: id })
                 .then(response => {
                     const dados = response.data;
                     const options = dados.map(item =>
@@ -248,44 +249,44 @@ const AlterarAnimal = ({ navigation }) => {
                 <>
                     <GroupBox titulo='Imagem do animal'>
                         {image ? <Image style={styles.Imagem} source={{ uri: image }} /> : <Imagem style={styles.Imagem} url={urlAPI + "selanimalimg/" + id} />}
-                        <BotaoArquivo onPress={escolherImagem} texto={image ? 'Trocar imagem' : null} />
+                        <BotaoArquivo onPress={escolherImagem} texto='Trocar imagem' />
                     </GroupBox>
                     <GroupBox titulo='Informações'>
-                        <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} val={dadosanimal.TB_ANIMAL_NOME} />
+                        <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} val={dadosanimal.current.TB_ANIMAL_NOME} />
                         <View style={styles.containerCampos}>
-                            <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} maxLength={2} defaultValue={dadosanimal.TB_ANIMAL_IDADE.toString()} />
-                            <DropdownSimples data={TipoIdade} setRef={idadeTipo} texto='Ano(s) ou Mes(es)' val={dadosanimal.TB_ANIMAL_IDADE_TIPO} />
+                            <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} maxLength={2} defaultValue={dadosanimal.current.TB_ANIMAL_IDADE.toString()} />
+                            <DropdownSimples data={TipoIdade} setRef={idadeTipo} texto='Ano(s) ou Mes(es)' val={dadosanimal.current.TB_ANIMAL_IDADE_TIPO} />
                         </View>
                         <View style={styles.ContainerDublo}>
                             <View style={styles.campo}>
-                                <DropdownSimples data={Porte} texto='Porte' setRef={porte} val={dadosanimal.TB_ANIMAL_PORTE} />
+                                <DropdownSimples data={Porte} texto='Porte' setRef={porte} val={dadosanimal.current.TB_ANIMAL_PORTE} />
                             </View>
                             <View style={styles.campo}>
-                                <Campo styleView={{ flex: 0.9 }} placeholder="Peso" keyboardType="numeric" setRef={peso} maxLength={4} defaultValue={dadosanimal.TB_ANIMAL_PESO.toString()} />
+                                <Campo styleView={{ flex: 0.9 }} placeholder="Peso" keyboardType="numeric" setRef={peso} maxLength={4} defaultValue={dadosanimal.current.TB_ANIMAL_PESO.toString()} />
                                 <Text style={styles.Texto}>Kg</Text>
                             </View>
                         </View>
                         <View style={styles.containerCampos}>
-                            <DropdownSimples data={Especie} texto='Especie' setRef={especie} val={dadosanimal.TB_ANIMAL_ESPECIE} />
-                            <DropdownSimples data={Sexo} texto='Sexo' setRef={sexo} val={dadosanimal.TB_ANIMAL_SEXO} />
+                            <DropdownSimples data={Especie} texto='Especie' setRef={especie} val={dadosanimal.current.TB_ANIMAL_ESPECIE} />
+                            <DropdownSimples data={Sexo} texto='Sexo' setRef={sexo} val={dadosanimal.current.TB_ANIMAL_SEXO} />
                         </View>
                     </GroupBox>
                     <GroupBox titulo='Descrição'>
-                        <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} val={dadosanimal.TB_ANIMAL_DESCRICAO} />
-                        <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} val={dadosanimal.TB_ANIMAL_LOCAL_RESGATE} />
-                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={dadosanimal.TB_ANIMAL_CUIDADO_ESPECIAL} />
+                        <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} val={dadosanimal.current.TB_ANIMAL_DESCRICAO} />
+                        <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} val={dadosanimal.current.TB_ANIMAL_LOCAL_RESGATE} />
+                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={dadosanimal.current.TB_ANIMAL_CUIDADO_ESPECIAL} />
                     </GroupBox>
                     <GroupBox titulo='Saúde *'>
-                        <RadioButton2 setRef={saude} val={dadosanimal.TB_ANIMAL_SAUDE} />
+                        <RadioButton2 setRef={saude} val={dadosanimal.current.TB_ANIMAL_SAUDE} />
                     </GroupBox>
                     <GroupBox titulo='Castrado *'>
-                        <RadioButton3 setRef={castrado} val={dadosanimal.TB_ANIMAL_CASTRADO} />
+                        <RadioButton3 setRef={castrado} val={dadosanimal.current.TB_ANIMAL_CASTRADO} />
                     </GroupBox>
                     <GroupBox titulo='Vermifugado *'>
-                        <RadioButton3 setRef={vermifugado} val={dadosanimal.TB_ANIMAL_VERMIFUGADO} />
+                        <RadioButton3 setRef={vermifugado} val={dadosanimal.current.TB_ANIMAL_VERMIFUGADO} />
                     </GroupBox>
                     <GroupBox titulo='Microchipado *'>
-                        <RadioButton3 setRef={microchip} val={dadosanimal.TB_ANIMAL_MICROCHIP} />
+                        <RadioButton3 setRef={microchip} val={dadosanimal.current.TB_ANIMAL_MICROCHIP} />
                     </GroupBox>
                     <GroupBox titulo='Temperamentos'>
                         <MultiSelect
@@ -333,9 +334,9 @@ const AlterarAnimal = ({ navigation }) => {
                         />
                     </GroupBox>
                     <GroupBox titulo='Localização'>
-                        <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo val2={dadosanimal.TB_ANIMAL_LOCALIZACAO_UF} val3={dadosanimal.TB_ANIMAL_LOCALIZACAO_CIDADE} val4={dadosanimal.TB_ANIMAL_LOCALIZACAO_BAIRRO} val5={dadosanimal.TB_ANIMAL_LOCALIZACAO_RUA} />
+                        <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo val2={dadosanimal.current.TB_ANIMAL_LOCALIZACAO_UF} val3={dadosanimal.current.TB_ANIMAL_LOCALIZACAO_CIDADE} val4={dadosanimal.current.TB_ANIMAL_LOCALIZACAO_BAIRRO} val5={dadosanimal.current.TB_ANIMAL_LOCALIZACAO_RUA} cepOpcional />
                     </GroupBox>
-                    <BotaoCheckBox texto='Animal em estado de alerta' setRef={alerta} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} jaativado={dadosanimal.TB_ANIMAL_ALERTA} />
+                    <BotaoCheckBox texto='Animal em estado de alerta' setRef={alerta} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} jaativado={dadosanimal.current.TB_ANIMAL_ALERTA} />
                     <Mensagem mensagem={message} />
                     <BotaoCadastrarAnimado onPress={Cadastrar} texto='Editar' />
                     <AlertPro

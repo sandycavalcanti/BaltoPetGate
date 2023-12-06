@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ToastAndroid, Image } from 'react-native'
 import { corBordaBoxCad, urlAPI } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import Dropdown from '../geral/Dropdown';
@@ -97,16 +97,17 @@ const NavbarChat = (props) => {
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.containerHeaderRight}>
-        {existeAnimal && // Imagem do animal
+        {existeAnimal &&
+          // Imagem do animal
           <>
             {animais.length == 1 ? // Um animal
               <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: animais[0].TB_ANIMAL_ID })}>
-                <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={styles.profileImage} />
+                <Image source={{ uri: urlAnimalImg + animais[0].TB_ANIMAL_ID }} style={styles.profileImage} resizeMode='cover' />
               </TouchableOpacity>
               : // Mais de um animal
               <TouchableOpacity onPress={() => navigation.navigate('InfoChat', { dadosPessoa, animais, dados })} style={{ height: 50, width: 70 }}>
-                <Imagem url={urlAnimalImg + animais[0].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', top: 0, left: 0 }]} />
-                <Imagem url={urlAnimalImg + animais[1].TB_ANIMAL_ID} style={[styles.animalImage, { position: 'absolute', bottom: 0, right: 0 }]} />
+                <Image source={{ uri: urlAnimalImg + animais[0].TB_ANIMAL_ID }} style={[styles.animalImage, { position: 'absolute', top: 0, left: 0 }]} resizeMode='cover' />
+                <Image source={{ uri: urlAnimalImg + animais[1].TB_ANIMAL_ID }} style={[styles.animalImage, { position: 'absolute', bottom: 0, right: 0 }]} resizeMode='cover' />
                 {animais.length > 2 && <Text style={{ position: 'absolute', top: 0, right: 0, fontSize: 18, color: '#fff' }}>+{animais.length - 2}</Text>}
               </TouchableOpacity>}
           </>}

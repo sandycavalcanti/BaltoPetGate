@@ -132,8 +132,8 @@ const AlterarSolicitacao = (props) => {
   return (
     <>
       <View style={styles.InfoPet}>
-        <Text style={styles.TituloPet}>{props.nome}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: TB_ANIMAL_ID })}>
+        <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: TB_ANIMAL_ID })} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={styles.TituloPet}>{props.nome}</Text>
           <Imagem url={urlAnimal} style={styles.ImagemPet} />
         </TouchableOpacity>
       </View>

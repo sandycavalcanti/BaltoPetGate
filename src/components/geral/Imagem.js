@@ -12,13 +12,13 @@ const Imagem = (props) => {
     const ChecarImagem = async () => {
         if (props.url.startsWith(urlAPI)) {
             await axios.get(props.url, { signal: controller.signal })
-            .then(() => {
-                setImageExists(true);
-                if (props.setResult) props.setResult(true)
-            }).catch(() => {
-                setImageExists(false);
-                if (props.setResult) props.setResult(false)
-            })
+                .then(() => {
+                    setImageExists(true);
+                    if (props.setResult) props.setResult(true)
+                }).catch(() => {
+                    setImageExists(false);
+                    if (props.setResult) props.setResult(false)
+                })
         }
     };
 
@@ -35,7 +35,7 @@ const Imagem = (props) => {
                 <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: props.url }} resizeMode='cover' />
                 :
                 !props.remove &&
-                <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: 'https://via.placeholder.com/100' }} resizeMode='cover' />
+                <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={require('../../../assets/img/user.png')} resizeMode='cover' />
             }
         </>
     )

@@ -1,5 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
@@ -13,15 +12,26 @@ const GrupoContatos = (props) => {
                 <Text style={[styles.categoria, { opacity: props.desativado ? 0.5 : 1 }]}>{props.titulo}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View style={styles.contact}>
-                        {props.data.map((pessoa) => {
+                        {props.data.map(pessoa => {
                             const urlImg = urlAPI + 'selpessoaimg/' + pessoa.TB_PESSOA_ID;
-
+                            const Animais = pessoa.Animais;
                             return (
-                                <TouchableOpacity key={pessoa.TB_PESSOA_ID} onPress={() => navigation.navigate('Chat', { TB_CHAT_ID: pessoa.TB_CHAT_ID, TB_PESSOA_ID: pessoa.TB_PESSOA_ID })}>
+                                <TouchableOpacity key={pessoa.TB_CHAT_ID} onPress={() => navigation.navigate('Chat', { TB_CHAT_ID: pessoa.TB_CHAT_ID, TB_PESSOA_ID: pessoa.TB_PESSOA_ID })}>
                                     <View style={styles.containerContato}>
-                                        <Imagem url={urlImg} desativado={props.desativado} style={styles.contactImage} />
+                                        <View>
+                                            <Imagem url={urlImg} desativado={props.desativado} style={styles.contactImage} />
+                                            {Animais.length == 1 ?
+                                                <Image resizeMode='cover' source={{ uri: urlAPI + 'selanimalimg/' + Animais[0].TB_ANIMAL_ID }} style={styles.animalImage} />
+                                                : Animais.length > 1 &&
+                                                <View style={[styles.animalImage, { borderWidth: 0 }]}>
+                                                    <Image resizeMode='cover' source={{ uri: urlAPI + 'selanimalimg/' + Animais[0].TB_ANIMAL_ID }} style={[styles.twoAnimalImage, { top: 0, left: 0 }]} />
+                                                    <Image resizeMode='cover' source={{ uri: urlAPI + 'selanimalimg/' + Animais[1].TB_ANIMAL_ID }} style={[styles.twoAnimalImage, { bottom: 0, right: 0 }]} />
+                                                </View>
+                                            }
+                                        </View>
                                         <Text style={[styles.contactName, { opacity: props.desativado ? 0.5 : 1 }]}>{pessoa.TB_PESSOA_NOME_PERFIL}</Text>
                                     </View>
+
                                 </TouchableOpacity>
                             )
                         })}
@@ -53,7 +63,7 @@ const styles = StyleSheet.create({
     contactImage: {
         width: 80,
         height: 80,
-        borderRadius: 250,
+        borderRadius: 100,
         borderColor: 'white',
         borderWidth: 1,
     },
@@ -64,5 +74,25 @@ const styles = StyleSheet.create({
         color: "#697C55",
         textAlign: 'center'
     },
+    animalImage: {
+        width: 40,
+        height: 40,
+        aspectRatio: 1,
+        position: 'absolute',
+        bottom: -5,
+        right: -5,
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 100
+    },
+    twoAnimalImage: {
+        width: 32,
+        height: 32,
+        aspectRatio: 1,
+        position: 'absolute',
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 100
+    }
 });
 export default GrupoContatos

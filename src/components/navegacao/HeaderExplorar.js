@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, Dimensions, ScrollView, Animated, Easing, ToastAndroid, Pressable, Keyboard } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, Image, View, TextInput, Dimensions, ScrollView, Animated, Easing, ActivityIndicator, Pressable, Keyboard } from 'react-native';
 import { Octicons, Feather, Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import Dropdown from '../geral/Dropdown';
-import { corFundoNavegacao, urlAPI } from '../../constants';
+import { corFundoNavegacao, corRosaForte, urlAPI } from '../../constants';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import DecodificarToken from '../../utils/DecodificarToken';
 import axios from 'axios';
@@ -64,17 +64,21 @@ const HeaderExplorar = (props) => {
     const textInputRef = useRef(null);
     const navigation = useNavigation();
 
+    const [carregando, setCarregando] = useState(true);
     const controller = new AbortController();
 
-    const Selecionar = () => {
-        axios.get(urlAPI + 'selpessoaspesquisa', { signal: controller.signal })
-            .then(response => {
-                if (response.data) dadosPessoas.current = response.data;
-            }).catch(CatchError);
-        axios.get(urlAPI + 'selanimaispesquisa', { signal: controller.signal })
-            .then(response => {
-                if (response.data) dadosAnimais.current = response.data;
-            }).catch(CatchError);
+    const Selecionar = async () => {
+        await Promise.all([
+            axios.get(urlAPI + 'selpessoaspesquisa', { signal: controller.signal })
+                .then(response => {
+                    if (response.data) dadosPessoas.current = response.data;
+                }).catch(CatchError),
+            axios.get(urlAPI + 'selanimaispesquisa', { signal: controller.signal })
+                .then(response => {
+                    if (response.data) dadosAnimais.current = response.data;
+                }).catch(CatchError),
+        ]);
+        setCarregando(false);
     }
 
     const PegarId = async () => {
@@ -198,46 +202,49 @@ const HeaderExplorar = (props) => {
             </View>
             <Animated.View style={[styles.containerAnimated, { transform: [{ translateY }] }]}>
                 <View style={styles.containerResults}>
-                    <ScrollView keyboardShouldPersistTaps='always'>
-                        {filtroSelecionar.current ?
-                            usuarios.map(item => {
-                                const urlImg = urlAPI + 'selpessoaimg/' + item.TB_PESSOA_ID;
-                                let tipoNome;
-                                if (item.TB_TIPO_ID != 1) {
-                                    tipoNome = RetornarTipoNome(item.TB_TIPO_ID);
-                                }
-                                return (
-                                    <Pressable key={item.TB_PESSOA_ID} onPress={() => navigation.navigate('Perfil', { id: item.TB_PESSOA_ID })}>
-                                        <View style={styles.contatoPessoa}>
-                                            <Imagem url={urlImg} style={styles.contatoImagem} />
-                                            <View>
-                                                <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
-                                                {tipoNome && <Text style={styles.contatoTipo}>{tipoNome}</Text>}
+                    {carregando ? <ActivityIndicator size='large' color={corRosaForte} />
+                        :
+                        <ScrollView keyboardShouldPersistTaps='always'>
+                            {filtroSelecionar.current ?
+                                usuarios.map(item => {
+                                    const urlImg = urlAPI + 'selpessoaimg/' + item.TB_PESSOA_ID;
+                                    let tipoNome;
+                                    if (item.TB_TIPO_ID != 1) {
+                                        tipoNome = RetornarTipoNome(item.TB_TIPO_ID);
+                                    }
+                                    return (
+                                        <Pressable key={item.TB_PESSOA_ID} onPress={() => navigation.navigate('Perfil', { id: item.TB_PESSOA_ID })}>
+                                            <View style={styles.contatoPessoa}>
+                                                <Imagem url={urlImg} style={styles.contatoImagem} />
+                                                <View>
+                                                    <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
+                                                    {tipoNome && <Text style={styles.contatoTipo}>{tipoNome}</Text>}
+                                                </View>
                                             </View>
-                                        </View>
-                                        <Divider orientation="vertical" width={1} color="grey" />
-                                    </Pressable>
-                                )
-                            })
-                            :
-                            animais.map(item => {
-                                const urlImg = urlAPI + 'selanimalimg/' + item.TB_ANIMAL_ID;
-                                let tipoNome = item.TB_ANIMAL_ESPECIE == 'CACHORRO' ? 'Cachorro' : 'Gato';
-                                return (
-                                    <Pressable key={item.TB_ANIMAL_ID} onPress={() => navigation.navigate('Ficha', { id: item.TB_ANIMAL_ID })}>
-                                        <View style={styles.contatoPessoa}>
-                                            <Imagem url={urlImg} style={styles.contatoImagem} />
-                                            <View>
-                                                <Text>{item.TB_ANIMAL_NOME}</Text>
-                                                {tipoNome && <Text style={styles.contatoTipo}>{tipoNome}</Text>}
+                                            <Divider orientation="vertical" width={1} color="grey" />
+                                        </Pressable>
+                                    )
+                                })
+                                :
+                                animais.map(item => {
+                                    const urlImg = urlAPI + 'selanimalimg/' + item.TB_ANIMAL_ID;
+                                    let tipoNome = item.TB_ANIMAL_ESPECIE == 'CACHORRO' ? 'Cachorro' : 'Gato';
+                                    return (
+                                        <Pressable key={item.TB_ANIMAL_ID} onPress={() => navigation.navigate('Ficha', { id: item.TB_ANIMAL_ID })}>
+                                            <View style={styles.contatoPessoa}>
+                                                <Image source={{ uri: urlImg }} style={styles.contatoImagem} resizeMode='cover' />
+                                                <View>
+                                                    <Text>{item.TB_ANIMAL_NOME}</Text>
+                                                    {tipoNome && <Text style={styles.contatoTipo}>{tipoNome}</Text>}
+                                                </View>
                                             </View>
-                                        </View>
-                                        <Divider orientation="vertical" width={1} color="grey" />
-                                    </Pressable>
-                                )
-                            })
-                        }
-                    </ScrollView>
+                                            <Divider orientation="vertical" width={1} color="grey" />
+                                        </Pressable>
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                    }
                 </View>
             </Animated.View>
         </>
@@ -301,6 +308,8 @@ const styles = StyleSheet.create({
         columnGap: 10
     },
     contatoImagem: {
+        width: 50,
+        height: 50,
         borderRadius: 25
     },
     contatoTipo: {

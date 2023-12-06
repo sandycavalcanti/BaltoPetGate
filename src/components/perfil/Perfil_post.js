@@ -29,10 +29,19 @@ const Perfil_post = (props) => {
     }
   }
 
-  const textoConfirmacao = "Deseja desativar " + (tipoAnimal ? 'esse animal?' : 'essa postagem?');
+  const textoConfirmacao = "Deseja " + (!props.reativar ? "desativar " : "reativar ") + (tipoAnimal ? 'esse animal?' : 'essa postagem?');
+  const textoToast = tipoAnimal ? ('Animal ' + (!props.reativar ? "desativado" : "reativado")) : ('Postagem ' + (!props.reativar ? "desativada" : "reativada"));
   const aoDesativar = () => {
     props.onRefresh();
-    ToastAndroid.show(tipoAnimal ? 'Animal desativado' : 'Postagem desativada', ToastAndroid.SHORT);
+    ToastAndroid.show(textoToast, ToastAndroid.SHORT);
+  }
+
+  const BloquearPessoa = () => {
+    ToastAndroid.show('A função de bloquear pessoa ainda será implementada', ToastAndroid.SHORT);
+  }
+
+  const Denunciar = () => {
+    ToastAndroid.show('A função de denunciar ainda será implementada', ToastAndroid.SHORT);
   }
 
   return (
@@ -58,7 +67,7 @@ const Perfil_post = (props) => {
               </MenuTrigger>
               <MenuOptions optionsContainerStyle={styles.dropdownOptions}>
                 <MenuOption onSelect={() => NavegarParaPerfil()}>
-                  <Text style={[styles.dropdownText, { marginTop: 5 }]}>Visualizar Perfil</Text>
+                  <Text style={[styles.dropdownText, { marginTop: 5 }]}>{props.pessoal ? 'Ir para seu Perfil' : 'Visualizar Perfil'}</Text>
                 </MenuOption>
                 <Divider width={1} color='gray' />
                 {props.pessoal ?
@@ -68,24 +77,30 @@ const Perfil_post = (props) => {
                         <Text style={styles.dropdownText}>Editar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>}
                     <Divider width={1} color='gray' />
-                    <MenuOption onSelect={() => setModalDesativarVisible(true)}>
-                      <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
-                    </MenuOption>
+                    {!props.reativar ?
+                      <MenuOption onSelect={() => setModalDesativarVisible(true)}>
+                        <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
+                      </MenuOption>
+                      :
+                      <MenuOption onSelect={() => setModalDesativarVisible(true)}>
+                        <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Reativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
+                      </MenuOption>
+                    }
                   </>
                   :
                   <>
-                    <MenuOption onSelect={() => console.log('Denunciar')}>
+                    <MenuOption onSelect={() => Denunciar()}>
                       <Text style={styles.dropdownText}>Denunciar {tipoAnimal ? 'publicação' : 'postagem'}</Text>
                     </MenuOption>
                     <Divider width={1} color='gray' />
-                    <MenuOption onSelect={() => console.log('Bloquear')}>
+                    <MenuOption onSelect={() => BloquearPessoa()}>
                       <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Bloquear pessoa</Text>
                     </MenuOption>
                   </>
                 }
               </MenuOptions>
             </Menu>
-            <ModalConfirmacao texto={textoConfirmacao} press={() => DesativarCampo(props.tipo, props.itemId, aoDesativar)} val={modalDesativarVisible} set={setModalDesativarVisible} sim='Desativar' />
+            <ModalConfirmacao texto={textoConfirmacao} press={() => DesativarCampo(props.tipo, props.itemId, aoDesativar, props.reativar)} val={modalDesativarVisible} set={setModalDesativarVisible} sim={!props.reativar ? 'Desativar' : 'Reativar'} />
           </>
           :
           <View style={{ padding: 10 }}>
@@ -158,9 +173,11 @@ Perfil_post.propTypes = {
   data: PropTypes.object,
   pessoal: PropTypes.bool,
   tipo: PropTypes.string,
+  itemId: PropTypes.number,
   onRefresh: PropTypes.func,
   podeEditar: PropTypes.bool,
-  naoExibirOpcoes: PropTypes.bool
+  naoExibirOpcoes: PropTypes.bool,
+  reativar: PropTypes.bool
 }
 
 export default memo(Perfil_post);

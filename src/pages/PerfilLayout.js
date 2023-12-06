@@ -303,7 +303,8 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 15,
     color: 'gray',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingBottom: 5
   },
   infoContainer: {
     flex: 1,

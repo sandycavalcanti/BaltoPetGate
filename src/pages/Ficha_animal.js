@@ -3,7 +3,7 @@ import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
 import TextosOpcionais from "../components/ficha/TextosOpcionais";
-import { corBordaBoxCad, corFundo, urlAPI } from "../constants";
+import { corBordaBoxCad, corFundo, corRosaForte, urlAPI } from "../constants";
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -13,6 +13,7 @@ import IniciarChat from "../utils/IniciarChat";
 import CatchError from "../utils/CatchError";
 import BotaoCadastrarAnimado from "../components/cadastro/BotaoCadastrarAnimado";
 import Lightbox from 'react-native-lightbox-v2'
+import { Feather } from "@expo/vector-icons";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -180,9 +181,18 @@ const Ficha_animal = ({ navigation: { navigate } }) => {
                                     <Text style={styles.TextoClaro}>{select.current.TB_ANIMAL_LOCALIZACAO_RUA}</Text>}
                             </View>
                         </View>
-                        {!pessoal.current && <View style={styles.ConjuntoBotao}>
-                            <BotaoCadastrarAnimado onPress={TenhoInteresse} texto="Tenho interesse" width={300} />
-                        </View>}
+                        {select.current.TB_ANIMAL_ALERTA &&
+                            <View style={styles.containerAlerta}>
+                                <Feather name="alert-triangle" size={24} color={corRosaForte} />
+                                <Text style={styles.textAlerta}>Animal em alerta</Text>
+                            </View>}
+                        <View style={styles.ConjuntoBotao}>
+                            {!pessoal.current ?
+                                <BotaoCadastrarAnimado onPress={TenhoInteresse} texto="Tenho interesse" width={300} />
+                                :
+                                <BotaoCadastrarAnimado onPress={() => navigate('AlterarAnimal', { id })} texto="Editar" width={300} />
+                            }
+                        </View>
                     </>
                 }
             </View>
@@ -286,6 +296,18 @@ const styles = StyleSheet.create({
         height: windowWidth,
         resizeMode: 'contain',
     },
+    containerAlerta: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        columnGap: 10,
+        marginBottom: 10,
+    },
+    textAlerta: {
+        fontSize: 18,
+        color: corRosaForte
+    }
 });
 
 export default Ficha_animal;
