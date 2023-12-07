@@ -9,7 +9,7 @@ const GroupBox = (props) => {
     const [lineCount, setLineCount] = useState(1);
 
     useEffect(() => {
-        const lineHeight = 30;
+        const lineHeight = 40;
 
         if (textRef.current) {
             textRef.current.measure((x, y, width, height, pageX, pageY) => {
@@ -20,8 +20,18 @@ const GroupBox = (props) => {
     }, [textRef.current]);
 
     return (
-        <View style={[styles.groupBox, { alignItems: props.esquerda ? 'flex-start' : 'center', borderColor: props.corBorda ? props.corBorda : corBordaBoxCad, paddingTop: lineCount == 2 ? 40 : 10 }]}>
-            <Text style={[styles.titulo, { textAlign: props.esquerda ? 'left' : 'center', left: props.esquerda ? 10 : null, color: props.corTexto ? props.corTexto : corTituloBoxCad, backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad, top: lineCount == 2 ? -25 : -20 }]} ref={textRef}>{text}</Text>
+        <View style={[styles.groupBox, {
+            alignItems: props.esquerda ? 'flex-start' : 'center',
+            borderColor: props.corBorda ? props.corBorda : corBordaBoxCad,
+            paddingTop: lineCount == 3 ? 70 : lineCount == 2 ? 40 : 10
+        }]}>
+            <Text style={[styles.titulo, {
+                textAlign: props.esquerda ? 'left' : 'center',
+                left: props.esquerda ? 10 : null,
+                color: props.corTexto ? props.corTexto : corTituloBoxCad,
+                backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad,
+                top: lineCount == 2 ? -25 : -20
+            }]} ref={textRef}>{text}</Text>
             {props.children}
         </View>
     );

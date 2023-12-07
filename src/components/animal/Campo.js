@@ -21,8 +21,10 @@ const Campo = (props) => {
     }
 
     useEffect(() => {
-        const novoTexto = SubstituirVirgulas(props.defaultValue);
-        setTexto(novoTexto);
+        if (props.defaultValue) {
+            const novoTexto = SubstituirVirgulas(props.defaultValue);
+            setTexto(novoTexto);
+        }
     }, []);
 
     return (

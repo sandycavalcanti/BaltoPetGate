@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { View, StyleSheet, StatusBar, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -27,7 +27,8 @@ const Splash = ({ navigation }) => {
       </View>
       <View style={styles.ContainerLottie}>
         <LottieView source={require('../../assets/animacaoCirculo.json')} autoPlay loop style={styles.Lottie} />
-      </View>
+      </View>            
+      <StatusBar hidden />
     </View>
   );
 };

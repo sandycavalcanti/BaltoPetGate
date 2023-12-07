@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, ScrollView, Image } from "react-native";
+import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, StatusBar, Image } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import GroupBox from "../../components/cadastro/GroupBox";
@@ -8,7 +8,6 @@ import RadioButton3 from "../../components/animal/Radiobutton3";
 import RadioButton2 from "../../components/animal/radioButton2";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import { corBotaoCad, corRosaForte, corRosaFraco, urlAPI } from "../../constants";
-import DecodificarToken from "../../utils/DecodificarToken";
 import BotaoArquivo from "../../components/cadastro/BotaoArquivo";
 import * as ImagePicker from 'expo-image-picker';
 import Mensagem from "../../components/cadastro/Mensagem";
@@ -23,7 +22,6 @@ import AlertPro from "react-native-alert-pro";
 import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
 import ValidarCamposAnimal from "../../utils/ValidarCamposAnimal";
 import { useRoute } from "@react-navigation/native";
-import Imagem from "../../components/geral/Imagem";
 
 const AlterarAnimal = ({ navigation }) => {
     const route = useRoute();
@@ -355,6 +353,7 @@ const AlterarAnimal = ({ navigation }) => {
                     />
                 </>
             }
+            <StatusBar hidden />
         </ContainerCadastro>
     );
 }

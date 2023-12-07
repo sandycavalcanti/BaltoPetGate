@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, Dimensions, ToastAndroid } from 'react-native';
+import { StyleSheet, ActivityIndicator, TouchableOpacity, Text, View, TextInput, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { corBordaBoxCad, urlAPI } from '../constants';
@@ -101,6 +101,7 @@ const HistChat = () => {
                 <Text style={styles.textEmpty}>Nenhum Chat iniciado</Text>
               </View>}
         </View>
+        <StatusBar animated backgroundColor={'#A9DDE8'} hidden={false} />
       </SafeAreaView>
     </ScrollView >
   );

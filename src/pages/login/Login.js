@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ActivityIndicator, ImageBackground, TouchableOpacity, StatusBar, Pressable, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, ImageBackground, TouchableOpacity, Pressable, KeyboardAvoidingView, StatusBar } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
@@ -98,6 +98,7 @@ const Login = () => {
                     inputStyle={styles.inputStyle}
                     style={{ width: '95%', marginBottom: 30, marginHorizontal: 10 }}
                     onChangeText={text => email.current = text}
+                    autoCapitalize="none"
                 />
             </View>
             <View style={styles.containersenha}>
@@ -116,6 +117,7 @@ const Login = () => {
                         onChangeText={text => senha.current = text}
                         secureTextEntry={!mostrarSenha}
                         onSubmitEditing={Logar}
+                        autoCapitalize="none"
                     />
                     <Pressable onPress={() => setMostrarSenha(prev => !prev)}>
                         {mostrarSenha ?
@@ -151,7 +153,7 @@ const Login = () => {
                         <ActivityIndicator size="large" color={corBordaBoxCad} />
                     </View>
                 </View>}
-            <StatusBar />
+            <StatusBar hidden />
         </KeyboardAvoidingView>
     );
 };

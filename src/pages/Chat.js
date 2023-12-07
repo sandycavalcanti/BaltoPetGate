@@ -262,7 +262,7 @@ const Chat = () => {
         }));
         onSend(messagesToUpload);
     };
-    
+
     const onLongPress = (context, message) => { // Segurar dedo na mensagem
         podeExcluir.current = true;
         podeEditar.current = !message.image;
@@ -282,7 +282,7 @@ const Chat = () => {
     const reRender = () => {
         setForceUpdate(prevValue => prevValue + 1);
     };
-    
+
     // const setIsTyping = (isTyping) => { // Escrevendo mensagem (true) ou (false)
     //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     // };
@@ -326,7 +326,7 @@ const Chat = () => {
                             imageStyle={{ width: 200, height: 125 }}
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
-                        <StatusBar />
+                        <StatusBar animated backgroundColor={'#A9DDAE'} hidden={false} />
                         <AlertPro
                             ref={alertRef}
                             onConfirm={() => alertRef.current.close()}

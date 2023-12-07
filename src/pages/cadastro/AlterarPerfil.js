@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { StyleSheet, Dimensions, Text, View, Image, ScrollView, TouchableOpacity, ToastAndroid, ImageBackground, TextInput, ActivityIndicator } from "react-native";
+import { StyleSheet, Dimensions, Text, View, Image, ScrollView, TouchableOpacity, StatusBar, ImageBackground, TextInput, ActivityIndicator } from "react-native";
 import Imagem from "../../components/geral/Imagem";
 import GroupBox from '../../components/cadastro/GroupBox';
-import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
 import { corFundo, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -179,6 +178,7 @@ const AlterarPerfil = ({ navigation }) => {
             </View>
           </>
         }
+        <StatusBar hidden />
       </View>
     </ScrollView >
   );

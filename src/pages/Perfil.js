@@ -68,7 +68,7 @@ const Perfil = ({ navigation }) => {
     ]);
     setTimeout(() => {
       setCarregando(false);
-    }, 500);
+    }, 300);
   }
 
   const Selecionar = async () => {
@@ -149,6 +149,7 @@ const Perfil = ({ navigation }) => {
         {renderHeader()}
         {renderCustomRefresh()}
       </View>
+      <StatusBar animated hidden={false} backgroundColor={'#000000'} />
     </SafeAreaView>
   );
 };

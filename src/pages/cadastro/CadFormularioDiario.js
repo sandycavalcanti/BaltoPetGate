@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, TextInput, StyleSheet, ScrollView } from "react-native";
+import { TouchableOpacity, Text, View, TextInput, StyleSheet, StatusBar } from "react-native";
 import { useState } from "react";
 import axios from 'axios';
 import BotaoCadastrar from "../../components/cadastro/BotaoCadastrar";
@@ -41,8 +41,8 @@ const CadFormularioDiario = ({ navigation: { navigate } }) => {
             <BotaoCadastrar texto='Acresentar uma imagem' styleBotao={{ backgroundColor: '#EEECEC', width: '90%' }} styleTexto={{ color: '#8EBF81' }} />
             <Text style={styles.Texto}>Ao acrescentar uma imagem, você estara acrescentando uma prova, caso seu ponto seja denunciado por um usuário. </Text>
             <BotaoCadastrarAnimado onPress={Cadastrar} width={300} />
+            <StatusBar hidden />
         </ContainerCadastro>
-
     );
 }
 

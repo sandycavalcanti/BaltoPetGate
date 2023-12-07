@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
-import MapView, { Callout, Marker } from 'react-native-maps';
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 
 const MapaMapView = (props) => {
     return (
-        <MapView style={{ width: '100%', height: '100%' }} initialRegion={props.initialRegion} onPress={props.onPress ? props.onPress : null}>
+        <MapView style={{ width: '100%', height: '100%' }} provider={PROVIDER_GOOGLE} initialRegion={props.initialRegion} onPress={props.onPress ? props.onPress : null}>
             {props.pontosAlimentacao.map((coords, index) => {
                 const diferencaEmMilissegundos = new Date() - new Date(coords.updatedAt);
                 const diferencaEmDias = Math.floor(diferencaEmMilissegundos / (1000 * 60 * 60 * 24));

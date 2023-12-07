@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, TextInput, StatusBar, ActivityIndicator } from 'react-native'
 import { useRoute } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import GroupBox from '../../components/cadastro/GroupBox';
 import RadioButton from '../../components/cadastro/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import BotaoQuantidade from '../../components/cadastro/BotaoQuantidade';
-import { corBordaBoxCad, corRosaFraco, urlAPI } from '../../constants';
+import { corBordaBoxCad, corFundoCad, corRosaFraco, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import IniciarChat from '../../utils/IniciarChat';
@@ -137,6 +137,7 @@ const QuestAdocao = ({ navigation }) => {
                     />
                 </>
             }
+            <StatusBar hidden />
         </ContainerCadastro>
     )
 }

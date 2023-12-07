@@ -1,5 +1,6 @@
-import { StyleSheet, Text, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, StatusBar } from 'react-native';
 import BotaoOpcaoCadastro from '../../components/cadastro/BotaoOpcaoCadastro';
+import { corFundoCad } from '../../constants';
 
 const CadOpcao = ({ navigation: { navigate } }) => {
     return (
@@ -12,6 +13,7 @@ const CadOpcao = ({ navigation: { navigate } }) => {
             <BotaoOpcaoCadastro texto="Sou um protetor" onPress={() => navigate("CadConta", { tipo: 4 })} />
             <BotaoOpcaoCadastro texto="Sou um abrigo" onPress={() => navigate("CadConta", { tipo: 5 })} />
             <BotaoOpcaoCadastro texto="Sou um estabelecimento" onPress={() => navigate("CadConta", { tipo: 6 })} />
+            <StatusBar hidden />
         </SafeAreaView>
     );
 }

@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { format } from "date-fns";
 import Imagem from '../geral/Imagem';
 import { AntDesign } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { corRosaFraco, urlAPI } from '../../constants';
 import DecodificarToken from '../../utils/DecodificarToken';
 import CatchError from '../../utils/CatchError';
-import Modal from 'react-native-modals'
+import Modal, { SlideAnimation } from 'react-native-modals'
 import AlertPro from 'react-native-alert-pro';
 
 const Avaliar = (props) => {
@@ -18,6 +18,7 @@ const Avaliar = (props) => {
   const alertRef = useRef(null);
   const textoTitulo = useRef('');
   const [textoAlert, setTextoAlert] = useState('');
+  const [estaAvaliando, setEstaAvaliando] = useState(false);
 
   const PegarId = async () => {
     const decodedToken = await DecodificarToken();
@@ -34,19 +35,22 @@ const Avaliar = (props) => {
 
   const Cadastrar = () => {
     if (rating) {
-      axios.post(urlAPI + 'cadavaliacao', {
-        TB_AVALIACAO_TEXTO: texto.current,
-        TB_AVALIACAO_NOTA: rating,
-        TB_PESSOA_AVALIADORA_ID: props.TB_PESSOA_IDD,
-        TB_PESSOA_AVALIADA_ID: props.TB_PESSOA_ID
-      }).then(response => {
-        textoTitulo.current = 'Avaliação feita!';
-        setTextoAlert('Avaliação enviada com sucesso');
-        alertRef.current.open();
-        setTimeout(() => {
-          props.set(false);
-        }, 1500);
-      }).catch(CatchError);
+      setEstaAvaliando(true);
+      if (!estaAvaliando) {
+        axios.post(urlAPI + 'cadavaliacao', {
+          TB_AVALIACAO_TEXTO: texto.current,
+          TB_AVALIACAO_NOTA: rating,
+          TB_PESSOA_AVALIADORA_ID: props.TB_PESSOA_IDD,
+          TB_PESSOA_AVALIADA_ID: props.TB_PESSOA_ID
+        }).then(response => {
+          textoTitulo.current = 'Avaliação feita!';
+          setTextoAlert('Avaliação enviada com sucesso');
+          alertRef.current.open();
+          setTimeout(() => {
+            props.set(false);
+          }, 1500);
+        }).catch(error => CatchError(error, false, () => setEstaAvaliando(false), () => setEstaAvaliando(false)));
+      }
     } else {
       textoTitulo.current = 'Avaliação não realizada';
       setTextoAlert('Insira uma nota de 1 a 5 estrelas');
@@ -54,8 +58,12 @@ const Avaliar = (props) => {
     }
   }
 
+  const Fechar = () => {
+    props.set(false)
+  }
+
   return (
-    <Modal visible={props.val} onTouchOutside={() => props.set(false)}>
+    <Modal visible={props.val} modalAnimation={new SlideAnimation({ slideFrom: 'bottom' })} onTouchOutside={Fechar}>
       <View style={styles.ContainerAvaliar} >
         <ScrollView style={{ flex: 1 }}>
           <View style={styles.Container}>
@@ -67,9 +75,9 @@ const Avaliar = (props) => {
                 <Text style={styles.Texto}>{pessoaNome}</Text>
                 <View style={styles.ratingContainer}>
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <TouchableOpacity key={index} onPress={() => setRating(index + 1)}>
+                    <Pressable key={index} onPress={() => setRating(index + 1)}>
                       <AntDesign name={index < rating ? 'star' : 'staro'} size={22} color={index < rating ? 'gold' : 'gray'} />
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -82,9 +90,9 @@ const Avaliar = (props) => {
                 <Text style={styles.Data}>{dataformatada}</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.Botao} onPress={() => Cadastrar()}>
-              <Text style={styles.BotaoTexto}>Avaliar</Text>
-            </TouchableOpacity>
+            <Pressable style={styles.Botao} onPress={() => Cadastrar()}>
+              <Text style={[styles.BotaoTexto, { color: !estaAvaliando ? '#CE7272' : '#dddddd' }]}>Avaliar</Text>
+            </Pressable>
           </View>
         </ScrollView>
         <AlertPro
@@ -172,7 +180,6 @@ const styles = StyleSheet.create({
   },
   BotaoTexto: {
     padding: 7,
-    color: '#CE7272',
     fontSize: 23,
   },
 });

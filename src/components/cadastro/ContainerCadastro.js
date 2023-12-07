@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     color: corTituloCad,
     marginBottom: 15,
     marginTop: 5,
+    textAlign: 'center'
   },
 });
 

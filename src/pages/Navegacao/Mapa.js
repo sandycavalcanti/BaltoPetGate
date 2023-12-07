@@ -1,11 +1,12 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
+import { Modal, StyleSheet, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { corFundo, corRosaForte, urlAPI } from '../../constants';
 import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
+import { ToastAndroid } from 'react-native';
 
 const Mapa = () => {
   const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
@@ -19,18 +20,23 @@ const Mapa = () => {
   const controller = new AbortController();
 
   const PegarLocalizacao = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status == "granted") {
-      let location = await Location.getCurrentPositionAsync({});
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status == "granted") {
+        let location = await Location.getCurrentPositionAsync({});
 
-      initialRegion.current = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      };
+        initialRegion.current = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        };
+      }
+      setCarregando(false);
+    } catch (error) {
+      ToastAndroid.show('Houve um erro ao requisitar a localização', ToastAndroid.SHORT);
+      setCarregando(false);
     }
-    setCarregando(false);
   }
 
   const Selecionar = async () => {
@@ -63,7 +69,9 @@ const Mapa = () => {
     <View style={styles.container}>
       {carregando ?
         <View style={styles.viewCarregando}>
-          <ActivityIndicator size='large' color={corRosaForte} />
+          <Pressable onPress={() => PegarLocalizacao()}>
+            <ActivityIndicator size='large' color={corRosaForte} />
+          </Pressable>
         </View>
         :
         <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />

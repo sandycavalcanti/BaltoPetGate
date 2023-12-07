@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ToastAndroid, TextInput } from "react-native";
+import { View, Text, StyleSheet, ToastAndroid, TextInput, StatusBar } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import ContainerCadastro from "../../components/cadastro/ContainerCadastro";
 import axios from "axios";
@@ -109,6 +109,7 @@ const CadPostagem = ({ navigation }) => {
         textConfirm="OK"
         customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
       />
+      <StatusBar hidden />
     </ContainerCadastro>
   );
 };

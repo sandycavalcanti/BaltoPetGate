@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
+import { Text, StatusBar, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import GroupBox from '../../components/cadastro/GroupBox';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
 import axios from 'axios';
-import { corBotaoCad, urlAPI } from '../../constants';
+import { corBotaoCad, corFundoCad, urlAPI } from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mensagem from '../../components/cadastro/Mensagem';
 import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
@@ -281,6 +281,7 @@ const CadConta = () => {
                 textConfirm="OK"
                 customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, message: { textAlign: 'left' } }}
             />
+            <StatusBar hidden />
         </ContainerCadastro>
     )
 }

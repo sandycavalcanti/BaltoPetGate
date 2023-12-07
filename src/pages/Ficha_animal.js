@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, StyleSheet, Dimensions, Image, ScrollView, ActivityIndicator, ToastAndroid } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, Dimensions, Image, ScrollView, ActivityIndicator, StatusBar } from "react-native";
 import TextoComum from "../components/ficha/TextoComum";
 import TextoMultiplo from "../components/ficha/TextoMultiplo";
 import TextoMenor from "../components/ficha/TextoMenor";
@@ -196,6 +196,7 @@ const Ficha_animal = ({ navigation: { navigate } }) => {
                     </>
                 }
             </View>
+            <StatusBar animated hidden={false} backgroundColor={'#000000'} />
         </ScrollView>
     );
 }

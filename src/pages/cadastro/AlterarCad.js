@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, ToastAndroid, ActivityIndicator } from 'react-native'
+import { Text, TouchableOpacity, StyleSheet, View, TextInput, StatusBar, ActivityIndicator } from 'react-native'
 import GroupBox from '../../components/cadastro/GroupBox';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import ValidarCamposCad from '../../utils/ValidarCamposCad';
-import { corBordaBoxCad, corRosaFraco, urlAPI } from '../../constants';
+import { corBordaBoxCad, corFundoCad, corRosaFraco, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import { useRoute } from '@react-navigation/native';
@@ -126,7 +126,7 @@ const AlterarCad = ({ navigation }) => {
       controller.abort();
     })
   }, []);
-  
+
   return (
     <ContainerCadastro titulo={modoAlterar ? "Alterar informações" : "Complete seu cadastro"}>
       {carregando ?
@@ -163,6 +163,7 @@ const AlterarCad = ({ navigation }) => {
             customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
           />
         </>}
+      <StatusBar hidden />
     </ContainerCadastro>
   )
 }

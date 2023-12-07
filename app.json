@@ -15,14 +15,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "appbalto.com"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/img/Logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "appbalto.com"
+      "package": "appbalto.com",
+      "icon": "./assets/img/Logo.png",
+      "iconBackground": "#ffffff"
     },
     "web": {
       "favicon": "./assets/img/Logo.png"

@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     textocadastro: {
         color: corPlaceholderCad,
         fontSize: 18,
+        textAlign: 'center'
     },
 });
 

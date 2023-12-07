@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, ScrollView, Image } from "react-native";
+import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, StatusBar, Image } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import GroupBox from "../../components/cadastro/GroupBox";
@@ -318,6 +318,7 @@ const CadAnimal = ({ navigation }) => {
                 textConfirm="OK"
                 customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, message: { textAlign: 'left' } }}
             />
+            <StatusBar hidden />
         </ContainerCadastro>
     );
 }

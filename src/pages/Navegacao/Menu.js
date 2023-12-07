@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, StyleSheet, View, StatusBar } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Octicons, Feather, Ionicons } from '@expo/vector-icons';
@@ -56,7 +56,7 @@ const Menu = ({ navigation: { navigate } }) => {
                         tabBarIcon: props => <Ionicons name="paw-outline" size={33} color={props.focused ? '#fff' : '#ededed'} />,
                     }} />
             </Tab.Navigator>
-            <StatusBar />
+            <StatusBar backgroundColor={corFundoNavegacao} animated hidden={false} />
         </SafeAreaView>
     );
 }

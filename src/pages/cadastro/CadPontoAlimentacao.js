@@ -1,11 +1,9 @@
 
 import { useState, useEffect, useRef } from 'react';
-import MapView, { Marker, Callout } from 'react-native-maps';
-import { Modal, StyleSheet, Text, View, ActivityIndicator, TextInput, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
+import { Modal, StyleSheet, Text, View, ActivityIndicator, Pressable, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { corFundo, corFundoCad, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
-import Imagem from '../../components/geral/Imagem';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
 import DecodificarToken from '../../utils/DecodificarToken';
@@ -42,18 +40,23 @@ const CadPontoAlimento = () => {
     const controller = new AbortController();
 
     const PegarLocalizacao = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status == "granted") {
-            let location = await Location.getCurrentPositionAsync({});
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status == "granted") {
+                let location = await Location.getCurrentPositionAsync({});
 
-            initialRegion.current = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-            };
+                initialRegion.current = {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                };
+            }
+            setCarregando(false);
+        } catch (error) {
+            ToastAndroid.show('Houve um erro ao requisitar a localização', ToastAndroid.SHORT);
+            setCarregando(false);
         }
-        setCarregando(false);
     }
 
     const Selecionar = async () => {
@@ -175,7 +178,9 @@ const CadPontoAlimento = () => {
         <View style={styles.container}>
             {carregando ?
                 <View style={styles.viewCarregando}>
-                    <ActivityIndicator size='large' color={corRosaForte} />
+                    <Pressable onPress={() => PegarLocalizacao()}>
+                        <ActivityIndicator size='large' color={corRosaForte} />
+                    </Pressable>
                 </View>
                 :
                 <>
@@ -226,6 +231,7 @@ const CadPontoAlimento = () => {
                     />
                 </>
             }
+            <StatusBar hidden />
         </View>
     );
 }

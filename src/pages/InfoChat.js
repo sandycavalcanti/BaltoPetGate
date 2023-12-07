@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, Text, ScrollView, ImageBackground, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native'
 import { urlAPI, corBordaBoxCad } from '../constants';
 import Questao from '../components/InfoChat/Questao';
 import axios from 'axios';
@@ -85,6 +85,7 @@ const InfoChat = () => {
                 }
             </ScrollView>
             <DropdownAlert alert={func => (alert = func)} />
+            <StatusBar hidden />
         </View>
     )
 }
