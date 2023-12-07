@@ -66,7 +66,9 @@ const Perfil = ({ navigation }) => {
           selectSeguindo.current = response.data;
         }).catch(CatchError),
     ]);
-    setCarregando(false);
+    setTimeout(() => {
+      setCarregando(false);
+    }, 500);
   }
 
   const Selecionar = async () => {

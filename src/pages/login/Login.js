@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, SafeAreaView, ActivityIndicator, ImageBackground, TouchableOpacity, ToastAndroid, StatusBar, Pressable } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, ImageBackground, TouchableOpacity, StatusBar, Pressable, KeyboardAvoidingView } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRef, useState } from "react";
-import { urlAPI, corBotaoCad, corFundoCad, corFundoCampoCad, corPlaceholderCad, corBordaBoxCad, corRosaFraco } from "../../constants";
+import { urlAPI, corFundoCad, corFundoCampoCad, corPlaceholderCad, corBordaBoxCad, corRosaFraco } from "../../constants";
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertPro from "react-native-alert-pro";
@@ -82,7 +82,7 @@ const Login = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior='padding'>
             <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
             <Mensagem mensagem={mensagem} style={{ marginBottom: 20, fontSize: 16 }} />
             <View style={styles.containercampo}>
@@ -152,7 +152,7 @@ const Login = () => {
                     </View>
                 </View>}
             <StatusBar />
-        </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 };
 

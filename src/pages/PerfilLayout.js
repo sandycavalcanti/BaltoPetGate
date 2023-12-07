@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { StyleSheet, Dimensions, Text, View, Alert, Animated, TouchableOpacity, ToastAndroid, ImageBackground, Image } from "react-native";
 import { Entypo, AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { urlAPI } from "../constants";
+import { corRosaForte, urlAPI } from "../constants";
 import Dropdown from "../components/geral/Dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalConfirmacao from "../components/geral/ModalConfirmacao";
@@ -12,6 +12,9 @@ import DesativarCampo from "../utils/DesativarCampo";
 import Estrelas from "../components/Avaliacao/Estrelas";
 import ModalAvaliacao from "../components/Avaliacao/ModalAvaliacao";
 import Avaliar from "../components/Avaliacao/Avaliar";
+import ModalSeguindo from "../components/Avaliacao/ModalSeguindo";
+import CatchError from "../utils/CatchError";
+import axios from "axios";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -27,12 +30,15 @@ const PerfilLayout = (props) => {
   const [modalSairVisible, setModalSairVisible] = useState(false);
   const [modalDesativarVisible, setModalDesativarVisible] = useState(false);
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
+  const [seguindoVisible, setSeguindoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
   const [valorScroll, setValorScroll] = useState(-20);
+  const idSeguindo = useRef(null);
   let scrollY = props.scrollY ? props.scrollY : 0;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
   const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
+  const [segue, setSegue] = useState(false);
 
   const MedirAltura = (event) => {
     const height = Math.floor(event.nativeEvent.layout.height);
@@ -85,6 +91,37 @@ const PerfilLayout = (props) => {
     )
   }
 
+  const Seguir = async (cadastrar) => {
+    if (cadastrar) {
+      await axios.post(urlAPI + 'cadinteracao', {
+        TB_TIPO_INTERACAO_ID: "1",
+        TB_PESSOA_REMETENTE_ID: TB_PESSOA_IDD,
+        TB_PESSOA_DESTINATARIO_ID: TB_PESSOA_ID
+      }).then(response => {
+        idSeguindo.current = response.data.response.TB_INTERACAO_ID;
+        setSegue(true);
+      }).catch(CatchError)
+    } else {
+      let seguindoId = null;
+      props.seguindo.map(item => {
+        if (item.TB_PESSOA_REMETENTE_ID == TB_PESSOA_IDD) seguindoId = item.TB_INTERACAO_ID;
+      })
+      if (idSeguindo.current) seguindoId = idSeguindo.current;
+      await axios.put(urlAPI + 'delinteracao/' + seguindoId)
+        .then(response => {
+          setSegue(false);
+        }).catch(CatchError)
+    }
+  }
+
+  useEffect(() => {
+    if (!props.pessoal) {
+      props.seguindo.map(item => {
+        if (item.TB_PESSOA_REMETENTE_ID == TB_PESSOA_IDD) setSegue(true);
+      })
+    }
+  }, [props.seguindo]);
+
   // Animação da info sobre puxar a tela
   const translateYInfo = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -132,15 +169,22 @@ const PerfilLayout = (props) => {
           <View style={styles.containerEstrelasSeguindo}>
             {/* Estrelas e seguindo */}
             <View style={styles.viewEstrelas}>
-              <Text style={styles.quantidadeSeguidores}>{props.seguindo.length}</Text>
-              <Text style={styles.textoSeguidores}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
+              <TouchableOpacity onPress={() => setSeguindoVisible(true)}>
+                <Text style={styles.quantidadeSeguidores}>{props.seguindo.length}</Text>
+                <Text style={styles.textoSeguidores}>{props.seguindo.length == 1 ? 'Seguidor' : 'Seguidores'}</Text>
+              </TouchableOpacity>
+              <ModalSeguindo seguindo={props.seguindo} val={seguindoVisible} set={setSeguindoVisible} />
               <Estrelas avaliacoes={props.avaliacoes} set={setAvaliacaoVisible} />
               <ModalAvaliacao avaliacoes={props.avaliacoes} val={avaliacaoVisible} set={setAvaliacaoVisible} />
             </View>
             {!props.pessoal &&
               <View>
-                <TouchableOpacity style={styles.buttonSeguir}>
-                  <MaterialIcons name="person-add-alt-1" size={35} color='#84B794' />
+                <TouchableOpacity style={styles.buttonSeguir} onPress={() => Seguir(!segue)}>
+                  {!segue ?
+                    <MaterialIcons name="person-add-alt-1" size={35} color='#84B794' />
+                    :
+                    <MaterialIcons name="person-remove-alt-1" size={35} color='#84B794' />
+                  }
                 </TouchableOpacity>
               </View>}
           </View>
@@ -151,6 +195,15 @@ const PerfilLayout = (props) => {
             {props.data.TB_PESSOA_BIO && props.data.TB_PESSOA_BIO}
           </Text>
         </View>
+        {/* Pix */}
+        {props.data.TB_PESSOA_PIX &&
+          <View style={[styles.content, { flexDirection: 'row' }]}>
+            <Text style={styles.contentText}>Pix:</Text>
+            <Text style={[styles.contentText, { color: corRosaForte }]}>
+              {props.data.TB_PESSOA_PIX}
+            </Text>
+          </View>
+        }
         {/* Botões */}
         <View style={styles.buttons}>
           {props.pessoal ? // Botões para a conta pessoal

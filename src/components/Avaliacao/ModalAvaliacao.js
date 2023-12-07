@@ -8,9 +8,7 @@ const ModalAvaliacao = (props) => {
         <Modal visible={props.val} onTouchOutside={() => props.set(false)}>
             <View style={styles.ContainerAvaliacao} >
                 <ScrollView style={{ flex: 1 }}>
-                    <View>
-                        {props.avaliacoes.Selecionar && props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
-                    </View>
+                    {props.avaliacoes.Selecionar && props.avaliacoes.Selecionar.map((item, index) => <Avaliacoes key={index} data={item} />)}
                 </ScrollView>
             </View>
         </Modal>

@@ -37,6 +37,7 @@ const CadPontoAlimento = () => {
         longitudeDelta: 0.005
     })
     const alertRef = useRef(null);
+    const tituloAlert = useRef('');
     const [textoAlert, setTextoAlert] = useState('');
     const controller = new AbortController();
 
@@ -117,19 +118,15 @@ const CadPontoAlimento = () => {
                 const createdAt = new Date();
                 const updatedAt = new Date();
                 const newCoords = [{ latitude, longitude, id, nomePerfil, createdAt, updatedAt }];
+                tituloAlert.current = "Cadastrado!";
+                setTextoAlert('Para manter o ponto de alimentação você terá que preencher formulários diários. Caso ficar mais de três dias sem preencher os formulários, seu ponto de alimentação será desativado.');
+                alertRef.current.open();
                 setPontosAlimentacao([...pontosAlimentacao, ...newCoords]);
-            }).catch(error => {
-                if (error.response) {
-                    let erro = error.response.data;
-                    ToastAndroid.show(erro.message, ToastAndroid.SHORT);
-                    console.error(erro.error, error);
-                } else {
-                    ToastAndroid.show('Houve um erro', ToastAndroid.SHORT);
-                    console.error(error)
-                }
-            })
+            }).catch(CatchError)
         } else {
-            ToastAndroid.show('Insira uma imagem', ToastAndroid.SHORT);
+            tituloAlert.current = "Campos inválidos";
+            setTextoAlert('Insira uma imagem');
+            alertRef.current.open();
         }
     }
 
@@ -145,6 +142,7 @@ const CadPontoAlimento = () => {
         if (!result.canceled) {
             const mensagemArquivo = await VerificarTamanhoImagem(result);
             if (mensagemArquivo) {
+                tituloAlert.current = "Arquivo inválido";
                 setTextoAlert(mensagemArquivo);
                 alertRef.current.open();
                 return
@@ -220,7 +218,7 @@ const CadPontoAlimento = () => {
                     <AlertPro
                         ref={alertRef}
                         onConfirm={() => alertRef.current.close()}
-                        title="Arquivo inválido"
+                        title={tituloAlert.current}
                         message={textoAlert}
                         showCancel={false}
                         textConfirm="OK"

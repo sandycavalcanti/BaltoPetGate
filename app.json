@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/img/Logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "appbalto.com"
     },
     "web": {
       "favicon": "./assets/img/Logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f1da787a-ce23-489a-a725-39046e4471ed"
+      }
     }
   }
 }

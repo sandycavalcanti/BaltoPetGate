@@ -14,6 +14,7 @@ import BotaoCadastrarAnimado from "../../components/cadastro/BotaoCadastrarAnima
 import Mensagem from "../../components/cadastro/Mensagem";
 import AlertPro from "react-native-alert-pro";
 import VerificarTamanhoImagem from "../../utils/VerificarTamanhoImagem";
+import BotaoCheckBox from "../../components/geral/BotaoCheckBox";
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
@@ -21,11 +22,13 @@ const AlterarPerfil = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
   const TB_TIPO_IDD = useRef(null);
   const urlImg = useRef('imagem');
-  const nomePerfil = useRef(null);
-  const bio = useRef(null);
-  const instagram = useRef(null);
-  const facebook = useRef(null);
-  const pix = useRef(null);
+  const nomePerfil = useRef('');
+  const bio = useRef('');
+  const instagram = useRef('');
+  const facebook = useRef('');
+  const pix = useRef('');
+  const link = useRef('');
+  const [habilitado, setHabilitado] = useState(false);
   const [image, setImage] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState({});
@@ -51,6 +54,10 @@ const AlterarPerfil = ({ navigation }) => {
       instagram.current = dados.TB_PESSOA_INSTAGRAM;
       facebook.current = dados.TB_PESSOA_FACEBOOK;
       pix.current = dados.TB_PESSOA_PIX;
+      link.current = dados.TB_PESSOA_LINK;
+      if (pix.current || link.current) {
+        setHabilitado(true);
+      }
       setCarregando(false);
     }).catch(CatchError);
   }
@@ -109,11 +116,16 @@ const AlterarPerfil = ({ navigation }) => {
     }).catch(CatchError)
   }
 
+  const jaAtivado = Boolean(pix.current || link.current);
+
   return (
     <ScrollView style={styles.container}>
       <View>
         <ImageBackground style={styles.imagemFundo} resizeMode="cover" source={require("../../../assets/img/FundoPerfil.png")} />
-        {carregando ? <View style={styles.containerCarregando}><ActivityIndicator size='large' color={corRosaForte} /></View>
+        {carregando ?
+          <View style={styles.containerCarregando}>
+            <ActivityIndicator size='large' color={corRosaForte} />
+          </View>
           :
           <>
             <View style={styles.Oval}></View>
@@ -141,9 +153,18 @@ const AlterarPerfil = ({ navigation }) => {
                 <TextInput style={styles.Input} defaultValue={facebook.current} onChangeText={text => facebook.current = text} />
               </GroupBox>
               {(TB_TIPO_IDD.current == 2 || TB_TIPO_IDD.current == 3 || TB_TIPO_IDD.current == 4) &&
-                <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para pix:'>
-                  <TextInput style={styles.Input} defaultValue={pix.current} onChangeText={text => pix.current = text} />
-                </GroupBox>}
+                <>
+                  <BotaoCheckBox texto='Habilitar doações' onPress={() => setHabilitado(prev => !prev)} styleBotao={styles.checkBox} corBoxAtivado={corRosaForte} jaativado={jaAtivado} />
+                  {habilitado && <>
+                    <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar chave pix:'>
+                      <TextInput style={styles.Input} defaultValue={pix.current} onChangeText={text => pix.current = text} />
+                    </GroupBox>
+                    <GroupBox corFundoTexto={corFundo} esquerda corTexto='#096D82' titulo='Adicionar link para doação:'>
+                      <TextInput style={styles.Input} defaultValue={link.current} onChangeText={text => link.current = text} />
+                    </GroupBox>
+                  </>
+                  }
+                </>}
               <Mensagem mensagem={mensagem} style={styles.subtitle} />
               <BotaoCadastrarAnimado texto="Confirmar alterações" onPress={Alterar} width={300} />
               <AlertPro
@@ -245,5 +266,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#096D82',
   },
+  checkBox: {
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+    marginBottom: 10
+  }
 });
 export default AlterarPerfil;

@@ -4,13 +4,17 @@ import CampoSimples from '../../components/cadastro/CampoSimples';
 import BotaoCadastrar from '../../components/cadastro/BotaoCadastrar';
 import { useState } from 'react';
 import { corTextoBotaoCad, corTituloCad } from '../../constants';
+import { useRoute } from '@react-navigation/native';
+import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 
 const VerCodigo = ({ navigation: { navigate } }) => {
+    const route = useRoute();
+    const { email } = route.params;
 
     const [codigo, setCodigo] = useState('');
 
     const Verificar = () => {
-        navigate("CriarSenha");
+        // navigate("CriarSenha");
     }
 
     const Enviar = () => {
@@ -20,12 +24,12 @@ const VerCodigo = ({ navigation: { navigate } }) => {
     return (
         <ContainerCadastro titulo="Verificar o código">
             <View style={styles.container}>
-                <Text style={styles.texto}>Enviando código para o email: </Text>
+                <Text style={styles.texto}>Enviando código para o email: {email}</Text>
                 <CampoSimples set={text => setCodigo(text)} placeholder={"Código"} keyboardType='numeric' />
                 <TouchableOpacity onPress={Enviar} style={styles.enviar}>
                     <Text>Enviar código novamente</Text>
                 </TouchableOpacity>
-                <BotaoCadastrar texto="Verificar código" onPress={Verificar} />
+                <BotaoCadastrarAnimado texto="Verificar código" onPress={Verificar} width={250} />
             </View>
         </ContainerCadastro>
     )
@@ -40,6 +44,7 @@ const styles = StyleSheet.create({
     },
     texto: {
         color: corTituloCad,
+        fontSize: 18,
     },
     enviar: {
         color: corTextoBotaoCad,

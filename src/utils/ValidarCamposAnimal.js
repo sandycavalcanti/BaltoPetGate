@@ -1,8 +1,8 @@
 // Função que valida se as informações do animal fornecidas pelo usuário nos campos estão válidas
 export default function ValidarCamposAnimal(camposObrigatorios, dados) {
     let mensagemErro = "";
-    const criteriosNome = /[a-zA-Z]{3,}/;
-    const criteriosLetrasMinimas = /[a-zA-Z]{10,}/;
+    const criteriosNome = /^.{3,}$/;
+    const criteriosLetrasMinimas = /^.{10,}$/;
 
     const { nome, idade, idadeTipo, porte, peso, especie, sexo, descricao, localResgate, cuidadoEspecial, saude, castrado, vermifugado, microchip, temperamentos, situacoes, traumas, uf, cidade, bairro, rua } = dados;
 
