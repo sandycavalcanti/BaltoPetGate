@@ -13,13 +13,12 @@ const GrupoContatos = (props) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View style={styles.contact}>
                         {props.data.map(pessoa => {
-                            const urlImg = urlAPI + 'selpessoaimg/' + pessoa.TB_PESSOA_ID;
                             const Animais = pessoa.Animais;
                             return (
                                 <TouchableOpacity key={pessoa.TB_CHAT_ID} onPress={() => navigation.navigate('Chat', { TB_CHAT_ID: pessoa.TB_CHAT_ID, TB_PESSOA_ID: pessoa.TB_PESSOA_ID })}>
                                     <View style={styles.containerContato}>
                                         <View>
-                                            <Imagem url={urlImg} desativado={props.desativado} style={styles.contactImage} />
+                                            <Imagem id={pessoa.TB_PESSOA_ID} existe={pessoa.TB_PESSOA_POSSUI_IMG} desativado={props.desativado} style={styles.contactImage} />
                                             {Animais.length == 1 ?
                                                 <Image resizeMode='cover' source={{ uri: urlAPI + 'selanimalimg/' + Animais[0].TB_ANIMAL_ID }} style={styles.animalImage} />
                                                 : Animais.length > 1 &&

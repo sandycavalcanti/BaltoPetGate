@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import { format } from "date-fns";
-import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 import PropTypes from 'prop-types';
 import Lightbox from 'react-native-lightbox-v2'
@@ -12,13 +11,10 @@ const Post = (props) => {
     const dataOriginal = props.data ? props.data.createdAt : new Date();
     const foiEditado = props.alterado ? props.alterado : props.data?.TB_POSTAGEM_TEXTO_ALTERADO;
     const texto = (props.text !== undefined) ? props.text : props.data?.TB_POSTAGEM_TEXTO_ALTERADO ? props.data.TB_POSTAGEM_TEXTO_ALTERADO : props.data.TB_POSTAGEM_TEXTO;
-    let dataFormatada, urlImg = "";
+    let dataFormatada = "";
 
     if (dataOriginal) {
         dataFormatada = format(new Date(dataOriginal), "dd/MM/yy");
-    }
-    if (props.data) {
-        urlImg = urlAPI + 'selpostagemimg/' + props.data.TB_POSTAGEM_ID;
     }
     const possuiImg = props.img ? true : props.img === null ? false : props.data.TB_POSTAGEM_POSSUI_IMG;
 
@@ -29,7 +25,7 @@ const Post = (props) => {
                     <Image source={{ uri: props.img }} style={styles.Imagem} />
                     :
                     <Lightbox activeProps={{ style: styles.imageActive }} underlayColor='transparent'>
-                        <Imagem url={urlImg} style={styles.Imagem} remove={!possuiImg} />
+                        <Imagem id={props.data.TB_POSTAGEM_ID} style={styles.Imagem} existe={possuiImg} postagem/>
                     </Lightbox>
                 }
                 {texto &&

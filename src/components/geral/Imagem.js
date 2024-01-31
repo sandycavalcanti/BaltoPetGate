@@ -1,40 +1,16 @@
-import { useState, useEffect } from 'react'
 import { StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import { urlAPI } from '../../constants';
 
-const Imagem = (props) => {
-    const imageExistsDefaultValue = !props.remove;
-    const [imageExists, setImageExists] = useState(imageExistsDefaultValue);
-    const controller = new AbortController();
-
-    const ChecarImagem = async () => {
-        if (props.url.startsWith(urlAPI)) {
-            await axios.get(props.url, { signal: controller.signal })
-                .then(() => {
-                    setImageExists(true);
-                    if (props.setResult) props.setResult(true)
-                }).catch(() => {
-                    setImageExists(false);
-                    if (props.setResult) props.setResult(false)
-                })
-        }
-    };
-
-    useEffect(() => {
-        ChecarImagem();
-        return (() => {
-            controller.abort();
-        })
-    }, [props.url]);
-
+const ImagemPerfil = (props) => {
+    const url = props.postagem ? urlAPI + 'selpostagemimg/' + props.id : urlAPI + 'selpessoaimg/' + props.id;
+    
     return (
         <>
-            {imageExists ?
-                <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: props.url }} resizeMode='cover' />
+            {props.existe ?
+                <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={{ uri: url }} resizeMode='cover' />
                 :
-                !props.remove &&
+                !props.postagem &&
                 <Image style={[styles.contactImage, props.style, { opacity: props.desativado ? 0.5 : 1 }]} source={require('../../../assets/img/user.png')} resizeMode='cover' />
             }
         </>
@@ -48,12 +24,12 @@ const styles = StyleSheet.create({
     },
 });
 
-Imagem.propTypes = {
-    url: PropTypes.string,
+ImagemPerfil.propTypes = {
+    id: PropTypes.number,
+    existe: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
     style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-    setResult: PropTypes.func,
     desativado: PropTypes.bool,
-    remove: PropTypes.bool
+    postagem: PropTypes.bool,
 };
 
-export default Imagem
+export default ImagemPerfil

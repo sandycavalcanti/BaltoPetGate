@@ -20,13 +20,13 @@ const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 const AlterarPerfil = ({ navigation }) => {
   const TB_PESSOA_IDD = useRef(null);
   const TB_TIPO_IDD = useRef(null);
-  const urlImg = useRef('imagem');
   const nomePerfil = useRef('');
   const bio = useRef('');
   const instagram = useRef('');
   const facebook = useRef('');
   const pix = useRef('');
   const link = useRef('');
+  const possuiImg = useRef(false);
   const [habilitado, setHabilitado] = useState(false);
   const [image, setImage] = useState(null);
   const [carregando, setCarregando] = useState(true);
@@ -39,7 +39,6 @@ const AlterarPerfil = ({ navigation }) => {
     const decodedToken = await DecodificarToken();
     TB_PESSOA_IDD.current = decodedToken.TB_PESSOA_IDD;
     TB_TIPO_IDD.current = decodedToken.TB_TIPO_IDD;
-    urlImg.current = urlAPI + 'selpessoaimg/' + TB_PESSOA_IDD.current;
     Selecionar();
   }
 
@@ -54,6 +53,7 @@ const AlterarPerfil = ({ navigation }) => {
       facebook.current = dados.TB_PESSOA_FACEBOOK;
       pix.current = dados.TB_PESSOA_PIX;
       link.current = dados.TB_PESSOA_LINK;
+      possuiImg.current = dados.TB_PESSOA_POSSUI_IMG;
       if (pix.current || link.current) {
         setHabilitado(true);
       }
@@ -130,7 +130,7 @@ const AlterarPerfil = ({ navigation }) => {
             <View style={styles.Oval}></View>
             <View style={styles.profileContainer}>
               {!image ?
-                <Imagem style={styles.profileImage} url={urlImg.current} />
+                <Imagem style={styles.profileImage} id={TB_PESSOA_IDD.current} existe={possuiImg.current}/>
                 :
                 <Image style={styles.profileImage} source={{ uri: image }} />
               }

@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     flexDirection: 'row',
     alignItems: "flex-end",
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginTop: 5
   },
   Data: {
     color: "#216357",

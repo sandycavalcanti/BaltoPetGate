@@ -37,7 +37,6 @@ const PerfilLayout = (props) => {
   let scrollY = props.scrollY ? props.scrollY : 0;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
-  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const [segue, setSegue] = useState(false);
 
   const MedirAltura = (event) => {
@@ -162,7 +161,7 @@ const PerfilLayout = (props) => {
         <View style={styles.profileContainer}>
           <View>
             {/* Foto e nome */}
-            <Imagem url={urlImg} style={styles.profileImage} />
+            <Imagem id={TB_PESSOA_ID} existe={props.data.TB_PESSOA_POSSUI_IMG} style={styles.profileImage} />
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
             {props.data.TB_TIPO_ID != 1 && <Text style={styles.tipoUsuario}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>

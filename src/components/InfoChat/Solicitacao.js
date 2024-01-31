@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Image } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { urlAPI, corBordaBoxCad } from "../../constants";
-import Imagem from "../geral/Imagem";
 import BotaoCadastrar from "../cadastro/BotaoCadastrar";
 import { DropdownAlertType } from 'react-native-dropdownalert';
 import CatchError from "../../utils/CatchError";
@@ -108,7 +107,7 @@ const Solicitacao = (props) => {
       <View style={styles.InfoPet}>
         <TouchableOpacity onPress={() => navigation.navigate('Ficha', { id: TB_ANIMAL_ID })} style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={styles.TituloPet}>{props.nome}</Text>
-          <Imagem url={urlAnimal} style={styles.ImagemPet} />
+          <Image source={{ uri: urlAnimal }} style={styles.ImagemPet} resizeMode='cover' />
         </TouchableOpacity>
       </View>
       {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />

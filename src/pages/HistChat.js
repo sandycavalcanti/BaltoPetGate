@@ -109,7 +109,7 @@ const HistChat = () => {
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: windowHeight - 25,
+    minHeight: windowHeight,
     backgroundColor: '#A9DDE8',
     justifyContent: 'center',
     alignItems: 'center',

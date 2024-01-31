@@ -18,22 +18,36 @@ const NavbarChat = (props) => {
   const existeAnimal = animais.length !== 0;
   const nomes = animais.map(animal => animal["TB_ANIMAL.TB_ANIMAL_NOME"]).join(', ');
   const pessoaId = props.id
-  const urlPessoaImg = urlAPI + 'selpessoaimg/';
   const urlAnimalImg = urlAPI + 'selanimalimg/';
   const translateYText = useRef(new Animated.Value(5)).current;
   const translateYContent = useRef(new Animated.Value(50)).current;
 
-  // Itens modal botão três pontos
+  // Itens do modal do botão três pontos
   let item1, item2, item3, item4 = {};
   item1 = { texto: 'Visualizar perfil', press: () => navigation.navigate('Perfil', { id: pessoaId }) };
   item2 = !props.desativado ? { texto: 'Desativar conversa', press: () => { setmodalConfirmacaoVisible(true); setDropdownVisible(false) } } : null;
   item3 = { texto: 'Bloquear pessoa', press: () => BloquearPessoa() };
   item4 = { texto: 'Denunciar conversa', press: () => DenunciarConversa() };
 
-  // Variaveis a serem passadas ao infochat
-  const nomeUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"] : dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
-  const tipoUsuario = dados.TB_CHAT_INICIADO == true ? dados["TB_PESSOA_DESTINATARIO.TB_TIPO_ID"] : dados["TB_PESSOA_REMETENTE.TB_TIPO_ID"];
-  const dadosPessoa = { TB_PESSOA_ID: pessoaId, TB_PESSOA_NOME_PERFIL: nomeUsuario, TB_TIPO_ID: tipoUsuario };
+  // Variáveis a serem passadas ao infochat (Informações da pessoa que se está conversando)
+  let nomeUsuario, tipoUsuario, possuiImg;
+  // TB_CHAT_INICIADO será true caso o usuário utilizando o aplicativo seja a pessoa que iniciou o chat 
+  if (dados.TB_CHAT_INICIADO == true) {
+    nomeUsuario = dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_NOME_PERFIL"];
+    tipoUsuario = dados["TB_PESSOA_DESTINATARIO.TB_TIPO_ID"];
+    possuiImg = dados["TB_PESSOA_DESTINATARIO.TB_PESSOA_POSSUI_IMG"];
+  } else {
+    nomeUsuario = dados["TB_PESSOA_REMETENTE.TB_PESSOA_NOME_PERFIL"];
+    tipoUsuario = dados["TB_PESSOA_REMETENTE.TB_TIPO_ID"];
+    possuiImg = dados["TB_PESSOA_REMETENTE.TB_PESSOA_POSSUI_IMG"];
+  }
+
+  const dadosPessoa = {
+    TB_PESSOA_ID: pessoaId,
+    TB_PESSOA_NOME_PERFIL: nomeUsuario,
+    TB_TIPO_ID: tipoUsuario,
+    TB_PESSOA_POSSUI_IMG: possuiImg
+  };
 
   const BloquearPessoa = () => {
     ToastAndroid.show('A função de bloquear pessoa ainda será implementada', ToastAndroid.SHORT);
@@ -74,7 +88,7 @@ const NavbarChat = (props) => {
       <View style={styles.containerHeaderLeft}>
         {/* Imagem do usuário */}
         <TouchableOpacity onPress={() => navigation.navigate('Perfil', { id: pessoaId })}>
-          <Imagem url={urlPessoaImg + pessoaId} style={styles.profileImage} />
+          <Imagem id={pessoaId} existe={possuiImg} style={styles.profileImage} />
         </TouchableOpacity>
       </View>
       <View style={styles.containerHeaderMiddle}>
