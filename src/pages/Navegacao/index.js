@@ -23,7 +23,6 @@ import AlterarPerfil from '../cadastro/AlterarPerfil';
 import AlterarPostagem from '../cadastro/AlterarPostagem';
 import QuestAdocao from '../cadastro/QuestAdocao';
 import Chat from '../Chat';
-import Teste from '../Teste';
 
 const Stack = createStackNavigator();
 
@@ -94,7 +93,6 @@ const Navigation = () => {
           gestureDirection: 'vertical-inverted',
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
         }} />
-        <Stack.Screen name="Teste" component={Teste} />
       </Stack.Navigator>
     </NavigationContainer>
   );

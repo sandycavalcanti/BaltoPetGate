@@ -2,7 +2,7 @@ import axios from "axios";
 import { urlAPI } from "../constants";
 import CatchError from "./CatchError";
 import { CommonActions } from "@react-navigation/native";
-import { ToastAndroid } from "react-native";
+
 // Função para iniciar o chat, navegando para ele caso o chat já existir, criar um novo,ou adicionar um animal
 export default async function IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId, replace) {
 

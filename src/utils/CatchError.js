@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ToastAndroid } from "react-native";
+
 // Função para lidar com o catch do axios
 export default function CatchError(error, mostrar404, functionNonServerError, functionServerError, function404) {
     if (axios.isCancel(error)) return; // Caso a requisição for cancelada pelo controller

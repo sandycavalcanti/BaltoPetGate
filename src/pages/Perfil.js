@@ -113,7 +113,7 @@ const Perfil = ({ navigation }) => {
     const y = scrollY.interpolate({ inputRange: [0, HeaderHeight], outputRange: [0, -HeaderHeight], extrapolate: 'clamp' });
     return (
       <Animated.View {...headerPanResponder.panHandlers} style={[styles.header, { transform: [{ translateY: y }], height: HeaderHeight, }]}>
-        <PerfilLayout avaliacoes={selectAvaliacao.current} seguindo={selectSeguindo.current} pessoal={pessoal.current} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} scrollY={scrollY} navigation={navigation} carregando={carregando} />
+        <PerfilLayout avaliacoes={selectAvaliacao.current} seguindo={selectSeguindo.current} pessoal={pessoal.current} TB_PESSOA_IDD={TB_PESSOA_IDD.current} data={selectPessoa} setPerfilHeight={setPerfilHeight} navigation={navigation} carregando={carregando} />
       </Animated.View>
     );
   };

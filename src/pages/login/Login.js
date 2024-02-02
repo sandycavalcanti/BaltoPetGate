@@ -118,6 +118,7 @@ const Login = () => {
                         secureTextEntry={!mostrarSenha}
                         onSubmitEditing={Logar}
                         autoCapitalize="none"
+                        keyboardType="email"
                     />
                     <Pressable onPress={() => setMostrarSenha(prev => !prev)}>
                         {mostrarSenha ?

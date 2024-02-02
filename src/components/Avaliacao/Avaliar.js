@@ -1,14 +1,13 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Pressable, Modal, TouchableWithoutFeedback } from 'react-native';
 import { format } from "date-fns";
-import Imagem from '../geral/Imagem';
 import { AntDesign } from '@expo/vector-icons';
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { corRosaFraco, urlAPI } from '../../constants';
 import DecodificarToken from '../../utils/DecodificarToken';
 import CatchError from '../../utils/CatchError';
-import Modal, { SlideAnimation } from 'react-native-modals'
 import AlertPro from 'react-native-alert-pro';
+import ImagemComVerificacao from '../geral/ImagemComVerificacao';
 
 const Avaliar = (props) => {
   const [rating, setRating] = useState(0);
@@ -63,48 +62,54 @@ const Avaliar = (props) => {
   }
 
   return (
-    <Modal visible={props.val} modalAnimation={new SlideAnimation({ slideFrom: 'bottom' })} onTouchOutside={Fechar}>
-      <View style={styles.ContainerAvaliar} >
-        <ScrollView style={{ flex: 1 }}>
-          <View style={styles.Container}>
-            <View style={styles.ContainerHead}>
-              <View style={styles.ImagemCirculo}>
-                <Imagem style={styles.Imagem} url={urlAPI + 'selpessoaimg/' + props.TB_PESSOA_IDD} />
-              </View>
-              <View style={styles.ContainerTexto}>
-                <Text style={styles.Texto}>{pessoaNome}</Text>
-                <View style={styles.ratingContainer}>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Pressable key={index} onPress={() => setRating(index + 1)}>
-                      <AntDesign name={index < rating ? 'star' : 'staro'} size={22} color={index < rating ? 'gold' : 'gray'} />
-                    </Pressable>
-                  ))}
+    <Modal visible={props.val} transparent animationType='slide' onDismiss={Fechar} onRequestClose={Fechar}>
+      <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={Fechar}>
+        <ScrollView directionalLockEnabled={true} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableWithoutFeedback>
+            <View style={styles.ContainerAvaliar} >
+              <ScrollView style={{ flex: 1 }}>
+                <View style={styles.Container}>
+                  <View style={styles.ContainerHead}>
+                    <View style={styles.ImagemCirculo}>
+                      <ImagemComVerificacao id={props.TB_PESSOA_IDD} style={styles.Imagem} />
+                    </View>
+                    <View style={styles.ContainerTexto}>
+                      <Text style={styles.Texto}>{pessoaNome}</Text>
+                      <View style={styles.ratingContainer}>
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <Pressable key={index} onPress={() => setRating(index + 1)}>
+                            <AntDesign name={index < rating ? 'star' : 'staro'} size={24} color={index < rating ? 'gold' : 'gray'} />
+                          </Pressable>
+                        ))}
+                      </View>
+                    </View>
+                  </View>
+                  <View>
+                    <View>
+                      <TextInput style={styles.Descricao} multiline onChangeText={text => texto.current = text} placeholder='Escreva aqui sua avaliação' />
+                    </View>
+                    <View style={styles.ContainerData}>
+                      <Text style={styles.Data}>{dataformatada}</Text>
+                    </View>
+                  </View>
+                  <Pressable style={styles.Botao} onPress={() => Cadastrar()}>
+                    <Text style={[styles.BotaoTexto, { color: !estaAvaliando ? '#CE7272' : '#dddddd' }]}>Avaliar</Text>
+                  </Pressable>
                 </View>
-              </View>
+              </ScrollView>
+              <AlertPro
+                ref={alertRef}
+                onConfirm={() => alertRef.current.close()}
+                title={textoTitulo.current}
+                message={textoAlert}
+                showCancel={false}
+                textConfirm="OK"
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+              />
             </View>
-            <View>
-              <View>
-                <TextInput style={styles.Descricao} multiline onChangeText={text => texto.current = text} placeholder='Escreva aqui sua avaliação' />
-              </View>
-              <View style={styles.ContainerData}>
-                <Text style={styles.Data}>{dataformatada}</Text>
-              </View>
-            </View>
-            <Pressable style={styles.Botao} onPress={() => Cadastrar()}>
-              <Text style={[styles.BotaoTexto, { color: !estaAvaliando ? '#CE7272' : '#dddddd' }]}>Avaliar</Text>
-            </Pressable>
-          </View>
+          </TouchableWithoutFeedback>
         </ScrollView>
-        <AlertPro
-          ref={alertRef}
-          onConfirm={() => alertRef.current.close()}
-          title={textoTitulo.current}
-          message={textoAlert}
-          showCancel={false}
-          textConfirm="OK"
-          customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
-        />
-      </View>
+      </TouchableOpacity>
     </Modal>
   )
 }

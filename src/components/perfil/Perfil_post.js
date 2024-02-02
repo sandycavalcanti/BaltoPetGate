@@ -80,7 +80,10 @@ const Perfil_post = (props) => {
                         <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>
                       :
-                      <MenuOption onSelect={() => setModalDesativarVisible(true)}>
+                      // TESTE
+                      <MenuOption onSelect={() => setModalDesativarVisible(true)} style={{ flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',}}>
                         <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Reativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>
                     }
