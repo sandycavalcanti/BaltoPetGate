@@ -7,8 +7,6 @@ import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 import CatchError from "../../utils/CatchError";
 
-const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
-
 const Home = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
   const TB_PESSOA_IDD = useRef(null);
@@ -39,20 +37,28 @@ const Home = ({ navigation: { navigate } }) => {
     Selecionar();
   }
 
+  const temConteudo = select.length !== 0;
+  const estaCarregando = carregando.current;
+
   return (
     <View style={styles.container}>
-      {select.length !== 0 ?
+      {temConteudo ?
         <>
-          {carregando.current && <View style={styles.containerCarregando}><ActivityIndicator color={corRosaForte} size='large' /></View>}
-          <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID} renderItem={({ item }) => {
-            const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
-            return (
-              <>
-                <Perfil_post data={item} pessoal={pessoal} />
-                <Post data={item} />
-              </>
-            )
-          }} />
+          {estaCarregando &&
+            <View style={styles.containerCarregando}>
+              <ActivityIndicator color={corRosaForte} size='large' />
+            </View>
+          }
+          <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID}
+            renderItem={(item) => {
+              const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
+              return (
+                <>
+                  <Perfil_post data={item} pessoal={pessoal} />
+                  <Post data={item} />
+                </>
+              )
+            }} />
         </>
         :
         <Text style={styles.textoPadrao}>Aqui você verá as postagens de quem você seguir</Text>

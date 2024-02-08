@@ -165,7 +165,7 @@ const PerfilLayout = (props) => {
               </TouchableOpacity>
               <ModalSeguindo seguindo={props.seguindo} val={seguindoVisible} set={setSeguindoVisible} />
               <Estrelas avaliacoes={props.avaliacoes} set={setAvaliacaoVisible} />
-              <ModalAvaliacao avaliacoes={props.avaliacoes} val={avaliacaoVisible} set={setAvaliacaoVisible} />
+              {/* <ModalAvaliacao avaliacoes={props.avaliacoes} val={avaliacaoVisible} set={setAvaliacaoVisible} /> */}
             </View>
             {!props.pessoal &&
               <View>
@@ -201,7 +201,7 @@ const PerfilLayout = (props) => {
             : // Botões para a conta de outros
             <>
               <BotaoPerfil texto='Avaliar' onPress={() => setAvaliar(true)} />
-              <Avaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} possuiImg={true} />
+              {/* <Avaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} possuiImg={true} /> */}
               <BotaoPerfil texto='Iniciar Chat' onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)} />
             </>}
         </View>
