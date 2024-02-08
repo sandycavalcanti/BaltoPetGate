@@ -99,6 +99,7 @@ const Login = () => {
                     style={{ width: '95%', marginBottom: 30, marginHorizontal: 10 }}
                     onChangeText={text => email.current = text}
                     autoCapitalize="none"
+                    keyboardType="email-address"
                 />
             </View>
             <View style={styles.containersenha}>
@@ -118,7 +119,6 @@ const Login = () => {
                         secureTextEntry={!mostrarSenha}
                         onSubmitEditing={Logar}
                         autoCapitalize="none"
-                        keyboardType="email-address"
                     />
                     <Pressable onPress={() => setMostrarSenha(prev => !prev)}>
                         {mostrarSenha ?

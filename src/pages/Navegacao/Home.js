@@ -50,7 +50,7 @@ const Home = ({ navigation: { navigate } }) => {
             </View>
           }
           <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID}
-            renderItem={(item) => {
+            renderItem={({ item }) => {
               const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;
               return (
                 <>

@@ -130,7 +130,7 @@ const AlterarPerfil = ({ navigation }) => {
             <View style={styles.Oval}></View>
             <View style={styles.profileContainer}>
               {!image ?
-                <Imagem style={styles.profileImage} id={TB_PESSOA_IDD.current} existe={possuiImg.current}/>
+                <Imagem style={styles.profileImage} id={TB_PESSOA_IDD.current} existe={possuiImg.current} />
                 :
                 <Image style={styles.profileImage} source={{ uri: image }} />
               }
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#C1E6CD',
+    backgroundColor: '#CEF7FF',
   },
   imagemFundo: {
     position: 'absolute',
@@ -272,4 +272,5 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
 export default AlterarPerfil;
