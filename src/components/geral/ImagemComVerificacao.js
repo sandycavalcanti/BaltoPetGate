@@ -7,7 +7,10 @@ import { urlAPI } from '../../constants';
 const ImagemComVerificacao = (props) => {
     const [imageExists, setImageExists] = useState(true);
     const controller = new AbortController();
-    const urlImg = urlAPI + 'selpessoaimg/' + props.id;
+    let urlImg = urlAPI + 'selpessoaimg/' + props.id;
+    if (props.ponto) {
+        urlImg = urlAPI + 'selpontoalimentacaoimg/' + props.id;
+    }
 
     useEffect(() => {
         axios.get(urlImg, { signal: controller.signal })
@@ -20,7 +23,7 @@ const ImagemComVerificacao = (props) => {
             controller.abort();
         })
     }, [props.id]);
-    
+
     return (
         <>
             {imageExists ?
@@ -44,6 +47,7 @@ ImagemComVerificacao.propTypes = {
     id: PropTypes.number,
     style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     desativado: PropTypes.bool,
+    ponto: PropTypes.bool
 };
 
 export default ImagemComVerificacao

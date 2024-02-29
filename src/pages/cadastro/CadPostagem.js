@@ -23,6 +23,8 @@ const CadPostagem = ({ navigation }) => {
   const [mensagem, setMensagem] = useState({});
   const alertRef = useRef(null);
   const [textoAlert, setTextoAlert] = useState('');
+  const [imageExists, setImageExists] = useState(true);
+  const controller = new AbortController();
 
   const PegarId = async () => {
     const decodedToken = await DecodificarToken();
@@ -82,9 +84,24 @@ const CadPostagem = ({ navigation }) => {
     }
   }
 
+  useEffect(() => {
+    axios.get(urlAPI + 'selpessoaimg/' + TB_PESSOA_IDD.current, { signal: controller.signal })
+      .then(() => {
+        setImageExists(true);
+      }).catch(() => {
+        setImageExists(false);
+      })
+    return (() => {
+      controller.abort();
+    })
+  }, [TB_PESSOA_IDD.current]);
+
   const dataPerfilPost = {
     TB_PESSOA_ID: TB_PESSOA_IDD.current,
-    TB_PESSOA: { TB_PESSOA_NOME_PERFIL: TB_PESSOA_NOME_PERFIL.current }
+    TB_PESSOA: {
+      TB_PESSOA_NOME_PERFIL: TB_PESSOA_NOME_PERFIL.current,
+      TB_PESSOA_POSSUI_IMG: imageExists,
+    }
   }
 
   return (

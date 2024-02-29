@@ -14,7 +14,7 @@ const Perfil_post = (props) => {
   const [modalDesativarVisible, setModalDesativarVisible] = useState(false);
   const navigation = useNavigation();
   const tipoAnimal = props.tipo == 'animal';
-  
+
   const NavegarParaPerfil = () => {
     navigation.navigate("Perfil", { id: TB_PESSOA_ID });
   }
@@ -81,9 +81,11 @@ const Perfil_post = (props) => {
                       </MenuOption>
                       :
                       // TESTE
-                      <MenuOption onSelect={() => setModalDesativarVisible(true)} style={{ flex: 1,
+                      <MenuOption onSelect={() => setModalDesativarVisible(true)} style={{
+                        flex: 1,
                         justifyContent: 'center',
-                        alignItems: 'center',}}>
+                        alignItems: 'center',
+                      }}>
                         <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Reativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>
                     }

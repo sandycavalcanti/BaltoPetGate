@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal, StyleSheet, Text, View, ActivityIndicator, Pressable, Image, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
+import { Modal, StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Dimensions, StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { corFundo, corFundoCad, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
@@ -69,9 +69,10 @@ const CadPontoAlimento = () => {
                     const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
                     const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
                     const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
+                    const possuiImg = item.TB_PESSOA.TB_PESSOA_POSSUI_IMG;
                     const createdAt = item.createdAt;
                     const updatedAt = item.updatedAt;
-                    return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, createdAt, updatedAt };
+                    return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, possuiImg, createdAt, updatedAt };
                 });
                 setPontosAlimentacao([...newCoords]);
             }).catch(CatchError);
@@ -159,7 +160,7 @@ const CadPontoAlimento = () => {
         if (cadastrando) {
             const coordenadasPress = props.nativeEvent.coordinate;
             const distancia = CalcularDistanciaCoordenadas(coordenadasPress, initialRegion.current).toFixed(2);
-            if (distancia <= 1) {
+            if (distancia <= 1 || true) { // Remover true
                 setModalVisible(true);
                 setCadastrando(false);
                 coordenadas.current = coordenadasPress;
@@ -176,62 +177,56 @@ const CadPontoAlimento = () => {
 
     return (
         <View style={styles.container}>
-            {carregando ?
-                <View style={styles.viewCarregando}>
-                    <Pressable onPress={() => PegarLocalizacao()}>
-                        <ActivityIndicator size='large' color={corRosaForte} />
-                    </Pressable>
-                </View>
-                :
-                <>
-                    <View style={styles.containerBottom}>
-                        <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
-                            <View style={styles.containerCadastrando}>
-                                {cadastrando ?
-                                    <>
-                                        <Ionicons name="close-circle" size={50} color="black" />
-                                        <Text style={{ fontSize: 18, textAlign: 'justify' }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
-                                    </>
-                                    :
-                                    <>
-                                        <AntDesign name="pluscircle" size={50} color={corRosaForte} />
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Cadastre seu ponto de alimentação!</Text>
-                                        </View>
-                                    </>}
-                            </View>
-                        </TouchableOpacity>
+            <View style={styles.containerBottom}>
+                <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
+                    <View style={styles.containerCadastrando}>
+                        {cadastrando ?
+                            <>
+                                <Ionicons name="close-circle" size={50} color="black" />
+                                <Text style={{ fontSize: 18, textAlign: 'justify' }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                            </>
+                            :
+                            <>
+                                <AntDesign name="pluscircle" size={50} color={corRosaForte} />
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 20, textAlign: 'center' }}>Cadastre seu ponto de alimentação!</Text>
+                                </View>
+                            </>}
                     </View>
-                    <MapaMapView onPress={onPress} pontosAlimentacao={pontosAlimentacao} initialRegion={initialRegion.current} />
-                    <Modal animationType="slide" transparent={false} visible={modalVisible}>
-                        <View style={styles.modalContainer}>
-                            <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
-                            <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
-                            {image &&
-                                <>
-                                    <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
-                                    <Image source={{ uri: image }} style={styles.selectedImage} />
-                                </>
-                            }
-                            <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Text style={{ color: '#fafafa' }}>Cancelar</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </Modal>
-                    <DropdownAlert alert={func => (alert = func)} />
-                    <AlertPro
-                        ref={alertRef}
-                        onConfirm={() => alertRef.current.close()}
-                        title={tituloAlert.current}
-                        message={textoAlert}
-                        showCancel={false}
-                        textConfirm="OK"
-                        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
-                    />
-                </>
+                </TouchableOpacity>
+            </View>
+            <MapaMapView onPress={onPress} pontosAlimentacao={pontosAlimentacao} initialRegion={initialRegion.current} />
+            <Modal animationType="slide" transparent={false} visible={modalVisible}>
+                <View style={styles.modalContainer}>
+                    <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
+                    <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
+                    {image &&
+                        <>
+                            <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
+                            <Image source={{ uri: image }} style={styles.selectedImage} />
+                        </>
+                    }
+                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
+                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                        <Text style={{ color: '#fafafa' }}>Cancelar</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+            <DropdownAlert alert={func => (alert = func)} />
+            <AlertPro
+                ref={alertRef}
+                onConfirm={() => alertRef.current.close()}
+                title={tituloAlert.current}
+                message={textoAlert}
+                showCancel={false}
+                textConfirm="OK"
+                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+            />
+            {modalVisible ?
+                <StatusBar animated backgroundColor={corFundoCad} hidden={false} />
+                :
+                <StatusBar hidden />
             }
-            <StatusBar hidden />
         </View>
     );
 }

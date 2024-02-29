@@ -23,9 +23,9 @@ const Post = (props) => {
             <View style={styles.Container}>
                 {props.img ?
                     <Image source={{ uri: props.img }} style={styles.Imagem} />
-                    :
+                    : props.data &&
                     <Lightbox activeProps={{ style: styles.imageActive }} underlayColor='transparent'>
-                        <Imagem id={props.data.TB_POSTAGEM_ID} style={styles.Imagem} existe={possuiImg} postagem/>
+                        <Imagem id={props.data.TB_POSTAGEM_ID} style={styles.Imagem} existe={possuiImg} postagem />
                     </Lightbox>
                 }
                 {texto &&

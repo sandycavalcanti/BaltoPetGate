@@ -28,7 +28,7 @@
     "lottie-react-native": "5.1.6",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
-    "react-native": "0.72.6",
+    "react-native": "0.72.10",
     "react-native-alert-pro": "^1.1.2",
     "react-native-dropdownalert": "^5.1.0",
     "react-native-element-dropdown": "^2.9.0",

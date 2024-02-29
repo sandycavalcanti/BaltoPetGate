@@ -47,7 +47,6 @@ export default async function IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigate,
     }).then(async response => {
         const dados = response.data.Selecionar[0];
         const TB_CHAT_ID = dados.TB_CHAT_ID;
-        console.log(dados);
         if (animalId) { // Se o iniciar chat tiver um animal
             if (!dados.TB_ANIMAL_CADASTRADO) {
                 let existeAnimal = false;
