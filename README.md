@@ -5,13 +5,18 @@ Nosso projeto, batizado de Balto–PetGate, consiste em um aplicativo que tem o 
 ## Nosso aplicativo
 
 Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar animais, avaliar perfis de instituições, conversar via chat, se candidatar para ser dono de um animal e cadastrar pontos de alimentação.
+| <img width="240" src="https://i.imgur.com/oaVzqtg.png"> | <img width="240" src="https://i.imgur.com/mnwfEWv.png"> | <img width="240" src="https://i.imgur.com/yFCPmyk.png"> |
+|---|---|---|
 
-|<p align="center"> <img width="240" src="https://i.imgur.com/oaVzqtg.png"> <img width="240" src="https://i.imgur.com/mnwfEWv.png"> <img width="240" src="https://i.imgur.com/yFCPmyk.png"> <img width="240" src="https://i.imgur.com/tUJkduq.png"> </p>|
+| <img width="240" src="https://i.imgur.com/tUJkduq.png"> |
+|:---:|
 
 ## Tecnologias usadas
 
 O aplicativo foi desenvolvido em JavaScript utilizando o React Native e o Expo.
+
 Foram usadas diversas bibliotecas como axios, react-native-gifted-chat, react-native-textinput-effects e react-native-tab-view.
+
 Veja a API do projeto [aqui](https://github.com/Renan-Mochizuki/APIBalto).
 
 ## Features futuras
@@ -21,16 +26,23 @@ Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqu
 ## Como instalar e testar o aplicativo
 
 Para instalar o aplicativo em seu celular baixe o APK do aplicativo no link abaixo:
-[Instale o APK](https://expo.dev/artifacts/eas/tnqQ2SGN5Xu9DzKHdVCYeJ.apk)
-Obs.: O mapa não está funcionando pelo APK
 
-Para testar o aplicativo em um emulador Android, baixe o código e rode o seguinte comando para instalar todas as dependências
+[Instale o APK](https://expo.dev/artifacts/eas/tnqQ2SGN5Xu9DzKHdVCYeJ.apk)
+
+Obs.: O mapa está funcionando apenas pelo emulador Android no momento.
+
+Para testar o aplicativo em um emulador Android, baixe o código e rode o seguinte comando para instalar todas as dependências:
+
 `npm i`
-E execute o seguinte comando para emular o aplicativo em seu emulador Android (Android Studio recomendado)
+
+E execute o seguinte comando para emular o aplicativo em seu emulador Android (Android Studio recomendado):
+
 `npm start`
 
-O aplicativo está populado com dados básicos e de teste, para testar o aplicativo você pode criar uma conta, ou utilizar uma das contas testes:
+O banco de dados do aplicativo está populado com dados básicos e de teste, para testar o aplicativo você pode criar uma conta, ou utilizar uma das contas testes:
+
 Email: `joao@gmail.com`
+
 Senha: `senha123`
 
 ## Licença
