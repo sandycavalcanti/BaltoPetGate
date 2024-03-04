@@ -2,7 +2,7 @@
 
 Nosso projeto, batizado de Balto–PetGate, consiste em um aplicativo que tem o objetivo de ajudar cães e gatos em situação de rua, dando a esses animais um dono e reduzindo o número de casos de animais mortos devido à falta de tratamento adequado, além de reunir e promover pessoas engajadas com a causa animal e beneficiar fundações e profissionais veterinários, dando os mais visibilidade e propaganda.
 
-## Nosso aplicativo
+## Nosso aplicativo 🐾
 
 Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar animais, avaliar perfis de instituições, conversar via chat, se candidatar para ser dono de um animal e cadastrar pontos de alimentação.
 | <img width="240" src="https://i.imgur.com/oaVzqtg.png"> | <img width="240" src="https://i.imgur.com/mnwfEWv.png"> | <img width="240" src="https://i.imgur.com/yFCPmyk.png"> |
@@ -11,7 +11,7 @@ Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar a
 | <img width="240" src="https://i.imgur.com/tUJkduq.png"> |
 |:---:|
 
-## Tecnologias usadas
+## Tecnologias usadas 💻
 
 O aplicativo foi desenvolvido em JavaScript utilizando o React Native e o Expo.
 
@@ -19,11 +19,11 @@ Foram usadas diversas bibliotecas como axios, react-native-gifted-chat, react-na
 
 Veja a API do projeto [aqui](https://github.com/Renan-Mochizuki/APIBalto).
 
-## Features futuras
+## Features futuras💡
 
-Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqueio de usuários, diário de eventos de adoção, melhorias de segurança, chat em tempo real, melhorias no mapa e sistema de redefinição de senha.
+Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqueio de usuários, diário de eventos de adoção, melhorias de segurança, chat em tempo real, melhorias no mapa, sistema de localização por GPS e sistema de redefinição de senha.
 
-## Como instalar e testar o aplicativo
+## Como instalar e testar o aplicativo 📱
 
 Para instalar o aplicativo em seu celular baixe o APK do aplicativo no link abaixo:
 
@@ -45,11 +45,28 @@ Email: `joao@gmail.com`
 
 Senha: `senha123`
 
-## Licença
+## Diagramação 📄
+
+- Diagrama de Caso de Uso
+<p align="center">
+<img width="800" src="https://i.imgur.com/5J8cEib.jpeg">
+</p>
+
+- Diagrama de Entidade Relacionamento (DER)
+<p align="center">
+<img width="800" src="https://i.imgur.com/urpU7sJ.png">
+</p>
+
+- Modelo Entidade Relacionamento (MER)
+<p align="center">
+<img width="800" src="https://i.imgur.com/G2mUEAX.png">
+</p>
+
+## Licença ⚖️
 
 [MIT](LICENSE)
 
-## Créditos
+## Créditos 🔍
 
 - [Renan Mochizuki](https://github.com/Renan-Mochizuki)
 - [Sandy Pereira Cavalcanti](https://github.com/sandycavalcanti)
