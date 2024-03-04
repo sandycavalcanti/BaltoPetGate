@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { format } from "date-fns";
 import { AntDesign } from '@expo/vector-icons';
-import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
 
 const Avaliacoes = (props) => {
@@ -13,13 +12,14 @@ const Avaliacoes = (props) => {
   }
 
   const rating = props.data.TB_AVALIACAO_NOTA;
-  const urlIMG = urlAPI + 'selpessoaimg/' + props.data.TB_PESSOA_AVALIADORA_ID;
+
+  const possuiImg = props.data["TB_PESSOA_AVALIADORA.TB_PESSOA_POSSUI_IMG"];
 
   return (
     <View style={styles.Container}>
       <View style={styles.ContainerHead}>
         <View style={styles.ImagemCirculo}>
-          <Imagem url={urlIMG} style={styles.Imagem} />
+          <Imagem id={props.data.TB_PESSOA_AVALIADORA_ID} existe={possuiImg} style={styles.Imagem} />
         </View>
         <View style={styles.ContainerTexto}>
           <Text style={styles.Texto}>{props.data['TB_PESSOA_AVALIADORA.TB_PESSOA_NOME_PERFIL']}</Text>

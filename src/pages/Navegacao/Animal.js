@@ -29,7 +29,7 @@ const Animal = ({ navigation: { navigate } }) => {
                 setIsFetching(false);
             }).catch(CatchError)
     }
-
+    
     useEffect(() => {
         Selecionar();
         PegarId();

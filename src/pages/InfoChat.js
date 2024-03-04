@@ -25,7 +25,6 @@ const InfoChat = () => {
     const info = useRef({})
     const TB_PESSOA_IDD = useRef(null);
     const TB_TIPO_IDD = useRef(null);
-    const urlPessoa = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
     const [carregando, setCarregando] = useState(true);
     const controller = new AbortController();
 
@@ -56,7 +55,7 @@ const InfoChat = () => {
             <ScrollView>
                 <View style={styles.InfoHead}>
                     <View style={styles.ImagemCirculo}>
-                        <Imagem url={urlPessoa} style={styles.Imagem} />
+                        <Imagem id={TB_PESSOA_ID} style={styles.Imagem} existe={dadosPessoa.TB_PESSOA_POSSUI_IMG} />
                     </View>
                     <Text style={styles.Titulo}>{TB_PESSOA_NOME_PERFIL}</Text>
                     {TB_TIPO_ID != 1 && <Text style={styles.tipoUsuario}>{RetornarTipoNome(TB_TIPO_ID)}</Text>}
@@ -85,7 +84,7 @@ const InfoChat = () => {
                 }
             </ScrollView>
             <DropdownAlert alert={func => (alert = func)} />
-            <StatusBar hidden />
+            <StatusBar animated backgroundColor={'#BFDDE4'} hidden={false} />
         </View>
     )
 }

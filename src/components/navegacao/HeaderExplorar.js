@@ -207,7 +207,6 @@ const HeaderExplorar = (props) => {
                         <ScrollView keyboardShouldPersistTaps='always'>
                             {filtroSelecionar.current ?
                                 usuarios.map(item => {
-                                    const urlImg = urlAPI + 'selpessoaimg/' + item.TB_PESSOA_ID;
                                     let tipoNome;
                                     if (item.TB_TIPO_ID != 1) {
                                         tipoNome = RetornarTipoNome(item.TB_TIPO_ID);
@@ -215,7 +214,7 @@ const HeaderExplorar = (props) => {
                                     return (
                                         <Pressable key={item.TB_PESSOA_ID} onPress={() => navigation.navigate('Perfil', { id: item.TB_PESSOA_ID })}>
                                             <View style={styles.contatoPessoa}>
-                                                <Imagem url={urlImg} style={styles.contatoImagem} />
+                                                <Imagem id={item.TB_PESSOA_ID} existe={item.TB_PESSOA_POSSUI_IMG} style={styles.contatoImagem} />
                                                 <View>
                                                     <Text>{item.TB_PESSOA_NOME_PERFIL}</Text>
                                                     {tipoNome && <Text style={styles.contatoTipo}>{tipoNome}</Text>}

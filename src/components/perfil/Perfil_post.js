@@ -1,18 +1,16 @@
 import { View, Text, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { urlAPI } from '../../constants';
 import { Divider } from 'react-native-elements';
-import Imagem from '../geral/Imagem';
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import DesativarCampo from '../../utils/DesativarCampo';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import ModalConfirmacao from '../geral/ModalConfirmacao';
 import { memo, useState } from 'react';
+import Imagem from '../geral/Imagem';
 
 const Perfil_post = (props) => {
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
-  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const [modalDesativarVisible, setModalDesativarVisible] = useState(false);
   const navigation = useNavigation();
   const tipoAnimal = props.tipo == 'animal';
@@ -48,7 +46,7 @@ const Perfil_post = (props) => {
     <View style={styles.Container}>
       <TouchableOpacity onPress={NavegarParaPerfil}>
         <View style={styles.ImagemCirculo}>
-          <Imagem url={urlImg} style={styles.Imagem} />
+          <Imagem id={TB_PESSOA_ID} existe={props.data.TB_PESSOA.TB_PESSOA_POSSUI_IMG} />
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={NavegarParaPerfil}>
@@ -82,7 +80,12 @@ const Perfil_post = (props) => {
                         <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Desativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>
                       :
-                      <MenuOption onSelect={() => setModalDesativarVisible(true)}>
+                      // TESTE
+                      <MenuOption onSelect={() => setModalDesativarVisible(true)} style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
                         <Text style={[styles.dropdownText, { marginBottom: 5 }]}>Reativar {tipoAnimal ? 'animal' : 'postagem'}</Text>
                       </MenuOption>
                     }

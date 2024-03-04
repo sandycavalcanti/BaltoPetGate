@@ -2,7 +2,7 @@ import axios from "axios";
 import { urlAPI } from "../constants";
 import CatchError from "./CatchError";
 import { CommonActions } from "@react-navigation/native";
-import { ToastAndroid } from "react-native";
+
 // Função para iniciar o chat, navegando para ele caso o chat já existir, criar um novo,ou adicionar um animal
 export default async function IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigate, animalId, replace) {
 
@@ -47,7 +47,6 @@ export default async function IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigate,
     }).then(async response => {
         const dados = response.data.Selecionar[0];
         const TB_CHAT_ID = dados.TB_CHAT_ID;
-        console.log(dados);
         if (animalId) { // Se o iniciar chat tiver um animal
             if (!dados.TB_ANIMAL_CADASTRADO) {
                 let existeAnimal = false;

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal, StyleSheet, Text, View, Pressable, ActivityIndicator } from 'react-native';
+import { Modal, StyleSheet, Text, View, Pressable } from 'react-native';
 import axios from 'axios';
 import { corFundo, corRosaForte, urlAPI } from '../../constants';
 import * as Location from "expo-location";
@@ -10,7 +10,6 @@ import { ToastAndroid } from 'react-native';
 
 const Mapa = () => {
   const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
-  const [carregando, setCarregando] = useState(true);
   const initialRegion = useRef({
     latitude: -23.447440,
     longitude: -46.917877,
@@ -49,9 +48,10 @@ const Mapa = () => {
           const nomePerfil = item.TB_PESSOA.TB_PESSOA_NOME_PERFIL;
           const latitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LATITUDE);
           const longitude = parseFloat(item.TB_PONTO_ALIMENTACAO_LONGITUDE);
+          const possuiImg = item.TB_PESSOA.TB_PESSOA_POSSUI_IMG;
           const createdAt = item.createdAt;
           const updatedAt = item.updatedAt;
-          return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, createdAt, updatedAt };
+          return { latitude, longitude, id, idPerfil, tipoIdPerfil, nomePerfil, possuiImg, createdAt, updatedAt };
         });
         setPontosAlimentacao([...newCoords]);
       }).catch(CatchError);
@@ -67,15 +67,7 @@ const Mapa = () => {
 
   return (
     <View style={styles.container}>
-      {carregando ?
-        <View style={styles.viewCarregando}>
-          <Pressable onPress={() => PegarLocalizacao()}>
-            <ActivityIndicator size='large' color={corRosaForte} />
-          </Pressable>
-        </View>
-        :
-        <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
-      }
+      <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
     </View>
   );
 }

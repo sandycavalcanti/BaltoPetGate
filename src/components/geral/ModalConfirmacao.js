@@ -1,5 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Modal, SlideAnimation } from 'react-native-modals';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback } from "react-native";
 import { Divider } from "react-native-elements";
 import PropTypes from 'prop-types';
 
@@ -14,24 +13,30 @@ const ModalConfirmacao = (props) => {
     }
 
     return (
-        <Modal visible={props.val} modalAnimation={new SlideAnimation({ slideFrom: 'bottom' })} swipeDirection={['up', 'down']} swipeThreshold={200} onSwipeOut={Fechar} onTouchOutside={Fechar}>
-            <View style={styles.dropdown}>
-                <Text style={[styles.dropdownTitle, { paddingBottom: props.subtexto ? 15 : 25 }]}>{props.texto}</Text>
-                {props.subtexto &&
-                    <>
-                        <Divider width={1} color="grey" style={{ alignSelf: 'stretch' }} />
-                        <Text style={styles.dropdownSubTitle}>{props.subtexto}</Text>
-                    </>}
-                <View style={styles.dropdownButtons}>
-                    <TouchableOpacity style={styles.dropdownButton} onPress={Press}>
-                        <Text style={styles.textDropdownButton}>{props.sim ? props.sim : 'Sim'}</Text>
-                    </TouchableOpacity>
-                    <Divider orientation="vertical" width={1} color="grey" />
-                    <TouchableOpacity style={styles.dropdownButton} onPress={Fechar}>
-                        <Text style={styles.textDropdownButton}>{props.nao ? props.nao : 'Não'}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+        <Modal visible={props.val} transparent animationType='slide' onDismiss={Fechar} onRequestClose={Fechar}>
+            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={Fechar}>
+                <ScrollView directionalLockEnabled={true} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableWithoutFeedback>
+                        <View style={[styles.dropdown, { width: props.width ? props.width : '90%' }]}>
+                            <Text style={[styles.dropdownTitle, { paddingBottom: props.subtexto ? 15 : 25 }]}>{props.texto}</Text>
+                            {props.subtexto &&
+                                <>
+                                    <Divider width={1} color="grey" style={{ alignSelf: 'stretch' }} />
+                                    <Text style={styles.dropdownSubTitle}>{props.subtexto}</Text>
+                                </>}
+                            <View style={styles.dropdownButtons}>
+                                <TouchableOpacity style={styles.dropdownButton} onPress={Press}>
+                                    <Text style={styles.textDropdownButton}>{props.sim ? props.sim : 'Sim'}</Text>
+                                </TouchableOpacity>
+                                <Divider orientation="vertical" width={1} color="grey" />
+                                <TouchableOpacity style={styles.dropdownButton} onPress={Fechar}>
+                                    <Text style={styles.textDropdownButton}>{props.nao ? props.nao : 'Não'}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </ScrollView>
+            </TouchableOpacity>
         </Modal>
     )
 }
@@ -43,7 +48,6 @@ const styles = StyleSheet.create({
         zIndex: 12,
         borderWidth: 1,
         alignSelf: 'center',
-        width: '100%',
         alignItems: 'center',
         position: 'relative',
     },
@@ -87,7 +91,8 @@ ModalConfirmacao.propTypes = {
     texto: PropTypes.string,
     subtexto: PropTypes.string,
     sim: PropTypes.string,
-    nao: PropTypes.string
+    nao: PropTypes.string,
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default ModalConfirmacao

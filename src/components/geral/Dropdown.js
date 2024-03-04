@@ -7,50 +7,38 @@ const Dropdown = (props) => {
     if (props.valorScroll) valorScroll = props.valorScroll;
     if (props.valorDireita) valorDireita = props.valorDireita;
 
+    const CarregarItem = (item) => {
+        return (
+            <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); item.press(); }}>
+                {item.icone &&
+                    <View style={{ paddingRight: 10 }}>
+                        {item.icone}
+                    </View>}
+                <Text style={styles.textDropdownButton} >{item.texto}</Text>
+            </TouchableOpacity>
+        )
+    }
+
     return (
         <View style={{ position: 'absolute' }}>
             <Modal visible={props.val} transparent={true} animationType="none" onRequestClose={() => props.set(false)} >
                 <TouchableOpacity style={styles.dropdownBackdrop} onPress={() => props.set(false)} >
                     <View style={[styles.dropdown, { top: 45 - valorScroll, right: 15 - valorDireita }]}>
-                        <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item1.press(); }}>
-                            {props.item1.icone &&
-                                <View style={{ paddingRight: 10 }}>
-                                    {props.item1.icone}
-                                </View>}
-                            <Text style={styles.textDropdownButton}>{props.item1.texto}</Text>
-                        </TouchableOpacity>
+                        {CarregarItem(props.item1)}
                         {props.item2 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item2.press(); }}>
-                                    {props.item2.icone &&
-                                        <View style={{ paddingRight: 10 }}>
-                                            {props.item2.icone}
-                                        </View>}
-                                    <Text style={styles.textDropdownButton} >{props.item2.texto}</Text>
-                                </TouchableOpacity>
+                                {CarregarItem(props.item2)}
                             </>}
                         {props.item3 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item3.press(); }}>
-                                    {props.item3.icone &&
-                                        <View style={{ paddingRight: 10 }}>
-                                            {props.item3.icone}
-                                        </View>}
-                                    <Text style={styles.textDropdownButton}>{props.item3.texto}</Text>
-                                </TouchableOpacity>
+                                {CarregarItem(props.item3)}
                             </>}
                         {props.item4 &&
                             <>
                                 <Divider width={1} color="black" />
-                                <TouchableOpacity style={styles.dropdownButton} onPress={() => { props.set(false); props.item4.press(); }}>
-                                    {props.item4.icone &&
-                                        <View style={{ paddingRight: 10 }}>
-                                            {props.item4.icone}
-                                        </View>}
-                                    <Text style={styles.textDropdownButton} >{props.item4.texto}</Text>
-                                </TouchableOpacity>
+                                {CarregarItem(props.item4)}
                             </>}
                     </View>
                 </TouchableOpacity>
@@ -71,7 +59,6 @@ const styles = StyleSheet.create({
         zIndex: 1,
         borderWidth: 1,
         borderColor: 'gray',
-        paddingRight: 5,
     },
     dropdownButton: {
         flexDirection: 'row',
@@ -80,7 +67,7 @@ const styles = StyleSheet.create({
         minWidth: 175,
         maxWidth: 235,
         paddingLeft: 10,
-        paddingRight: 25,
+        paddingRight: 50,
     },
     dropdownBackdrop: {
         flex: 1,

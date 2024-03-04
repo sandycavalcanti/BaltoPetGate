@@ -3,6 +3,7 @@ import React from 'react'
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { urlAPI } from '../../constants';
 import Imagem from '../geral/Imagem';
+import ImagemComVerificacao from '../geral/ImagemComVerificacao';
 
 const MapaMapView = (props) => {
     return (
@@ -10,16 +11,15 @@ const MapaMapView = (props) => {
             {props.pontosAlimentacao.map((coords, index) => {
                 const diferencaEmMilissegundos = new Date() - new Date(coords.updatedAt);
                 const diferencaEmDias = Math.floor(diferencaEmMilissegundos / (1000 * 60 * 60 * 24));
-                const urlImg = urlAPI + 'selpontoalimentacaoimg/' + coords.id;
                 const urlImgPerfil = urlAPI + 'selpessoaimg/' + coords.idPerfil;
 
                 return (
                     <Marker key={index} coordinate={coords} >
-                        <Imagem url={urlImg} style={{ borderRadius: 125 }} />
+                        <ImagemComVerificacao id={coords.id} style={{ borderRadius: 125 }} ponto />
                         <Callout style={styles.containerCallout}>
                             <Text style={styles.titleCallout}>Ponto de Alimentação de:</Text>
                             <View style={styles.containerPerfil}>
-                                {/* <Text style={{ height: 50 }}><Imagem url={urlImgPerfil} style={{ borderRadius: 25 }} /></Text> */}
+                                {/* <Text style={{ height: 50 }}><Imagem id={coords.idPerfil} existe={coords.possuiimg} style={{ borderRadius: 25 }} /></Text> */}
                                 <Text style={styles.nameCallout}>{coords.nomePerfil}</Text>
                             </View>
                             <Text style={styles.textCallout}>Ativo há {diferencaEmDias} {diferencaEmDias == 1 ? 'dia' : 'dias'}</Text>

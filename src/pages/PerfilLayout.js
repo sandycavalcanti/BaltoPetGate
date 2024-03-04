@@ -32,25 +32,15 @@ const PerfilLayout = (props) => {
   const [avaliacaoVisible, setAvaliacaoVisible] = useState(false);
   const [seguindoVisible, setSeguindoVisible] = useState(false);
   const [avaliar, setAvaliar] = useState(false);
-  const [valorScroll, setValorScroll] = useState(-20);
   const idSeguindo = useRef(null);
-  let scrollY = props.scrollY ? props.scrollY : 0;
   const TB_PESSOA_ID = props.data.TB_PESSOA_ID;
   const TB_PESSOA_IDD = props.TB_PESSOA_IDD;
-  const urlImg = urlAPI + 'selpessoaimg/' + TB_PESSOA_ID;
   const [segue, setSegue] = useState(false);
 
   const MedirAltura = (event) => {
     const height = Math.floor(event.nativeEvent.layout.height);
     props.setPerfilHeight(height);
   };
-
-  // Calcular o movimento do modal três pontos quando descer a tela
-  useEffect(() => {
-    let timeoutId, listener = null;
-    setTimeout(() => { listener = scrollY.addListener(value => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const valorScrollInteiro = Math.trunc(value.value); setValorScroll(valorScrollInteiro); if (valorScrollInteiro > 200) setDropdownVisible(false); }, 100); }); }, 500);
-    return () => scrollY.removeListener(listener);
-  }, [scrollY]);
 
   // Opções botão três pontos
   let item1, item2, item3 = {};
@@ -122,7 +112,7 @@ const PerfilLayout = (props) => {
     }
   }, [props.seguindo]);
 
-  // Animação da info sobre puxar a tela
+  // Animação do texto sobre puxar a tela para atualizar
   const translateYInfo = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     let animationTimeout = null;
@@ -155,14 +145,14 @@ const PerfilLayout = (props) => {
           <TouchableOpacity onPress={() => setDropdownVisible(prev => !prev)}>
             <Entypo name="dots-three-vertical" size={30} color="white" />
           </TouchableOpacity>
-          <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} valorScroll={valorScroll} />
-          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalSairVisible} set={setModalSairVisible} sim='Sair' />
-          <ModalConfirmacao texto="Deseja desativar sua conta?" press={DesativarConta} val={modalDesativarVisible} set={setModalDesativarVisible} sim='Desativar' />
+          <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} />
+          <ModalConfirmacao texto="Deseja sair da conta?" press={SairDaConta} val={modalSairVisible} set={setModalSairVisible} sim='Sair' width={'60%'} />
+          <ModalConfirmacao texto="Deseja desativar sua conta?" press={DesativarConta} val={modalDesativarVisible} set={setModalDesativarVisible} sim='Desativar' width={'70%'} />
         </View>
         <View style={styles.profileContainer}>
           <View>
             {/* Foto e nome */}
-            <Imagem url={urlImg} style={styles.profileImage} />
+            <Imagem id={TB_PESSOA_ID} existe={props.data.TB_PESSOA_POSSUI_IMG} style={styles.profileImage} />
             <Text style={styles.profileName}>{props.data.TB_PESSOA_NOME_PERFIL}</Text>
             {props.data.TB_TIPO_ID != 1 && <Text style={styles.tipoUsuario}>{RetornarTipoNome(props.data.TB_TIPO_ID)}</Text>}
           </View>
@@ -211,7 +201,7 @@ const PerfilLayout = (props) => {
             : // Botões para a conta de outros
             <>
               <BotaoPerfil texto='Avaliar' onPress={() => setAvaliar(true)} />
-              <Avaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} />
+              <Avaliar val={avaliar} set={setAvaliar} TB_PESSOA_ID={TB_PESSOA_ID} TB_PESSOA_IDD={TB_PESSOA_IDD} possuiImg={true} />
               <BotaoPerfil texto='Iniciar Chat' onPress={() => IniciarChat(TB_PESSOA_IDD, TB_PESSOA_ID, navigation.navigate, null)} />
             </>}
         </View>
