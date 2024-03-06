@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, StatusBar, Image } from "react-native";
+import { ActivityIndicator, Text, View, StyleSheet, StatusBar, Image } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import GroupBox from "../../components/cadastro/GroupBox";
@@ -214,7 +214,7 @@ const CadAnimal = ({ navigation }) => {
                 <BotaoArquivo onPress={escolherImagem} texto={image ? 'Trocar imagem' : null} />
             </GroupBox>
             <GroupBox titulo='Informações'>
-                <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} />
+                <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} autoCapitalize='words' />
                 <View style={styles.containerCampos}>
                     <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} maxLength={2} />
                     <DropdownSimples data={TipoIdade} setRef={idadeTipo} texto='Ano(s) ou Mes(es)' />
@@ -234,9 +234,9 @@ const CadAnimal = ({ navigation }) => {
                 </View>
             </GroupBox>
             <GroupBox titulo='Descrição'>
-                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} />
-                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} />
-                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional />
+                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} autoCapitalize='sentences' />
+                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} autoCapitalize='sentences' />
+                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional autoCapitalize='sentences' />
             </GroupBox>
             <GroupBox titulo='Saúde *'>
                 <RadioButton2 setRef={saude} />

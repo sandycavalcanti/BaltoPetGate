@@ -36,6 +36,7 @@ const CampoSimplesAnimado = (props) => {
                 keyboardType={props.keyboardType}
                 defaultValue={props.val?.toString()}
                 multiline={props.multiline}
+                autoCapitalize={props.autoCapitalize ? props.autoCapitalize : 'none'}
             />
             {!props.opcional && <Text style={styles.asterisco}>*</Text>}
         </Animated.View>
@@ -78,7 +79,8 @@ CampoSimplesAnimado.propTypes = {
     opcional: PropTypes.bool,
     placeholder: PropTypes.string,
     keyboardType: PropTypes.string,
-    multiline: PropTypes.bool
+    multiline: PropTypes.bool,
+    autoCapitalize: PropTypes.string
 };
 
 export default CampoSimplesAnimado;

@@ -247,6 +247,7 @@ const AlterarAnimal = ({ navigation }) => {
 
 
     return (
+        
         <ContainerCadastro titulo='Alterar informações do animal'>
             {carregando ? <View style={{ flex: 1 }}><ActivityIndicator size="large" color={corRosaForte} /></View> :
                 <>

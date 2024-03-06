@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Text, StatusBar, StyleSheet, View, TextInput, ToastAndroid } from 'react-native'
+import { Text, StatusBar, StyleSheet, View, ToastAndroid } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import GroupBox from '../../components/cadastro/GroupBox';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
@@ -55,7 +55,8 @@ const CadConta = () => {
         const camposEndereco = { cep: cep.current, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current, numero: numero.current, complemento: complemento.current }
         const camposRedesTelefones = { facebook: facebook.current, instagram: instagram.current, whatsapp: whatsapp.current, telefone1: telefone1.current, telefone2: telefone2.current }
         const camposPessoais = { dtNasc: dtNasc.current, cpf: cpf.current };
-        const redeExiste = !(!instagram.current && !facebook.current);
+        const foiInseridoAlgumaRede = !(!instagram.current && !facebook.current);
+        const redeExiste = foiInseridoAlgumaRede ? true : null;
 
         if (tipo != 1) {
             camposObrigatorios.push(dtNasc.current, cpf.current, telefone1.current);
@@ -143,7 +144,7 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Como gostaria de ser chamado?"} />
                                 </GroupBox>
                             </>
@@ -152,13 +153,13 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoDtNascAnimado setRef={dtNasc} />
                                     <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
                                     <CampoNumFormatadoAnimado setRef={crmv} tipo='crmv' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações da cliníca veterinária">
-                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da clínica"} autoCapitalize='words' />
                                     <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} opcional />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
@@ -174,13 +175,13 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoDtNascAnimado setRef={dtNasc} />
                                     <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
                                     <CampoNumFormatadoAnimado setRef={cnpj} tipo='cnpj' opcional />
                                 </GroupBox>
                                 <GroupBox titulo="Informações da instituição">
-                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da instituição"} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome da instituição"} autoCapitalize='words' />
                                     <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
@@ -200,12 +201,12 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoDtNascAnimado setRef={dtNasc} />
                                     <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações do protetor">
-                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do protetor "} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do protetor "} autoCapitalize='words' />
                                     <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
@@ -225,12 +226,12 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoDtNascAnimado setRef={dtNasc} />
                                     <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações do abrigo">
-                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do abrigo"} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do abrigo"} autoCapitalize='words' />
                                     <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
@@ -246,13 +247,13 @@ const CadConta = () => {
                         return (
                             <>
                                 <GroupBox titulo="Informações pessoais">
-                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} />
+                                    <CampoSimplesAnimado setRef={nome} placeholder={"Nome Completo"} autoCapitalize='words' />
                                     <CampoDtNascAnimado setRef={dtNasc} />
                                     <CampoNumFormatadoAnimado setRef={cpf} tipo='cpf' />
                                     <CampoNumFormatadoAnimado setRef={cnpj} tipo='cnpj' />
                                 </GroupBox>
                                 <GroupBox titulo="Informações do estabecimento">
-                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do estabelecimento"} />
+                                    <CampoSimplesAnimado setRef={nomePerfil} placeholder={"Nome do estabelecimento"} autoCapitalize='words' />
                                     <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} setRef6={numero} setRef7={complemento} />
                                 </GroupBox>
                                 <GroupBox titulo="Informações de contato">
@@ -287,6 +288,13 @@ const CadConta = () => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        backgroundColor: corFundoCad,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+    },
     viewAsterisco: {
         width: '90%',
         justifyContent: 'center',

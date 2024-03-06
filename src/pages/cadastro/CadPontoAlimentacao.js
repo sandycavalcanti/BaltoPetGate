@@ -15,6 +15,7 @@ import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
 import AlertPro from 'react-native-alert-pro';
+import VerificarTamanhoImagem from '../../utils/VerificarTamanhoImagem';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let alert = (_data) => new Promise(res => res);
