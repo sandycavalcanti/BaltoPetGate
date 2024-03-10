@@ -1,8 +1,8 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal, StyleSheet, Text, View, Pressable } from 'react-native';
+import { Modal, StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { corFundo, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corFundoNavegacao, corRosaForte, urlAPI } from '../../constants';
 import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
@@ -31,10 +31,10 @@ const Mapa = () => {
           longitudeDelta: 0.005,
         };
       }
-      setCarregando(false);
+      // setCarregando(false);
     } catch (error) {
       ToastAndroid.show('Houve um erro ao requisitar a localização', ToastAndroid.SHORT);
-      setCarregando(false);
+      // setCarregando(false);
     }
   }
 
@@ -65,9 +65,26 @@ const Mapa = () => {
     })
   }, []);
 
+  const [mensagemFalha, setMensagemFalha] = useState(true);
+
   return (
     <View style={styles.container}>
-      <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
+      {mensagemFalha ?
+        <>
+          <Text style={{ color: 'white', fontSize: 22, textAlign: "center" }}>
+            O mapa apresenta falhas no aplicativo pelo APK.
+          </Text>
+          <Text style={{ color: 'white', fontSize: 22, textAlign: "center" }}>
+            Abra o aplicativo no emulador para testar o mapa
+            (Instruções no README do projeto no GitHub)
+          </Text>
+          <TouchableOpacity onPress={() => setMensagemFalha(false)}>
+            <Text style={{ color: 'black', fontSize: 22, marginTop: 50 }}>Clique aqui para testar o mapa</Text>
+          </TouchableOpacity>
+        </>
+        :
+        <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
+      }
     </View>
   );
 }
@@ -75,7 +92,7 @@ const Mapa = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: corFundoNavegacao,
     alignItems: 'center',
     justifyContent: 'center',
   },

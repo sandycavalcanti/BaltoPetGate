@@ -4,28 +4,31 @@
     "slug": "appbalto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/img/Logo.png",
+    "icon": "./assets/img/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/img/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e2f9ff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
+    "androidStatusBar": {
+      "hidden": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "appbalto.com"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/img/Logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/img/adaptive-icon.png",
+        "backgroundColor": "#e2f9ff"
       },
       "package": "appbalto.com",
-      "icon": "./assets/img/Logo.png",
-      "iconBackground": "#ffffff"
+      "icon": "./assets/img/icon.png",
+      "iconBackground": "#e2f9ff"
     },
     "web": {
       "favicon": "./assets/img/Logo.png"
