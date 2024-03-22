@@ -1,15 +1,20 @@
-## Balto-PetGate
+# Balto-PetGate
 
 Nosso projeto, batizado de Balto–PetGate, consiste em um aplicativo que tem o objetivo de ajudar cães e gatos em situação de rua, dando a esses animais um dono e reduzindo o número de casos de animais mortos devido à falta de tratamento adequado, além de reunir e promover pessoas engajadas com a causa animal e beneficiar fundações e profissionais veterinários, dando os mais visibilidade e propaganda.
 
 ## Nosso aplicativo 🐾
 
 Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar animais, avaliar perfis de instituições, conversar via chat, se candidatar para ser dono de um animal e cadastrar pontos de alimentação.
-| <img width="240" src="https://i.imgur.com/oaVzqtg.png"> | <img width="240" src="https://i.imgur.com/mnwfEWv.png"> | <img width="240" src="https://i.imgur.com/yFCPmyk.png"> |
+
+<div align="center">
+  
+| <img width="240" src="https://i.imgur.com/oaVzqtg.png"> | <img width="240" src="https://i.imgur.com/fZd39F3.png"> | <img width="240" src="https://i.imgur.com/yFCPmyk.png"> |
 |---|---|---|
 
 | <img width="240" src="https://i.imgur.com/tUJkduq.png"> |
 |:---:|
+
+</div>
 
 ## Tecnologias usadas 💻
 
@@ -27,7 +32,7 @@ Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqu
 
 Para instalar o aplicativo em seu celular baixe o APK do aplicativo no link abaixo:
 
-[Instale o APK](https://expo.dev/artifacts/eas/tnqQ2SGN5Xu9DzKHdVCYeJ.apk)
+[Instale o APK](https://expo.dev/artifacts/eas/bBzNny5YQ4nYUbgkKhtsXT.apk)
 
 Obs.: O mapa está funcionando apenas pelo emulador Android no momento.
 
@@ -48,19 +53,19 @@ Senha: `senha123`
 ## Diagramação 📄
 
 - Diagrama de Caso de Uso
-<p align="center">
-<img width="800" src="https://i.imgur.com/5J8cEib.jpeg">
-</p>
+<div align="center">
+  <img width="720" src="https://i.imgur.com/5J8cEib.jpeg">
+</div>
 
 - Diagrama de Entidade Relacionamento (DER)
-<p align="center">
-<img width="800" src="https://i.imgur.com/urpU7sJ.png">
-</p>
+<div align="center">
+  <img width="720" src="https://i.imgur.com/urpU7sJ.png">
+</div>
 
 - Modelo Entidade Relacionamento (MER)
-<p align="center">
-<img width="800" src="https://i.imgur.com/G2mUEAX.png">
-</p>
+<div align="center">
+  <img width="720" src="https://i.imgur.com/G2mUEAX.png">
+</div>
 
 ## Licença ⚖️
 
