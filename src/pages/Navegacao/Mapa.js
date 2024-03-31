@@ -7,6 +7,7 @@ import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
 import { ToastAndroid } from 'react-native';
+import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 
 const Mapa = () => {
   const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
@@ -71,16 +72,13 @@ const Mapa = () => {
     <View style={styles.container}>
       {mensagemFalha ?
         <>
-          <Text style={{ color: 'white', fontSize: 22, textAlign: "center" }}>
-            O mapa apresenta falhas no aplicativo pelo APK.
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20 }}>
+            O mapa apresenta falhas no aplicativo. Pedimos desculpas pelo inconveniente.
           </Text>
-          <Text style={{ color: 'white', fontSize: 22, textAlign: "center" }}>
-            Abra o aplicativo no emulador para testar o mapa
-            (Instruções no README do projeto no GitHub)
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginBottom: 20, marginHorizontal: 20, marginTop: 40 }}>
+            O mapa funcionará apenas pelo emulador. (Instruções na página do projeto no GitHub)
           </Text>
-          <TouchableOpacity onPress={() => setMensagemFalha(false)}>
-            <Text style={{ color: 'black', fontSize: 22, marginTop: 50 }}>Clique aqui para testar o mapa</Text>
-          </TouchableOpacity>
+          <BotaoCadastrarAnimado texto="Clique aqui para testar o mapa" onPress={() => setMensagemFalha(false)} width={300} />
         </>
         :
         <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />

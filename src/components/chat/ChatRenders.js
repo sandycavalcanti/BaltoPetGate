@@ -21,7 +21,7 @@ function contarLetrasHorizontais(texto) {
     }
 }
 
-export const renderBubble = (props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender) => {
+export const renderBubble = (props, mensagens, user, mensagemRespondendo, ResponderMensagem, reRender) => {
     const dados = { ...props };
     let foiExcluida = props.currentMessage.mensagemExcluida;
     let foiAlterada = props.currentMessage.mensagemAlterada;
@@ -58,9 +58,11 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
     let pessoal = dados.currentMessage.user._id == user._id;
     const AoDeslizarMensagem = () => {
         if (foiExcluida) {
-            mensagemSelecionada.current.text = "(Mensagem excluída)";
+            const dadosDaMensagemApagada = {...props.currentMessage}
+            dadosDaMensagemApagada.text = "(Mensagem excluída)";
+            mensagemRespondendo.current = dadosDaMensagemApagada;
         } else {
-            mensagemSelecionada.current = props.currentMessage;
+            mensagemRespondendo.current = props.currentMessage;
         }
         ResponderMensagem();
         reRender();
@@ -88,7 +90,7 @@ export const renderBubble = (props, mensagens, user, mensagemSelecionada, Respon
     )
 }
 
-export const renderInputToolbar = (props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo) => {
+export const renderInputToolbar = (props, editando, respondendo, desativado, textoDigitado, mensagemRespondendo, setAlturaViewRespondendo) => {
     const Fechar = () => {
         respondendo.current = false;
         setAlturaViewRespondendo(50);
@@ -97,8 +99,8 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, tex
         let alturaViewRespondendo = Math.round(event.nativeEvent.layout.height);
         setAlturaViewRespondendo(50 + alturaViewRespondendo);
     }
-    let respondendoImagem = mensagemSelecionada.current.image;
-    let respondendoTexto = mensagemSelecionada.current.text;
+    let respondendoImagem = mensagemRespondendo.current.image;
+    let respondendoTexto = mensagemRespondendo.current.text;
 
     return (
         <>
