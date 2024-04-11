@@ -278,7 +278,7 @@ const AlterarAnimal = ({ navigation }) => {
                     <GroupBox titulo='Descrição'>
                         <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} val={descricao.current} multiline />
                         <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} val={localResgate.current} multiline />
-                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={cuidadoEspecial.current} />
+                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={cuidadoEspecial.current} multiline />
                     </GroupBox>
                     <GroupBox titulo='Saúde' asterisco>
                         <RadioButton2 setRef={saude} val={saude.current} />

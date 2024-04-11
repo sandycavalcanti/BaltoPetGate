@@ -236,7 +236,7 @@ const CadAnimal = ({ navigation }) => {
             <GroupBox titulo='Descrição'>
                 <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} autoCapitalize='sentences' multiline />
                 <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} autoCapitalize='sentences' multiline />
-                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional autoCapitalize='sentences' />
+                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional autoCapitalize='sentences' multiline />
             </GroupBox>
             <GroupBox titulo='Saúde' asterisco>
                 <RadioButton2 setRef={saude} />

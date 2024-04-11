@@ -11,7 +11,7 @@ const SwipeableMessage = (props) => {
     }
 
     return (
-        <Swipeable ref={swipeableRef} friction={1} onSwipeableOpen={closeSwipeable} renderLeftActions={() => <MaterialIcons name="reply" size={30} color={corRosaForte} />} onActivated={props.onActivated} enabled={props.enabled}>
+        <Swipeable ref={swipeableRef} friction={1} onSwipeableOpen={closeSwipeable} renderLeftActions={() => <MaterialIcons name="reply" size={30} color={corRosaForte} />} onEnded={props.onActivated} enabled={props.enabled}>
             {props.children}
         </Swipeable>
     )

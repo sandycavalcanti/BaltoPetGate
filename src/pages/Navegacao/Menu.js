@@ -53,6 +53,7 @@ const Menu = ({ navigation: { navigate } }) => {
                     name="Animal"
                     component={Animal}
                     options={{
+
                         tabBarIcon: props => <Ionicons name="paw-outline" size={33} color={props.focused ? '#fff' : '#ededed'} />,
                     }} />
             </Tab.Navigator>

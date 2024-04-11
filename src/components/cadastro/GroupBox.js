@@ -28,12 +28,12 @@ const GroupBox = (props) => {
             <View style={[styles.viewTitulo, {
                 textAlign: props.esquerda ? 'left' : 'center',
                 left: props.esquerda ? 10 : null,
-                color: props.corTexto ? props.corTexto : corTituloBoxCad,
                 backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad,
                 top: lineCount == 2 ? -25 : -20,
             }]}>
                 <Text style={[styles.titulo, {
                     textAlign: props.esquerda ? 'left' : 'center',
+                    color: props.corTexto ? props.corTexto : corTituloBoxCad,
                 }]} ref={textRef}>{text}</Text>
                 {props.asterisco && <Text style={styles.asterisco}> *</Text>}
             </View>
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         color: corTituloBoxCad
     },
     asterisco: {
-        color: 'red', 
+        color: 'red',
         fontSize: 22,
     }
 });

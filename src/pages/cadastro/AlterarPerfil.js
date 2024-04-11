@@ -32,6 +32,7 @@ const AlterarPerfil = ({ navigation }) => {
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState({});
   const alertRef = useRef(null);
+  const tituloAlert = useRef('');
   const [textoAlert, setTextoAlert] = useState('');
   const controller = new AbortController();
 
@@ -79,6 +80,7 @@ const AlterarPerfil = ({ navigation }) => {
     if (!result.canceled) {
       const mensagemArquivo = await VerificarTamanhoImagem(result);
       if (mensagemArquivo) {
+        tituloAlert.current = "Arquivo inválido";
         setTextoAlert(mensagemArquivo);
         alertRef.current.open();
         return
@@ -88,6 +90,13 @@ const AlterarPerfil = ({ navigation }) => {
   };
 
   const Alterar = async () => {
+    if (nomePerfil.current.length < 3) {
+      tituloAlert.current = "Campos inválidos";
+      setTextoAlert("Nome de perfil inválido");
+      alertRef.current.open();
+      return;
+    }
+
     const formData = new FormData();
 
     if (image) {
@@ -100,10 +109,18 @@ const AlterarPerfil = ({ navigation }) => {
     }
 
     formData.append('TB_PESSOA_NOME_PERFIL', nomePerfil.current);
-    formData.append('TB_PESSOA_BIO', bio.current);
-    formData.append('TB_PESSOA_INSTAGRAM', instagram.current);
-    formData.append('TB_PESSOA_FACEBOOK', facebook.current);
-    formData.append('TB_PESSOA_PIX', pix.current);
+    if (bio.current) {
+      formData.append('TB_PESSOA_BIO', bio.current);
+    }
+    if (instagram.current) {
+      formData.append("TB_PESSOA_INSTAGRAM", instagram.current);
+    }
+    if (facebook.current) {
+      formData.append("TB_PESSOA_FACEBOOK", facebook.current);
+    }
+    if (pix.current) {
+      formData.append("TB_PESSOA_PIX", pix.current);
+    }
 
     await axios.put(urlAPI + 'altpessoa/' + TB_PESSOA_IDD.current, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -169,7 +186,7 @@ const AlterarPerfil = ({ navigation }) => {
               <AlertPro
                 ref={alertRef}
                 onConfirm={() => alertRef.current.close()}
-                title="Arquivo inválido"
+                title={tituloAlert.current}
                 message={textoAlert}
                 showCancel={false}
                 textConfirm="OK"
