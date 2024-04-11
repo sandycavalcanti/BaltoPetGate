@@ -36,7 +36,7 @@ const Chat = () => {
 
     const TB_PESSOA_IDD = useRef(null)
     const mensagens = useRef([]);
-    const dadosChat = useRef({});
+    const [dadosChat, setDadosChat] = useState({});
     const animais = useRef([]);
     const mensagemSelecionada = useRef({});
     const mensagemRespondendo = useRef({});
@@ -69,6 +69,10 @@ const Chat = () => {
         }, { signal: controller.signal }).then(response => {
             if (response.data) {
                 const mensagensBanco = response.data;
+                if (mensagensBanco.length == 0) {
+                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
+                    return;
+                }
                 const mensagensGiftedChat = mensagensBanco.map((item) => {
                     let mensagemTexto = item.TB_MENSAGEM_TEXTO;
                     let mensagemAlterada = false;
@@ -102,16 +106,15 @@ const Chat = () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }, { signal: controller.signal }).then(response => {
+        }, { signal: controller.signal }).then(async response => {
             if (response.data) {
                 const dados = response.data.Selecionar[0];
                 animais.current = response.data.Animais
-                dadosChat.current = dados;
+                setDadosChat(dados);
                 TB_PESSOA_IDD.current = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
                 if (dados.TB_CHAT_STATUS) {
-                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
                     desativado.current = false;
-                    SelecionarMensagens();
+                    await SelecionarMensagens();
                 } else {
                     msgEmptyChat.current = "Esse chat foi desativado";
                     desativado.current = true;
@@ -295,7 +298,7 @@ const Chat = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
+            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
             <View style={styles.content}>
                 {carregando ?
                     <View style={styles.carregando}>
@@ -332,7 +335,6 @@ const Chat = () => {
                             imageStyle={{ width: 200, height: 125 }}
                         />
                         <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagemPeloModal} denunciar={DenunciarMensagem} />
-                        <StatusBar animated backgroundColor={'#A9DDAE'} hidden={false} />
                         <AlertPro
                             ref={alertRef}
                             onConfirm={() => alertRef.current.close()}
@@ -342,6 +344,7 @@ const Chat = () => {
                             textConfirm="OK"
                             customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
                         />
+                        <StatusBar animated backgroundColor={'#A9DDAE'} hidden={false} />
                     </>}
             </View>
         </SafeAreaView>

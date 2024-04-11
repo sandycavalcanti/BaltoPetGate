@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     containerContato: {
-        width: 100,
+        width: 125,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 10,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     contactName: {
-        width: 90,
+        width: '100%',
         paddingVertical: 6,
         fontSize: 18,
         color: "#697C55",

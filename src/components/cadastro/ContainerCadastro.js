@@ -1,18 +1,16 @@
-import { SafeAreaView, Text, ImageBackground, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaView, Text, ImageBackground, StyleSheet, ScrollView } from 'react-native';
 import { corFundoCad, corTituloCad } from '../../constants';
 import PropTypes from 'prop-types';
 
 const ContainerCadastro = (props) => {
   return (
-    <KeyboardAvoidingView style={styles.container} behavior='padding' keyboardVerticalOffset={-100}>
-      <ScrollView style={styles.scroll} keyboardShouldPersistTaps="always">
-        <SafeAreaView style={styles.container}>
-          <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
-          <Text style={styles.titulo}>{props.titulo}</Text>
-          {props.children}
-        </SafeAreaView>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    <ScrollView style={styles.scroll} keyboardShouldPersistTaps="always">
+      <SafeAreaView style={styles.container}>
+        <ImageBackground style={styles.imagem} resizeMode="contain" source={require("../../../assets/img/Logo.png")} />
+        <Text style={styles.titulo}>{props.titulo}</Text>
+        {props.children}
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({

@@ -50,6 +50,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerShown: false
       }} >
         <Stack.Screen name="Splash" component={Splash} />
