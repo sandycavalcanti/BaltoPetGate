@@ -50,10 +50,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
-        headerShown: false,
-        gestureEnabled: true,
-        gestureDirection: 'horizontal',
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        headerShown: false
       }} >
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={Login} options={{
@@ -63,11 +60,15 @@ const Navigation = () => {
         <Stack.Screen name="Menu" component={Menu} options={{
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
         }} />
-        <Stack.Screen name="Ficha" component={Ficha_animal} />
+        <Stack.Screen name="Ficha" component={Ficha_animal} options={{
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }} />
         <Stack.Screen name="AlterarAnimal" component={AlterarAnimal} />
         <Stack.Screen name="CadConta" component={CadConta} />
         <Stack.Screen name="CadastroAnimal" component={CadAnimal} />
-        <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="CadastroPontoAlimento" component={CadPontoAlimento} />
         <Stack.Screen name="Cadastroformulariodiario" component={CadFormularioDiario} />
         <Stack.Screen name="CadOpcao" component={CadOpcao} />
         <Stack.Screen name="RecSenha" component={RecSenha} />
@@ -75,21 +76,21 @@ const Navigation = () => {
         <Stack.Screen name="Perfil" component={Perfil} />
         <Stack.Screen name="CriarSenha" component={CriarSenha} />
         <Stack.Screen name="CadPostagem" component={CadPostagem} />
-        <Stack.Screen name="Chat" component={Chat} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="AlterarCad" component={AlterarCad} />
         <Stack.Screen name="AlterarPerfil" component={AlterarPerfil} />
         <Stack.Screen name="AlterarPostagem" component={AlterarPostagem} />
         <Stack.Screen name="QuestAdocao" component={QuestAdocao} />
         <Stack.Screen name="HistChat" component={HistChat} options={{
+          gestureEnabled: true,
           gestureDirection: 'vertical',
           transitionSpec: {
             open: openConfig,
-            close: closeConfig,
+            close: closeConfig
           },
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
         }} />
         <Stack.Screen name="InfoChat" component={InfoChat} options={{
-          gestureEnabled: false,
           gestureDirection: 'vertical-inverted',
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
         }} />

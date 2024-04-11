@@ -282,7 +282,7 @@ const CadConta = () => {
                 textConfirm="OK"
                 customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, message: { textAlign: 'left' } }}
             />
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     )
 }

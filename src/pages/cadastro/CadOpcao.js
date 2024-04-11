@@ -13,7 +13,7 @@ const CadOpcao = ({ navigation: { navigate } }) => {
             <BotaoOpcaoCadastro texto="Sou um protetor" onPress={() => navigate("CadConta", { tipo: 4 })} />
             <BotaoOpcaoCadastro texto="Sou um abrigo" onPress={() => navigate("CadConta", { tipo: 5 })} />
             <BotaoOpcaoCadastro texto="Sou um estabelecimento" onPress={() => navigate("CadConta", { tipo: 6 })} />
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </SafeAreaView>
     );
 }

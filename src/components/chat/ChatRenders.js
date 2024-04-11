@@ -58,7 +58,7 @@ export const renderBubble = (props, mensagens, user, mensagemRespondendo, Respon
     let pessoal = dados.currentMessage.user._id == user._id;
     const AoDeslizarMensagem = () => {
         if (foiExcluida) {
-            const dadosDaMensagemApagada = {...props.currentMessage}
+            const dadosDaMensagemApagada = { ...props.currentMessage }
             dadosDaMensagemApagada.text = "(Mensagem excluída)";
             mensagemRespondendo.current = dadosDaMensagemApagada;
         } else {
@@ -111,12 +111,15 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, tex
                             <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
                         </View>}
                     {respondendo.current &&
-                        <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70 }]} onLayout={MedirAltura}>
+                        <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, maxWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70 }]} onLayout={MedirAltura}>
                             <Text>Respondendo a:</Text>
                             <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={Fechar} />
                             {!respondendoImagem ?
-                                <Text style={styles.textoRespondendo}>{respondendoTexto}</Text> :
-                                <Image source={{ uri: respondendoImagem }} resizeMode="cover" style={{ aspectRatio: 1, height: 100 }} />}
+                                <Text style={styles.textoRespondendo}>{respondendoTexto}</Text>
+                                :
+                                <View style={{ maxWidth: '95%', maxHeight: 100, margin: 'auto' }}>
+                                    <Image source={{ uri: respondendoImagem }} resizeMode="contain" style={{ width: '100%', height: '100%' }} />
+                                </View>}
                         </View>}
                     <InputToolbar {...props} containerStyle={styles.barraInput} />
                 </>

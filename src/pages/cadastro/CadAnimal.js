@@ -234,20 +234,20 @@ const CadAnimal = ({ navigation }) => {
                 </View>
             </GroupBox>
             <GroupBox titulo='Descrição'>
-                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} autoCapitalize='sentences' />
-                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} autoCapitalize='sentences' />
+                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} autoCapitalize='sentences' multiline />
+                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} autoCapitalize='sentences' multiline />
                 <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional autoCapitalize='sentences' />
             </GroupBox>
-            <GroupBox titulo='Saúde *'>
+            <GroupBox titulo='Saúde' asterisco>
                 <RadioButton2 setRef={saude} />
             </GroupBox>
-            <GroupBox titulo='Castrado *'>
+            <GroupBox titulo='Castrado' asterisco>
                 <RadioButton3 setRef={castrado} />
             </GroupBox>
-            <GroupBox titulo='Vermifugado *'>
+            <GroupBox titulo='Vermifugado' asterisco>
                 <RadioButton3 setRef={vermifugado} />
             </GroupBox>
-            <GroupBox titulo='Microchipado *'>
+            <GroupBox titulo='Microchipado' asterisco>
                 <RadioButton3 setRef={microchip} />
             </GroupBox>
             {carregando ?
@@ -304,7 +304,7 @@ const CadAnimal = ({ navigation }) => {
                 </>
             }
             <GroupBox titulo='Localização'>
-                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo />
+                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo cepOpcional />
             </GroupBox>
             <BotaoCheckBox texto='Animal em estado de alerta' setRef={alerta} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
             <Mensagem mensagem={message} />
@@ -318,7 +318,7 @@ const CadAnimal = ({ navigation }) => {
                 textConfirm="OK"
                 customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, message: { textAlign: 'left' } }}
             />
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     );
 }

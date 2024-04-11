@@ -137,7 +137,7 @@ const QuestAdocao = ({ navigation }) => {
                     />
                 </>
             }
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     )
 }

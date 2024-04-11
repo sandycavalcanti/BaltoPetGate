@@ -25,13 +25,18 @@ const GroupBox = (props) => {
             borderColor: props.corBorda ? props.corBorda : corBordaBoxCad,
             paddingTop: lineCount == 3 ? 70 : lineCount == 2 ? 40 : 10
         }]}>
-            <Text style={[styles.titulo, {
+            <View style={[styles.viewTitulo, {
                 textAlign: props.esquerda ? 'left' : 'center',
                 left: props.esquerda ? 10 : null,
                 color: props.corTexto ? props.corTexto : corTituloBoxCad,
                 backgroundColor: props.corFundoTexto ? props.corFundoTexto : corFundoCad,
-                top: lineCount == 2 ? -25 : -20
-            }]} ref={textRef}>{text}</Text>
+                top: lineCount == 2 ? -25 : -20,
+            }]}>
+                <Text style={[styles.titulo, {
+                    textAlign: props.esquerda ? 'left' : 'center',
+                }]} ref={textRef}>{text}</Text>
+                {props.asterisco && <Text style={styles.asterisco}> *</Text>}
+            </View>
             {props.children}
         </View>
     );
@@ -47,13 +52,20 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         position: 'relative',
     },
-    titulo: {
-        fontSize: 22,
-        color: corTituloBoxCad,
+    viewTitulo: {
         position: 'absolute',
         marginBottom: 10,
         paddingHorizontal: 10,
+        flexDirection: 'row'
     },
+    titulo: {
+        fontSize: 22,
+        color: corTituloBoxCad
+    },
+    asterisco: {
+        color: 'red', 
+        fontSize: 22,
+    }
 });
 
 GroupBox.propTypes = {
@@ -61,7 +73,8 @@ GroupBox.propTypes = {
     esquerda: PropTypes.bool,
     corBorda: PropTypes.string,
     corTexto: PropTypes.string,
-    corFundoTexto: PropTypes.string
+    corFundoTexto: PropTypes.string,
+    asterisco: PropTypes.bool
 }
 
 export default GroupBox

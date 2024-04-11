@@ -178,7 +178,7 @@ const AlterarPerfil = ({ navigation }) => {
             </View>
           </>
         }
-        <StatusBar hidden />
+        <StatusBar animated hidden={false} backgroundColor={'#000000'} />
       </View>
     </ScrollView >
   );

@@ -156,7 +156,7 @@ const Login = () => {
                         <ActivityIndicator size="large" color={corBordaBoxCad} />
                     </View>
                 </View>}
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </KeyboardAvoidingView>
     );
 };
