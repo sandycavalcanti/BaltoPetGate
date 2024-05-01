@@ -29,6 +29,7 @@ export const renderBubble = (props, mensagens, user, mensagemRespondendo, Respon
     let respostaFoiExcluida = false;
     if (foiExcluida) {
         dados.currentMessage = { ...props.currentMessage, text: "(Mensagem excluída)" };
+        dados.currentMessage.image = null;
     }
     mensagens.current.map(item => {
         if (item._id == props.currentMessage.reply_id) {
@@ -79,7 +80,7 @@ export const renderBubble = (props, mensagens, user, mensagemRespondendo, Respon
                             <View style={[styles.bubbleRespondendo, { padding: imagemResposta ? 0 : 5, flex: imagemResposta ? 0 : 1, backgroundColor: estaNoLadoEsquerdo ? '#B0B0B0' : '#E0E0E0', alignSelf: estaNoLadoEsquerdo ? 'flex-start' : 'flex-end' }]}>
                                 <Text style={[{ color: estaNoLadoEsquerdo ? '#fdfdfd' : '#505050', padding: imagemResposta ? 5 : 0 }]}>Respondendo:</Text>
                                 {textoResposta && <Text style={[!respostaFoiExcluida ? { color: estaNoLadoEsquerdo ? '#fafafa' : '#020202' } : styles.mensagemExcluida, { fontSize: 16 }]}>{textoResposta}</Text>}
-                                {imagemResposta && <MessageImage currentMessage={resposta} />}
+                                {imagemResposta && !foiExcluida && <MessageImage currentMessage={resposta} />}
                             </View>
                         </View>}
                     <SwipeableMessage enabled={!pessoal} onActivated={AoDeslizarMensagem}>
@@ -101,6 +102,7 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, tex
     }
     let respondendoImagem = mensagemRespondendo.current.image;
     let respondendoTexto = mensagemRespondendo.current.text;
+    const foiExcluida = mensagemRespondendo.current.mensagemExcluida;
 
     return (
         <>
@@ -114,12 +116,12 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, tex
                         <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, maxWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70 }]} onLayout={MedirAltura}>
                             <Text>Respondendo a:</Text>
                             <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={Fechar} />
-                            {!respondendoImagem ?
-                                <Text style={styles.textoRespondendo}>{respondendoTexto}</Text>
-                                :
+                            {respondendoImagem && !foiExcluida ?
                                 <View style={{ maxWidth: '95%', maxHeight: 100, margin: 'auto' }}>
                                     <Image source={{ uri: respondendoImagem }} resizeMode="contain" style={{ width: '100%', height: '100%' }} />
-                                </View>}
+                                </View>
+                                :
+                                <Text style={styles.textoRespondendo}>{respondendoTexto}</Text>}
                         </View>}
                     <InputToolbar {...props} containerStyle={styles.barraInput} />
                 </>

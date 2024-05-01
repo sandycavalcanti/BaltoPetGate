@@ -21,9 +21,10 @@ const Home = ({ navigation: { navigate } }) => {
     await axios.get(urlAPI + 'selpostagemseguindo/' + TB_PESSOA_IDD.current, { signal: controller.signal })
       .then(response => {
         if (carregando.current) carregando.current = false;
+        if (response.data.length == 0) temConteudo.current = false;
         setSelect(response.data);
         setIsFetching(false);
-      }).catch(error => CatchError(error, false, null, () => {temConteudo.current = false}))
+      }).catch(error => CatchError(error, false, null, () => { temConteudo.current = false }))
   }
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const Home = ({ navigation: { navigate } }) => {
           <ActivityIndicator color={corRosaForte} size='large' />
         </View>
       }
-      {temConteudo ?
+      {temConteudo.current ?
         <>
           <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID}
             renderItem={({ item }) => {

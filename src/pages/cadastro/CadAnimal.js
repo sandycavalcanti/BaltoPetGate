@@ -61,7 +61,8 @@ const CadAnimal = ({ navigation }) => {
     const controller = new AbortController();
 
     const Cadastrar = () => {
-        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, rua.current];
+        const temTemperamentosSituacoes = (temperamentos.length > 0 && situacoes.length > 0) ? true : null;
+        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, rua.current, temTemperamentosSituacoes];
         const camposCadastro = { nome: nome.current, idade: idade.current, idadeTipo: idadeTipo.current, porte: porte.current, peso: peso.current, especie: especie.current, sexo: sexo.current, descricao: descricao.current, localResgate: localResgate.current, cuidadoEspecial: cuidadoEspecial.current, saude: saude.current, castrado: castrado.current, vermifugado: vermifugado.current, microchip: microchip.current, temperamentos, situacoes, traumas, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current }
 
         const mensagemErro = ValidarCamposAnimal(camposObrigatorios, camposCadastro);

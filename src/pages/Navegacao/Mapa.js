@@ -75,10 +75,13 @@ const Mapa = () => {
           <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20 }}>
             O mapa apresenta falhas no aplicativo. Pedimos desculpas pelo inconveniente.
           </Text>
-          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginBottom: 20, marginHorizontal: 20, marginTop: 40 }}>
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20, marginTop: 20 }}>
             O mapa funcionará apenas pelo emulador. (Instruções na página do projeto no GitHub)
           </Text>
-          <BotaoCadastrarAnimado texto="Clique aqui para testar o mapa" onPress={() => setMensagemFalha(false)} width={300} />
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginBottom: 20, marginHorizontal: 20, marginTop: 40 }}>
+            Para contato, envie um email para baltopetgate@gmail.com.
+          </Text>
+          <BotaoCadastrarAnimado texto="Clique aqui para testar o mapa" onPress={() => setMensagemFalha(false)} />
         </>
         :
         <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />

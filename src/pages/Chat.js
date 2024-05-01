@@ -1,5 +1,5 @@
 import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
-import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
+import { StyleSheet, View, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
