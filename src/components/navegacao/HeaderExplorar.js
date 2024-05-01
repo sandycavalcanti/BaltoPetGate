@@ -200,7 +200,7 @@ const HeaderExplorar = (props) => {
                 </TouchableOpacity>
                 <Dropdown val={dropdownVisible} set={setDropdownVisible} item1={item1} item2={item2} item3={item3} />
             </View>
-            <Animated.View style={[styles.containerAnimated, { transform: [{ translateY }] }]}>
+            <Animated.View style={[styles.containerAnimated, { transform: [{ translateY }] }]} >
                 <View style={styles.containerResults}>
                     {carregando ? <ActivityIndicator size='large' color={corRosaForte} />
                         :
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fafafa',
         width: windowWidth - 50,
-        maxHeight: windowHeight - 120,
+        maxHeight: windowHeight - 150,
         justifyContent: 'center',
     },
     contatoPessoa: {

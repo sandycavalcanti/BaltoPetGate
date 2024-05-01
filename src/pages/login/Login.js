@@ -30,10 +30,12 @@ const Login = () => {
     const [desativado, setDesativado] = useState(false);
 
     const Logar = () => {
+        setMensagem({ color: '#fafafa', text: 'Verificando...' })
         const mensagem = VerificarCampos();
         if (mensagem) { // Se houver algum campo inválido
             setTextoAlert(mensagem);
             alertRef.current.open();
+            setMensagem(null);
         } else {
             if (numeroTentativas.current >= 10) { // Bloquear tentativas caso houverem 10
                 numeroTentativas.current = 0;
@@ -154,7 +156,7 @@ const Login = () => {
                         <ActivityIndicator size="large" color={corBordaBoxCad} />
                     </View>
                 </View>}
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={corFundoCad} />
         </KeyboardAvoidingView>
     );
 };

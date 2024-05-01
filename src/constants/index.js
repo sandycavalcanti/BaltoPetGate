@@ -17,4 +17,3 @@ export const corFundoNavegacao = "#A9DDE8";
 export const corHabilitado = "#CEF7FF";
 export const corDesabilitado = "#aaaaaa";
 export const urlAPI = "https://apibalto.vercel.app/";
-export const urlLocal = "http://26.7.171.108:3000/";

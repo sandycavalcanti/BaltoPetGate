@@ -16,6 +16,7 @@ const BotaoCadastrarAnimado = (props) => {
                 borderRadius={15}
                 textSize={20}
                 width={props.width ? props.width : 175}
+                height={props.height ? props.height : 55}
                 disabled={props.disabled}
             >
                 {props.texto ? props.texto : 'Cadastrar'}
@@ -30,6 +31,7 @@ BotaoCadastrarAnimado.propTypes = {
     corBotao: PropTypes.string,
     corBotaoFundo: PropTypes.string,
     width: PropTypes.number,
+    height: PropTypes.number,
     marginTop: PropTypes.number,
     marginBottom: PropTypes.number,
     disabled: PropTypes.bool

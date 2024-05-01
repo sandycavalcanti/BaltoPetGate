@@ -1,13 +1,17 @@
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, ScrollView } from 'react-native'
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import RetornarTipoNome from '../../utils/RetornarTipoNome';
 import { AntDesign } from '@expo/vector-icons';
 import { corHabilitado } from '../../constants';
 import BotaoCheckBox from '../geral/BotaoCheckBox';
+import { useRoute } from '@react-navigation/native';
 
 const modalWidth = 300;
 
 const ModalFiltrarPesquisa = (props) => {
+    const route = useRoute();
+    const nomeDaTelaAtual = route.name;
+
     const pesquisandoTipos = props.filtroTipo;
     const pesquisandoEspecies = props.filtroEspecie;
     const pesquisandoCastrado = props.filtroCastrado;
@@ -45,6 +49,12 @@ const ModalFiltrarPesquisa = (props) => {
         props.filtroSelecionar.current = bool;
     }
 
+    useEffect(() => {
+        if (nomeDaTelaAtual == 'Animal') {
+            CliqueFiltroSelecionar(false);
+        }
+    }, []);
+
     return (
         <>
             <Modal visible={props.val} transparent animationType='slide' onDismiss={Fechar} onRequestClose={Fechar}>
@@ -80,23 +90,39 @@ const ModalFiltrarPesquisa = (props) => {
                                         <>
                                             <Text style={styles.containerOpcoesTitle}>Espécie:</Text>
                                             <View style={styles.viewBotoesSelecionar}>
-                                                <BotaoCheckBox texto='Cachorro' valor={pesquisandoEspecies.current[0]} onPress={() => toggleCheckboxEspecies(0)} styleBotao={{ flex: 1 }} />
-                                                <BotaoCheckBox texto='Gato' valor={pesquisandoEspecies.current[1]} onPress={() => toggleCheckboxEspecies(1)} styleBotao={{ flex: 1 }} />
+                                                <View style={styles.botaoFiltroEsquerda}>
+                                                    <BotaoCheckBox texto='Cachorro' valor={pesquisandoEspecies.current[0]} onPress={() => toggleCheckboxEspecies(0)} />
+                                                </View>
+                                                <View style={styles.botaoFiltroDireita}>
+                                                    <BotaoCheckBox texto='Gato' valor={pesquisandoEspecies.current[1]} onPress={() => toggleCheckboxEspecies(1)} />
+                                                </View>
                                             </View>
                                             <Text style={styles.containerOpcoesSubtitle}>Castrado:</Text>
                                             <View style={styles.viewBotoesSelecionar}>
-                                                <BotaoCheckBox texto='Castrado' valor={pesquisandoCastrado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoCastrado, 0)} styleBotao={{ flex: 1 }} />
-                                                <BotaoCheckBox texto='Não' valor={pesquisandoCastrado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoCastrado, 1)} styleBotao={{ flex: 1 }} />
+                                                <View style={styles.botaoFiltroEsquerda}>
+                                                    <BotaoCheckBox texto='Castrado' valor={pesquisandoCastrado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoCastrado, 0)} />
+                                                </View>
+                                                <View style={styles.botaoFiltroDireita}>
+                                                    <BotaoCheckBox texto='Não' valor={pesquisandoCastrado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoCastrado, 1)} />
+                                                </View>
                                             </View>
                                             <Text style={styles.containerOpcoesSubtitle}>Vermifugado:</Text>
                                             <View style={styles.viewBotoesSelecionar}>
-                                                <BotaoCheckBox texto='Vermifugado' valor={pesquisandoVermifugado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoVermifugado, 0)} styleBotao={{ flex: 1 }} />
-                                                <BotaoCheckBox texto='Não' valor={pesquisandoVermifugado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoVermifugado, 1)} styleBotao={{ flex: 1 }} />
+                                                <View style={styles.botaoFiltroEsquerda}>
+                                                    <BotaoCheckBox texto='Vermifugado' valor={pesquisandoVermifugado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoVermifugado, 0)} />
+                                                </View>
+                                                <View style={styles.botaoFiltroDireita}>
+                                                    <BotaoCheckBox texto='Não' valor={pesquisandoVermifugado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoVermifugado, 1)} />
+                                                </View>
                                             </View>
                                             <Text style={styles.containerOpcoesSubtitle}>Microchipado:</Text>
                                             <View style={styles.viewBotoesSelecionar}>
-                                                <BotaoCheckBox texto='Microchipado' valor={pesquisandoMicrochipado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoMicrochipado, 0)} styleBotao={{ flex: 1 }} />
-                                                <BotaoCheckBox texto='Não' valor={pesquisandoMicrochipado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoMicrochipado, 1)} styleBotao={{ flex: 1 }} />
+                                                <View style={styles.botaoFiltroEsquerda}>
+                                                    <BotaoCheckBox texto='Microchipado' valor={pesquisandoMicrochipado.current[0]} onPress={() => toggleCheckboxAplicacoes(pesquisandoMicrochipado, 0)} />
+                                                </View>
+                                                <View style={styles.botaoFiltroDireita}>
+                                                    <BotaoCheckBox texto='Não' valor={pesquisandoMicrochipado.current[1]} onPress={() => toggleCheckboxAplicacoes(pesquisandoMicrochipado, 1)} />
+                                                </View>
                                             </View>
                                         </>
                                     }
@@ -134,6 +160,7 @@ const styles = StyleSheet.create({
         height: 35,
         flexDirection: 'row',
         marginBottom: 5,
+        justifyContent: 'center',
     },
     botaoSelecionar: {
         flex: 1,
@@ -160,6 +187,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
         marginTop: 5,
+    },
+    botaoFiltroEsquerda: {
+        width: '60%',
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        paddingLeft: 20,
+    },
+    botaoFiltroDireita: {
+        width: '40%',
+        justifyContent: 'flex-start',
+        flexDirection: 'row'
     }
 });
 

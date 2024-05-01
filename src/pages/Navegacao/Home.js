@@ -1,8 +1,8 @@
-import { TouchableOpacity, FlatList, Text, View, StyleSheet, ScrollView, SafeAreaView, Dimensions, ActivityIndicator } from "react-native";
+import { FlatList, Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import DecodificarToken from "../../utils/DecodificarToken";
 import axios from 'axios';
-import { corFundoCad, urlAPI } from "../../constants";
+import { corFundoCad, corRosaForte, urlAPI } from "../../constants";
 import Perfil_post from '../../components/perfil/Perfil_post';
 import Post from '../../components/perfil/Post';
 import CatchError from "../../utils/CatchError";
@@ -10,6 +10,7 @@ import CatchError from "../../utils/CatchError";
 const Home = ({ navigation: { navigate } }) => {
   const [select, setSelect] = useState([]);
   const TB_PESSOA_IDD = useRef(null);
+  const temConteudo = useRef(true);
   const carregando = useRef(true);
   const [isFetching, setIsFetching] = useState(false);
   const controller = new AbortController();
@@ -20,9 +21,10 @@ const Home = ({ navigation: { navigate } }) => {
     await axios.get(urlAPI + 'selpostagemseguindo/' + TB_PESSOA_IDD.current, { signal: controller.signal })
       .then(response => {
         if (carregando.current) carregando.current = false;
+        if (response.data.length == 0) temConteudo.current = false;
         setSelect(response.data);
         setIsFetching(false);
-      }).catch(CatchError)
+      }).catch(error => CatchError(error, false, null, () => { temConteudo.current = false }))
   }
 
   useEffect(() => {
@@ -37,18 +39,17 @@ const Home = ({ navigation: { navigate } }) => {
     Selecionar();
   }
 
-  const temConteudo = select.length !== 0;
   const estaCarregando = carregando.current;
 
   return (
     <View style={styles.container}>
-      {temConteudo ?
+      {estaCarregando &&
+        <View style={styles.containerCarregando}>
+          <ActivityIndicator color={corRosaForte} size='large' />
+        </View>
+      }
+      {temConteudo.current ?
         <>
-          {estaCarregando &&
-            <View style={styles.containerCarregando}>
-              <ActivityIndicator color={corRosaForte} size='large' />
-            </View>
-          }
           <FlatList style={styles.Lista} data={select} onRefresh={onRefresh} refreshing={isFetching} keyExtractor={item => item.TB_POSTAGEM_ID}
             renderItem={({ item }) => {
               const pessoal = item.TB_PESSOA_ID == TB_PESSOA_IDD.current;

@@ -1,5 +1,5 @@
 import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
-import { Alert, StyleSheet, Text, View, TouchableOpacity, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
+import { StyleSheet, View, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NavbarChat from '../components/chat/NavbarChat';
@@ -36,9 +36,10 @@ const Chat = () => {
 
     const TB_PESSOA_IDD = useRef(null)
     const mensagens = useRef([]);
-    const dadosChat = useRef({});
+    const [dadosChat, setDadosChat] = useState({});
     const animais = useRef([]);
     const mensagemSelecionada = useRef({});
+    const mensagemRespondendo = useRef({});
     const msgPessoal = useRef(false);
     const msgEmptyChat = useRef('Nenhuma mensagem ainda');
     const editando = useRef(false);
@@ -68,6 +69,10 @@ const Chat = () => {
         }, { signal: controller.signal }).then(response => {
             if (response.data) {
                 const mensagensBanco = response.data;
+                if (mensagensBanco.length == 0) {
+                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
+                    return;
+                }
                 const mensagensGiftedChat = mensagensBanco.map((item) => {
                     let mensagemTexto = item.TB_MENSAGEM_TEXTO;
                     let mensagemAlterada = false;
@@ -101,16 +106,15 @@ const Chat = () => {
         await axios.post(urlAPI + 'selchat/filtrar', {
             TB_CHAT_ID,
             TB_PESSOA_ID,
-        }, { signal: controller.signal }).then(response => {
+        }, { signal: controller.signal }).then(async response => {
             if (response.data) {
                 const dados = response.data.Selecionar[0];
                 animais.current = response.data.Animais
-                dadosChat.current = dados;
+                setDadosChat(dados);
                 TB_PESSOA_IDD.current = dados.TB_CHAT_INICIADO ? dados.TB_PESSOA_REMETENTE_ID : dados.TB_PESSOA_DESTINATARIO_ID;
                 if (dados.TB_CHAT_STATUS) {
-                    msgEmptyChat.current = 'Nenhuma mensagem ainda';
                     desativado.current = false;
-                    SelecionarMensagens();
+                    await SelecionarMensagens();
                 } else {
                     msgEmptyChat.current = "Esse chat foi desativado";
                     desativado.current = true;
@@ -146,8 +150,15 @@ const Chat = () => {
         setTextoDigitado(mensagemSelecionada.current.text);
     }
     const ResponderMensagem = () => {
+        if (editando.current) {
+            setTextoDigitado("");
+        }
         editando.current = false;
         respondendo.current = true;
+    }
+    const ResponderMensagemPeloModal = () => {
+        mensagemRespondendo.current = mensagemSelecionada.current;
+        ResponderMensagem();
     }
     const ExcluirMensagem = async () => {
         const modifiedMessagesDelete = state.messages.map(message => {
@@ -176,21 +187,21 @@ const Chat = () => {
         }
         if (!editando.current) {
             if (!imagem) { // Enviar ou responder mensagem de texto
-                let objetoForm = {
+                let objetoParaSerEnviado = {
                     TB_CHAT_ID,
                     TB_MENSAGEM_TEXTO: texto,
                     TB_PESSOA_ID: TB_PESSOA_IDD.current,
                 }
                 if (respondendo.current) {
-                    objetoForm.TB_MENSAGEM_RESPOSTA_ID = mensagemSelecionada.current._id;
+                    objetoParaSerEnviado.TB_MENSAGEM_RESPOSTA_ID = mensagemRespondendo.current._id;
                 }
-                await axios.post(urlAPI + 'cadmensagem', objetoForm)
+                await axios.post(urlAPI + 'cadmensagem', objetoParaSerEnviado)
                     .then(response => {
                         const sentMessagesFix = sentMessages[0];
                         sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
                         sentMessagesFix.image = null;
                         if (respondendo.current) {
-                            sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                            sentMessagesFix.reply_id = mensagemRespondendo.current._id;
                             setAlturaViewRespondendo(50);
                         }
                         const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
@@ -209,7 +220,7 @@ const Chat = () => {
                 formData.append('TB_MENSAGEM_POSSUI_IMG', true);
                 formData.append('img', img);
                 if (respondendo.current) {
-                    formData.append('TB_MENSAGEM_RESPOSTA_ID', mensagemSelecionada.current._id);
+                    formData.append('TB_MENSAGEM_RESPOSTA_ID', mensagemRespondendo.current._id);
                 }
                 await axios.post(urlAPI + 'cadmensagem', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -217,16 +228,15 @@ const Chat = () => {
                     const sentMessagesFix = sentMessages[0];
                     sentMessagesFix._id = response.data.Cadastrar.TB_MENSAGEM_ID;
                     if (respondendo.current) {
-                        sentMessagesFix.reply_id = mensagemSelecionada.current._id;
+                        sentMessagesFix.reply_id = mensagemRespondendo.current._id;
                         setAlturaViewRespondendo(50);
                     }
                     const newMessages = GiftedChat.append(state.messages, sentMessagesFix, true);
                     respondendo.current = false;
                     dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
                 }).catch(error => {
-                    let erro = error.response.data;
                     ToastAndroid.show("Não foi possível enviar a imagem", ToastAndroid.SHORT);
-                    console.error(erro.error);
+                    console.error(error.response.data.error);
                 })
             }
         } else { // Editar mensagem de texto
@@ -243,9 +253,8 @@ const Chat = () => {
                     editando.current = false;
                     dispatch({ type: ActionKind.SEND_MESSAGE, payload: newMessages });
                 }).catch(error => {
-                    let erro = error.response.data;
                     ToastAndroid.show("Não foi possível enviar a mensagem", ToastAndroid.SHORT);
-                    console.error(erro.error, error);
+                    console.error(error.response.data.error, error);
                 });
             } else { // Se o texto não tiver sido modificado
                 editando.current = false;
@@ -289,7 +298,7 @@ const Chat = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat.current} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
+            <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
             <View style={styles.content}>
                 {carregando ?
                     <View style={styles.carregando}>
@@ -304,9 +313,9 @@ const Chat = () => {
                             renderSystemMessage={renderSystemMessage}
                             renderCustomView={renderCustomView}
                             renderComposer={renderComposer}
-                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemSelecionada, setAlturaViewRespondendo)}
+                            renderInputToolbar={props => renderInputToolbar(props, editando, respondendo, desativado, textoDigitado, mensagemRespondendo, setAlturaViewRespondendo)}
                             renderSend={props => renderSend(props, editando, respondendo)}
-                            renderBubble={props => renderBubble(props, mensagens, user, mensagemSelecionada, ResponderMensagem, reRender)}
+                            renderBubble={props => renderBubble(props, mensagens, user, mensagemRespondendo, ResponderMensagem, reRender)}
                             renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef)}
                             renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
                             keyboardShouldPersistTaps='always'
@@ -325,8 +334,7 @@ const Chat = () => {
                             minInputToolbarHeight={alturaViewRespondendo}
                             imageStyle={{ width: 200, height: 125 }}
                         />
-                        <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagem} denunciar={DenunciarMensagem} />
-                        <StatusBar animated backgroundColor={'#A9DDAE'} hidden={false} />
+                        <ModalMensagem val={modalVisible} set={setModalVisible} msgPessoal={msgPessoal.current} podeExcluir={podeExcluir.current} podeEditar={podeEditar.current} alterar={AlterarMensagem} excluir={ExcluirMensagem} responder={ResponderMensagemPeloModal} denunciar={DenunciarMensagem} />
                         <AlertPro
                             ref={alertRef}
                             onConfirm={() => alertRef.current.close()}
@@ -336,6 +344,7 @@ const Chat = () => {
                             textConfirm="OK"
                             customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
                         />
+                        <StatusBar animated backgroundColor={'#A9DDAE'} hidden={false} />
                     </>}
             </View>
         </SafeAreaView>

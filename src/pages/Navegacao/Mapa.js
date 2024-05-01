@@ -1,12 +1,13 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { Modal, StyleSheet, Text, View, Pressable } from 'react-native';
+import { Modal, StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { corFundo, corRosaForte, urlAPI } from '../../constants';
+import { corFundo, corFundoNavegacao, corRosaForte, urlAPI } from '../../constants';
 import * as Location from "expo-location";
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
 import { ToastAndroid } from 'react-native';
+import BotaoCadastrarAnimado from '../../components/cadastro/BotaoCadastrarAnimado';
 
 const Mapa = () => {
   const [pontosAlimentacao, setPontosAlimentacao] = useState([]);
@@ -31,10 +32,10 @@ const Mapa = () => {
           longitudeDelta: 0.005,
         };
       }
-      setCarregando(false);
+      // setCarregando(false);
     } catch (error) {
       ToastAndroid.show('Houve um erro ao requisitar a localização', ToastAndroid.SHORT);
-      setCarregando(false);
+      // setCarregando(false);
     }
   }
 
@@ -65,9 +66,26 @@ const Mapa = () => {
     })
   }, []);
 
+  const [mensagemFalha, setMensagemFalha] = useState(true);
+
   return (
     <View style={styles.container}>
-      <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
+      {mensagemFalha ?
+        <>
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20 }}>
+            O mapa apresenta falhas no aplicativo. Pedimos desculpas pelo inconveniente.
+          </Text>
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20, marginTop: 20 }}>
+            O mapa funcionará apenas pelo emulador. (Instruções na página do projeto no GitHub)
+          </Text>
+          <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginBottom: 20, marginHorizontal: 20, marginTop: 40 }}>
+            Para contato, envie um email para baltopetgate@gmail.com.
+          </Text>
+          <BotaoCadastrarAnimado texto="Clique aqui para testar o mapa" onPress={() => setMensagemFalha(false)} />
+        </>
+        :
+        <MapaMapView initialRegion={initialRegion.current} pontosAlimentacao={pontosAlimentacao} />
+      }
     </View>
   );
 }
@@ -75,7 +93,7 @@ const Mapa = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: corFundoNavegacao,
     alignItems: 'center',
     justifyContent: 'center',
   },

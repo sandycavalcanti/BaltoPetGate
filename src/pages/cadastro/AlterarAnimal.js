@@ -62,11 +62,12 @@ const AlterarAnimal = ({ navigation }) => {
     const controller = new AbortController();
 
     const Cadastrar = () => {
-        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current];
+        const temTemperamentosSituacoes = (temperamentos.length > 0 && situacoes.length > 0) ? true : null;
+        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, temTemperamentosSituacoes];
         const camposCadastro = { nome: nome.current, idade: idade.current, idadeTipo: idadeTipo.current, porte: porte.current, peso: peso.current, especie: especie.current, sexo: sexo.current, descricao: descricao.current, localResgate: localResgate.current, cuidadoEspecial: cuidadoEspecial.current, saude: saude.current, castrado: castrado.current, vermifugado: vermifugado.current, microchip: microchip.current, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current }
 
         const mensagemErro = ValidarCamposAnimal(camposObrigatorios, camposCadastro);
-        
+
         if (!mensagemErro) {
             InserirDados();
         } else {
@@ -247,11 +248,12 @@ const AlterarAnimal = ({ navigation }) => {
 
 
     return (
+
         <ContainerCadastro titulo='Alterar informações do animal'>
             {carregando ? <View style={{ flex: 1 }}><ActivityIndicator size="large" color={corRosaForte} /></View> :
                 <>
                     <GroupBox titulo='Imagem do animal'>
-                        {image ? <Image style={styles.Imagem} source={{ uri: image }} resizeMode="cover"/> : <Image style={styles.Imagem} source={{ uri: urlAPI + "selanimalimg/" + id }} resizeMode="cover"/>}
+                        {image ? <Image style={styles.Imagem} source={{ uri: image }} resizeMode="cover" /> : <Image style={styles.Imagem} source={{ uri: urlAPI + "selanimalimg/" + id }} resizeMode="cover" />}
                         <BotaoArquivo onPress={escolherImagem} texto='Trocar imagem' />
                     </GroupBox>
                     <GroupBox titulo='Informações'>
@@ -275,20 +277,20 @@ const AlterarAnimal = ({ navigation }) => {
                         </View>
                     </GroupBox>
                     <GroupBox titulo='Descrição'>
-                        <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} val={descricao.current} />
-                        <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} val={localResgate.current} />
-                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={cuidadoEspecial.current} />
+                        <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} val={descricao.current} multiline />
+                        <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} val={localResgate.current} multiline />
+                        <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional val={cuidadoEspecial.current} multiline />
                     </GroupBox>
-                    <GroupBox titulo='Saúde *'>
+                    <GroupBox titulo='Saúde' asterisco>
                         <RadioButton2 setRef={saude} val={saude.current} />
                     </GroupBox>
-                    <GroupBox titulo='Castrado *'>
+                    <GroupBox titulo='Castrado' asterisco>
                         <RadioButton3 setRef={castrado} val={castrado.current} />
                     </GroupBox>
-                    <GroupBox titulo='Vermifugado *'>
+                    <GroupBox titulo='Vermifugado' asterisco>
                         <RadioButton3 setRef={vermifugado} val={vermifugado.current} />
                     </GroupBox>
-                    <GroupBox titulo='Microchipado *'>
+                    <GroupBox titulo='Microchipado' asterisco>
                         <RadioButton3 setRef={microchip} val={microchip.current} />
                     </GroupBox>
                     <GroupBox titulo='Temperamentos'>
@@ -300,7 +302,7 @@ const AlterarAnimal = ({ navigation }) => {
                             data={temperamentosBanco.current}
                             labelField="label"
                             valueField="value"
-                            placeholder="Selecione os temperamentos"
+                            placeholder="Alterar os temperamentos"
                             value={temperamentos}
                             onChange={item => setTemperamentos(item)}
                             selectedStyle={styles.selectedStyle}
@@ -315,7 +317,7 @@ const AlterarAnimal = ({ navigation }) => {
                             data={situacoesBanco.current}
                             labelField="label"
                             valueField="value"
-                            placeholder="Selecione as situações"
+                            placeholder="Alterar as situações"
                             value={situacoes}
                             onChange={item => setSituacoes(item)}
                             selectedStyle={styles.selectedStyle}
@@ -330,7 +332,7 @@ const AlterarAnimal = ({ navigation }) => {
                             data={traumasBanco.current}
                             labelField="label"
                             valueField="value"
-                            placeholder="Selecione os traumas"
+                            placeholder="Alterar os traumas"
                             value={traumas}
                             onChange={item => setTraumas(item)}
                             selectedStyle={styles.selectedStyle}
@@ -353,7 +355,7 @@ const AlterarAnimal = ({ navigation }) => {
                     />
                 </>
             }
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     );
 }

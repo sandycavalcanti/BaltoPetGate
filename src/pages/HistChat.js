@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     width: '90%',
     paddingTop: 20,
     paddingBottom: 10,
+    paddingRight: 5,
     borderWidth: 2,
     borderColor: corBordaBoxCad,
     borderRadius: 10,

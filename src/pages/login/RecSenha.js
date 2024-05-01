@@ -13,7 +13,7 @@ const RecSenha = ({ navigation: { navigate } }) => {
   const [textoAlert, setTextoAlert] = useState("Insira seu email");
 
   const Enviar = () => {
-    ToastAndroid.show('Essa funcionalidade ainda será adicionada',ToastAndroid.SHORT);
+    ToastAndroid.show('Essa funcionalidade ainda será adicionada', ToastAndroid.SHORT);
     // if (email.current) {
     //   const ValidarEmail = ValidarCamposCad([], { email: email.current })
     //   if (ValidarEmail) {
@@ -30,7 +30,8 @@ const RecSenha = ({ navigation: { navigate } }) => {
 
   return (
     <ContainerCadastro titulo="Recuperar conta">
-      <View style={styles.container}>
+
+      {/* <View style={styles.container}>
         <Text style={styles.text}>Insira seu email para recuperação de senha:</Text>
         <CampoSimples set={text => email.current = text} placeholder={"Email"} keyboardType='email-address' />
         <BotaoCadastrarAnimado texto="Enviar código" onPress={Enviar} width={250} />
@@ -42,7 +43,9 @@ const RecSenha = ({ navigation: { navigate } }) => {
         showCancel={false}
         textConfirm="OK"
         customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
-      />
+      /> */}
+
+      <Text style={{ color: '#fafafa', fontSize: 25, textAlign: 'center', marginTop: 120 }}>Essa funcionalidade ainda será implementada</Text>
     </ContainerCadastro>
   )
 }

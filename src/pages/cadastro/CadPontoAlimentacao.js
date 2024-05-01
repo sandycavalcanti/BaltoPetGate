@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Modal, StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Dimensions, StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { corFundo, corFundoCad, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
+import { corFundo, corFundoCad, corFundoNavegacao, corRosaForte, corRosaFraco, urlAPI } from '../../constants';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FormData from 'form-data';
 import DecodificarToken from '../../utils/DecodificarToken';
@@ -15,6 +15,7 @@ import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
 import MapaMapView from '../../components/navegacao/MapaMapView';
 import CatchError from '../../utils/CatchError';
 import AlertPro from 'react-native-alert-pro';
+import VerificarTamanhoImagem from '../../utils/VerificarTamanhoImagem';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 let alert = (_data) => new Promise(res => res);
@@ -175,57 +176,76 @@ const CadPontoAlimento = () => {
         }
     }
 
+    const [mensagemFalha, setMensagemFalha] = useState(true);
+
     return (
         <View style={styles.container}>
-            <View style={styles.containerBottom}>
-                <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
-                    <View style={styles.containerCadastrando}>
-                        {cadastrando ?
-                            <>
-                                <Ionicons name="close-circle" size={50} color="black" />
-                                <Text style={{ fontSize: 18, textAlign: 'justify' }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
-                            </>
-                            :
-                            <>
-                                <AntDesign name="pluscircle" size={50} color={corRosaForte} />
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 20, textAlign: 'center' }}>Cadastre seu ponto de alimentação!</Text>
-                                </View>
-                            </>}
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <MapaMapView onPress={onPress} pontosAlimentacao={pontosAlimentacao} initialRegion={initialRegion.current} />
-            <Modal animationType="slide" transparent={false} visible={modalVisible}>
-                <View style={styles.modalContainer}>
-                    <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
-                    <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
-                    {image &&
-                        <>
-                            <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
-                            <Image source={{ uri: image }} style={styles.selectedImage} />
-                        </>
-                    }
-                    <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
-                    <TouchableOpacity onPress={() => setModalVisible(false)}>
-                        <Text style={{ color: '#fafafa' }}>Cancelar</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal>
-            <DropdownAlert alert={func => (alert = func)} />
-            <AlertPro
-                ref={alertRef}
-                onConfirm={() => alertRef.current.close()}
-                title={tituloAlert.current}
-                message={textoAlert}
-                showCancel={false}
-                textConfirm="OK"
-                customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
-            />
-            {modalVisible ?
-                <StatusBar animated backgroundColor={corFundoCad} hidden={false} />
+            {mensagemFalha ?
+                <>
+                    <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20 }}>
+                        O mapa apresenta falhas no aplicativo. Pedimos desculpas pelo inconveniente.
+                    </Text>
+                    <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginHorizontal: 20, marginTop: 20 }}>
+                        O mapa funcionará apenas pelo emulador. (Instruções na página do projeto no GitHub)
+                    </Text>
+                    <Text style={{ color: '#030303', fontSize: 22, textAlign: "center", marginBottom: 20, marginHorizontal: 20, marginTop: 40 }}>
+                        Para contato, envie um email para baltopetgate@gmail.com.
+                    </Text>
+                    <BotaoCadastrarAnimado texto="Clique aqui para testar o mapa" onPress={() => setMensagemFalha(false)} />
+                </>
                 :
-                <StatusBar hidden />
+                <>
+                    <View style={styles.containerBottom}>
+                        <TouchableOpacity onPress={() => setCadastrando(prev => !prev)}>
+                            <View style={styles.containerCadastrando}>
+                                {cadastrando ?
+                                    <>
+                                        <Ionicons name="close-circle" size={50} color="black" />
+                                        <Text style={{ fontSize: 18, textAlign: 'justify' }}>Clique em um lugar no mapa para cadastrar um ponto</Text>
+                                    </>
+                                    :
+                                    <>
+                                        <AntDesign name="pluscircle" size={50} color={corRosaForte} />
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Cadastre seu ponto de alimentação!</Text>
+                                        </View>
+                                    </>}
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <MapaMapView onPress={onPress} pontosAlimentacao={pontosAlimentacao} initialRegion={initialRegion.current} />
+                    <Modal animationType="slide" transparent={false} visible={modalVisible}>
+                        <View style={styles.modalContainer}>
+                            <Text style={{ color: '#fafafa', fontSize: 18 }}>Selecione uma imagem:</Text>
+                            <BotaoArquivo onPress={EscolherImagem} texto={'Escolher imagem'} />
+                            {image &&
+                                <>
+                                    <Text style={styles.textSelectedImage}>Imagem selecionada:</Text>
+                                    <Image source={{ uri: image }} style={styles.selectedImage} />
+                                </>
+                            }
+                            <BotaoCadastrarAnimado onPress={Inserir} texto={'Confirmar'} marginBottom={10} marginTop={25} />
+                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                <Text style={{ color: '#fafafa' }}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
+                    <DropdownAlert alert={func => (alert = func)} />
+                    <AlertPro
+                        ref={alertRef}
+                        onConfirm={() => alertRef.current.close()}
+                        title={tituloAlert.current}
+                        message={textoAlert}
+                        showCancel={false}
+                        textConfirm="OK"
+                        customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
+                    />
+                    {modalVisible ?
+                        <StatusBar animated backgroundColor={corFundoCad} hidden={false} />
+                        :
+                        <StatusBar hidden />
+                    }
+                </>
             }
         </View>
     );
@@ -234,7 +254,7 @@ const CadPontoAlimento = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: corFundoNavegacao,
         alignItems: 'center',
         justifyContent: 'center',
     },

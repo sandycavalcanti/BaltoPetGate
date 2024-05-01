@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, TextInput, StatusBar, ActivityIndicator } from 'react-native'
+import { StatusBar, ActivityIndicator } from 'react-native'
 import { useRoute } from '@react-navigation/native';
 import CampoSimples from '../../components/cadastro/CampoSimples';
 import GroupBox from '../../components/cadastro/GroupBox';
 import RadioButton from '../../components/cadastro/RadioButton';
 import ContainerCadastro from '../../components/cadastro/ContainerCadastro';
 import BotaoQuantidade from '../../components/cadastro/BotaoQuantidade';
-import { corBordaBoxCad, corFundoCad, corRosaFraco, urlAPI } from '../../constants';
+import { corBordaBoxCad, corRosaFraco, urlAPI } from '../../constants';
 import axios from 'axios';
 import DecodificarToken from '../../utils/DecodificarToken';
 import IniciarChat from '../../utils/IniciarChat';
@@ -103,7 +103,7 @@ const QuestAdocao = ({ navigation }) => {
             {carregando ? <ActivityIndicator size="large" color={corBordaBoxCad} />
                 :
                 <>
-                    <GroupBox titulo='Toda a familia esta ciente e apoia a adoção do animal?'>
+                    <GroupBox titulo='Toda a família está ciente e apoia a adoção do animal?'>
                         <RadioButton opcoes={SimNao} setRef={ciente} defaultValue={ciente.current} />
                     </GroupBox>
                     <GroupBox titulo='Moradia'>
@@ -112,7 +112,7 @@ const QuestAdocao = ({ navigation }) => {
                     <GroupBox titulo='Quantas vezes por semana o animal será levado a passeios?' >
                         <BotaoQuantidade setRef={passear} limite={14} defaultValue={passear.current} />
                     </GroupBox>
-                    <GroupBox titulo='Qual a quantidade media de espaço que o animal terá acesso?' >
+                    <GroupBox titulo='Qual a quantidade média de espaço que o animal terá acesso?' >
                         <RadioButton opcoes={Tamanho} setRef={espaco} defaultValue={espaco.current} />
                     </GroupBox>
                     <GroupBox titulo='Em caso de sua ausência, quem ficará responsável pelo animal?' >
@@ -137,18 +137,9 @@ const QuestAdocao = ({ navigation }) => {
                     />
                 </>
             }
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     )
 }
-
-const styles = StyleSheet.create({
-    titulocampo: {
-        fontSize: 18,
-        marginBottom: 5,
-        color: '#fff',
-        textAlign: 'center',
-    }
-});
 
 export default QuestAdocao

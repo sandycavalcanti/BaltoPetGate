@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator, Text, View, TextInput, StyleSheet, StatusBar, Image } from "react-native";
+import { ActivityIndicator, Text, View, StyleSheet, StatusBar, Image } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import GroupBox from "../../components/cadastro/GroupBox";
@@ -61,7 +61,8 @@ const CadAnimal = ({ navigation }) => {
     const controller = new AbortController();
 
     const Cadastrar = () => {
-        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, rua.current];
+        const temTemperamentosSituacoes = (temperamentos.length > 0 && situacoes.length > 0) ? true : null;
+        const camposObrigatorios = [nome.current, idade.current, idadeTipo.current, porte.current, peso.current, especie.current, sexo.current, descricao.current, localResgate.current, saude.current, saude.current, castrado.current, vermifugado.current, microchip.current, uf.current, cidade.current, bairro.current, rua.current, temTemperamentosSituacoes];
         const camposCadastro = { nome: nome.current, idade: idade.current, idadeTipo: idadeTipo.current, porte: porte.current, peso: peso.current, especie: especie.current, sexo: sexo.current, descricao: descricao.current, localResgate: localResgate.current, cuidadoEspecial: cuidadoEspecial.current, saude: saude.current, castrado: castrado.current, vermifugado: vermifugado.current, microchip: microchip.current, temperamentos, situacoes, traumas, uf: uf.current, cidade: cidade.current, bairro: bairro.current, rua: rua.current }
 
         const mensagemErro = ValidarCamposAnimal(camposObrigatorios, camposCadastro);
@@ -214,7 +215,7 @@ const CadAnimal = ({ navigation }) => {
                 <BotaoArquivo onPress={escolherImagem} texto={image ? 'Trocar imagem' : null} />
             </GroupBox>
             <GroupBox titulo='Informações'>
-                <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} />
+                <CampoSimplesAnimado placeholder="Nome do animal" setRef={nome} autoCapitalize='words' />
                 <View style={styles.containerCampos}>
                     <Campo styleView={{ flex: 0.8 }} placeholder="Idade" keyboardType="numeric" setRef={idade} maxLength={2} />
                     <DropdownSimples data={TipoIdade} setRef={idadeTipo} texto='Ano(s) ou Mes(es)' />
@@ -234,20 +235,20 @@ const CadAnimal = ({ navigation }) => {
                 </View>
             </GroupBox>
             <GroupBox titulo='Descrição'>
-                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} />
-                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} />
-                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional />
+                <CampoSimplesAnimado placeholder="Minha historia" setRef={descricao} autoCapitalize='sentences' multiline />
+                <CampoSimplesAnimado placeholder="Local do resgate" setRef={localResgate} autoCapitalize='sentences' multiline />
+                <CampoSimplesAnimado placeholder="Cuidados necessarios com o pet" setRef={cuidadoEspecial} opcional autoCapitalize='sentences' multiline />
             </GroupBox>
-            <GroupBox titulo='Saúde *'>
+            <GroupBox titulo='Saúde' asterisco>
                 <RadioButton2 setRef={saude} />
             </GroupBox>
-            <GroupBox titulo='Castrado *'>
+            <GroupBox titulo='Castrado' asterisco>
                 <RadioButton3 setRef={castrado} />
             </GroupBox>
-            <GroupBox titulo='Vermifugado *'>
+            <GroupBox titulo='Vermifugado' asterisco>
                 <RadioButton3 setRef={vermifugado} />
             </GroupBox>
-            <GroupBox titulo='Microchipado *'>
+            <GroupBox titulo='Microchipado' asterisco>
                 <RadioButton3 setRef={microchip} />
             </GroupBox>
             {carregando ?
@@ -304,7 +305,7 @@ const CadAnimal = ({ navigation }) => {
                 </>
             }
             <GroupBox titulo='Localização'>
-                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo />
+                <CampoEnderecoAnimado setRef1={cep} setRef2={uf} setRef3={cidade} setRef4={bairro} setRef5={rua} removerTitulo cepOpcional />
             </GroupBox>
             <BotaoCheckBox texto='Animal em estado de alerta' setRef={alerta} styleTexto={{ color: '#fafafa', fontSize: 18 }} corBoxAtivado={'#AA3939'} />
             <Mensagem mensagem={message} />
@@ -318,7 +319,7 @@ const CadAnimal = ({ navigation }) => {
                 textConfirm="OK"
                 customStyles={{ buttonConfirm: { backgroundColor: corBotaoCad }, message: { textAlign: 'left' } }}
             />
-            <StatusBar hidden />
+            <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
         </ContainerCadastro>
     );
 }

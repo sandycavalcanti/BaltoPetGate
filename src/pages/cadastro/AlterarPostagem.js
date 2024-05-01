@@ -141,7 +141,7 @@ const AlterarPostagem = ({ navigation }) => {
         textConfirm="OK"
         customStyles={{ buttonConfirm: { backgroundColor: corRosaFraco } }}
       />
-      <StatusBar hidden />
+      <StatusBar animated hidden={false} backgroundColor={'#a5cbd3'} />
     </ContainerCadastro>
   );
 };
