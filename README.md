@@ -18,9 +18,9 @@ Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar a
 
 ## Tecnologias usadas 💻
 
-O aplicativo foi desenvolvido em JavaScript utilizando o React Native e o Expo.
+O aplicativo foi desenvolvido em **JavaScript** utilizando o **React Native** e o **Expo**.
 
-Foram usadas diversas bibliotecas como axios, react-native-gifted-chat, react-native-textinput-effects e react-native-tab-view.
+Foram usadas diversas bibliotecas como **axios**, **react-native-gifted-chat**, **react-native-textinput-effects**, **react-native-tab-view**, entre outras.
 
 Veja a API do projeto [aqui](https://github.com/Renan-Mochizuki/APIBalto).
 
@@ -32,7 +32,7 @@ Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqu
 
 Para instalar o aplicativo em seu celular baixe o APK do aplicativo no link abaixo:
 
-[Instale o APK](https://expo.dev/artifacts/eas/bBzNny5YQ4nYUbgkKhtsXT.apk)
+[Instale o APK](https://expo.dev/artifacts/eas/ap76ULfTiYZDdtXdT3Pj6K.apk)
 
 Obs.: O mapa está funcionando apenas pelo emulador Android no momento.
 
