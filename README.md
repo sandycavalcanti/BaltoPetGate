@@ -16,6 +16,10 @@ Dentro do aplicativo um usuário pode se cadastrar, fazer postagens, cadastrar a
 
 </div>
 
+## Vídeo de apresentação ▶️
+
+Veja o [vídeo de apresentação](https://www.linkedin.com/posts/sandy-pereira-cavalcanti-4351a0259_depois-de-muito-tempo-dedica%C3%A7%C3%A3o-e-esfor%C3%A7o-activity-7191779051039010817-exTN?utm_source=share&utm_medium=member_desktop) no LinkedIn
+
 ## Tecnologias usadas 💻
 
 O aplicativo foi desenvolvido em **JavaScript** utilizando o **React Native** e o **Expo**.
@@ -32,7 +36,7 @@ Sistema de denúncia, sistema de desativação total do perfil, sistema de bloqu
 
 Para instalar o aplicativo em seu celular baixe o APK do aplicativo no link abaixo:
 
-[Instale o APK](https://expo.dev/artifacts/eas/ap76ULfTiYZDdtXdT3Pj6K.apk)
+[Instale o APK](https://drive.google.com/drive/folders/1Xi6vzAztKnxaGRkdQrXttbZkV_jsta0H?usp=sharing)
 
 Obs.: O mapa está funcionando apenas pelo emulador Android no momento.
 
@@ -49,6 +53,10 @@ O banco de dados do aplicativo está populado com dados básicos e de teste, par
 Email: `joao@gmail.com`
 
 Senha: `senha123`
+
+Este aplicativo encontra-se em fase de desenvolvimento. Qualquer ação realizada no aplicativo durante esta fase é de responsabilidade do usuário, incluindo o envio de informações pessoais, ou outros dados sensíveis.
+
+Para contato, envie um email para: baltopetgate@gmail.com.
 
 ## Diagramação 📄
 
