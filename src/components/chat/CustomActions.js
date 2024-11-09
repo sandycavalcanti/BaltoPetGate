@@ -4,7 +4,15 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { getLocationAsync, pickImageAsync, takePictureAsync } from './mediaUtils';
 import { AntDesign } from '@expo/vector-icons';
 
-const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle, onSend, setTextoAlert, alertRef }) => {
+const CustomActions = ({
+  renderIcon = null,
+  iconTextStyle = {},
+  containerStyle = {},
+  wrapperStyle = {},
+  onSend = () => { },
+  setTextoAlert,
+  alertRef
+}) => {
   const { showActionSheetWithOptions } = useActionSheet();
 
   const onActionsPress = useCallback(() => {
@@ -41,7 +49,7 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
     return (
       <AntDesign name="plussquareo" size={35} color="#fafafa" style={wrapperStyle} />
     );
-  }, []);
+  }, [renderIcon, wrapperStyle]);
 
   const handleOnPress = () => {
     // Outras opções
@@ -49,8 +57,8 @@ const CustomActions = ({ renderIcon, iconTextStyle, containerStyle, wrapperStyle
 
     // Apenas carregar imagem
     pickImageAsync(onSend, setTextoAlert, alertRef);
-
   }
+
   return (
     <TouchableOpacity style={[styles.container, containerStyle]} onPress={handleOnPress}>
       <>{renderIconComponent()}</>
@@ -81,12 +89,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-CustomActions.defaultProps = {
-  onSend: () => { },
-  options: {},
-  renderIcon: null,
-  containerStyle: {},
-  wrapperStyle: {},
-  iconTextStyle: {},
-};

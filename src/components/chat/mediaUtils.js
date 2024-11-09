@@ -1,15 +1,28 @@
 import * as Linking from 'expo-linking'
 import * as Location from 'expo-location'
-import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 import { Alert } from 'react-native'
-import { any } from 'prop-types'
 import VerificarTamanhoImagem from '../../utils/VerificarTamanhoImagem'
 
-export default async function getPermissionAsync(permission) {
-  const { status } = await Permissions.askAsync(permission)
-  if (status !== 'granted') {
-    const permissionName = permission.toLowerCase().replace('_', ' ')
+export async function getPermissionAsync(permission) {
+  let permissionStatus;
+
+  switch (permission) {
+    case 'location':
+      permissionStatus = await Location.requestForegroundPermissionsAsync();
+      break;
+    case 'camera':
+      permissionStatus = await ImagePicker.requestCameraPermissionsAsync();
+      break;
+    case 'mediaLibrary':
+      permissionStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      break;
+    default:
+      throw new Error('Permission type not supported');
+  }
+
+  if (permissionStatus.status !== 'granted') {
+    const permissionName = permission.toLowerCase().replace('_', ' ');
     Alert.alert(
       'Sem sucesso.',
       `Por favor, permita ${permissionName}.`,
@@ -21,18 +34,19 @@ export default async function getPermissionAsync(permission) {
         { text: 'Cancelar', onPress: () => { }, style: 'cancel' },
       ],
       { cancelable: true },
-    )
+    );
 
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 export async function getLocationAsync(onSend) {
-  if (await Location.requestForegroundPermissionsAsync()) {
-    const location = await Location.getCurrentPositionAsync({})
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status === 'granted') {
+    const location = await Location.getCurrentPositionAsync({});
     if (location) {
-      onSend([{ location: location.coords }])
+      onSend([{ location: location.coords }]);
     }
   }
 }
@@ -49,22 +63,23 @@ export async function pickImageAsync(onSend, setTextoAlert, alertRef) {
     if (mensagemArquivo) {
       setTextoAlert(mensagemArquivo);
       alertRef.current.open();
-      return
+      return;
     }
-    onSend([{ image: result.assets[0].uri }])
-    return result.assets[0].uri
+    onSend([{ image: result.assets[0].uri }]);
+    return result.assets[0].uri;
   }
 }
 
 export async function takePictureAsync(onSend) {
-  if (await ImagePicker.requestCameraPermissionsAsync()) {
+  const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  if (status === 'granted') {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-    })
+    });
 
     if (!result.canceled) {
-      onSend([{ image: result.uri }])
-      return result.uri
+      onSend([{ image: result.uri }]);
+      return result.uri;
     }
   }
 }
