@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useEffect, useState, useRef } from 'react';
+import { useCallback, useReducer, useEffect, useState, useRef, useMemo } from 'react';
 import { StyleSheet, View, ToastAndroid, ActivityIndicator, StatusBar } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -55,7 +55,10 @@ const Chat = () => {
     const alertRef = useRef(null);
     const [textoAlert, setTextoAlert] = useState('');
 
-    let user = { _id: TB_PESSOA_IDD.current }
+        // Criar user estável com useMemo
+    const user = useMemo(() => ({ 
+        _id: TB_PESSOA_IDD.current 
+    }), [TB_PESSOA_IDD.current]);
     const [state, dispatch] = useReducer(reducer, {
         messages: mensagens.current,
         step: 0,
@@ -260,7 +263,7 @@ const Chat = () => {
                 editando.current = false;
             }
         }
-    }, [dispatch, state.messages]);
+    }, [dispatch, state.messages, user, TB_CHAT_ID]); // Dependências corretas
 
     const onSendCustomActions = (messages = []) => { // Função botão mais (Enviar Imagem)
         const messagesToUpload = messages.map(message => ({
@@ -296,6 +299,14 @@ const Chat = () => {
     //     dispatch({ type: ActionKind.SET_IS_TYPING, payload: isTyping });
     // };
 
+    const scrollToBottomComponent = useCallback(() => (
+        <FontAwesome5 name="arrow-down" size={25} color="#9e9e9e" />
+    ), []);
+
+    const renderChatEmptyStable = useCallback(() => (
+        renderChatEmpty(msgEmptyChat)
+    ), []);
+
     return (
         <SafeAreaView style={styles.container}>
             <NavbarChat id={TB_PESSOA_ID} dados={dadosChat} animais={animais.current} DesativarChat={DesativarChat} desativado={desativado.current} />
@@ -317,14 +328,14 @@ const Chat = () => {
                             renderSend={props => renderSend(props, editando, respondendo)}
                             renderBubble={props => renderBubble(props, mensagens, user, mensagemRespondendo, ResponderMensagem, reRender)}
                             renderActions={props => renderActions(props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef)}
-                            renderChatEmpty={() => renderChatEmpty(msgEmptyChat)}
+                            renderChatEmpty={renderChatEmptyStable}
                             keyboardShouldPersistTaps='always'
                             isTyping={state.isTyping}
                             text={textoDigitado}
                             onInputTextChanged={text => setTextoDigitado(text)}
                             infiniteScroll
                             scrollToBottom
-                            scrollToBottomComponent={() => <FontAwesome5 name="arrow-down" size={25} color="#9e9e9e" />}
+                            scrollToBottomComponent={scrollToBottomComponent}
                             maxInputLength={256}
                             parsePatterns={parsePatterns}
                             dateFormat='DD/MM/YYYY'
