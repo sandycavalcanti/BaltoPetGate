@@ -92,6 +92,12 @@ export const renderBubble = (props, mensagens, user, mensagemRespondendo, Respon
 }
 
 export const renderInputToolbar = (props, editando, respondendo, desativado, textoDigitado, mensagemRespondendo, setAlturaViewRespondendo) => {
+    // Capturar valores das refs no início
+    const isEditando = editando.current;
+    const isRespondendo = respondendo.current;
+    const isDesativado = desativado.current;
+    const mensagemAtual = mensagemRespondendo.current || {};
+    
     const Fechar = () => {
         respondendo.current = false;
         setAlturaViewRespondendo(50);
@@ -100,19 +106,20 @@ export const renderInputToolbar = (props, editando, respondendo, desativado, tex
         let alturaViewRespondendo = Math.round(event.nativeEvent.layout.height);
         setAlturaViewRespondendo(50 + alturaViewRespondendo);
     }
-    let respondendoImagem = mensagemRespondendo.current.image;
-    let respondendoTexto = mensagemRespondendo.current.text;
-    const foiExcluida = mensagemRespondendo.current.mensagemExcluida;
+    
+    let respondendoImagem = mensagemAtual.image;
+    let respondendoTexto = mensagemAtual.text;
+    const foiExcluida = mensagemAtual.mensagemExcluida;
 
     return (
         <>
-            {!desativado.current &&
+            {!isDesativado &&
                 <>
-                    {editando.current &&
+                    {isEditando &&
                         <View style={styles.containerEditando}>
                             <Text style={styles.textoEditando}>Você só pode editar a mensagem uma vez</Text>
                         </View>}
-                    {respondendo.current &&
+                    {isRespondendo &&
                         <View style={[styles.containerRespondendo, { minWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70, maxWidth: textoDigitado ? windowWidth - 150 : windowWidth - 70 }]} onLayout={MedirAltura}>
                             <Text>Respondendo a:</Text>
                             <AntDesign name="close" size={25} color="#9e9e9e" style={{ position: 'absolute', top: 5, right: 5 }} onPress={Fechar} />
@@ -145,23 +152,30 @@ export const renderTime = (props, user) => {
 }
 
 export const renderSend = (props, editando, respondendo) => {
+    const isEditando = editando.current;
+    const isRespondendo = respondendo.current;
+    
     return (
         <Send {...props} containerStyle={{ justifyContent: 'center' }}>
             <View style={styles.enviarContainer}>
-                <Text style={{ fontSize: 16 }}>{editando.current ? 'Editar' : respondendo.current ? 'Responder' : 'Enviar'}</Text>
+                <Text style={{ fontSize: 16 }}>
+                    {isEditando ? 'Editar' : isRespondendo ? 'Responder' : 'Enviar'}
+                </Text>
             </View>
         </Send>
     );
 };
 
 export const renderActions = (props, editando, setTextoDigitado, onSendCustomActions, setTextoAlert, alertRef) => {
+    const isEditando = editando.current;
+    
     const Fechar = () => {
         editando.current = false;
         setTextoDigitado('');
     }
     return (
         <>
-            {editando.current ?
+            {isEditando ?
                 <AntDesign name="close" size={35} color="#9e9e9e" style={{ marginLeft: 10, marginBottom: 7 }} onPress={Fechar} />
                 :
                 <CustomActions {...props} onSend={onSendCustomActions} setTextoAlert={setTextoAlert} alertRef={alertRef} />}
@@ -170,9 +184,11 @@ export const renderActions = (props, editando, setTextoDigitado, onSendCustomAct
 }
 
 export const renderChatEmpty = (msgEmptyChat) => {
+    const mensagem = msgEmptyChat.current;
+    
     return (
         <View style={styles.emptyChat}>
-            <Text style={styles.emptyChatText}>{msgEmptyChat.current}</Text>
+            <Text style={styles.emptyChatText}>{mensagem}</Text>
         </View>
     )
 }
